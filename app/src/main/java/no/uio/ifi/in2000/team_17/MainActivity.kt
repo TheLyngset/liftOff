@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    Greeting("RandomTest Branch")
+                    Greeting("Team 17")
                 }
             }
         }
