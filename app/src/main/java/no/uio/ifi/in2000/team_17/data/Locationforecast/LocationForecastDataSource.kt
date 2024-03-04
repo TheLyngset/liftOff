@@ -10,14 +10,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 
 class LocationForecastDataSource {
-
     val client = HttpClient(CIO) {
         defaultRequest {
-            url("gw-uio.intark.uh-it.no/in2000/weatherapi")
+            url("gw-uio.intark.uh-it.no/in2000/")
             header("X-Gravitee-API-Key", "<4fc44a0a-d804-4696-9e91-bf936486aed5>")
         }
     }
-
     suspend fun fetchLocationforecast(): LocationforecastAllData {
         // Fetch and deserialize data from the API
         // (JSON -> Kotlin Data Class)
