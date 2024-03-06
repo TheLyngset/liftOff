@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team_17.data.Locationforecast.Geometry
-import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTest.LocationforecastUiState
-import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTest.LocationforecastViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)

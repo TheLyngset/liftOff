@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui.theme.locationforecastTest
+package no.uio.ifi.in2000.team_17.ui.theme.LocationforecastTestScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationForecastRepository
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationForecastRepositoryImplementation
-import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationforecastAllData
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationforecastWeatherData
 
 data class LocationforecastUiState(
