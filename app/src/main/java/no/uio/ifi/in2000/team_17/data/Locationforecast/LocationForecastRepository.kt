@@ -15,9 +15,9 @@ class LocationForecastRepositoryImplementation (
             locationforecastData = locationforecastDataSource.fetchLocationforecast()
         } catch (e: IOException) {
             // log the exception
-            Log.e("LOCATIONFORECAST_REPOSITORY", "Error while fetching Locationforecast data ", e)
+            Log.e("LOCATIONFORECAST_REPOSITORY", "Error while fetching Locationforecast data: ${e.message}")
         } catch (e: Exception) {
-            Log.e("LOCATIONFORECAST_REPOSITORY", "Error while fetching Locationforecast data ", e)
+            Log.e("LOCATIONFORECAST_REPOSITORY", "Error while fetching Locationforecast data: ${e.message}")
         }
         return locationforecastData
     }

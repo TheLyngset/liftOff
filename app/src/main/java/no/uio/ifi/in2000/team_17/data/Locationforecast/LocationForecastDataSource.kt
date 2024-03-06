@@ -6,32 +6,60 @@ import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.http.headersOf
+import io.ktor.serialization.gson.gson
 
-class LocationForecastDataSource {
-    val client = HttpClient(CIO) {
-        defaultRequest {
-            url("gw-uio.intark.uh-it.no/in2000/")
-            header("X-Gravitee-API-Key", "<4fc44a0a-d804-4696-9e91-bf936486aed5>")
+class LocationForecastDataSource() {
+    private val ApiKey = LocationforecastKey()
+    private val keyValue = ApiKey.getAPIKey()
+
+    private val client = HttpClient () {
+           defaultRequest {
+                header("X-Gravitee-API-Key", keyValue)
+           }
+            install(ContentNegotiation) {
+                gson()
+            }
         }
-    }
     suspend fun fetchLocationforecast(): LocationforecastAllData {
-        // Fetch and deserialize data from the API
-        // (JSON -> Kotlin Data Class)
-        val response = client.get("weatherapi/")
-
-        // Logging is optional, this is an example of how to do it
-        Log.d(
-            "FORCAST_DATA_SOURCE",
-            "forecastDataSource.fetchLocationforecast() HTTP status: ${response.status}"
-        ) // log the HTTP status code
-
-        // Deserialize the response body to on object
-        val locationForcastAllData: LocationforecastAllData = response.body()
+        var lat = "61"
+        var lon = "10"
+       //var path = "gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=${lat}lon=${lon}"
+       var path ="https://gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
+        val response = client.get(path)
+        Log.d("FetchLocationforecast", "$response.status")
 
         // Return the inner object from the deserialized object
-        return locationForcastAllData
+     //   Log.d("ooo", response.status.toString())
+
+        return response.body()
     }
 
 }
+
+/*
+suspend fun main(){
+    private val ApiKey = LocationforecastKey()
+    private val keyValue = ApiKey.getAPIKey()
+
+    val client = HttpClient(CIO)
+    val path = "https://gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
+    try {
+        val response: io.ktor.client.statement.HttpResponse = client.get(path)
+        headersOf("X-Gravitee-API-Key", keyValue)
+        Log.d("ooo", "OOOO $response.status.toString()")
+
+    }
+
+    catch (e: Exception) {
+        println("Failed to make requedts ${e.message}")
+        } finally {
+        client.close()
+    }
+}
+
+ */
+
