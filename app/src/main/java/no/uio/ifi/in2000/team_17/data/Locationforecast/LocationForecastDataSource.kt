@@ -51,7 +51,6 @@ suspend fun main(){
         val response: io.ktor.client.statement.HttpResponse = client.get(path)
         headersOf("X-Gravitee-API-Key", keyValue)
         Log.d("ooo", "OOOO $response.status.toString()")
-
     }
 
     catch (e: Exception) {
