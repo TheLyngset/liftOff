@@ -24,20 +24,22 @@ class LocationForecastDataSource() {
                 gson()
             }
         }
-    suspend fun fetchLocationforecast(): LocationforecastAllData {
+    suspend fun fetchLocationforecast(): LocationforecastWeatherData {
         var lat = "61"
         var lon = "10"
-       //var path = "gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=${lat}lon=${lon}"
-       var path ="https://gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
+        //  var path: String = "https://gw-uiointark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=$lat&lon=$lon"
+        //var path = "gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=${lat}lon=${lon}"
+        var path =
+            "https://gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
+
         val response = client.get(path)
         Log.d("FetchLocationforecast", "$response.status")
 
         // Return the inner object from the deserialized object
-     //   Log.d("ooo", response.status.toString())
+        //   Log.d("ooo", response.status.toString())
 
         return response.body()
     }
-
 }
 
 /*

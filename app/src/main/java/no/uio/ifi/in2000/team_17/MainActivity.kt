@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTest.LocationforecastViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team_17.ui.theme.LocationforecastTestScreen.LocationforecastScreenTest
 
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +26,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Team 17, Samuel, Hedda, Lelia, Malin")
+                    //Greeting("Team 17, Samuel, Hedda, Lelia, Malin")
                     val LocationforecastViewModel: LocationforecastViewModel = viewModel()
+                    LocationforecastScreenTest()
 
                 }
             }

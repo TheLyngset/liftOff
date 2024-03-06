@@ -12,9 +12,10 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationForecastRepository
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationForecastRepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationforecastAllData
+import no.uio.ifi.in2000.team_17.data.Locationforecast.LocationforecastWeatherData
 
 data class LocationforecastUiState(
-    val locationforecastData: LocationforecastAllData = LocationforecastAllData(null, null, null),
+    val locationforecastData: LocationforecastWeatherData = LocationforecastWeatherData(null),
 )
 class LocationforecastViewModel : ViewModel() {
     // Create instance of the repository that fetches data.
@@ -27,7 +28,7 @@ class LocationforecastViewModel : ViewModel() {
     val locationforecastUiState: StateFlow<LocationforecastUiState> = _locationforecastUiState.asStateFlow()
 
     init {
-        Log.d("LOCATIONFORECAST_VIEW_MODEL", "Calling loadJokes()")
+        Log.d("LOCATIONFORECAST_VIEW_MODEL", "Calling loadLocationforecastData()")
         loadLocationforecastData()
     }
     private fun loadLocationforecastData() {
@@ -35,8 +36,10 @@ class LocationforecastViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             // Update the private mutableStateFlow with the loaded list of jokes
             _locationforecastUiState.update { currentLocationforecastUiState ->
-
                 Log.d("LOCFORECAST_VIEW_MODEL", "Calling getLocationforecastData()")
+
+                Log.d("LOCATIONFORECAST_VIEW_MODEL", "Calling locationforecastRepository.getLocationforecastData()")
+
                 // Get data from the repository (which then gets them from the data source)
                 val locationforecastData = locationforecastRepository.getLocationforecastData()
 

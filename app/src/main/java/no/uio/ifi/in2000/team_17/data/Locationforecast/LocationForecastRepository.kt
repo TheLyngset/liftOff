@@ -4,13 +4,13 @@ import android.util.Log
 import java.io.IOException
 
 interface LocationForecastRepository{
-    suspend fun getLocationforecastData(): LocationforecastAllData
+    suspend fun getLocationforecastData(): LocationforecastWeatherData
 }
 class LocationForecastRepositoryImplementation (
     private val locationforecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
 ) : LocationForecastRepository  {
-    override suspend fun getLocationforecastData(): LocationforecastAllData {
-        var locationforecastData = LocationforecastAllData(null, null, null)
+    override suspend fun getLocationforecastData(): LocationforecastWeatherData {
+        var locationforecastData = LocationforecastWeatherData(null)
         try {
             locationforecastData = locationforecastDataSource.fetchLocationforecast()
         } catch (e: IOException) {

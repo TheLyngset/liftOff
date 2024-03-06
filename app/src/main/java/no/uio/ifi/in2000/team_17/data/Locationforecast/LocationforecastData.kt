@@ -1,5 +1,8 @@
 package no.uio.ifi.in2000.team_17.data.Locationforecast
 
+data class LocationforecastWeatherData(
+    val feature: LocationforecastAllData?
+)
 data class LocationforecastAllData(
     val type: String?,
     val geometry: Geometry?,
@@ -26,13 +29,13 @@ data class LocationforcastTimeSerie (
     val data: LocationforecastData
 )
 data class LocationforecastData (
-    val instant: LocationforecastInstant,
-    val next_12_hours: LocationforecastNextHours,
-    val next_1_hours: LocationforecastNextHours,
-    val next_6_hours: LocationforecastNextHours,
+    val instant: LocationforecastTimeDetails,
+    val next_12_hours: LocationforecastTimeDetails,
+    val next_1_hours: LocationforecastTimeDetails,
+    val next_6_hours: LocationforecastTimeDetails,
 )
 data class LocationforecastDetails (
-    val   air_pressure_at_sea_level: Double,
+    val air_pressure_at_sea_level: Double,
     val air_temperature: Double,
     val cloud_area_fraction: Double,
     val precipitation_amount: Double,
@@ -40,10 +43,7 @@ data class LocationforecastDetails (
     val wind_from_direction: Double,
     val wind_speed: Double
 )
-data class LocationforecastInstant (
-    val instant: LocationforecastDetails
-)
-data class LocationforecastNextHours(
-    val summary: String,
-    val details: LocationforecastDetails
+data class LocationforecastTimeDetails(
+    val summary: String?,
+    val details: LocationforecastDetails?
 )
