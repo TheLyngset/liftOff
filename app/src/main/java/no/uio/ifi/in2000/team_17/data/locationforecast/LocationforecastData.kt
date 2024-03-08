@@ -1,5 +1,5 @@
-package no.uio.ifi.in2000.team_17.data.Locationforecast
-
+package no.uio.ifi.in2000.team_17.data.locationforecast
+/*
 data class LocationforecastWeatherData(
     val feature: LocationforecastAllData?
 )
@@ -47,3 +47,5 @@ data class LocationforecastTimeDetails(
     val summary: String?,
     val details: LocationforecastDetails?
 )
+
+ */

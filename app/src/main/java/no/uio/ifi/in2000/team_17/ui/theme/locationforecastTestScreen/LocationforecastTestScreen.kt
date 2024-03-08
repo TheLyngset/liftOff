@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui.theme.LocationforecastTestScreen
+package no.uio.ifi.in2000.team_17.ui.theme.locationforecastTestScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import no.uio.ifi.in2000.team_17.data.Locationforecast.Geometry
+import no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather.Geometry
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,8 +28,8 @@ fun LocationforecastScreenTest(
     //onNavigateToHomeScreen: () -> Unit,
 ) {
     val locationforecastUiState: LocationforecastUiState by locationforecastViewModel.locationforecastUiState.collectAsState()
-    val type: String? = locationforecastUiState.locationforecastData.feature?.type
-    val geometry: Geometry? = locationforecastUiState.locationforecastData.feature?.geometry
+    val type: String? = locationforecastUiState.locationforecastData.type
+    val geometry: Geometry? = locationforecastUiState.locationforecastData.geometry
 
 
     Scaffold(
@@ -51,7 +51,6 @@ fun LocationforecastScreenTest(
             LazyColumn(
                 modifier = Modifier
                     .padding(8.dp),
-                //.verticalScroll(state), __CRASHER APPEN
             ) {
                 item {
                     Row(Modifier.background(MaterialTheme.colorScheme.primary)) {

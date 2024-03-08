@@ -1,16 +1,14 @@
-package no.uio.ifi.in2000.team_17.data.Locationforecast
+package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import android.util.Log
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse
 import io.ktor.client.*
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.http.headersOf
 import io.ktor.serialization.gson.gson
+import io.ktor.util.appendIfNameAbsent
+import no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather.LocationforecastDTO
 
 class LocationForecastDataSource() {
     private val ApiKey = LocationforecastKey()
@@ -18,19 +16,19 @@ class LocationForecastDataSource() {
 
     private val client = HttpClient () {
            defaultRequest {
-                header("X-Gravitee-API-Key", keyValue)
+               url("https://gw-uio.intark.uh-it.no/in2000/")
+                headers.appendIfNameAbsent("X-Gravitee-API-Key", keyValue)
            }
             install(ContentNegotiation) {
                 gson()
             }
         }
-    suspend fun fetchLocationforecast(): LocationforecastWeatherData {
+    suspend fun fetchLocationforecast(): LocationforecastDTO {
         var lat = "61"
         var lon = "10"
         //  var path: String = "https://gw-uiointark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=$lat&lon=$lon"
         //var path = "gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=${lat}lon=${lon}"
-        var path =
-            "https://gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
+        var path = "weatherapi//locationforecast/2.0/compact?lat=61&lon=10"
 
         val response = client.get(path)
         Log.d("FetchLocationforecast", "$response.status")
@@ -38,8 +36,17 @@ class LocationForecastDataSource() {
         // Return the inner object from the deserialized object
         //   Log.d("ooo", response.status.toString())
 
-        return response.body()
+        return response.body<LocationforecastDTO>()
     }
+   /* suspend fun getWeatherDataLocation(lat: Double, lon: Double): FoodCategory?:Meal? {
+   val categoryString = when((lat){
+   FoodCatefory.CKICKEN -> "Chicken"
+   }
+   client.get("filter.php?C=seafood")
+
+    }
+
+    */
 }
 
 /*

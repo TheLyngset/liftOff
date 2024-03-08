@@ -1,7 +1,7 @@
-package no.uio.ifi.in2000.team_17.data.Locationforecast
+package no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather
 
-data class LocationforecastUnits (
-   val air_pressure_at_sea_level: String,
+data class Units(
+    val air_pressure_at_sea_level: String,
     val air_temperature: String,
     val cloud_area_fraction: String,
     val precipitation_amount: String,
