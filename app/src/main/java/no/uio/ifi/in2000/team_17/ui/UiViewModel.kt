@@ -16,7 +16,8 @@ data class UIState(
     val layerHeights:List<Double> = listOf(),
     val windSpeeds:List<Double> = listOf(),
     val windFromDirections: List<Double> = listOf(),
-    val temperatures: List<Double> = listOf()
+    val temperatures: List<Double> = listOf(),
+    val windShear:List<Double> = listOf()
 )
 class UiViewModel: ViewModel() {
     val repo = IsobaricRepo()
@@ -24,7 +25,6 @@ class UiViewModel: ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     init {
-        repo.setPressureAtSealevel(900.0)
         viewModelScope.launch {
             repo.loadData(59.65797123887148, 10.76636053581773)
             _uiState.update {
@@ -32,7 +32,8 @@ class UiViewModel: ViewModel() {
                     layerHeights = repo.layerHeights.asStateFlow().value,
                     windSpeeds = repo.windSpeeds.asStateFlow().value,
                     windFromDirections = repo.windFromDirection.asStateFlow().value,
-                    temperatures = repo.temperatures.asStateFlow().value
+                    temperatures = repo.temperatures.asStateFlow().value,
+                    windShear = repo.windShear.asStateFlow().value
                 )
             }
         }

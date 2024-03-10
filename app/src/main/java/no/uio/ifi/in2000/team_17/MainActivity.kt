@@ -63,6 +63,12 @@ class MainActivity : ComponentActivity() {
                                 Text(text = it.toString())
                             }
                         }
+                        Column (Modifier.background(Color.Gray)){
+                            Text(" shear ")
+                            uiState.value.windShear.forEach {
+                                Text(text = it.toString())
+                            }
+                        }
                     }
                 }
             }
