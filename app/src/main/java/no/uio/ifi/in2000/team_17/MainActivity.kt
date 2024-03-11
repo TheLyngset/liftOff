@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team_17.ui.UiViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
+import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTestScreen.LocationforecastScreenTest
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
