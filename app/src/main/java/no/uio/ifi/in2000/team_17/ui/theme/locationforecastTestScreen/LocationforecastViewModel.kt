@@ -9,20 +9,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepository
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepositoryImplementation
-import no.uio.ifi.in2000.team_17.data.locationforecast.WeatherUseCase
-import no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 
 data class LocationforecastUiState(
     val locationforecastData: LocationforecastDTO = LocationforecastDTO(null, null, null),
 )
 class LocationforecastViewModel : ViewModel() {
     // Create instance of the repository that fetches data.
-    private val locationforecastRepository: LocationForecastRepository = LocationForecastRepositoryImplementation()
+    private val locationforecastRepository = LocationForecastRepositoryImplementation()
 
     // Private mutable state flow to represent the UI state.
-    private val _locationforecastUiState: MutableStateFlow<LocationforecastUiState> = MutableStateFlow(LocationforecastUiState())
+    private val _locationforecastUiState = MutableStateFlow(LocationforecastUiState())
 
     // Public immutable state flow to expose the UI state to the Screen.
     val locationforecastUiState: StateFlow<LocationforecastUiState> = _locationforecastUiState.asStateFlow()
@@ -49,6 +47,7 @@ class LocationforecastViewModel : ViewModel() {
             }
         }
     }
+    /*
     private fun loadTemperature(){
         viewModelScope.launch {
             val temp = WeatherUseCase(locationforecastRepository).getTemperature()
@@ -59,4 +58,6 @@ class LocationforecastViewModel : ViewModel() {
             }
         }
     }
+
+     */
 }

@@ -8,11 +8,13 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
-import no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
+// import no.uio.ifi.in2000.team_17.data.locationforecast.LocationforecastKey
 
 class LocationForecastDataSource() {
     private val ApiKey = LocationforecastKey()
     private val keyValue = ApiKey.getAPIKey()
+
 
     private val client = HttpClient () {
            defaultRequest {

@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import no.uio.ifi.in2000.team_17.data.locationforecast.jsondata.dto.weather.Geometry
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,8 +27,12 @@ fun LocationforecastScreenTest(
     //onNavigateToHomeScreen: () -> Unit,
 ) {
     val locationforecastUiState: LocationforecastUiState by locationforecastViewModel.locationforecastUiState.collectAsState()
-    val type: String? = locationforecastUiState.locationforecastData.type
-    val geometry: Geometry? = locationforecastUiState.locationforecastData.geometry
+    val geometry = locationforecastUiState.locationforecastData.geometry
+    val windSpeed = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_speed
+    val windDirection = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_from_direction
+    val rainNextHour = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.next_1_hours?.details?.precipitation_amount
+    val clouds = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.cloud_area_fraction
+    val dateTime = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.time
 
 
     Scaffold(
@@ -53,17 +56,31 @@ fun LocationforecastScreenTest(
                     .padding(8.dp),
             ) {
                 item {
+                    Row {
+                        Column {
+                            Text(text = "Type: ${geometry?.type}")
+                            Text(text = "Coordinates: ${geometry?.coordinates}")
+                            Text(text = "DateTime: ${dateTime}")
+                        }
+                    }
                     Row(Modifier.background(MaterialTheme.colorScheme.primary)) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                text = "Wind",
+                                text = "WindSpeed",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "WindFrom",
                                 fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                             Column(Modifier.weight(1f)) {
                                 Text(
-                                    text = "Rain",
+                                    text = "RainNextH",
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
@@ -76,12 +93,37 @@ fun LocationforecastScreenTest(
                                 )
                             }
                }
-                    Row {
-                        Column {
-                            Text(text = "Type: ${geometry?.type}")
-                            Text(text = "Coordinates: ${geometry?.coordinates}")
+                    Row(Modifier.background(MaterialTheme.colorScheme.primary)) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "${windSpeed}",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "${windDirection}",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "${rainNextHour}",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = "${clouds}",
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
                     }
+
                 }
 
             }

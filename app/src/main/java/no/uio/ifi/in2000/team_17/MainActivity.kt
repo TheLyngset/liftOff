@@ -10,9 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTestScreen.LocationforecastViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
-import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTestScreen.LocationforecastScreenTest
 
 
@@ -27,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //Greeting("Team 17, Samuel, Hedda, Lelia, Malin")
-                    val LocationforecastViewModel: LocationforecastViewModel = viewModel()
+                  ///  val locationforecastViewModel: LocationforecastViewModel = viewModel()
                     LocationforecastScreenTest()
                 }
             }
