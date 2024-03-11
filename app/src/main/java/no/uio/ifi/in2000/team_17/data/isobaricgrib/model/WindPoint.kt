@@ -6,7 +6,7 @@ data class WindPoint(
     val windSpeed: Double = 0.0,
     val windFromDirection: Double = 0.0,
     val temperature: Double = 0.0,
-    val pressure: Int = 1000,
+    val pressure: Double = 1000.00,
     val height: Double = 0.0
 )
 
