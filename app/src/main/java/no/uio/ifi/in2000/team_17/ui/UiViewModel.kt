@@ -26,7 +26,7 @@ class UiViewModel: ViewModel() {
 
     init {
         viewModelScope.launch {
-            repo.loadData(59.65797123887148, 10.76636053581773)
+            repo.loadData(59.96144907197439, 10.713250420850423)
             _uiState.update {
                 it.copy(
                     layerHeights = repo.layerHeights.asStateFlow().value,
