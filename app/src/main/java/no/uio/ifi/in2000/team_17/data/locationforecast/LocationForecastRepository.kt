@@ -59,7 +59,12 @@ class LocationForecastRepositoryImplementation (
     }
 
     private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double?{
-        //There is also a very simple approximation that allows conversion between the dew point, temperature, and relative humidity. This approach is accurate to within about ±1 °C as long as the relative humidity is above 50%:
+        //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+        //Td = T - ((100 - RH)/5.)
+        //Td is dew point temperature (in degrees Celsius),
+        // T is observed temperature (in degrees Celsius), and
+        // RH is relative humidity (in percent).
+        // Apparently this relationship is fairly accurate for relative humidity values above 50%.
         if (temperature != null && relativeHumidity != null) {
             return round((temperature!! - ((100- relativeHumidity)/5)))
         }
