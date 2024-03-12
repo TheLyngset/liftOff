@@ -6,7 +6,7 @@ import java.io.IOException
 
 interface LocationForecastRepository{
     suspend fun getLocationforecastData(): LocationforecastDTO
-    suspend fun getTemperature(): Double?
+    suspend fun getGroundWeatherPoint(lan: Double?, lon: Double?): GroundWeatherPoint
 }
 class LocationForecastRepositoryImplementation (
     private val locationforecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
@@ -26,10 +26,36 @@ class LocationForecastRepositoryImplementation (
         return locationforecastData
     }
 
-    override suspend fun getTemperature(): Double? {
-        val all = locationforecastDataSource.fetchLocationforecast()
-        val temp: Double? = all.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.air_temperature
-        return temp
-    }
     /* funksjoner som returnenre kun den dataen vi er interessert i.*/
+
+    //rename this to ground weather point.
+    override suspend fun getGroundWeatherPoint(lan: Double?, lon: Double?): GroundWeatherPoint {
+
+        val allLocationData = getLocationforecastData()
+
+        val windSpeed: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_speed
+        val windFromDirection: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_from_direction
+        val airTemperature: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.air_temperature
+        val pressureSeaLevel: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.air_pressure_at_sea_level
+        val cloudFraction: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.cloud_area_fraction
+        val rain: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.next_1_hours?.details?.precipitation_amount
+        val humidity: Double? = allLocationData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.relative_humidity
+
+
+
+        var weatherPoint = GroundWeatherPoint(windSpeed, windFromDirection, airTemperature, pressureSeaLevel,cloudFraction,rain, humidity, 0.0)
+
+    return weatherPoint
+    }
+    /* data class WeatherPoint(
+    val windSpeed: Double?,
+    val windFromDirection: Double?,
+    val airTemperature: Double?,
+    val pressureSeaLevel: Double?,
+    val height: Double?,
+    val cloudFraction: Double?,
+    val rain: Double?,
+    val humidity: Double?,
+)
+*/
 }

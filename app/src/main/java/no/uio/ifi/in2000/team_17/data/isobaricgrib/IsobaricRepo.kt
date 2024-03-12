@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.MultiNode
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WindPoint
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
@@ -27,7 +27,7 @@ class IsobaricRepo {
     private val dataSource = IsobaricDataSource()
     private var pressureAtSeaLevel: Double = 1000.0
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
-    val windPointList = MutableStateFlow<List<WindPoint>>(listOf())
+    val windPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
     val layerHeights = MutableStateFlow<List<Double>>(listOf())
     val windSpeeds = MutableStateFlow<List<Double>>(listOf())
     val windFromDirection = MutableStateFlow<List<Double>>(listOf())
@@ -60,7 +60,7 @@ class IsobaricRepo {
                     MultiNode(speed, direction, temperature, pressure)
                 }
                 .zip(layerHeights.value) { (speed, direction, temperature, pressure), height ->
-                    WindPoint(
+                    WeatherPoint(
                         windSpeed = speed,
                         windFromDirection = direction,
                         temperature = temperature,

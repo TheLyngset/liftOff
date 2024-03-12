@@ -25,6 +25,7 @@ class LocationForecastDataSource() {
                 gson()
             }
         }
+
     suspend fun fetchLocationforecast(): LocationforecastDTO {
         var lat = "61"
         var lon = "10"
