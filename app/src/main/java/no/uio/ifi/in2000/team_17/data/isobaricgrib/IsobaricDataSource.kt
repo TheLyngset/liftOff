@@ -7,6 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
+import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 
 
@@ -24,8 +25,8 @@ class IsobaricDataSource {
         return try {
             Log.d(LOG_NAME, makeQueryUrl(north, east))
             client.get(makeQueryUrl(north, east)).body<IsoBaricModel>()
-        } catch (e: UnresolvedAddressException) {
-            Log.d(LOG_NAME, "Unresolved address")
+        } catch (e: IOException) {
+            Log.e(LOG_NAME, "Got an IO exception $e")
             IsoBaricModel()
         }
     }
