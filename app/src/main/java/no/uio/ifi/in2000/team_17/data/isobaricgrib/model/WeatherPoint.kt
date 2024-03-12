@@ -8,6 +8,10 @@ data class WeatherPoint(
     val windShear:Double = 0.0,
     val temperature: Double = 0.0,
     val pressure: Double = 1000.00,
-    val height: Double = 0.0
+    val height: Double = 0.0,
+    val cloudFraction: Double = -1.0,
+    val rain: Double = -1.0,
+    val humidity: Double = -1.0,
+    val groundLevel:Int = 0
 )
 

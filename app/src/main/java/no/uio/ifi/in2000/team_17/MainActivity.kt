@@ -27,9 +27,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LocationforecastScreenTest()
                     val uiViewModel: UiViewModel = viewModel()
                     val uiState = uiViewModel.uiState.collectAsState()
+
                 }
             }
         }

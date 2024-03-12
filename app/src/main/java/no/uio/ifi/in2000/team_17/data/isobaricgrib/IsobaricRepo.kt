@@ -21,7 +21,7 @@ class IsobaricRepo {
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
-    suspend fun loadData(north: Double, east: Double, sealevelPoint: WeatherPoint = WeatherPoint()) {
+    suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint()) {
         isoBaricModel.update { dataSource.getData(north, east) }
 
         val layerHeights = mutableListOf<Double>()
@@ -33,8 +33,8 @@ class IsobaricRepo {
                 layerHeights.add(hydrostaticFormula(pressure, temp, pressureAtSeaLevel))
                 }
 
-        var s_0 = sealevelPoint.windSpeed
-        var d_0 = sealevelPoint.windDirection
+        var s_0 = groundWeatherPoint.windSpeed
+        var d_0 = groundWeatherPoint.windDirection
         val windSpeed = isoBaricModel.value.ranges.windSpeed.values
         val temperatures = isoBaricModel.value.ranges.temperature.values
         val windFromDirection = isoBaricModel.value.ranges.windFromDirection.values
@@ -45,7 +45,7 @@ class IsobaricRepo {
             d_0 = d_1
         }
         weatherPointList.update {
-            windSpeed.zip(windFromDirection)
+            listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
                     Triple(speed, direction, temperature)
                 }.zip(windShear){(speed, direction, temperature), shear ->
