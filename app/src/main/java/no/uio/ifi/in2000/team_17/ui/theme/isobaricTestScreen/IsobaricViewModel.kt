@@ -1,16 +1,12 @@
-package no.uio.ifi.in2000.team_17.ui
+package no.uio.ifi.in2000.team_17.ui.theme.isobaricTestScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricRepo
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 
 data class UIState(
     val layerHeights:List<Double> = listOf(),

@@ -35,9 +35,6 @@ class LocationForecastDataSource() {
         val response = client.get(path)
         Log.d("FetchLocationforecast", "$response.status")
 
-        // Return the inner object from the deserialized object
-        //   Log.d("ooo", response.status.toString())
-
         return response.body<LocationforecastDTO>()
     }
    /* suspend fun getWeatherDataLocation(lat: Double, lon: Double): FoodCategory?:Meal? {
