@@ -5,13 +5,13 @@ import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Locationforeca
 import java.io.IOException
 
 interface LocationForecastRepository{
-    suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO
+   // suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO
     suspend fun getGroundWeatherPoint(lan: Double, lon: Double, index: Int): GroundWeatherPoint
 }
 class LocationForecastRepositoryImplementation (
     private val locationforecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
 ) : LocationForecastRepository  {
-    override suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO {
+    suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO {
         var locationforecastData = LocationforecastDTO(null, null, null)
         try {
             locationforecastData = locationforecastDataSource.fetchLocationforecast(lat, lon)

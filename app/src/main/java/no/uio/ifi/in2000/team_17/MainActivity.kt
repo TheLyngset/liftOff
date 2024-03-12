@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team_17.ui.theme.isobaricTestScreen.IsobaricViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
 import no.uio.ifi.in2000.team_17.ui.theme.isobaricTestScreen.IsobaricTestScreen
+import no.uio.ifi.in2000.team_17.ui.theme.locationforecastTestScreen.LocationforecastScreenTest
 
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    IsobaricTestScreen()
+                    LocationforecastScreenTest()
                 }
             }
         }

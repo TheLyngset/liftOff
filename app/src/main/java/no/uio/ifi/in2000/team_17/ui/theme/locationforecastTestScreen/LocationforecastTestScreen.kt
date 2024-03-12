@@ -27,12 +27,11 @@ fun LocationforecastScreenTest(
     //onNavigateToHomeScreen: () -> Unit,
 ) {
     val locationforecastUiState: LocationforecastUiState by locationforecastViewModel.locationforecastUiState.collectAsState()
-    val geometry = locationforecastUiState.locationforecastData.geometry
-    val windSpeed = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_speed
-    val windDirection = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.wind_from_direction
-    val rainNextHour = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.next_1_hours?.details?.precipitation_amount
-    val clouds = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.cloud_area_fraction
-    val dateTime = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.time
+    val windSpeed = locationforecastUiState.locationforecastData.windSpeed
+    val windDirection = locationforecastUiState.locationforecastData.windFromDirection
+    val rainNextHour = locationforecastUiState.locationforecastData.rain
+    val clouds = locationforecastUiState.locationforecastData.cloudFraction
+    //val dateTime = locationforecastUiState.locationforecastData.properties?.timeseries?.firstOrNull()?.time
 
 
     Scaffold(
@@ -58,9 +57,8 @@ fun LocationforecastScreenTest(
                 item {
                     Row {
                         Column {
-                            Text(text = "Type: ${geometry?.type}")
-                            Text(text = "Coordinates: ${geometry?.coordinates}")
-                            Text(text = "DateTime: ${dateTime}")
+                            // Text(text = "Coordinates: ${geometry?.coordinates}")
+                            // Text(text = "DateTime: ${dateTime}")
                         }
                     }
                     Row(Modifier.background(MaterialTheme.colorScheme.primary)) {
