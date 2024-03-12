@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data.isobaricgrib.model
+package no.uio.ifi.in2000.team_17.data
 
 
 // May be used instead of keeping up with a multitude of lists and their indexes
@@ -12,5 +12,6 @@ data class WeatherPoint(
     val cloudFraction: Double = -1.0,
     val rain: Double = -1.0,
     val humidity: Double = -1.0,
-)
+    val dewPoint: Double = -1.0,
+    )
 

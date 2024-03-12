@@ -26,10 +26,7 @@ class LocationForecastDataSource() {
         }
 
     suspend fun fetchLocationforecast(lat: Double, lon: Double): LocationforecastDTO {
-        var lat = lat.toString()
-        var lon = lon.toString()
-        //  var path: String = "https://gw-uiointark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=$lat&lon=$lon"
-        //var path = "gw-uio.intark.uh-it.no/in2000/weatherapi//locationforecast/2.0/compact?lat=${lat}lon=${lon}"
+
         var path = "weatherapi//locationforecast/2.0/compact?lat=${lat}&lon=${lon}"
 
         val response = client.get(path)

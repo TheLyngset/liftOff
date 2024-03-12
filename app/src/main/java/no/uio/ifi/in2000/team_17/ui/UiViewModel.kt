@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricRepo
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.WeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepositoryImplementation
 import kotlin.math.round
 

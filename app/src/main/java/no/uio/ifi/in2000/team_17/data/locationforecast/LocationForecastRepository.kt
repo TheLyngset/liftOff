@@ -1,9 +1,10 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import android.util.Log
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.WeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 import java.io.IOException
+import kotlin.math.round
 
 interface LocationForecastRepository{
    // suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO
@@ -38,7 +39,8 @@ class LocationForecastRepositoryImplementation (
         val pressureSeaLevel: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.air_pressure_at_sea_level
         val cloudFraction: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.cloud_area_fraction
         val rain: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.next_1_hours?.details?.precipitation_amount
-        val humidity: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.relative_humidity
+        val relativeHumidity: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.relative_humidity
+        val dewPoint: Double? = computeDewPointGround(airTemperature, relativeHumidity)
 
         //var weatherPoint = GroundWeatherPoint(windSpeed, windFromDirection, airTemperature, pressureSeaLevel,cloudFraction,rain, humidity, 0.0)
         val weatherPoint = WeatherPoint(
@@ -48,11 +50,25 @@ class LocationForecastRepositoryImplementation (
             pressure = pressureSeaLevel!!,
             cloudFraction =  cloudFraction!!,
             rain = rain!!,
-            humidity = humidity!!,
-            height = 0.0
+            humidity = relativeHumidity!!,
+            height = 0.0,
+            dewPoint = dewPoint!!
         )
 
         return weatherPoint
+    }
+
+    private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double?{
+        //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+        //Td = T - ((100 - RH)/5.)
+        //Td is dew point temperature (in degrees Celsius),
+        // T is observed temperature (in degrees Celsius), and
+        // RH is relative humidity (in percent).
+        // Apparently this relationship is fairly accurate for relative humidity values above 50%.
+        if (temperature != null && relativeHumidity != null) {
+            return round((temperature!! - ((100- relativeHumidity)/5)))
+        }
+        return -1.0
     }
     
 }
