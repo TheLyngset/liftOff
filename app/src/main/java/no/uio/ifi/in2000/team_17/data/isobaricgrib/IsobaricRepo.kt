@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team_17.data.isobaricgrib
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.WeatherPoint
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln

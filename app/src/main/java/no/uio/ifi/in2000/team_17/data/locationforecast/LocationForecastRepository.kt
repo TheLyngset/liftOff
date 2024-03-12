@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import android.util.Log
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.WeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 import java.io.IOException
 import kotlin.math.round
