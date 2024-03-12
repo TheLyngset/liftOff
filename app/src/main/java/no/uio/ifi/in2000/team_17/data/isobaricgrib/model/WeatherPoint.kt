@@ -12,6 +12,5 @@ data class WeatherPoint(
     val cloudFraction: Double = -1.0,
     val rain: Double = -1.0,
     val humidity: Double = -1.0,
-    val groundLevel:Int = 0
 )
 

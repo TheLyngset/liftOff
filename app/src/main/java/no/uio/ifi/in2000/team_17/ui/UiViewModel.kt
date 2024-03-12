@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricRepo
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepositoryImplementation
+import kotlin.math.round
 
 data class UIState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint())
@@ -23,8 +24,8 @@ class UiViewModel: ViewModel() {
         val lat = 59.96144907197439
         val lon = 10.713250420850423
         viewModelScope.launch {
-            val groundWeatherPoint = locationForecastRepo.getGroundWeatherPoint(59.96,10.71, 0)
-            isobaricRepo.loadData(59.96144907197439, 10.713250420850423, groundWeatherPoint)
+            val groundWeatherPoint = locationForecastRepo.getGroundWeatherPoint(round(lat),round(lon), 1)
+            isobaricRepo.loadData(lat, lon, groundWeatherPoint)
             _uiState.update {
                 it.copy(
                     weatherPointList = isobaricRepo.weatherPointList.asStateFlow().value
