@@ -9,11 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team_17.data.locationforecast.GroundWeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 
 data class LocationforecastUiState(
-    val locationforecastData: LocationforecastDTO = LocationforecastDTO(null, null, null),
+    val locationforecastData: GroundWeatherPoint = GroundWeatherPoint(null, null, null, null, null, null, null, null),
 )
 class LocationforecastViewModel : ViewModel() {
     // Create instance of the repository that fetches data.
@@ -36,10 +37,8 @@ class LocationforecastViewModel : ViewModel() {
             _locationforecastUiState.update { currentLocationforecastUiState ->
                 Log.d("LOCFORECAST_VIEW_MODEL", "Calling getLocationforecastData()")
 
-                Log.d("LOCATIONFORECAST_VIEW_MODEL", "Calling locationforecastRepository.getLocationforecastData()")
-
                 // Get data from the repository (which then gets them from the data source)
-                val locationforecastData = locationforecastRepository.getLocationforecastData()
+                val locationforecastData = locationforecastRepository.getGroundWeatherPoint(61.73, 10.83, 0)
 
                 Log.d("LOCATIONFORECAST_VIEW_MODEL", "Updating _locationforecastUiState")
                 // and replace the current mutableStateFlow

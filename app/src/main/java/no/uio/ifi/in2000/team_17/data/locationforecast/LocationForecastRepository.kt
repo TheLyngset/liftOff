@@ -5,16 +5,16 @@ import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Locationforeca
 import java.io.IOException
 
 interface LocationForecastRepository{
-    suspend fun getLocationforecastData(): LocationforecastDTO
-    suspend fun getTemperature(): Double?
+   // suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO
+    suspend fun getGroundWeatherPoint(lan: Double, lon: Double, index: Int): GroundWeatherPoint
 }
 class LocationForecastRepositoryImplementation (
     private val locationforecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
 ) : LocationForecastRepository  {
-    override suspend fun getLocationforecastData(): LocationforecastDTO {
+    suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO {
         var locationforecastData = LocationforecastDTO(null, null, null)
         try {
-            locationforecastData = locationforecastDataSource.fetchLocationforecast()
+            locationforecastData = locationforecastDataSource.fetchLocationforecast(lat, lon)
         } catch (e: IOException) {
             // log the exception
             Log.e("LOCATIONFORECAST_REPOSITORY", "Error while fetching Locationforecast data: ${e.message}")
@@ -26,10 +26,23 @@ class LocationForecastRepositoryImplementation (
         return locationforecastData
     }
 
-    override suspend fun getTemperature(): Double? {
-        val all = locationforecastDataSource.fetchLocationforecast()
-        val temp: Double? = all.properties?.timeseries?.firstOrNull()?.data?.instant?.details?.air_temperature
-        return temp
-    }
     /* funksjoner som returnenre kun den dataen vi er interessert i.*/
+
+    //rename this to ground weather point.
+    override suspend fun getGroundWeatherPoint(lat: Double, lon: Double, index: Int): GroundWeatherPoint {
+
+        val allLocationData = getLocationforecastData(lat, lon)
+
+        val windSpeed: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.wind_speed
+        val windFromDirection: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.wind_from_direction
+        val airTemperature: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.air_temperature
+        val pressureSeaLevel: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.air_pressure_at_sea_level
+        val cloudFraction: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.cloud_area_fraction
+        val rain: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.next_1_hours?.details?.precipitation_amount
+        val humidity: Double? = allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.relative_humidity
+
+        var weatherPoint = GroundWeatherPoint(windSpeed, windFromDirection, airTemperature, pressureSeaLevel,cloudFraction,rain, humidity, 0.0)
+
+    return weatherPoint
+    }
 }
