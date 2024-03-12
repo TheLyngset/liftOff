@@ -21,9 +21,9 @@ class IsobaricRepo {
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
+
     suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint()) {
         isoBaricModel.update { dataSource.getData(north, east) }
-
         val layerHeights = mutableListOf<Double>()
         val pressures = isoBaricModel.value.domain.axes.z.values
         isoBaricModel
