@@ -31,7 +31,8 @@ fun HomeScreen(uiState:UIState){
             weatherInfoList = listOf(
                 Triple("Cloud coverage", uiState.weatherPointList.first().cloudFraction, "%" ),
                 Triple("Rain", uiState.weatherPointList.first().rain, "mm" ),
-                Triple("Humidity", uiState.weatherPointList.first().humidity, "%" )
+                Triple("Humidity", uiState.weatherPointList.first().humidity, "%" ),
+                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C" )
             )
         )
     }
