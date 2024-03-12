@@ -36,10 +36,8 @@ class LocationforecastViewModel : ViewModel() {
             _locationforecastUiState.update { currentLocationforecastUiState ->
                 Log.d("LOCFORECAST_VIEW_MODEL", "Calling getLocationforecastData()")
 
-                Log.d("LOCATIONFORECAST_VIEW_MODEL", "Calling locationforecastRepository.getLocationforecastData()")
-
                 // Get data from the repository (which then gets them from the data source)
-                val locationforecastData = locationforecastRepository.getLocationforecastData()
+                val locationforecastData = locationforecastRepository.getLocationforecastData(61.73, 10.83)
 
                 Log.d("LOCATIONFORECAST_VIEW_MODEL", "Updating _locationforecastUiState")
                 // and replace the current mutableStateFlow

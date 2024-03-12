@@ -15,7 +15,7 @@ data class UIState(
     val temperatures: List<Double> = listOf(),
     val windShear:List<Double> = listOf()
 )
-class UiViewModel: ViewModel() {
+class IsobaricViewModel: ViewModel() {
     val repo = IsobaricRepo()
     val _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
