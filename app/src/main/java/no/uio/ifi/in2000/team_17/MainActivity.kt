@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -36,9 +37,24 @@ class MainActivity : ComponentActivity() {
                     val uiViewModel:UiViewModel = viewModel()
                     val uiState = uiViewModel.uiState.collectAsState()
 
-                    Column {
-                        Text(text = uiState.value.toString())
+                    Column (Modifier.fillMaxSize()){
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
+                            Text("height")
+                            Text("windSpeed")
+                            Text("windShear")
+                            Text("temperature")
+                        }
+                        uiState.value.weatherPointList.forEach {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
+                                Text("${it.height}")
+                                Text("${it.windSpeed}")
+                                Text("${it.windShear}")
+                                Text("${it.temperature}")
+                            }
+                        }
+
                     }
+
                 }
             }
         }

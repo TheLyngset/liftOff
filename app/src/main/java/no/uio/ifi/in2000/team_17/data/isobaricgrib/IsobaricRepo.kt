@@ -48,14 +48,17 @@ class IsobaricRepo {
             windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
                     Triple(speed, direction, temperature)
+                }.zip(windShear){(speed, direction, temperature), shear ->
+                    listOf(speed, direction, temperature, shear)
                 }
-                .zip(pressures) { (speed, direction, temperature), pressure ->
+                .zip(pressures) { (speed, direction, temperature, shear), pressure ->
                      WeatherPoint(
-                        windSpeed = speed,
-                        windDirection = direction,
-                        temperature = temperature,
-                        pressure = pressure,
-                        height = hydrostaticFormula(pressure, temperature, pressureAtSeaLevel)
+                         windSpeed = speed,
+                         windDirection = direction,
+                         windShear = shear,
+                         temperature = temperature,
+                         pressure = pressure,
+                         height = hydrostaticFormula(pressure, temperature, pressureAtSeaLevel)
                      )
                 }
             }
