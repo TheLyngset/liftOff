@@ -23,6 +23,7 @@ class IsobaricRepo {
 
 
     suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint()) {
+        pressureAtSeaLevel = groundWeatherPoint.pressure
         isoBaricModel.update { dataSource.getData(north, east) }
         val layerHeights = mutableListOf<Double>()
         val pressures = isoBaricModel.value.domain.axes.z.values
@@ -32,7 +33,6 @@ class IsobaricRepo {
             .forEach { (temp, pressure) ->
                 layerHeights.add(hydrostaticFormula(pressure, temp, pressureAtSeaLevel))
                 }
-
         var s_0 = groundWeatherPoint.windSpeed
         var d_0 = groundWeatherPoint.windDirection
         val windSpeed = isoBaricModel.value.ranges.windSpeed.values
@@ -68,9 +68,7 @@ class IsobaricRepo {
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
     ): Double {
         val tempInKelvin = temperature + 273.15
-        //TODO: Pressure at sea level is needed, this we can get from the LocationForecastApi
         return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
-
     }
 
     private fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {

@@ -13,9 +13,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team_17.ui.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.UiViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
 
@@ -31,50 +33,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val uiViewModel: UiViewModel = viewModel()
-                    val uiState = uiViewModel.uiState.collectAsState()
-                    Column (Modifier.fillMaxSize()) {
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("height")
-                            Text("windSpeed")
-                            Text("windShear")
-                            Text("temperature")
-                        }
-                        uiState.value.weatherPointList.forEach {
-                            Row(
-                                Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("${it.height}")
-                                Text("${it.windSpeed}")
-                                Text("${it.windShear}")
-                                Text("${it.temperature}")
-                            }
-                        }
-
-                        Text("${uiState.value.weatherPointList[0]}")
-
-                    }
+                    val uiState by uiViewModel.uiState.collectAsState()
+                    HomeScreen(uiState)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Team17Theme {
-        Greeting("Android")
     }
 }
