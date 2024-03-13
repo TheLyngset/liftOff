@@ -20,7 +20,7 @@ import kotlin.math.sqrt
 
 const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
-class Repo {
+class Repository {
     private val isoBaricDataSource = IsobaricDataSource()
     private val locationForecastDataSource = LocationForecastDataSource()
     private val LOG_NAME = "REPOSITORY"

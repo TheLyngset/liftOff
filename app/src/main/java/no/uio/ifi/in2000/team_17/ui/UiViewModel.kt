@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team_17.data.Repo
+import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.WeatherPoint
 data class UIState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
@@ -15,7 +15,7 @@ data class UIState(
     val maxHeight: Int = 3
 )
 class UiViewModel: ViewModel() {
-    val repo = Repo()
+    val repo = Repository()
     val _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
 
