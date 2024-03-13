@@ -8,25 +8,26 @@ import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import java.io.IOException
-import java.nio.channels.UnresolvedAddressException
 
-
-val LOG_NAME = "ISOBARICDATASOURCE"
-private const val BASE_URL = "http://20.100.26.176:5000/collections/isobaric/position"
 
 class IsobaricDataSource {
+    private val LOG_NAME = "ISOBARIC_DATASOURCE"
+    private val BASE_URL = "http://20.100.26.176:5000/collections/isobaric/position"
 
     private val client = HttpClient { install(ContentNegotiation) { gson() } }
-    fun makeQueryUrl(north: Double, east: Double): String {
+    private fun makeQueryUrl(north: Double, east: Double): String {
         return "$BASE_URL?coords=POINT%28$east%20$north%29"
     }
 
+
+    // Returns empty IsoBaricModel object on fail
     suspend fun getData(north: Double, east: Double): IsoBaricModel {
+        val queryUrl: String = makeQueryUrl(north, east)
         return try {
-            Log.d(LOG_NAME, makeQueryUrl(north, east))
-            client.get(makeQueryUrl(north, east)).body<IsoBaricModel>()
+            Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
+            client.get(queryUrl).body<IsoBaricModel>()
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Got an IO exception $e")
+            Log.e(LOG_NAME, "Got an IO exception while trying to fetch from $queryUrl", e)
             IsoBaricModel()
         }
     }
