@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val uiViewModel: UiViewModel = viewModel()
                     val uiState = uiViewModel.uiState.collectAsState()
+                    val canLaunch = uiViewModel.useCase.canLaunch(uiState.value.weatherPointList[0])
+
                     Column (Modifier.fillMaxSize()) {
                         Row(
                             Modifier.fillMaxWidth(),
@@ -55,6 +57,8 @@ class MainActivity : ComponentActivity() {
                         }
 
                         Text("${uiState.value.weatherPointList[0]}")
+
+                        Text("Launch Clearance: $canLaunch")
 
                     }
                 }
