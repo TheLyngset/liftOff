@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.data.isobaricgrib
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.WeatherPoint
@@ -32,8 +33,11 @@ class IsobaricRepo {
         groundWeatherPoint: WeatherPoint = WeatherPoint()
     ) {
 
+        Log.d(LOG_NAME, "Starting isoBaricDataSource.getData()")
+
         // Fetching isobaric data from geographic coordinates
         isoBaricModel.update { dataSource.getData(north, east) }
+        //TODO: Handle empty object being returned
 
         // Extracts the relevant values from isobaricModel -> less boilerplate
         val isoBaricData = isoBaricModel.value.ranges
@@ -91,7 +95,16 @@ class IsobaricRepo {
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
     ): Double {
         val tempInKelvin = temperature + 273.15
-        return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
+        return try {
+            round(
+                (GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln(
+                    (pressureAtSeaLevel / pressure)
+                )
+            ) //TODO: Check if this is right
+        } catch (e: Exception) {
+            Log.e(LOG_NAME, "Tried to calculate height", e)
+            -1.00
+        }
     }
 
     // Calculates wind-shear from given ground points wind and wind direction values
