@@ -16,18 +16,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String) {
@@ -69,6 +76,8 @@ fun App(
     val uiViewModel: UiViewModel = viewModel()
     val uiState by uiViewModel.uiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             AppTopBar(
@@ -88,17 +97,34 @@ fun App(
                     }
                 }
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ){innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name
         ){
             composable(route = Screen.Home.name){
-                HomeScreen(Modifier.padding(innerPadding).verticalScroll(scrollStateVertical),uiState = uiState)
+                HomeScreen(
+                    Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(scrollStateVertical),uiState = uiState)
             }
             composable(route = Screen.Input.name){
-                InputScreen(Modifier.padding(innerPadding))
+                InputScreen(Modifier.padding(innerPadding), uiState){latLngString, maxHeightString ->
+                    try {
+                        val latLng = LatLng(latLngString.split(", ")[0].toDouble(),latLngString.split(", ")[1].toDouble())
+                        val maxHeight = maxHeightString.toInt()
+                        uiViewModel.load(latLng, maxHeight)
+                        navController.navigate(Screen.Home.name)
+                    }catch (e:NumberFormatException){
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = "Invalid input"
+                            )
+                        }
+                    }
+                }
             }
         }
     }

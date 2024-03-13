@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.data.isobaricgrib
 
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.Streams.zip
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
@@ -22,7 +23,7 @@ class IsobaricRepo {
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
 
-    suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint()) {
+    suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint(), maxHeight:Int) {
         pressureAtSeaLevel = groundWeatherPoint.pressure
         isoBaricModel.update { dataSource.getData(north, east) }
         val layerHeights = mutableListOf<Double>()
@@ -45,7 +46,7 @@ class IsobaricRepo {
             d_0 = d_1
         }
         weatherPointList.update {
-            listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
+            val allLayers = listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
                     Triple(speed, direction, temperature)
                 }.zip(windShear){(speed, direction, temperature), shear ->
@@ -61,6 +62,7 @@ class IsobaricRepo {
                          height = hydrostaticFormula(pressure, temperature, pressureAtSeaLevel)
                      )
                 }
+            allLayers.filter { it.height <= maxHeight*1000 + 1000 }
             }
         }
 
