@@ -12,8 +12,8 @@ import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
-const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
+const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // Gravitational acceleration constant in m/s^2
+const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // Gas constant for dry air in J⋅kg−1⋅K−1
 
 
 class IsobaricRepo {
@@ -24,30 +24,37 @@ class IsobaricRepo {
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
+
+    // Function to load data for specific geographical coordinates (north, east) and specific ground weather point data
     suspend fun loadData(
         north: Double,
         east: Double,
         groundWeatherPoint: WeatherPoint = WeatherPoint()
     ) {
 
+        // Fetching isobaric data from geographic coordinates
         isoBaricModel.update { dataSource.getData(north, east) }
 
-        // Assigned to a variable for better re-use and less boilerplate
-        val isoBaricData = isoBaricModel.value
+        // Extracts the relevant values from isobaricModel -> less boilerplate
+        val isoBaricData = isoBaricModel.value.ranges
 
-        val pressures = isoBaricData.domain.axes.z.values
-
+        // Extracting relevant data from fetched isobaric data
+        val pressures = isoBaricModel.value.domain.axes.z.values
         var s_0 = groundWeatherPoint.windSpeed
         var d_0 = groundWeatherPoint.windDirection
-        val windSpeed = isoBaricData.ranges.windSpeed.values
-        val temperatures = isoBaricData.ranges.temperature.values
-        val windFromDirection = isoBaricData.ranges.windFromDirection.values
+        val windSpeed = isoBaricData.windSpeed.values
+        val temperatures = isoBaricData.temperature.values
+        val windFromDirection = isoBaricData.windFromDirection.values
+
+        // Calculating wind shear for all points
         val windShear = mutableListOf<Double>()
         windSpeed.zip(windFromDirection).forEach { (s_1, d_1) ->
             windShear.add(round(WindShear(s_0, d_0, s_1, d_1)))
             s_0 = s_1
             d_0 = d_1
         }
+
+        // Updating all weather points
         weatherPointList.update {
             listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
@@ -78,15 +85,15 @@ class IsobaricRepo {
         }
     }
 
+    // Function for calculating height using the hydrostatic formula
     private fun hydrostaticFormula(
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
     ): Double {
         val tempInKelvin = temperature + 273.15
-        //TODO: Pressure at sea level is needed, this we can get from the LocationForecastApi
         return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
-
     }
 
+    // Calculates wind-shear from given ground points wind and wind direction values
     private fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
         val d_0_rad = d_0 * PI / 180
         val d_1_rad = d_1 * PI / 180
