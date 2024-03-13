@@ -13,7 +13,9 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
+// - why highest variation and not the conventional standard value og  9.806 m/s^2 ?
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
+///{\displaystyle R^{*}} = universal gas constant: 8.3144598 J/(mol·K)
 
 
 class IsobaricRepo {

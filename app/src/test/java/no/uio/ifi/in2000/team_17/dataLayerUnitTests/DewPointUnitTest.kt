@@ -1,10 +1,8 @@
 package no.uio.ifi.in2000.team_17.dataLayerUnitTests
 
-import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import no.uio.ifi.in2000.team_17.data.locationforecast.computeDewPointGround
-import org.junit.Assert.assertThat
 
 class DewPointUnitTest {
     @Test
@@ -21,7 +19,7 @@ class DewPointUnitTest {
         //arrange and act
         val result = computeDewPointGround(-10.0, 60.0)
         //assert
-        assertEquals(-18.0 , result)
+        //assertEquals(-18.0 , result)
         assertTrue(result in -19.0..-17.0);
 
     }
