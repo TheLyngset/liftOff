@@ -32,13 +32,16 @@ class IsobaricRepo {
 
         isoBaricModel.update { dataSource.getData(north, east) }
 
-        val pressures = isoBaricModel.value.domain.axes.z.values
+        // Assigned to a variable for better re-use and less boilerplate
+        val isoBaricData = isoBaricModel.value
+
+        val pressures = isoBaricData.domain.axes.z.values
 
         var s_0 = groundWeatherPoint.windSpeed
         var d_0 = groundWeatherPoint.windDirection
-        val windSpeed = isoBaricModel.value.ranges.windSpeed.values
-        val temperatures = isoBaricModel.value.ranges.temperature.values
-        val windFromDirection = isoBaricModel.value.ranges.windFromDirection.values
+        val windSpeed = isoBaricData.ranges.windSpeed.values
+        val temperatures = isoBaricData.ranges.temperature.values
+        val windFromDirection = isoBaricData.ranges.windFromDirection.values
         val windShear = mutableListOf<Double>()
         windSpeed.zip(windFromDirection).forEach { (s_1, d_1) ->
             windShear.add(round(WindShear(s_0, d_0, s_1, d_1)))
