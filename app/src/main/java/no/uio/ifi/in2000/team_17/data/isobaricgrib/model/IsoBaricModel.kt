@@ -2,14 +2,6 @@ package no.uio.ifi.in2000.team_17.data.isobaricgrib.model
 
 import com.google.gson.annotations.SerializedName
 
-// Used in zipping together the WindPoint information in IsobaricRepo.kt
-data class MultiNode(
-    val a: Double,
-    val b: Double,
-    val c: Double,
-    val d: Double
-)
-
 data class IsoBaricModel(
     @SerializedName("domain")
     val domain: Domain = Domain(),
