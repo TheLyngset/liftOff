@@ -2,18 +2,13 @@ package no.uio.ifi.in2000.team_17.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -45,9 +40,7 @@ enum class Screen(val title: String) {
 @Composable
 fun AppTopBar(
     modifier: Modifier = Modifier,
-    currentScreen: Screen,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit = {}
+    currentScreen: Screen
  ){
     TopAppBar(
         title = { Text(currentScreen.title) },
@@ -55,16 +48,6 @@ fun AppTopBar(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         modifier = modifier,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            }
-        }
     )
 }
 
@@ -81,9 +64,7 @@ fun App(
     Scaffold(
         topBar = {
             AppTopBar(
-                currentScreen = Screen.Home,
-                canNavigateBack = false,
-                navigateUp = {}
+                currentScreen = Screen.Home
             )
         },
         bottomBar = {
