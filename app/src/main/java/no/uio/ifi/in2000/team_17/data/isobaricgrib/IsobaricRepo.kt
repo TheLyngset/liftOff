@@ -14,7 +14,9 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
+// - why highest variation and not the conventional standard value of 9.806 m/s^2 ?
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
+///{\displaystyle R^{*}} = universal gas constant: 8.3144598 J/(mol·K)
 
 class IsobaricRepo {
     private val dataSource = IsobaricDataSource()
@@ -66,20 +68,26 @@ class IsobaricRepo {
             }
         }
 
-    private fun hydrostaticFormula(
-        pressure: Double, temperature: Double, pressureAtSeaLevel: Double
-    ): Double {
-        val tempInKelvin = temperature + 273.15
-        return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
-    }
+}
+internal fun hydrostaticFormula(
+    pressure: Double, temperature: Double, pressureAtSeaLevel: Double
+): Double {
+    val tempInKelvin = temperature + 273.15
+    //TODO: Pressure at sea level is needed, this we can get from the LocationForecastApi
+    //returns height over ground in meters
+    return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
 
-    private fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-        val d_0_rad = d_0 * PI / 180
-        val d_1_rad = d_1 * PI / 180
-        return sqrt(
-            (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
-                d_0_rad
-            )).pow(2)
-        )
-    }
+}
+
+
+internal fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
+    val d_0_rad = d_0 * PI / 180
+    val d_1_rad = d_1 * PI / 180
+    //returns difference in wind speed (m/s) between wind speed s_1 and wind speed s2.
+    //how are is wind 1 and wind 2 chosen here?
+    return sqrt(
+        (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
+            d_0_rad
+        )).pow(2)
+    )
 }
