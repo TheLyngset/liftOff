@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.WeatherPoint
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
