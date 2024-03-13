@@ -72,6 +72,7 @@ internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Doubl
     // RH is relative humidity (in percent).
     // Apparently this relationship is fairly accurate for relative humidity values above 50%.
     if (temperature != null && relativeHumidity != null) {
+        //returns dew point in Celcius
         return round((temperature - ((100 - relativeHumidity) / 5)))
     }
     return -1.0
