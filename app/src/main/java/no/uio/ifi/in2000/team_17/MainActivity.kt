@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.UiViewModel
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
@@ -32,9 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val uiViewModel: UiViewModel = viewModel()
-                    val uiState by uiViewModel.uiState.collectAsState()
-                    HomeScreen(uiState)
+                    App()
                 }
             }
         }

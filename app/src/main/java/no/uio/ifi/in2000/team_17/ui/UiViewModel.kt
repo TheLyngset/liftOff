@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +13,8 @@ import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastRepositor
 import kotlin.math.round
 
 data class UIState(
-    val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint())
+    val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
+    val latLng: LatLng = LatLng(59.96144907197439, 10.713250420850423)
 )
 class UiViewModel: ViewModel() {
     val isobaricRepo = IsobaricRepo()
@@ -20,6 +22,17 @@ class UiViewModel: ViewModel() {
     val _uiState = MutableStateFlow(UIState())
     val uiState = _uiState.asStateFlow()
 
+    fun load(latLng: LatLng){
+        viewModelScope.launch {
+            val groundWeatherPoint = locationForecastRepo.getGroundWeatherPoint(round(latLng.latitude),round(latLng.longitude), 1)
+            isobaricRepo.loadData(latLng.latitude, latLng.longitude, groundWeatherPoint)
+            _uiState.update {
+                it.copy(
+                    weatherPointList = isobaricRepo.weatherPointList.asStateFlow().value
+                )
+            }
+        }
+    }
     init {
         val lat = 59.96144907197439
         val lon = 10.713250420850423

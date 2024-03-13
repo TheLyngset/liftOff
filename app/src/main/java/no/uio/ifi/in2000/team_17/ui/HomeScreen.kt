@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,10 +18,39 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun HomeScreen(uiState:UIState){
-    Column(Modifier.fillMaxSize()){
+fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(uiState.latLng, 11f)
+    }
+    Column(modifier.fillMaxSize()){
+        Card(
+            Modifier
+                .size(400.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ){
+            GoogleMap(
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(mapToolbarEnabled = false, zoomControlsEnabled = false),
+                properties = MapProperties(mapType = MapType.SATELLITE)
+            ) {
+                Marker(
+                    state = MarkerState(position = uiState.latLng),
+                    title = "Test",
+                    snippet = "Marker not in Singapore"
+                )
+            }
+        }
         WeatherCard(
             weatherInfoList = listOf(
                 Triple("Ground wind", uiState.weatherPointList.first().windSpeed, "m/s" ),
