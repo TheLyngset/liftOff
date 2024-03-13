@@ -10,10 +10,8 @@ import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import java.io.IOException
 
 
-const val LOG_NAME = "ISOBARIC_DATASOURCE"
-
-
 class IsobaricDataSource {
+    private val LOG_NAME = "ISOBARIC_DATASOURCE"
     private val BASE_URL = "http://20.100.26.176:5000/collections/isobaric/position"
 
     private val client = HttpClient { install(ContentNegotiation) { gson() } }
