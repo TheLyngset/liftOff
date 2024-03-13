@@ -22,11 +22,12 @@ class IsobaricDataSource {
 
     // Returns empty IsoBaricModel object on fail
     suspend fun getData(north: Double, east: Double): IsoBaricModel {
+        val queryUrl: String = makeQueryUrl(north, east)
         return try {
-            Log.d(LOG_NAME, makeQueryUrl(north, east))
-            client.get(makeQueryUrl(north, east)).body<IsoBaricModel>()
+            Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
+            client.get(queryUrl).body<IsoBaricModel>()
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Got an IO exception $e")
+            Log.e(LOG_NAME, "Got an IO exception while trying to fetch from $queryUrl", e)
             IsoBaricModel()
         }
     }

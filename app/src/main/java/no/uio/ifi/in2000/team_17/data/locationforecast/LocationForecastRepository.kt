@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import android.util.Log
 import no.uio.ifi.in2000.team_17.data.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 import java.io.IOException
 import kotlin.math.round
@@ -14,8 +15,16 @@ interface LocationForecastRepository {
 class LocationForecastRepositoryImplementation(
     private val locationforecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
 ) : LocationForecastRepository {
-    private val LOG_NAME = "LOCATIONFORECAST_REPOSITORY"
-    suspend fun getLocationforecastData(lat: Double, lon: Double): LocationforecastDTO {
+    private val LOG_NAME = "LOCATION_FORECAST_REPOSITORY"
+
+    /**
+     * Fetches locationforecastData via the dataSource. If exception is thrown, it will return an
+     * empty LocationforecastDTO object
+     * @param lat coordinates on latitude
+     * @param lon coordinates on longitude
+     * @return LocationforecastDTO()
+     */
+    suspend fun getLocationForecastData(lat: Double, lon: Double): LocationforecastDTO {
         var locationforecastData = LocationforecastDTO(null, null, null)
         try {
             locationforecastData = locationforecastDataSource.fetchLocationforecast(lat, lon)
@@ -28,23 +37,34 @@ class LocationForecastRepositoryImplementation(
         return locationforecastData
     }
 
-    /* funksjoner som returnenre kun den dataen vi er interessert i.*/
+    /**
+     * Fetches locationForecastData via getLocationForecastData() and parses it into a
+     * Weatherpoint() data object, to later be used as ground point
+     * @param lat coordinates on latitude
+     * @param lon coordinates on longitude
+     * @param index the index is used to get the wanted start timeframe
+     * @return weatherpoint with ground level information
+     */
     override suspend fun getGroundWeatherPoint(lat: Double, lon: Double, index: Int): WeatherPoint {
-        val allLocationData = getLocationforecastData(lat, lon)
+        val allLocationData = getLocationForecastData(lat, lon)
+
+        val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
+            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details
+
         val windSpeed: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.wind_speed
+            timeSeriesInstantDetails?.wind_speed
         val windFromDirection: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.wind_from_direction
+            timeSeriesInstantDetails?.wind_from_direction
         val airTemperature: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.air_temperature
+            timeSeriesInstantDetails?.air_temperature
         val pressureSeaLevel: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.air_pressure_at_sea_level
+            timeSeriesInstantDetails?.air_pressure_at_sea_level
         val cloudFraction: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.cloud_area_fraction
+            timeSeriesInstantDetails?.cloud_area_fraction
         val rain: Double? =
             allLocationData.properties?.timeseries?.getOrNull(index)?.data?.next_1_hours?.details?.precipitation_amount
         val relativeHumidity: Double? =
-            allLocationData.properties?.timeseries?.getOrNull(index)?.data?.instant?.details?.relative_humidity
+            timeSeriesInstantDetails?.relative_humidity
         val dewPoint: Double = computeDewPointGround(airTemperature, relativeHumidity)
 
         //var weatherPoint = GroundWeatherPoint(windSpeed, windFromDirection, airTemperature, pressureSeaLevel,cloudFraction,rain, humidity, 0.0)

@@ -30,7 +30,7 @@ class LocationForecastDataSource() {
         var path = "weatherapi//locationforecast/2.0/compact?lat=${lat}&lon=${lon}"
 
         val response = client.get(path)
-        Log.d("FetchLocationforecast", "$response.status")
+        Log.d("FetchLocationforecast", "${response.status}")
 
         return response.body<LocationforecastDTO>()
     }
