@@ -51,9 +51,19 @@ class IsobaricRepo {
         weatherPointList.update {
             listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
-                    Triple(speed, direction, temperature)
-                }.zip(windShear) { (speed, direction, temperature), shear ->
-                    listOf(speed, direction, temperature, shear)
+                    Triple(
+                        speed,
+                        direction,
+                        temperature
+                    )
+                }
+                .zip(windShear) { (speed, direction, temperature), shear ->
+                    listOf(
+                        speed,
+                        direction,
+                        temperature,
+                        shear
+                    )
                 }
                 .zip(pressures) { (speed, direction, temperature, shear), pressure ->
                     WeatherPoint(
