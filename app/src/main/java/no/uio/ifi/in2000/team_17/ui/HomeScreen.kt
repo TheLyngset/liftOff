@@ -35,8 +35,8 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
     Column(modifier.fillMaxSize()){
         Card(
             Modifier
-                .size(400.dp)
                 .fillMaxWidth()
+                .size(350.dp)
                 .padding(16.dp)
         ){
             GoogleMap(
