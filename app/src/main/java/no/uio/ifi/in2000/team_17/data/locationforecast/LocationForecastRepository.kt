@@ -20,19 +20,15 @@ class LocationForecastRepositoryImplementation(
         try {
             locationforecastData = locationforecastDataSource.fetchLocationforecast(lat, lon)
         } catch (e: IOException) {
-            // log the exception
             Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
         } catch (e: Exception) {
             Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
         }
-        //Log.d(LOG_NAME, "type: ${locationforecastData.type}")
 
         return locationforecastData
     }
 
     /* funksjoner som returnenre kun den dataen vi er interessert i.*/
-
-    //rename this to ground weather point
     override suspend fun getGroundWeatherPoint(lat: Double, lon: Double, index: Int): WeatherPoint {
         val allLocationData = getLocationforecastData(lat, lon)
         val windSpeed: Double? =
