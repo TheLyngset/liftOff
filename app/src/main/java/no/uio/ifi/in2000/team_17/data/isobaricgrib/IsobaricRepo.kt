@@ -78,22 +78,22 @@ class IsobaricRepo {
         }
     }
 
-    private fun hydrostaticFormula(
-        pressure: Double, temperature: Double, pressureAtSeaLevel: Double
-    ): Double {
-        val tempInKelvin = temperature + 273.15
-        //TODO: Pressure at sea level is needed, this we can get from the LocationForecastApi
-        return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
+}
+internal fun hydrostaticFormula(
+    pressure: Double, temperature: Double, pressureAtSeaLevel: Double
+): Double {
+    val tempInKelvin = temperature + 273.15
+    //TODO: Pressure at sea level is needed, this we can get from the LocationForecastApi
+    return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
 
-    }
+}
 
-    private fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-        val d_0_rad = d_0 * PI / 180
-        val d_1_rad = d_1 * PI / 180
-        return sqrt(
-            (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
-                d_0_rad
-            )).pow(2)
-        )
-    }
+internal fun WindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
+    val d_0_rad = d_0 * PI / 180
+    val d_1_rad = d_1 * PI / 180
+    return sqrt(
+        (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
+            d_0_rad
+        )).pow(2)
+    )
 }

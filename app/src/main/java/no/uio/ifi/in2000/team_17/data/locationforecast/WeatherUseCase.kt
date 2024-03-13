@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import no.uio.ifi.in2000.team_17.data.WeatherPoint
+import kotlin.math.round
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
@@ -36,5 +37,4 @@ class WeatherUseCase() {
     suspend fun maxSearWind(){
 
     }
-
 }

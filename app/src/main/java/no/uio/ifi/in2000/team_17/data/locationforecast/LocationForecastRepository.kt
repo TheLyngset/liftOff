@@ -63,17 +63,16 @@ class LocationForecastRepositoryImplementation(
         return weatherPoint
     }
 
-    private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
-        //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-        //Td = T - ((100 - RH)/5.)
-        //Td is dew point temperature (in degrees Celsius),
-        // T is observed temperature (in degrees Celsius), and
-        // RH is relative humidity (in percent).
-        // Apparently this relationship is fairly accurate for relative humidity values above 50%.
-        if (temperature != null && relativeHumidity != null) {
-            return round((temperature - ((100 - relativeHumidity) / 5)))
-        }
-        return -1.0
+}
+internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
+    //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+    //Td = T - ((100 - RH)/5.)
+    //Td is dew point temperature (in degrees Celsius),
+    // T is observed temperature (in degrees Celsius), and
+    // RH is relative humidity (in percent).
+    // Apparently this relationship is fairly accurate for relative humidity values above 50%.
+    if (temperature != null && relativeHumidity != null) {
+        return round((temperature - ((100 - relativeHumidity) / 5)))
     }
-
+    return -1.0
 }
