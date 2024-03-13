@@ -2,8 +2,8 @@ package no.uio.ifi.in2000.team_17.data.isobaricgrib
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.data.WeatherPoint
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
@@ -21,17 +21,15 @@ class IsobaricRepo {
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
-    suspend fun loadData(north: Double, east: Double, groundWeatherPoint: WeatherPoint = WeatherPoint()) {
+    suspend fun loadData(
+        north: Double,
+        east: Double,
+        groundWeatherPoint: WeatherPoint = WeatherPoint()
+    ) {
+
         isoBaricModel.update { dataSource.getData(north, east) }
 
-        val layerHeights = mutableListOf<Double>()
         val pressures = isoBaricModel.value.domain.axes.z.values
-        isoBaricModel
-            .value.ranges.temperature.values
-            .zip(pressures)
-            .forEach { (temp, pressure) ->
-                layerHeights.add(hydrostaticFormula(pressure, temp, pressureAtSeaLevel))
-                }
 
         var s_0 = groundWeatherPoint.windSpeed
         var d_0 = groundWeatherPoint.windDirection
@@ -48,21 +46,21 @@ class IsobaricRepo {
             listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
                     Triple(speed, direction, temperature)
-                }.zip(windShear){(speed, direction, temperature), shear ->
+                }.zip(windShear) { (speed, direction, temperature), shear ->
                     listOf(speed, direction, temperature, shear)
                 }
                 .zip(pressures) { (speed, direction, temperature, shear), pressure ->
-                     WeatherPoint(
-                         windSpeed = speed,
-                         windDirection = direction,
-                         windShear = shear,
-                         temperature = temperature,
-                         pressure = pressure,
-                         height = hydrostaticFormula(pressure, temperature, pressureAtSeaLevel)
-                     )
+                    WeatherPoint(
+                        windSpeed = speed,
+                        windDirection = direction,
+                        windShear = shear,
+                        temperature = temperature,
+                        pressure = pressure,
+                        height = hydrostaticFormula(pressure, temperature, pressureAtSeaLevel)
+                    )
                 }
-            }
         }
+    }
 
     private fun hydrostaticFormula(
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
