@@ -15,7 +15,10 @@ import kotlin.math.sqrt
 const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
 
+
 class IsobaricRepo {
+    private val LOG_NAME = "ISOBARIC_REPO"
+
     private val dataSource = IsobaricDataSource()
     private var pressureAtSeaLevel: Double = 1000.0
     private val isoBaricModel = MutableStateFlow(IsoBaricModel())
