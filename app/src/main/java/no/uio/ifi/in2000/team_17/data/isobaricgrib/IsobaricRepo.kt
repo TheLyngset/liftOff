@@ -86,6 +86,7 @@ class IsobaricRepo {
     }
 
     // Function for calculating height using the hydrostatic formula
+    // Note: The pressure at sea level is needed, which should be obtained from the LocationForecastApi
     private fun hydrostaticFormula(
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
     ): Double {
