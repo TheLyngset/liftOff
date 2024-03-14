@@ -21,6 +21,7 @@ import kotlin.math.sqrt
 const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
 
+
 class Repository {
     private val LOG_NAME = "REPOSITORY"
 
@@ -34,12 +35,24 @@ class Repository {
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
 
 
+    /**
+     * Calls both loadLocationForecast() and loadIsoBaricData()
+     * @param latLng is a latitude and longitude object
+     * @param maxHeight sets maximum needed height for showing later
+     */
     suspend fun load(latLng: LatLng, maxHeight: Int) {
         loadLocationForecast(latLng)
         loadIsobaricData(latLng, maxHeight, generateGroundWeatherPoint())
 
     }
 
+    /**
+     * Fetches locationforecastData via the dataSource. If exception is thrown, it will return an
+     * empty LocationforecastDTO object
+     * @param lat coordinates on latitude
+     * @param lon coordinates on longitude
+     * @return LocationforecastDTO()
+     */
     private suspend fun loadLocationForecast(latLng: LatLng) {
         locationForecastData.update {
             try {
@@ -57,6 +70,7 @@ class Repository {
         }
     }
 
+
     private suspend fun loadIsobaricData(
         latLng: LatLng,
         maxHeight: Int,
@@ -64,22 +78,19 @@ class Repository {
     ) {
         pressureAtSeaLevel = groundWeatherPoint.pressure
         isoBaricData.update { isoBaricDataSource.getData(latLng.latitude, latLng.longitude) }
-        val layerHeights = mutableListOf<Double>()
+
+        // Parser data fra isoBaricData
+        val isoData = isoBaricData.value.ranges // New value creates better re-use
         val pressures = isoBaricData.value.domain.axes.z.values
-        isoBaricData
-            .value.ranges.temperature.values
-            .zip(pressures)
-            .forEach { (temp, pressure) ->
-                layerHeights.add(calculateHeight(pressure, temp, pressureAtSeaLevel))
-            }
         var s_0 = groundWeatherPoint.windSpeed //Wind speed at lower level
         var d_0 = groundWeatherPoint.windDirection //Wind direction at lower level
-        val windSpeed = isoBaricData.value.ranges.windSpeed.values
-        val temperatures = isoBaricData.value.ranges.temperature.values
-        val windFromDirection = isoBaricData.value.ranges.windFromDirection.values
+        val windSpeed = isoData.windSpeed.values
+        val temperatures = isoData.temperature.values
+        val windFromDirection = isoData.windFromDirection.values
         val windShear = mutableListOf<Double>()
+
         windSpeed.zip(windFromDirection)
-            .forEach { (s_1, d_1) -> //Wind speed and wind direction at higher level
+            .forEach { (s_1, d_1) -> // Wind speed and wind direction at higher level
                 windShear.add(round(calculateWindShear(s_0, d_0, s_1, d_1)))
                 s_0 = s_1
                 d_0 = d_1
@@ -105,6 +116,15 @@ class Repository {
         }
     }
 
+    /**
+     * Fetches locationForecastData via getLocationForecastData() and parses it into a
+     * Weatherpoint() data object, to later be used as ground point
+     * @param lat coordinates on latitude
+     * @param lon coordinates on longitude
+     * @param index the index is used to get the wanted start timeframe
+     * @return weatherpoint with ground level information
+     * @author Lelia
+     */
     private fun generateGroundWeatherPoint(): WeatherPoint {
         val index = 1
         val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
