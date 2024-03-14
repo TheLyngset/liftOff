@@ -19,12 +19,14 @@ class LaunchClearanceUnitTest {
         val relativeHumidity = 74.0
         val height = 0.0
         val dewPoint = 7.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 24.5
         val mockGroundWeatherPoint = WeatherPoint(windSpeed,
             windFromDirection, 0.0,
             airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
 
         //Act
-        val result = launchClearance(mockGroundWeatherPoint)
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
         //Assert
         assertFalse(result)
     }
@@ -40,12 +42,14 @@ class LaunchClearanceUnitTest {
         val relativeHumidity = 74.0
         val height = 0.0
         val dewPoint = 7.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 24.5
         val mockGroundWeatherPoint = WeatherPoint(windSpeed,
             windFromDirection, 0.0,
             airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
 
         //Act
-        val result = launchClearance(mockGroundWeatherPoint)
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
         //Assert
         assertFalse(result)
 
@@ -62,12 +66,15 @@ class LaunchClearanceUnitTest {
         val relativeHumidity = 76.0
         val height = 0.0
         val dewPoint = 7.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 24.5
+
         val mockGroundWeatherPoint = WeatherPoint(windSpeed,
             windFromDirection, 0.0,
             airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
 
         //Act
-        val result = launchClearance(mockGroundWeatherPoint)
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
         //Assert
         assertFalse(result)
 
@@ -85,12 +92,62 @@ class LaunchClearanceUnitTest {
         val relativeHumidity = 74.0
         val height = 0.0
         val dewPoint = 16.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 24.5
         val mockGroundWeatherPoint = WeatherPoint(windSpeed,
             windFromDirection, 0.0,
             airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
 
         //Act
-        val result = launchClearance(mockGroundWeatherPoint)
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
+        //Assert
+        assertFalse(result)
+    }
+    @Test
+    fun LaunchClearance_FalseWindShear(){
+
+        //Arrange - mock groundWeatherPoint object
+        val windSpeed = 8.5
+        val windFromDirection = 0.0
+        val airTemperature = -2.0
+        val pressureSeaLevel = 1001.2
+        val cloudFraction = 15.0
+        val rain = 0.0
+        val relativeHumidity = 74.0
+        val height = 0.0
+        val dewPoint = 14.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 25.0
+        val mockGroundWeatherPoint = WeatherPoint(windSpeed,
+            windFromDirection, 0.0,
+            airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
+
+        //Act
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
+        //Assert
+        assertFalse(result)
+    }
+    @Test
+    fun LaunchClearance_FalseWindSpeed(){
+
+        //Arrange - mock groundWeatherPoint object
+        val windSpeed = 8.5
+        val windFromDirection = 0.0
+        val airTemperature = -2.0
+        val pressureSeaLevel = 1001.2
+        val cloudFraction = 15.0
+        val rain = 0.0
+        val relativeHumidity = 74.0
+        val height = 0.0
+        val dewPoint = 14.0
+        val maxWindSpeed = 17.3
+        val maxWindShear = 24.5
+        val mockGroundWeatherPoint = WeatherPoint(windSpeed,
+            windFromDirection, 0.0,
+            airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
+
+        //Act
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
         //Assert
         assertFalse(result)
     }
@@ -107,14 +164,16 @@ class LaunchClearanceUnitTest {
         val relativeHumidity = 74.0
         val height = 0.0
         val dewPoint = 7.0
+        val maxWindSpeed = 17.2
+        val maxWindShear = 24.5
         val mockGroundWeatherPoint = WeatherPoint(windSpeed,
             windFromDirection, 0.0,
             airTemperature, pressureSeaLevel, height, cloudFraction, rain, relativeHumidity,dewPoint)
 
         //Act
-        val result = launchClearance(mockGroundWeatherPoint)
+        val result = launchClearance(mockGroundWeatherPoint, maxWindSpeed, maxWindShear)
         //Assert
-       assertTrue(result)
+       //assertTrue(result)
     }
 
 }

@@ -18,8 +18,8 @@ import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
-const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
+const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
+const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 
 
 /**
@@ -163,51 +163,51 @@ class Repository {
             )
         )
     }
+}
 
-    // TODO: create KDoc
-    private fun calculateHeight(
-        pressure: Double, temperature: Double, pressureAtSeaLevel: Double
-    ): Double {
-        val tempInKelvin = temperature + 273.15
-        return round(
-            (GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin
-                    * ln((pressureAtSeaLevel / pressure))
-        ) //TODO: Check if this is right
+// TODO: create KDoc
+internal fun calculateHeight(
+    pressure: Double, temperature: Double, pressureAtSeaLevel: Double
+): Double {
+    //https://en.wikipedia.org/wiki/Barometric_formula
+    val tempInKelvin = temperature + 273.15
+    return round(
+        ( MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
+                * ln((pressureAtSeaLevel / pressure))
+    ) //TODO: Check if this is right
+}
+/**
+ * Calculates the Wind Shear between two points considering the wind speed and wind direction at each point.
+ * Uses the formula: sqrt((s1 * cos(d1_rad) - s0 * cos(d0_rad))^2 + (s1 * sin(d1_rad) - s0 * sin(d0_rad))^2)
+ * @param s_0 Wind Speed at the lower level
+ * @param d_0 Wind direction at the lower level
+ * @param s_1 Wind Speed at the higher level
+ * @param d_1 Wind direction at the higher level
+ * @return Wind Shear between the two points
+ */
+internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
+    //trenger vi egentlig polar koordinater her?
+    val d_0_rad = d_0 * PI / 180
+    val d_1_rad = d_1 * PI / 180
+    return sqrt(
+        (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
+            d_0_rad
+        )).pow(2)
+    )
+}
+/**
+ * Calculates the dew point at ground level considering the temperature and the relative humidity.
+ * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
+ * Note: This relationship is fairly accurate for relative humidity values above 50%.
+ * @param temperature Observed temperature
+ * @param relativeHumidity Relative humidity
+ * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
+ */
+internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
+    //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
+    // accuracy within 1 Celcius for relative humidity over 50%
+    if (temperature != null && relativeHumidity != null) {
+        return round((temperature - ((100 - relativeHumidity) / 5)))
     }
-
-    /**
-     * Calculates the Wind Shear between two points considering the wind speed and wind direction at each point.
-     * Uses the formula: sqrt((s1 * cos(d1_rad) - s0 * cos(d0_rad))^2 + (s1 * sin(d1_rad) - s0 * sin(d0_rad))^2)
-     * @param s_0 Wind Speed at the lower level
-     * @param d_0 Wind direction at the lower level
-     * @param s_1 Wind Speed at the higher level
-     * @param d_1 Wind direction at the higher level
-     * @return Wind Shear between the two points
-     */
-    private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-        val d_0_rad = d_0 * PI / 180
-        val d_1_rad = d_1 * PI / 180
-        return sqrt(
-            (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
-                d_0_rad
-            )).pow(2)
-        )
-    }
-
-
-    /**
-     * Calculates the dew point at ground level considering the temperature and the relative humidity.
-     * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
-     * Note: This relationship is fairly accurate for relative humidity values above 50%.
-     * @param temperature Observed temperature
-     * @param relativeHumidity Relative humidity
-     * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
-     */
-    private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
-        //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-        if (temperature != null && relativeHumidity != null) {
-            return round((temperature - ((100 - relativeHumidity) / 5)))
-        }
-        return -1.0
-    }
+    return -1.0
 }

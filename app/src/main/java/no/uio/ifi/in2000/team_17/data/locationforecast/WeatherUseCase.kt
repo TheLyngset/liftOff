@@ -21,30 +21,30 @@ class WeatherUseCase() {
     //Luftfuktighet: 75%
     //Dew point: max 15 grader
 
-  fun canLaunch(weatherPoint: WeatherPoint, maxWindHeigth: Double, maxShearWind: Double): Boolean{
+  fun canLaunch(weatherPoint: WeatherPoint, maxWindSpeed: Double, maxShearWind: Double): Boolean{
         //mangler:
         // max shear wind
         // max wind in air
         //tåke --- (connected to clouds, dew point and precipitation)
   return(
           weatherPoint.windSpeed < 8.6 &&
-          weatherPoint.humidity < 75 &&
-          weatherPoint.dewPoint < 15 &&
-          weatherPoint.cloudFraction < 15 &&
-          weatherPoint.rain < 1 &&
+          weatherPoint.humidity < 75.0 &&
+          weatherPoint.dewPoint < 15.0 &&
+          weatherPoint.cloudFraction < 15.0 &&
+          weatherPoint.rain < 0.1 &&
           weatherPoint.windShear < 24.5 &&
-          maxWindHeigth < 17.2 &&
+          maxWindSpeed < 17.2 &&
           maxShearWind < 24.5)
     }
 }
-internal fun launchClearance(weatherPoint: WeatherPoint, maxWindHeigth: Int, maxShearWind: Double): Boolean{
+internal fun launchClearance(weatherPoint: WeatherPoint, maxWindSpeed: Double, maxShearWind: Double): Boolean{
  return   return(
          weatherPoint.windSpeed < 8.6 &&
-                 weatherPoint.humidity < 75 &&
-                 weatherPoint.dewPoint < 15 &&
-                 weatherPoint.cloudFraction < 15 &&
-                 weatherPoint.rain < 1 &&
+                 weatherPoint.humidity < 75.0 &&
+                 weatherPoint.dewPoint < 15.0 &&
+                 weatherPoint.cloudFraction < 15.0 &&
+                 weatherPoint.rain < 0.1 &&
                  weatherPoint.windShear < 24.5 &&
-                 maxWindHeigth < 17.2 &&
+                 maxWindSpeed < 17.2 &&
                  maxShearWind < 24.5)
 }

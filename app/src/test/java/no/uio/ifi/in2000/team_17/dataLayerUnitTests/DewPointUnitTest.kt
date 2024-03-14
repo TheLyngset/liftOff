@@ -1,8 +1,8 @@
 package no.uio.ifi.in2000.team_17.dataLayerUnitTests
 
 import junit.framework.TestCase.assertTrue
+import no.uio.ifi.in2000.team_17.data.computeDewPointGround
 import org.junit.Test
-import no.uio.ifi.in2000.team_17.data.locationforecast.computeDewPointGround
 
 class DewPointUnitTest {
     @Test
