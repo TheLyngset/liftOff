@@ -30,6 +30,7 @@ class Repository {
     private val locationForecastDataSource = LocationForecastDataSource()
     private var pressureAtSeaLevel: Double = 1000.0
 
+    // Creates necessary StateFlows
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
@@ -69,7 +70,14 @@ class Repository {
         }
     }
 
-
+    /**
+     * Loads data from [isoBaricDataSource] and creates [WeatherPoint]'s.
+     * These are loaded into weatherPointList
+     * Creates weatherpoints and adds them to weatherPointList
+     * @param latLng geographic coordinate point for wanted information
+     * @param maxHeight max height of information needed
+     * @param groundWeatherPoint geographic point at ground-height
+     */
     private suspend fun loadIsobaricData(
         latLng: LatLng,
         maxHeight: Int,
@@ -78,8 +86,9 @@ class Repository {
         pressureAtSeaLevel = groundWeatherPoint.pressure
         isoBaricData.update { isoBaricDataSource.getData(latLng.latitude, latLng.longitude) }
 
-        // Parser data fra isoBaricData
-        val isoData = isoBaricData.value.ranges // New value creates better re-use
+        // Parses data from isoBaricData into relevant values
+        val isoData =
+            isoBaricData.value.ranges // Extracts the relevant value ranges from isobaricModel -> less boilerplate
         val pressures = isoBaricData.value.domain.axes.z.values
         var s_0 = groundWeatherPoint.windSpeed //Wind speed at lower level
         var d_0 = groundWeatherPoint.windDirection //Wind direction at lower level
@@ -94,6 +103,8 @@ class Repository {
                 s_0 = s_1
                 d_0 = d_1
             }
+
+        // Zips lists together to parse everything together into a WeatherPoint
         weatherPointList.update {
             val allLayers = listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->
@@ -125,7 +136,6 @@ class Repository {
         val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
             locationForecastData.value.properties?.timeseries?.getOrNull(index)?.data?.instant?.details
 
-        //
         return WeatherPoint(
             windSpeed = timeSeriesInstantDetails!!.wind_speed,
             windDirection = timeSeriesInstantDetails.wind_from_direction,
@@ -142,13 +152,18 @@ class Repository {
         )
     }
 
+    // TODO: create KDoc
     private fun calculateHeight(
         pressure: Double, temperature: Double, pressureAtSeaLevel: Double
     ): Double {
         val tempInKelvin = temperature + 273.15
-        return round((GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin * ln((pressureAtSeaLevel / pressure))) //TODO: Check if this is right
+        return round(
+            (GAS_CONSTANT_AT_DRY_AIR / GRAVITATIONAL_ACCELERATION) * tempInKelvin
+                    * ln((pressureAtSeaLevel / pressure))
+        ) //TODO: Check if this is right
     }
 
+    // TODO: Create KDoc
     private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
         val d_0_rad = d_0 * PI / 180
         val d_1_rad = d_1 * PI / 180
@@ -159,6 +174,8 @@ class Repository {
         )
     }
 
+
+    // TODO: Create Kdoc
     private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
         //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
         //Td = T - ((100 - RH)/5.)
