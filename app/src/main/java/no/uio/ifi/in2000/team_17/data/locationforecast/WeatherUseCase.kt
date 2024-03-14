@@ -18,7 +18,7 @@ class WeatherUseCase() {
     //Nedbør: 0
     //Luftfuktighet: 75%
     //Dew point: max 15 grader
-  fun canLaunch(weatherPoint: WeatherPoint): Boolean{
+  fun canLaunch(weatherPoint: WeatherPoint, maxWindHeigth: Double, maxShearWind: Double): Boolean{
         //mangler:
         // max shear wind
         // max wind in air
@@ -29,13 +29,9 @@ class WeatherUseCase() {
           weatherPoint.dewPoint < 15 &&
           weatherPoint.cloudFraction < 15 &&
           weatherPoint.rain < 1 &&
-          weatherPoint.windShear < 24.5)
-    }
-    suspend fun maxWindSpeedATM(){
-
-    }
-    suspend fun maxSearWind(){
-
+          weatherPoint.windShear < 24.5 &&
+          maxWindHeigth < 17.2 &&
+          maxShearWind < 24.5)
     }
 }
 internal fun launchClearance(weatherPoint: WeatherPoint): Boolean{
