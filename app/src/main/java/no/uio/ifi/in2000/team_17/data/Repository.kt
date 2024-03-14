@@ -116,7 +116,7 @@ class Repository {
                 d_0 = d_1
             }
 
-        // Zips lists together to parse everything together into a WeatherPoint
+        // Zips lists together to parse everything together into a single WeatherPoint
         weatherPointList.update {
             val allLayers = listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
                 .zip(temperatures) { (speed, direction), temperature ->

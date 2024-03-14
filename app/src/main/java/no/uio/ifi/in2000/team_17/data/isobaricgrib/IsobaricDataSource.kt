@@ -10,6 +10,16 @@ import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import java.io.IOException
 
 
+/**
+ * Handles retrieval of isobaric data from remote service.
+ *
+ * This class is responsible for building the query URL and performing HTTP GET requests
+ * to fetch isobaric data from an Azure server, which typically includes information
+ * such as wind speed, temperature, pressure, etc for layers over the geographic location.
+ *
+ * The class abstracts away the networking logic and error handling, providing a simple interface
+ * for retrieving the IsoBaricModel objects that contain the requested isobaric data.
+ */
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
     private val BASE_URL = "http://20.100.26.176:5000/collections/isobaric/position"
