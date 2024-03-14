@@ -13,6 +13,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,11 +37,16 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(uiState.latLng, 11f)
     }
+    val canLaunch by remember {
+        mutableStateOf(uiState.canLaunch)
+    }
+
+
     Column(modifier.fillMaxSize()){
         Card(
             Modifier
                 .fillMaxWidth()
-                .size(350.dp)
+                .size(300.dp)
                 .padding(16.dp)
         ){
             GoogleMap(
@@ -51,6 +61,7 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
                 )
             }
         }
+        LaunchClearanceCard("Launch clearance for current input: $canLaunch")
         WeatherCard(
             weatherInfoList = listOf(
                 Triple("Ground wind", uiState.weatherPointList.first().windSpeed, "m/s" ),
@@ -101,6 +112,27 @@ fun WeatherCard(weatherInfoList:List<Triple<String, Double, String>>){
                 Divider()
                 Spacer(Modifier.padding(vertical = 5.dp))
             }
+        }
+    }
+}
+
+@Composable
+fun LaunchClearanceCard(canLaunch:String){
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(3.dp)
+            .padding(horizontal = 16.dp)){
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+            Text(
+                canLaunch, style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            )
         }
     }
 }
