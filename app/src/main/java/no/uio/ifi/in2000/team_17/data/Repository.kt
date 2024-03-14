@@ -49,8 +49,7 @@ class Repository {
     /**
      * Fetches locationforecastData via the dataSource. If exception is thrown, it will return an
      * empty LocationforecastDTO object
-     * @param lat coordinates on latitude
-     * @param lon coordinates on longitude
+     * @param latLng latitudal and longitudal coordinate
      * @return LocationforecastDTO()
      */
     private suspend fun loadLocationForecast(latLng: LatLng) {
@@ -117,11 +116,7 @@ class Repository {
     }
 
     /**
-     * Fetches locationForecastData via getLocationForecastData() and parses it into a
-     * Weatherpoint() data object, to later be used as ground point
-     * @param lat coordinates on latitude
-     * @param lon coordinates on longitude
-     * @param index the index is used to get the wanted start timeframe
+     * Parses data from locationForecastData into a WeatherPoint object
      * @return weatherpoint with ground level information
      * @author Lelia
      */
@@ -130,35 +125,21 @@ class Repository {
         val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
             locationForecastData.value.properties?.timeseries?.getOrNull(index)?.data?.instant?.details
 
-        val windSpeed: Double? =
-            timeSeriesInstantDetails?.wind_speed
-        val windFromDirection: Double? =
-            timeSeriesInstantDetails?.wind_from_direction
-        val airTemperature: Double? =
-            timeSeriesInstantDetails?.air_temperature
-        val pressureSeaLevel: Double? =
-            timeSeriesInstantDetails?.air_pressure_at_sea_level
-        val cloudFraction: Double? =
-            timeSeriesInstantDetails?.cloud_area_fraction
-        val rain: Double? =
-            locationForecastData.value.properties?.timeseries?.getOrNull(index)?.data?.next_1_hours?.details?.precipitation_amount
-        val relativeHumidity: Double? =
-            timeSeriesInstantDetails?.relative_humidity
-        val dewPoint: Double = computeDewPointGround(airTemperature, relativeHumidity)
-
-        //var weatherPoint = GroundWeatherPoint(windSpeed, windFromDirection, airTemperature, pressureSeaLevel,cloudFraction,rain, humidity, 0.0)
-        val weatherPoint = WeatherPoint(
-            windSpeed = windSpeed!!,
-            windDirection = windFromDirection!!,
-            temperature = airTemperature!!,
-            pressure = pressureSeaLevel!!,
-            cloudFraction = cloudFraction!!,
-            rain = rain!!,
-            humidity = relativeHumidity!!,
+        //
+        return WeatherPoint(
+            windSpeed = timeSeriesInstantDetails!!.wind_speed,
+            windDirection = timeSeriesInstantDetails.wind_from_direction,
+            temperature = timeSeriesInstantDetails.air_temperature,
+            pressure = timeSeriesInstantDetails.air_pressure_at_sea_level,
+            cloudFraction = timeSeriesInstantDetails.cloud_area_fraction,
+            rain = locationForecastData.value.properties!!.timeseries.getOrNull(index)!!.data.next_1_hours.details.precipitation_amount,
+            humidity = timeSeriesInstantDetails.relative_humidity,
             height = 0.0,
-            dewPoint = dewPoint
+            dewPoint = computeDewPointGround(
+                timeSeriesInstantDetails.air_temperature,
+                timeSeriesInstantDetails.relative_humidity
+            )
         )
-        return weatherPoint
     }
 
     private fun calculateHeight(
