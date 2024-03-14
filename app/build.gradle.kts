@@ -82,4 +82,5 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
     implementation("com.google.maps.android:maps-compose:4.3.3")
+    api ("com.google.android.gms:play-services-location:9.6.1")
 }
