@@ -22,6 +22,18 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.834 // m/s^2
 const val GAS_CONSTANT_AT_DRY_AIR: Double = 287.052874 // J⋅kg−1⋅K−1
 
 
+/**
+ * Repository class manages and provides the data needed for the application, by sending and recieving requests
+ * from datasources IsobaricDataSource and LocationForecastDataSource.
+ *
+ * It also performs calculations like wind shear, height and dew ,.
+ *
+ * The data sources are used to populate StateFlows (mutable) which are then observed by the ViewModel or UI components.
+ *
+ * The most important StateFlow is going to be weatherPointList, containing all of the different WeatherPoint for specific coordinates.
+ *
+ * Error handling is mostly done in the DataSources
+ */
 class Repository {
     private val LOG_NAME = "REPOSITORY"
 
@@ -163,7 +175,15 @@ class Repository {
         ) //TODO: Check if this is right
     }
 
-    // TODO: Create KDoc
+    /**
+     * Calculates the Wind Shear between two points considering the wind speed and wind direction at each point.
+     * Uses the formula: sqrt((s1 * cos(d1_rad) - s0 * cos(d0_rad))^2 + (s1 * sin(d1_rad) - s0 * sin(d0_rad))^2)
+     * @param s_0 Wind Speed at the lower level
+     * @param d_0 Wind direction at the lower level
+     * @param s_1 Wind Speed at the higher level
+     * @param d_1 Wind direction at the higher level
+     * @return Wind Shear between the two points
+     */
     private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
         val d_0_rad = d_0 * PI / 180
         val d_1_rad = d_1 * PI / 180
@@ -175,14 +195,16 @@ class Repository {
     }
 
 
-    // TODO: Create Kdoc
+    /**
+     * Calculates the dew point at ground level considering the temperature and the relative humidity.
+     * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
+     * Note: This relationship is fairly accurate for relative humidity values above 50%.
+     * @param temperature Observed temperature
+     * @param relativeHumidity Relative humidity
+     * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
+     */
     private fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
         //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-        //Td = T - ((100 - RH)/5.)
-        //Td is dew point temperature (in degrees Celsius),
-        // T is observed temperature (in degrees Celsius), and
-        // RH is relative humidity (in percent).
-        // Apparently this relationship is fairly accurate for relative humidity values above 50%.
         if (temperature != null && relativeHumidity != null) {
             return round((temperature - ((100 - relativeHumidity) / 5)))
         }
