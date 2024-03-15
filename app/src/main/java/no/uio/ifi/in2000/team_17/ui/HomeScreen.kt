@@ -10,14 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,22 +27,18 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
+fun HomeScreen(modifier: Modifier = Modifier, uiState: UIState) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(uiState.latLng, 11f)
     }
-    val canLaunch by remember {
-        mutableStateOf(uiState.canLaunch)
-    }
 
-
-    Column(modifier.fillMaxSize()){
+    Column(modifier.fillMaxSize()) {
         Card(
             Modifier
                 .fillMaxWidth()
                 .size(300.dp)
                 .padding(16.dp)
-        ){
+        ) {
             GoogleMap(
                 cameraPositionState = cameraPositionState,
                 uiSettings = MapUiSettings(mapToolbarEnabled = false, zoomControlsEnabled = false),
@@ -61,31 +51,33 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState:UIState){
                 )
             }
         }
-        LaunchClearanceCard("Launch clearance for current input: $canLaunch")
+        LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Ground wind", uiState.weatherPointList.first().windSpeed, "m/s" ),
-                Triple("Max wind", uiState.weatherPointList.maxOf { it.windSpeed }, "m/s" ),
-                Triple("Max Shear", uiState.weatherPointList.maxOf { it.windShear }, "m/s" )
+                Triple("Ground wind", uiState.weatherPointList.first().windSpeed, "m/s"),
+                Triple("Max wind", uiState.weatherPointList.maxOf { it.windSpeed }, "m/s"),
+                Triple("Max Shear", uiState.weatherPointList.maxOf { it.windShear }, "m/s")
             )
         )
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Cloud coverage", uiState.weatherPointList.first().cloudFraction, "%" ),
-                Triple("Rain", uiState.weatherPointList.first().rain, "mm" ),
-                Triple("Humidity", uiState.weatherPointList.first().humidity, "%" ),
-                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C" )
+                Triple("Cloud coverage", uiState.weatherPointList.first().cloudFraction, "%"),
+                Triple("Rain", uiState.weatherPointList.first().rain, "mm"),
+                Triple("Humidity", uiState.weatherPointList.first().humidity, "%"),
+                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C")
             )
         )
     }
 }
+
 @Composable
-fun WeatherInfo(title:String, value: Double, unit: String){
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
+fun WeatherInfo(title: String, value: Double, unit: String) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
             title, style = TextStyle(
                 fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,)
+                fontWeight = FontWeight.SemiBold,
+            )
         )
         Text(
             text = "$value $unit",
@@ -97,7 +89,7 @@ fun WeatherInfo(title:String, value: Double, unit: String){
 }
 
 @Composable
-fun WeatherCard(weatherInfoList:List<Triple<String, Double, String>>){
+fun WeatherCard(weatherInfoList: List<Triple<String, Double, String>>) {
     Card(
         Modifier
             .fillMaxWidth()
@@ -106,7 +98,8 @@ fun WeatherCard(weatherInfoList:List<Triple<String, Double, String>>){
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)) {
+                .padding(16.dp)
+        ) {
             weatherInfoList.forEach {
                 WeatherInfo(title = it.first, value = it.second, unit = it.third)
                 Divider()
@@ -117,16 +110,18 @@ fun WeatherCard(weatherInfoList:List<Triple<String, Double, String>>){
 }
 
 @Composable
-fun LaunchClearanceCard(canLaunch:String){
+fun LaunchClearanceCard(canLaunch: String) {
     Card(
         Modifier
             .fillMaxWidth()
             .padding(3.dp)
-            .padding(horizontal = 16.dp)){
+            .padding(horizontal = 16.dp)
+    ) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)) {
+                .padding(16.dp)
+        ) {
             Text(
                 canLaunch, style = TextStyle(
                     fontSize = 16.sp,
