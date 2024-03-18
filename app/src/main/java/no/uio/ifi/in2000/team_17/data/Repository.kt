@@ -202,7 +202,7 @@ internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doub
  * @param relativeHumidity Relative humidity
  * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
  */
-internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
+/*internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
     //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
     // accuracy within 1 Celcius for relative humidity over 50%
     if (temperature != null && relativeHumidity != null) {
@@ -210,3 +210,5 @@ internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Doubl
     }
     return -1.0
 }
+
+ */
