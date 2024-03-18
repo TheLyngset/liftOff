@@ -3,7 +3,7 @@
 ## LocationforecastDTO
 
 >
-> Infor contained in this API:
+> Info contained in this API:
 > "air_pressure_at_sea_level": "hPa",
 "air_temperature": "celsius",
 "air_temperature_max": "celsius",

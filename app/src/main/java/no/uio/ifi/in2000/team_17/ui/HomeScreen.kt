@@ -63,9 +63,11 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState: UIState) {
             weatherInfoList = listOf(
                 Triple("Cloud coverage", uiState.weatherPointList.first().cloudFraction, "%"),
                 Triple("Rain", uiState.weatherPointList.first().rain, "mm"),
+                Triple("Fog", uiState.weatherPointList.first().fog, "˚C"),
                 Triple("Humidity", uiState.weatherPointList.first().humidity, "%"),
-                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C")
-            )
+                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C"),
+
+                )
         )
     }
 }
@@ -98,7 +100,8 @@ fun WeatherCard(weatherInfoList: List<Triple<String, Double, String>>) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(5.dp)
+                .padding(horizontal = 16.dp)
         ) {
             weatherInfoList.forEach {
                 WeatherInfo(title = it.first, value = it.second, unit = it.third)
@@ -114,7 +117,7 @@ fun LaunchClearanceCard(canLaunch: String) {
     Card(
         Modifier
             .fillMaxWidth()
-            .padding(3.dp)
+            .padding(5.dp)
             .padding(horizontal = 16.dp)
     ) {
         Column(
