@@ -40,7 +40,7 @@ class Repository {
     // Load data from isoBaricDataSource and locationForecast,
     private val isoBaricDataSource = IsobaricDataSource()
     private val locationForecastDataSource = LocationForecastDataSource()
-    private var pressureAtSeaLevel: Double = 1000.0
+    private var pressureAtSeaLevel: Double = 0.0
 
     // Creates necessary StateFlows
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
@@ -172,10 +172,11 @@ internal fun calculateHeight(
     //https://en.wikipedia.org/wiki/Barometric_formula
     val tempInKelvin = temperature + 273.15
     return round(
-        ( MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
+        (MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
                 * ln((pressureAtSeaLevel / pressure))
     ) //TODO: Check if this is right
 }
+
 /**
  * Calculates the Wind Shear between two points considering the wind speed and wind direction at each point.
  * Uses the formula: sqrt((s1 * cos(d1_rad) - s0 * cos(d0_rad))^2 + (s1 * sin(d1_rad) - s0 * sin(d0_rad))^2)
@@ -195,6 +196,7 @@ internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doub
         )).pow(2)
     )
 }
+
 /**
  * Calculates the dew point at ground level considering the temperature and the relative humidity.
  * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
