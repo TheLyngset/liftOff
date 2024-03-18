@@ -40,7 +40,6 @@ class Repository {
     // Load data from isoBaricDataSource and locationForecast,
     private val isoBaricDataSource = IsobaricDataSource()
     private val locationForecastDataSource = LocationForecastDataSource()
-    private var pressureAtSeaLevel: Double = 0.0
 
     // Creates necessary StateFlows
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
@@ -95,7 +94,7 @@ class Repository {
         maxHeight: Int,
         groundWeatherPoint: WeatherPoint
     ) {
-        pressureAtSeaLevel = groundWeatherPoint.pressure
+        val pressureAtSeaLevel = groundWeatherPoint.pressure
         isoBaricData.update { isoBaricDataSource.getData(latLng.latitude, latLng.longitude) }
 
         // Parses data from isoBaricData into relevant values
