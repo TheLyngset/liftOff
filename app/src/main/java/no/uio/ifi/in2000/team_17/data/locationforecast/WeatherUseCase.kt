@@ -45,6 +45,7 @@ internal fun launchClearance(
                     weatherPoint.cloudFraction < 15.0 &&
                     weatherPoint.rain < 0.1 &&
                     weatherPoint.windShear < 24.5 &&
+                    weatherPoint.fog < 0.1 &&
                     maxWindSpeed < 17.2 &&
                     maxShearWind < 24.5)
 }
