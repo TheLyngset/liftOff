@@ -22,7 +22,7 @@ import java.io.IOException
  */
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
-    private val BASE_URL = "http://20.100.26.176:5000/collections/isobaric/position"
+    private val BASE_URL = "http://4.235.14.248:5000/collections/isobaric/position"
 
     private val client = HttpClient { install(ContentNegotiation) { gson() } }
     private fun makeQueryUrl(north: Double, east: Double): String {
