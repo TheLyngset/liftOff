@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data.isobaricgrib.model
+package no.uio.ifi.in2000.team_17.model
 
 import com.google.gson.annotations.SerializedName
 

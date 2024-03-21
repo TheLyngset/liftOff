@@ -6,7 +6,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
+import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 
 
 /**

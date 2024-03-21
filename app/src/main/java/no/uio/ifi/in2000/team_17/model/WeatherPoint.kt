@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data
+package no.uio.ifi.in2000.team_17.model
 
 
 // May be used instead of keeping up with a multitude of lists and their indexes

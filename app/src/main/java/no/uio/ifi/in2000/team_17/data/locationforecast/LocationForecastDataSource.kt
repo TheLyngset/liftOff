@@ -8,7 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
-import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
 
 /**
  * This class is responsible for fetching location forecast data from the API.
@@ -43,7 +43,7 @@ class LocationForecastDataSource {
     suspend fun fetchLocationforecast(lat: Double, lon: Double): LocationforecastDTO {
 
         var path = "weatherapi//locationforecast/2.0/complete?lat=${lat}&lon=${lon}"
-        
+
         val response = client.get(path)
         Log.d("FetchLocationforecast", "${response.status}")
 

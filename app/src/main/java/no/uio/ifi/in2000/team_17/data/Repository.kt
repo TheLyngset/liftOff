@@ -5,10 +5,11 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
-import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Details
-import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.model.IsoBaricModel
+import no.uio.ifi.in2000.team_17.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
+import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
 import java.io.IOException
 import kotlin.math.PI
 import kotlin.math.cos

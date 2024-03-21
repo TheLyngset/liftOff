@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.Repository
-import no.uio.ifi.in2000.team_17.data.WeatherPoint
 import no.uio.ifi.in2000.team_17.data.locationforecast.WeatherUseCase
+import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
 data class UIState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),

@@ -1,10 +1,10 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
-import no.uio.ifi.in2000.team_17.data.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
-class WeatherUseCase() {
+class WeatherUseCase {
 
     //Thresholds:
     //Vind på bakken: 8.6 m/s
