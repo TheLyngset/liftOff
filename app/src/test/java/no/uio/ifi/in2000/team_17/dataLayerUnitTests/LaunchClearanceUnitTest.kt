@@ -277,7 +277,7 @@ class LaunchClearanceUnitTest {
         //Arrange - mock groundWeatherPoint object
         val windSpeed = 8.5
         val windFromDirection = 0.0
-        val windShear = 24.5
+        val windShear = 24.0
         val airTemperature = -2.0
         val pressureSeaLevel = 1001.2
         val height = 0.0
@@ -285,8 +285,8 @@ class LaunchClearanceUnitTest {
         val rain = 0.0
         val relativeHumidity = 74.0
         val dewPoint = 7.0
-        val maxWindSpeed = 17.2
-        val maxWindShear = 24.5
+        val maxWindSpeed = 16.0
+        val maxWindShear = 24.0
         val fog = 0.0
 
         val mockGroundWeatherPoint = WeatherPoint(
