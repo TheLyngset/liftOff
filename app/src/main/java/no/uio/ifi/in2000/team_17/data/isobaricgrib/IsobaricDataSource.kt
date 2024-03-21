@@ -35,5 +35,6 @@ class IsobaricDataSource {
             Log.e(LOG_NAME, "Got an IO exception while trying to fetch from $queryUrl", e)
             IsoBaricModel()
         }
+        print("Hello world")
     }
 }
