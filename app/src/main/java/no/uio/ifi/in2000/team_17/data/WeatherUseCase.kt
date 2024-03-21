@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data.locationforecast
+package no.uio.ifi.in2000.team_17.data
 
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
