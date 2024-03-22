@@ -13,7 +13,7 @@ import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
 data class UIState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
-    val latLng: LatLng = LatLng(59.96144907197439, 10.713250420850423),
+    val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
     val canLaunch: Boolean = true
 )

@@ -70,38 +70,27 @@ fun App(
                 currentScreen = Screen.Home
             )
         },
-        bottomBar = {
-            BottomAppBar {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-                    Button(onClick = { navController.navigate(Screen.Input.name) }) {
-                        Text(Screen.Input.title)
-                    }
-                    Button(onClick = {navController.navigate(Screen.Home.name)}) {
-                        Text(Screen.Home.title)
-                    }
-                }
-            }
-        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ){innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name
         ){
-            composable(route = Screen.Home.name){
+            composable(route = Screen.Home.name) {
                 HomeScreen(
                     Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical),uiState = uiState)
-            }
-            composable(route = Screen.Input.name){
-                InputScreen(Modifier.padding(innerPadding), uiState){latLngString, maxHeightString ->
+                        .verticalScroll(scrollStateVertical), uiState = uiState
+                )
+                { latLngString, maxHeightString ->
                     try {
-                        val latLng = LatLng(latLngString.split(", ")[0].toDouble(),latLngString.split(", ")[1].toDouble())
+                        val latLng = LatLng(
+                            latLngString.split(", ")[0].toDouble(),
+                            latLngString.split(", ")[1].toDouble()
+                        )
                         val maxHeight = maxHeightString.toInt()
                         uiViewModel.load(latLng, maxHeight)
-                        navController.navigate(Screen.Home.name)
-                    }catch (e:NumberFormatException){
+                    } catch (e: NumberFormatException) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
                                 message = "Invalid input"
