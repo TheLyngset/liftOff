@@ -227,7 +227,10 @@ fun InputSheetContent(
                 onValueChange = { latString = it },
                 label = { Text("Latitude") },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -240,7 +243,10 @@ fun InputSheetContent(
                 onValueChange = { lngString = it },
                 label = { Text("Longitude") },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
