@@ -45,7 +45,11 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, uiState: UIState, onValidate:(String, String)->Unit) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    uiState: UIState,
+    onValidate: (String, String) -> Unit
+) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(uiState.latLng, 11f)
     }
@@ -87,7 +91,10 @@ fun HomeScreen(modifier: Modifier = Modifier, uiState: UIState, onValidate:(Stri
 
                 )
         )
-        InputSheet(Modifier.fillMaxWidth(), uiState = uiState){latLngString, maxHeightText-> onValidate (latLngString, maxHeightText)}
+        InputSheet(
+            Modifier.fillMaxWidth(),
+            uiState = uiState
+        ) { latLngString, maxHeightText -> onValidate(latLngString, maxHeightText) }
     }
 }
 
@@ -123,9 +130,10 @@ fun WeatherCard(weatherInfoList: List<Triple<String, Double, String>>) {
                 .padding(horizontal = 16.dp)
         ) {
             weatherInfoList.forEach {
+                Spacer(modifier = Modifier.size(5.dp))
                 WeatherInfo(title = it.first, value = it.second, unit = it.third)
                 Divider()
-                Spacer(Modifier.padding(vertical = 5.dp))
+                Spacer(modifier = Modifier.size(7.dp))
             }
         }
     }
@@ -136,7 +144,7 @@ fun LaunchClearanceCard(canLaunch: String) {
     Card(
         Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(vertical = 5.dp)
             .padding(horizontal = 16.dp)
     ) {
         Column(
@@ -156,26 +164,34 @@ fun LaunchClearanceCard(canLaunch: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputSheet(modifier: Modifier = Modifier, uiState: UIState, onValidate:(String, String)->Unit){
-    var sheetState by remember { mutableStateOf( false ) }
-    Column (modifier,horizontalAlignment = Alignment.CenterHorizontally){
+fun InputSheet(
+    modifier: Modifier = Modifier,
+    uiState: UIState,
+    onValidate: (String, String) -> Unit
+) {
+    var sheetState by remember { mutableStateOf(false) }
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Button(onClick = { sheetState = true }) {
             Text(text = "Change input")
         }
     }
-    if(sheetState) {
+    if (sheetState) {
         ModalBottomSheet(onDismissRequest = { sheetState = false }) {
-            InputSheetContent(uiState = uiState, onValidate = {latLngString, maxHeightText->
-                onValidate (latLngString, maxHeightText)
+            InputSheetContent(uiState = uiState, onValidate = { latLngString, maxHeightText ->
+                onValidate(latLngString, maxHeightText)
                 sheetState = false
             }
             )
-        }   
+        }
     }
 }
 
 @Composable
-fun InputSheetContent(modifier: Modifier = Modifier, uiState: UIState, onValidate:(String, String)->Unit) {
+fun InputSheetContent(
+    modifier: Modifier = Modifier,
+    uiState: UIState,
+    onValidate: (String, String) -> Unit
+) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
@@ -204,7 +220,7 @@ fun InputSheetContent(modifier: Modifier = Modifier, uiState: UIState, onValidat
         Row(
             Modifier.padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ){
+        ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
                 value = latString,
@@ -253,12 +269,12 @@ fun InputSheetContent(modifier: Modifier = Modifier, uiState: UIState, onValidat
                         modifier = Modifier.padding(horizontal = 24.dp),
                         text = "The settings under are set with apropriate standard values, read more about why theese values have been chosen here"
                     )
-                    if(!showAdvancedSettings)
-                    Button(onClick = {showAdvancedSettings = true}) {
-                        Text("Show advanced settings")
-                    }
-                    else{
-                        Button(onClick = {showAdvancedSettings = false}) {
+                    if (!showAdvancedSettings)
+                        Button(onClick = { showAdvancedSettings = true }) {
+                            Text("Show advanced settings")
+                        }
+                    else {
+                        Button(onClick = { showAdvancedSettings = false }) {
                             Text("Hide advanced settings")
                         }
                         OutlinedTextField(value = "Advanced setting 1", onValueChange = {})
