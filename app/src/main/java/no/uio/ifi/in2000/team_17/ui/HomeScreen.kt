@@ -88,8 +88,7 @@ fun HomeScreen(
                 Triple("Fog", uiState.weatherPointList.first().fog, "%"),
                 Triple("Humidity", uiState.weatherPointList.first().humidity, "%"),
                 Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C"),
-
-                )
+            )
         )
         InputSheet(
             Modifier.fillMaxWidth(),
@@ -203,55 +202,23 @@ fun InputSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
+        InputSheetOutlinedTextField(
             value = maxHeightText,
             onValueChange = { maxHeightText = it },
-            label = { Text("Maximum height in km") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Number
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                })
+            label = "Maximum height in km"
         )
         Row(
             Modifier.padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
-                modifier = Modifier.weight(1f),
+            InputSheetOutlinedTextField(
                 value = latString,
                 onValueChange = { latString = it },
-                label = { Text("Latitude") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                    }
-                )
-            )
-            OutlinedTextField(
-                modifier = Modifier.weight(1f),
+                label = "Latitude")
+            InputSheetOutlinedTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
-                label = { Text("Longitude") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                    }
-                )
+                label = "Longitude"
             )
         }
         Button(
@@ -296,3 +263,23 @@ fun InputSheetContent(
     }
 }
 
+@Composable
+fun InputSheetOutlinedTextField(value: String, onValueChange: (String) -> Unit, label: String) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Number
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        )
+    )
+
+}
