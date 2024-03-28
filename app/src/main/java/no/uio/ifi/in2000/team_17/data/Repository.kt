@@ -23,7 +23,6 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
-
 /**
  * Repository class manages and provides the data needed for the application, by sending and recieving requests
  * from datasources IsobaricDataSource and LocationForecastDataSource.
@@ -146,7 +145,7 @@ class Repository {
      */
     private fun generateGroundWeatherPoint(): WeatherPoint {
         val index = 1
-        val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
+        val timeSeriesInstantDetails: Details? =
             locationForecastData.value.properties?.timeseries?.getOrNull(index)?.data?.instant?.details
 
         return WeatherPoint(
@@ -168,13 +167,8 @@ class Repository {
 internal fun calculateHeight(
     pressure: Double, temperature: Double, pressureAtSeaLevel: Double
 ): Double {
-    //https://en.wikipedia.org/wiki/Barometric_formula
+    // https://en.wikipedia.org/wiki/Barometric_formula
     val tempInKelvin = temperature + 273.15
-
-    /* round(
-        (MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
-                * ln((pressureAtSeaLevel / pressure))
-    ) */
 
     return round(
         (-MOLAR_GAS_CONSTANT * tempInKelvin) * ln(pressure / pressureAtSeaLevel) /
