@@ -195,7 +195,6 @@ fun InputSheetContent(
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showAdvancedSettings by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier
             .fillMaxSize(),
@@ -214,12 +213,14 @@ fun InputSheetContent(
             InputSheetContentOutlinedTextField(
                 value = latString,
                 onValueChange = { latString = it },
-                label = "Latitude"
+                label = "Latitude",
+                modifier = Modifier.weight(1f)
             )
             InputSheetContentOutlinedTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
-                label = "Longitude"
+                label = "Longitude",
+                modifier = Modifier.weight(1f)
             )
         }
         Button(
@@ -268,7 +269,8 @@ fun InputSheetContent(
 fun InputSheetContentOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String
+    label: String,
+    modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
@@ -284,7 +286,8 @@ fun InputSheetContentOutlinedTextField(
             onDone = {
                 keyboardController?.hide()
             }
-        )
+        ),
+        modifier = modifier
     )
 
 }
