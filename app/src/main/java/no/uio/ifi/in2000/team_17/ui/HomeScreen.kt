@@ -202,7 +202,7 @@ fun InputSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InputSheetOutlinedTextField(
+        InputSheetContentOutlinedTextField(
             value = maxHeightText,
             onValueChange = { maxHeightText = it },
             label = "Maximum height in km"
@@ -211,11 +211,12 @@ fun InputSheetContent(
             Modifier.padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            InputSheetOutlinedTextField(
+            InputSheetContentOutlinedTextField(
                 value = latString,
                 onValueChange = { latString = it },
-                label = "Latitude")
-            InputSheetOutlinedTextField(
+                label = "Latitude"
+            )
+            InputSheetContentOutlinedTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude"
@@ -264,7 +265,11 @@ fun InputSheetContent(
 }
 
 @Composable
-fun InputSheetOutlinedTextField(value: String, onValueChange: (String) -> Unit, label: String) {
+fun InputSheetContentOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
         value = value,
