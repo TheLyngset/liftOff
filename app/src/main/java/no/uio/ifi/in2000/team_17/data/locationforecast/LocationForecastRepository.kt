@@ -76,7 +76,7 @@ class LocationForecastRepositoryImplementation(
             cloudFraction = cloudFraction!!,
             rain = rain!!,
             humidity = relativeHumidity!!,
-            height = 0.0,
+            height = allLocationData.geometry?.coordinates?.getOrNull(2)!!,
             dewPoint = dewPoint
         )
 
@@ -84,6 +84,7 @@ class LocationForecastRepositoryImplementation(
     }
 
 }
+
 internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
     //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
     //Td = T - ((100 - RH)/5.)
