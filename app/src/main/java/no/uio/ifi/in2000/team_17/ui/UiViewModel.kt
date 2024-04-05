@@ -37,6 +37,7 @@ class UiViewModel : ViewModel() {
         }
     }
 
+
     fun setLatLng(latLng: LatLng) {
         load(latLng, uiState.value.maxHeight)
     }
