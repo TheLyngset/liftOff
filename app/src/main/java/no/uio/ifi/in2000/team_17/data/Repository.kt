@@ -24,9 +24,9 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
-interface RepoLocationForecast {
-    suspend fun getLocationForecast(latLng: LatLng): LocationforecastDTO
-    suspend fun load(latLng: LatLng, maxHeight: Int)
+interface Repository {
+    suspend fun load(latLng: LatLng, heigth: Int)
+    suspend fun getListOfWeatherPointsLists(): MutableList<MutableStateFlow<List<WeatherPoint>>>
 
 }
 
@@ -42,10 +42,11 @@ interface RepoLocationForecast {
  *
  * Error handling is mostly done in the DataSources
  */
-class Repository {
+class RepositoryImplementation : Repository {
     private val LOG_NAME = "REPOSITORY"
-    private var addDaylightSave = 1
+    private var hourIndex = 2
     private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
+    private var maxHeight: Int = 3
 
     // Load data from isoBaricDataSource and locationForecast
     private val locationForecastDataSource: LocationForecastDataSource =
@@ -55,7 +56,11 @@ class Repository {
     // Creates necessary StateFlows
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
-    val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
+
+    //
+    val weatherPointList =
+        MutableStateFlow<List<WeatherPoint>>(listOf()) // does this need to be a state flow?
+    var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPoint>>>()
 
 
     /**
@@ -63,11 +68,12 @@ class Repository {
      * @param latLng is a latitude and longitude object
      * @param maxHeight sets maximum needed height for showing later
      */
-    suspend fun load(latLng: LatLng, maxHeight: Int) {
+    override suspend fun load(latLng: LatLng, heigth: Int) {
         coordinates = latLng
-        loadLocationForecast(coordinates)
-        loadIsobaricData(coordinates, maxHeight, generateGroundWeatherPoint())
-
+        maxHeight = heigth
+        loadLocationForecast()
+        loadIsobaric()
+        generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
     }
 
     /**
@@ -76,7 +82,7 @@ class Repository {
      * @param latLng latitudal and longitudal coordinate
      * @return LocationforecastDTO()
      */
-    private suspend fun loadLocationForecast(coordinates: LatLng) {
+    private suspend fun loadLocationForecast() {
         locationForecastData.update {
             try {
                 locationForecastDataSource.fetchLocationforecast(
@@ -93,37 +99,35 @@ class Repository {
         }
     }
 
-    suspend fun getLocationForecast(): LocationforecastDTO {
-        var locationforecastData = LocationforecastDTO(null, null, null)
+    private suspend fun loadIsobaric() {
         try {
-            locationforecastData = locationForecastDataSource.fetchLocationforecast(
-                round(coordinates.latitude),
-                round(coordinates.longitude)
-            )
+            isoBaricData.update {
+                isobaricDataSource.getData(
+                    coordinates.latitude,
+                    coordinates.longitude
+                )
+            }
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            IsoBaricModel()
         } catch (e: Exception) {
-            Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            IsoBaricModel()
         }
-        locationForecastData.update { locationforecastData }
-        return locationforecastData
+
     }
+
 
     /**
      * Loads data from [isobaricDataSource] and creates [WeatherPoint]'s.
      * These are loaded into weatherPointList
      * Creates weatherpoints and adds them to weatherPointList
-     * @param latLng geographic coordinate point for wanted information
-     * @param maxHeight max height of information needed
-     * @param groundWeatherPoint geographic point at ground-height
+     * @param groundWeatherPoint weather data at ground-height
      */
-    private suspend fun loadIsobaricData(
-        latLng: LatLng,
-        maxHeight: Int,
+    private fun generateWeatherPointList(
         groundWeatherPoint: WeatherPoint
-    ) {
+    ): MutableStateFlow<List<WeatherPoint>> {
         val pressureAtSeaLevel = groundWeatherPoint.pressure
-        isoBaricData.update { isobaricDataSource.getData(latLng.latitude, latLng.longitude) }
 
         // Parses data from isoBaricData into relevant values
         val isoData =
@@ -163,6 +167,17 @@ class Repository {
                 }
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
+
+        return weatherPointList
+
+    }
+
+    override suspend fun getListOfWeatherPointsLists(): MutableList<MutableStateFlow<List<WeatherPoint>>> {
+        // adding this existing weather point list to the list of lists
+        for (index in 2..53) {
+            listOfWeatherPointLists.add(generateWeatherPointList(generateGroundWeatherPoint(index)))
+        }
+        return listOfWeatherPointLists
     }
 
     /**
@@ -170,7 +185,7 @@ class Repository {
      * @return weatherpoint with ground level information
      * @author Lelia
      */
-    private fun generateGroundWeatherPoint(): WeatherPoint {
+    private fun generateGroundWeatherPoint(hourIndex: Int): WeatherPoint {
         //rain data available: next hour, next 6 hours, next 12 hours.
         //default rain: next hour.
         //default time: UTC
@@ -179,10 +194,10 @@ class Repository {
         // UTC time for current day is at index 0 - Norwegian time is UTC + 2 (from last sunday in March) during summer and UTC + 1 during winter (from last sunday in October) .
         // DST changes: Last sunday in March and last sunday in October
 
-        changeDSTBasedOnDate() //resetting addDaylightSave to 1 or 2 based on month
+        changeDSTBasedOnDate() //resetting addDaylightSave to 1 or 2 based on current month
 
         val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
-            locationForecastData.value.properties?.timeseries?.getOrNull(addDaylightSave)?.data?.instant?.details
+            locationForecastData.value.properties?.timeseries?.getOrNull(hourIndex)?.data?.instant?.details
 
         return WeatherPoint(
             windSpeed = timeSeriesInstantDetails!!.wind_speed,
@@ -190,7 +205,7 @@ class Repository {
             temperature = timeSeriesInstantDetails.air_temperature,
             pressure = timeSeriesInstantDetails.air_pressure_at_sea_level,
             cloudFraction = timeSeriesInstantDetails.cloud_area_fraction,
-            rain = locationForecastData.value.properties!!.timeseries.getOrNull(addDaylightSave)!!.data.next_1_hours.details.precipitation_amount,
+            rain = locationForecastData.value.properties!!.timeseries.getOrNull(hourIndex)!!.data.next_1_hours.details.precipitation_amount,
             humidity = timeSeriesInstantDetails.relative_humidity,
             height = locationForecastData.value.geometry?.coordinates?.getOrNull(2)!!,
             dewPoint = timeSeriesInstantDetails.dew_point_temperature,
@@ -209,9 +224,9 @@ class Repository {
         // Note: months are 0-based (January is 0)
         // Change the value of the variable based on the date
         if (month >= 3 && month <= 10) { //April to (including) October.
-            addDaylightSave = 2
+            hourIndex = 2
         } else { // December - March
-            addDaylightSave = 1
+            hourIndex = 1
         }
     }
 }
