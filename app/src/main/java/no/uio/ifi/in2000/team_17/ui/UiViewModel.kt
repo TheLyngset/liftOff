@@ -51,7 +51,6 @@ class UiViewModel : ViewModel() {
 
     fun findMaxShear(): Double {
         return uiState.value.weatherPointList.maxOf { it.windShear }
-
     }
 
     init {
@@ -80,5 +79,4 @@ class UiViewModel : ViewModel() {
             }
         }
     }
-
 }
