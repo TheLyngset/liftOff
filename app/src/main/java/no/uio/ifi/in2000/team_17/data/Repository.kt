@@ -74,6 +74,7 @@ class RepositoryImplementation : Repository {
         loadLocationForecast()
         loadIsobaric()
         generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
+        getListOfWeatherPointsLists()
     }
 
     /**
@@ -174,6 +175,7 @@ class RepositoryImplementation : Repository {
 
     override suspend fun getListOfWeatherPointsLists(): MutableList<MutableStateFlow<List<WeatherPoint>>> {
         // adding this existing weather point list to the list of lists
+        //index 2 : NO time, index 53 - 48 hours from NO time
         for (index in 2..53) {
             listOfWeatherPointLists.add(generateWeatherPointList(generateGroundWeatherPoint(index)))
         }
