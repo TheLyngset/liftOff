@@ -26,15 +26,17 @@ const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
 interface Repository {
     suspend fun load(latLng: LatLng, heigth: Int)
-    suspend fun getListOfWeatherPointsLists(): MutableList<MutableStateFlow<List<WeatherPoint>>>
-
+    suspend fun getListOfWeatherPointsLists(
+        from: Int,
+        to: Int
+    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>>
 }
 
 /**
  * Repository class manages and provides the data needed for the application, by sending and recieving requests
  * from datasources IsobaricDataSource and LocationForecastDataSource.
  *
- * It also performs calculations like wind shear, height and dew ,.
+ * It also performs calculations like wind shear and alltitude
  *
  * The data sources are used to populate StateFlows (mutable) which are then observed by the ViewModel or UI components.
  *
@@ -57,9 +59,10 @@ class RepositoryImplementation : Repository {
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
 
-    //
-    val weatherPointList =
-        MutableStateFlow<List<WeatherPoint>>(listOf()) // does this need to be a state flow?
+    //does this need to be a state flow?
+    val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
+    var flowOfWeatherPointLists =
+        MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPoint>>>())
     var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPoint>>>()
 
 
@@ -74,7 +77,6 @@ class RepositoryImplementation : Repository {
         loadLocationForecast()
         loadIsobaric()
         generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
-        getListOfWeatherPointsLists()
     }
 
     /**
@@ -120,7 +122,8 @@ class RepositoryImplementation : Repository {
 
 
     /**
-     * Loads data from [isobaricDataSource] and creates [WeatherPoint]'s.
+     * Loads data from [isobaricDataSource]
+     * based on locationForecasst ground weather points creates [WeatherPoint]'s.
      * These are loaded into weatherPointList
      * Creates weatherpoints and adds them to weatherPointList
      * @param groundWeatherPoint weather data at ground-height
@@ -168,18 +171,21 @@ class RepositoryImplementation : Repository {
                 }
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
-
         return weatherPointList
 
     }
 
-    override suspend fun getListOfWeatherPointsLists(): MutableList<MutableStateFlow<List<WeatherPoint>>> {
+    override suspend fun getListOfWeatherPointsLists(
+        from: Int,
+        to: Int
+    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
         // adding this existing weather point list to the list of lists
         //index 2 : NO time, index 53 - 48 hours from NO time
-        for (index in 2..53) {
+        for (index in from..to) {
             listOfWeatherPointLists.add(generateWeatherPointList(generateGroundWeatherPoint(index)))
         }
-        return listOfWeatherPointLists
+        flowOfWeatherPointLists = MutableStateFlow(listOfWeatherPointLists)
+        return flowOfWeatherPointLists
     }
 
     /**
