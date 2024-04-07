@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
 
 
 class MainActivity : ComponentActivity() {
+    val repository: Repository by lazy {
+        Repository()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,5 +29,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        val repository: Repository = Repository()
     }
 }

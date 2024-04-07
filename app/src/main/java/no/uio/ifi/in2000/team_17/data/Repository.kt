@@ -10,6 +10,7 @@ import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsUiState
 import java.io.IOException
 import kotlin.math.PI
 import kotlin.math.cos
@@ -136,6 +137,10 @@ class Repository {
                 }
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
+    }
+
+    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState){
+        Log.d(LOG_NAME, "${advancedSettingsUiState.groundWindSpeed}")
     }
 
     /**
