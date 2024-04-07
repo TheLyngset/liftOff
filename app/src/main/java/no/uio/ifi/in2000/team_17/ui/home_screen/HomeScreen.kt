@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui
+package no.uio.ifi.in2000.team_17.ui.home_screen
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -201,7 +201,7 @@ fun InputSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InputSheetContentOutlinedTextField(
+        InputTextField(
             value = maxHeightText,
             onValueChange = { maxHeightText = it },
             label = "Maximum height in km"
@@ -210,13 +210,13 @@ fun InputSheetContent(
             Modifier.padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            InputSheetContentOutlinedTextField(
+            InputTextField(
                 value = latString,
                 onValueChange = { latString = it },
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
             )
-            InputSheetContentOutlinedTextField(
+            InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
@@ -266,7 +266,7 @@ fun InputSheetContent(
 }
 
 @Composable
-fun InputSheetContentOutlinedTextField(
+fun InputTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

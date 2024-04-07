@@ -27,12 +27,16 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logor),
-    Input(title = "Input Screen", logo = R.drawable.logor)
+    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor)
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,11 +58,15 @@ fun App(
     navController:NavHostController = rememberNavController(),
 
 ){
-    val uiViewModel: HomeScreenViewModel = viewModel()
-    val uiState by uiViewModel.homeScreenUiState.collectAsState()
+    //Using viewModel Factories to take the repository created in Main activity as a parameter
+    val homeScreenViewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
+    val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    val advancedSettingsViewModel: AdvancedSettingsViewModel = viewModel(factory = AdvancedSettingsViewModel.Factory)
+    val advancedSettingsUiState by advancedSettingsViewModel.advancedSettingsUiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -78,7 +86,7 @@ fun App(
                 HomeScreen(
                     Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical), homeScreenUiState = uiState
+                        .verticalScroll(scrollStateVertical), homeScreenUiState = homeScreenUiState
                 )
                 { latLngString, maxHeightString ->
                     try {
@@ -87,7 +95,7 @@ fun App(
                             latLngString.split(", ")[1].toDouble()
                         )
                         val maxHeight = maxHeightString.toInt()
-                        uiViewModel.load(latLng, maxHeight)
+                        homeScreenViewModel.load(latLng, maxHeight)
                     } catch (e: NumberFormatException) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
@@ -96,6 +104,9 @@ fun App(
                         }
                     }
                 }
+            }
+            composable(route = Screen.AdvancedSettings.name) {
+                AdvancedSettingsScreen(Modifier.padding(innerPadding), uiState = advancedSettingsUiState)
             }
         }
     }
