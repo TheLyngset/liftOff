@@ -38,7 +38,7 @@ internal fun launchClearance(
     maxWindSpeed: Double,
     maxShearWind: Double
 ): Boolean {
-    return return (
+    return (
             weatherPoint.windSpeed < 8.6 &&
                     weatherPoint.humidity < 75.0 &&
                     weatherPoint.dewPoint < 15.0 &&
