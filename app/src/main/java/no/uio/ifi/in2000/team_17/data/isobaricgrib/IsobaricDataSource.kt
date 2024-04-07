@@ -21,7 +21,7 @@ import no.uio.ifi.in2000.team_17.model.IsoBaricModel
  */
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
-    private val BASE_URL = "http://4.235.14.248:5000/collections/isobaric/position"
+    private val BASE_URL = "http://20.251.130.116:5000/collections/isobaric/position"
 
     private val client = HttpClient { install(ContentNegotiation) { gson() } }
 
