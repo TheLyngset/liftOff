@@ -47,11 +47,11 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    uiState: UIState,
+    homeScreenUiState: HomeScreenUiState,
     onValidate: (String, String) -> Unit
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(uiState.latLng, 11f)
+        position = CameraPosition.fromLatLngZoom(homeScreenUiState.latLng, 11f)
     }
 
     Column(modifier.fillMaxSize()) {
@@ -67,32 +67,32 @@ fun HomeScreen(
                 properties = MapProperties(mapType = MapType.SATELLITE)
             ) {
                 Marker(
-                    state = MarkerState(position = uiState.latLng),
+                    state = MarkerState(position = homeScreenUiState.latLng),
                     title = "Test",
                     snippet = "Marker not in Singapore"
                 )
             }
         }
-        LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
+        LaunchClearanceCard("Launch clearance for current input: ${homeScreenUiState.canLaunch}")
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Ground wind", uiState.weatherPointList.first().windSpeed, "m/s"),
-                Triple("Max wind", uiState.weatherPointList.maxOf { it.windSpeed }, "m/s"),
-                Triple("Max Shear", uiState.weatherPointList.maxOf { it.windShear }, "m/s")
+                Triple("Ground wind", homeScreenUiState.weatherPointList.first().windSpeed, "m/s"),
+                Triple("Max wind", homeScreenUiState.weatherPointList.maxOf { it.windSpeed }, "m/s"),
+                Triple("Max Shear", homeScreenUiState.weatherPointList.maxOf { it.windShear }, "m/s")
             )
         )
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Cloud coverage", uiState.weatherPointList.first().cloudFraction, "%"),
-                Triple("Rain", uiState.weatherPointList.first().rain, "mm"),
-                Triple("Fog", uiState.weatherPointList.first().fog, "%"),
-                Triple("Humidity", uiState.weatherPointList.first().humidity, "%"),
-                Triple("Dewpoint", uiState.weatherPointList.first().dewPoint, "˚C"),
+                Triple("Cloud coverage", homeScreenUiState.weatherPointList.first().cloudFraction, "%"),
+                Triple("Rain", homeScreenUiState.weatherPointList.first().rain, "mm"),
+                Triple("Fog", homeScreenUiState.weatherPointList.first().fog, "%"),
+                Triple("Humidity", homeScreenUiState.weatherPointList.first().humidity, "%"),
+                Triple("Dewpoint", homeScreenUiState.weatherPointList.first().dewPoint, "˚C"),
             )
         )
         InputSheet(
             Modifier.fillMaxWidth(),
-            uiState = uiState
+            homeScreenUiState = homeScreenUiState
         ) { latLngString, maxHeightText -> onValidate(latLngString, maxHeightText) }
     }
 }
@@ -165,7 +165,7 @@ fun LaunchClearanceCard(canLaunch: String) {
 @Composable
 fun InputSheet(
     modifier: Modifier = Modifier,
-    uiState: UIState,
+    homeScreenUiState: HomeScreenUiState,
     onValidate: (String, String) -> Unit
 ) {
     var sheetState by remember { mutableStateOf(false) }
@@ -176,7 +176,7 @@ fun InputSheet(
     }
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { sheetState = false }) {
-            InputSheetContent(uiState = uiState, onValidate = { latLngString, maxHeightText ->
+            InputSheetContent(homeScreenUiState = homeScreenUiState, onValidate = { latLngString, maxHeightText ->
                 onValidate(latLngString, maxHeightText)
                 sheetState = false
             }
@@ -188,12 +188,12 @@ fun InputSheet(
 @Composable
 fun InputSheetContent(
     modifier: Modifier = Modifier,
-    uiState: UIState,
+    homeScreenUiState: HomeScreenUiState,
     onValidate: (String, String) -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
-    var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
-    var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
+    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
+    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
+    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
     var showAdvancedSettings by remember { mutableStateOf(false) }
     Column(
         modifier

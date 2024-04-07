@@ -11,23 +11,23 @@ import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
-data class UIState(
+data class HomeScreenUiState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
     val canLaunch: Boolean = true
 )
 
-class UiViewModel : ViewModel() {
+class HomeScreenViewModel : ViewModel() {
     val repo = Repository()
-    val _uiState = MutableStateFlow(UIState())
+    val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
     val useCase = WeatherUseCase()
-    val uiState = _uiState.asStateFlow()
+    val homeScreenUiState = _homeScreenUiState.asStateFlow()
 
     fun load(latLng: LatLng, maxHeight: Int) {
         viewModelScope.launch {
             repo.load(latLng, maxHeight)
-            _uiState.update {
+            _homeScreenUiState.update {
                 it.copy(
                     weatherPointList = repo.weatherPointList.asStateFlow().value,
                     latLng = latLng,
@@ -39,30 +39,30 @@ class UiViewModel : ViewModel() {
 
 
     fun setLatLng(latLng: LatLng) {
-        load(latLng, uiState.value.maxHeight)
+        load(latLng, homeScreenUiState.value.maxHeight)
     }
 
     fun setMaxHeight(maxHeight: Int) {
-        load(uiState.value.latLng, maxHeight)
+        load(homeScreenUiState.value.latLng, maxHeight)
     }
 
     fun findMaxSpeed(): Double {
-        return uiState.value.weatherPointList.maxOf { it.windSpeed }
+        return homeScreenUiState.value.weatherPointList.maxOf { it.windSpeed }
     }
 
     fun findMaxShear(): Double {
-        return uiState.value.weatherPointList.maxOf { it.windShear }
+        return homeScreenUiState.value.weatherPointList.maxOf { it.windShear }
 
     }
 
     init {
         viewModelScope.launch {
-            repo.load(latLng = uiState.value.latLng, uiState.value.maxHeight)
-            _uiState.update {
+            repo.load(latLng = homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
+            _homeScreenUiState.update {
                 it.copy(
                     weatherPointList = repo.weatherPointList.asStateFlow().value,
-                    latLng = uiState.value.latLng,
-                    maxHeight = uiState.value.maxHeight
+                    latLng = homeScreenUiState.value.latLng,
+                    maxHeight = homeScreenUiState.value.maxHeight
                 )
             }
             canLaunch()
@@ -71,10 +71,10 @@ class UiViewModel : ViewModel() {
 
     fun canLaunch() {
         viewModelScope.launch {
-            _uiState.update {
+            _homeScreenUiState.update {
                 it.copy(
                     canLaunch = useCase.canLaunch(
-                        uiState.value.weatherPointList.first(),
+                        homeScreenUiState.value.weatherPointList.first(),
                         findMaxSpeed(), findMaxShear()
                     )
                 )
