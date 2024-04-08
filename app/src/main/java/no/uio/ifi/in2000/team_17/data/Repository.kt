@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.data
 
+import android.icu.util.Calendar
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,12 +24,19 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
+interface Repository {
+    suspend fun load(latLng: LatLng, heigth: Int)
+    suspend fun getListOfWeatherPointsLists(
+        from: Int,
+        to: Int
+    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>>
+}
 
 /**
  * Repository class manages and provides the data needed for the application, by sending and recieving requests
  * from datasources IsobaricDataSource and LocationForecastDataSource.
  *
- * It also performs calculations like wind shear, height and dew ,.
+ * It also performs calculations like wind shear and alltitude
  *
  * The data sources are used to populate StateFlows (mutable) which are then observed by the ViewModel or UI components.
  *
@@ -36,17 +44,26 @@ const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
  *
  * Error handling is mostly done in the DataSources
  */
-class Repository {
+class RepositoryImplementation : Repository {
     private val LOG_NAME = "REPOSITORY"
+    private var hourIndex = 2
+    private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
+    private var maxHeight: Int = 3
 
-    // Load data from isoBaricDataSource and locationForecast,
-    private val isoBaricDataSource = IsobaricDataSource()
-    private val locationForecastDataSource = LocationForecastDataSource()
+    // Load data from isoBaricDataSource and locationForecast
+    private val locationForecastDataSource: LocationForecastDataSource =
+        LocationForecastDataSource()
+    private val isobaricDataSource: IsobaricDataSource = IsobaricDataSource()
 
     // Creates necessary StateFlows
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
+
+    //does this need to be a state flow?
     val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
+    var flowOfWeatherPointLists =
+        MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPoint>>>())
+    var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPoint>>>()
 
 
     /**
@@ -54,10 +71,12 @@ class Repository {
      * @param latLng is a latitude and longitude object
      * @param maxHeight sets maximum needed height for showing later
      */
-    suspend fun load(latLng: LatLng, maxHeight: Int) {
-        loadLocationForecast(latLng)
-        loadIsobaricData(latLng, maxHeight, generateGroundWeatherPoint())
-
+    override suspend fun load(latLng: LatLng, heigth: Int) {
+        coordinates = latLng
+        maxHeight = heigth
+        loadLocationForecast()
+        loadIsobaric()
+        generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
     }
 
     /**
@@ -66,12 +85,12 @@ class Repository {
      * @param latLng latitudal and longitudal coordinate
      * @return LocationforecastDTO()
      */
-    private suspend fun loadLocationForecast(latLng: LatLng) {
+    private suspend fun loadLocationForecast() {
         locationForecastData.update {
             try {
                 locationForecastDataSource.fetchLocationforecast(
-                    round(latLng.latitude),
-                    round(latLng.longitude)
+                    round(coordinates.latitude),
+                    round(coordinates.longitude)
                 )
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
@@ -83,21 +102,36 @@ class Repository {
         }
     }
 
+    private suspend fun loadIsobaric() {
+        try {
+            isoBaricData.update {
+                isobaricDataSource.getData(
+                    coordinates.latitude,
+                    coordinates.longitude
+                )
+            }
+        } catch (e: IOException) {
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            IsoBaricModel()
+        } catch (e: Exception) {
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            IsoBaricModel()
+        }
+
+    }
+
+
     /**
-     * Loads data from [isoBaricDataSource] and creates [WeatherPoint]'s.
+     * Loads data from [isobaricDataSource]
+     * based on locationForecasst ground weather points creates [WeatherPoint]'s.
      * These are loaded into weatherPointList
      * Creates weatherpoints and adds them to weatherPointList
-     * @param latLng geographic coordinate point for wanted information
-     * @param maxHeight max height of information needed
-     * @param groundWeatherPoint geographic point at ground-height
+     * @param groundWeatherPoint weather data at ground-height
      */
-    private suspend fun loadIsobaricData(
-        latLng: LatLng,
-        maxHeight: Int,
+    private fun generateWeatherPointList(
         groundWeatherPoint: WeatherPoint
-    ) {
+    ): MutableStateFlow<List<WeatherPoint>> {
         val pressureAtSeaLevel = groundWeatherPoint.pressure
-        isoBaricData.update { isoBaricDataSource.getData(latLng.latitude, latLng.longitude) }
 
         // Parses data from isoBaricData into relevant values
         val isoData =
@@ -137,6 +171,21 @@ class Repository {
                 }
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
+        return weatherPointList
+
+    }
+
+    override suspend fun getListOfWeatherPointsLists(
+        from: Int,
+        to: Int
+    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+        // adding this existing weather point list to the list of lists
+        //index 2 : NO time, index 53 - 48 hours from NO time
+        for (index in from..to) {
+            listOfWeatherPointLists.add(generateWeatherPointList(generateGroundWeatherPoint(index)))
+        }
+        flowOfWeatherPointLists = MutableStateFlow(listOfWeatherPointLists)
+        return flowOfWeatherPointLists
     }
 
     /**
@@ -144,10 +193,19 @@ class Repository {
      * @return weatherpoint with ground level information
      * @author Lelia
      */
-    private fun generateGroundWeatherPoint(): WeatherPoint {
-        val index = 1
+    private fun generateGroundWeatherPoint(hourIndex: Int): WeatherPoint {
+        //rain data available: next hour, next 6 hours, next 12 hours.
+        //default rain: next hour.
+        //default time: UTC
+
+        //Compute local time from UTC + timezone + DST.
+        // UTC time for current day is at index 0 - Norwegian time is UTC + 2 (from last sunday in March) during summer and UTC + 1 during winter (from last sunday in October) .
+        // DST changes: Last sunday in March and last sunday in October
+
+        changeDSTBasedOnDate() //resetting addDaylightSave to 1 or 2 based on current month
+
         val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
-            locationForecastData.value.properties?.timeseries?.getOrNull(index)?.data?.instant?.details
+            locationForecastData.value.properties?.timeseries?.getOrNull(hourIndex)?.data?.instant?.details
 
         return WeatherPoint(
             windSpeed = timeSeriesInstantDetails!!.wind_speed,
@@ -155,12 +213,29 @@ class Repository {
             temperature = timeSeriesInstantDetails.air_temperature,
             pressure = timeSeriesInstantDetails.air_pressure_at_sea_level,
             cloudFraction = timeSeriesInstantDetails.cloud_area_fraction,
-            rain = locationForecastData.value.properties!!.timeseries.getOrNull(index)!!.data.next_1_hours.details.precipitation_amount,
+            rain = locationForecastData.value.properties!!.timeseries.getOrNull(hourIndex)!!.data.next_1_hours.details.precipitation_amount,
             humidity = timeSeriesInstantDetails.relative_humidity,
-            height = 0.0,
+            height = locationForecastData.value.geometry?.coordinates?.getOrNull(2)!!,
             dewPoint = timeSeriesInstantDetails.dew_point_temperature,
             fog = timeSeriesInstantDetails.fog_area_fraction
         )
+    }
+
+    fun changeDSTBasedOnDate() {
+        val calendar: Calendar = Calendar.getInstance()
+        val dayOfWeek: Int =
+            calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH) //keeping here for more detailed computing later
+        val dayOfMonth: Int =
+            calendar.get(Calendar.DAY_OF_MONTH) //keeping here for more detailed computing later
+        val month: Int = calendar.get(Calendar.MONTH)
+
+        // Note: months are 0-based (January is 0)
+        // Change the value of the variable based on the date
+        if (month >= 3 && month <= 10) { //April to (including) October.
+            hourIndex = 2
+        } else { // December - March
+            hourIndex = 1
+        }
     }
 }
 

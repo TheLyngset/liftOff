@@ -5,7 +5,6 @@ import no.uio.ifi.in2000.team_17.model.WeatherPoint
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
 class WeatherUseCase {
-
     //Thresholds:
     //Vind på bakken: 8.6 m/s
     //Vind i lufta: 17.2 m/s

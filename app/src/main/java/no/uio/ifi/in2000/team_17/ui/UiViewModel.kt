@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team_17.data.Repository
+import no.uio.ifi.in2000.team_17.data.RepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
 
@@ -19,7 +19,7 @@ data class UIState(
 )
 
 class UiViewModel : ViewModel() {
-    val repo = Repository()
+    val repo = RepositoryImplementation()
     val _uiState = MutableStateFlow(UIState())
     val useCase = WeatherUseCase()
     val uiState = _uiState.asStateFlow()
@@ -52,7 +52,6 @@ class UiViewModel : ViewModel() {
 
     fun findMaxShear(): Double {
         return uiState.value.weatherPointList.maxOf { it.windShear }
-
     }
 
     init {
@@ -81,5 +80,4 @@ class UiViewModel : ViewModel() {
             }
         }
     }
-
 }
