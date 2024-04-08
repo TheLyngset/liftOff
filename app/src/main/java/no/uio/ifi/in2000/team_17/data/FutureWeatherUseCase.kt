@@ -9,28 +9,31 @@ import no.uio.ifi.in2000.team_17.model.WeatherPoint
 class FutureWeatherUseCase(
     private val repository: Repository = RepositoryImplementation(),
 ) {
+    // cca. 85-88 indexes in timeseries
+    //needs to be tested
+
     suspend fun next24H(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(2, 26)
+        return repository.getListOfWeatherPointsLists(0, 23)
     }
 
     suspend fun next48h(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(27, 50)
+        return repository.getListOfWeatherPointsLists(24, 47)
     }
 
     suspend fun next3D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(51, 75)
+        return repository.getListOfWeatherPointsLists(48, 71)
     }
 
     suspend fun next4D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(76, 100)
+        return repository.getListOfWeatherPointsLists(72, 75)
     }
 
     suspend fun next5D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(101, 125)
+        return repository.getListOfWeatherPointsLists(76, 83)
     }
 
     suspend fun next6D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
-        return repository.getListOfWeatherPointsLists(126, 150)
+        return repository.getListOfWeatherPointsLists(84, 88)
     }
 
 
