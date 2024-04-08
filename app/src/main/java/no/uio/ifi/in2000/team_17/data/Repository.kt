@@ -31,6 +31,9 @@ interface Repository {
         from: Int,
         to: Int
     ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>>
+
+    suspend fun getWeatherPointList(): MutableStateFlow<List<WeatherPoint>>
+    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState)
 }
 
 /**
@@ -78,6 +81,10 @@ class RepositoryImplementation : Repository {
         loadLocationForecast()
         loadIsobaric()
         generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
+    }
+
+    override suspend fun getWeatherPointList(): MutableStateFlow<List<WeatherPoint>> {
+        return weatherPointList
     }
 
     /**
@@ -189,7 +196,7 @@ class RepositoryImplementation : Repository {
         return flowOfWeatherPointLists
     }
 
-    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState) {
+    override fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState) {
         Log.d(LOG_NAME, "${advancedSettingsUiState.groundWindSpeed}")
     }
 
@@ -277,22 +284,3 @@ internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doub
         )).pow(2)
     )
 }
-
-/**
- * Calculates the dew point at ground level considering the temperature and the relative humidity.
- * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
- * Note: This relationship is fairly accurate for relative humidity values above 50%.
- * @param temperature Observed temperature
- * @param relativeHumidity Relative humidity
- * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
- */
-/*internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
-    //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-    // accuracy within 1 Celcius for relative humidity over 50%
-    if (temperature != null && relativeHumidity != null) {
-        return round((temperature - ((100 - relativeHumidity) / 5)))
-    }
-    return -1.0
-}
-
- */
