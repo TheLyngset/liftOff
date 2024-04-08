@@ -14,7 +14,6 @@ import no.uio.ifi.in2000.team_17.MainActivity
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
 
 data class HomeScreenUiState(
     val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
@@ -45,7 +44,8 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             this@HomeScreenViewModel.repository.load(latLng, maxHeight)
             _homeScreenUiState.update {
                 it.copy(
-                    weatherPointList = this@HomeScreenViewModel.repository.weatherPointList.asStateFlow().value,
+                    weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
+                        .asStateFlow().value,
                     latLng = latLng,
                     maxHeight = maxHeight
                 )
@@ -73,10 +73,14 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            this@HomeScreenViewModel.repository.load(latLng = homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
+            this@HomeScreenViewModel.repository.load(
+                latLng = homeScreenUiState.value.latLng,
+                homeScreenUiState.value.maxHeight
+            )
             _homeScreenUiState.update {
                 it.copy(
-                    weatherPointList = this@HomeScreenViewModel.repository.weatherPointList.asStateFlow().value,
+                    weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
+                        .asStateFlow().value,
                     latLng = homeScreenUiState.value.latLng,
                     maxHeight = homeScreenUiState.value.maxHeight
                 )
