@@ -11,6 +11,7 @@ import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.WeatherPoint
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsUiState
 import java.io.IOException
 import kotlin.math.PI
 import kotlin.math.cos
@@ -188,6 +189,10 @@ class RepositoryImplementation : Repository {
         return flowOfWeatherPointLists
     }
 
+    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState) {
+        Log.d(LOG_NAME, "${advancedSettingsUiState.groundWindSpeed}")
+    }
+
     /**
      * Parses data from locationForecastData into a WeatherPoint object
      * @return weatherpoint with ground level information
@@ -243,13 +248,8 @@ class RepositoryImplementation : Repository {
 internal fun calculateHeight(
     pressure: Double, temperature: Double, pressureAtSeaLevel: Double
 ): Double {
-    //https://en.wikipedia.org/wiki/Barometric_formula
+    // https://en.wikipedia.org/wiki/Barometric_formula
     val tempInKelvin = temperature + 273.15
-
-    /* round(
-        (MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
-                * ln((pressureAtSeaLevel / pressure))
-    ) */
 
     return round(
         (-MOLAR_GAS_CONSTANT * tempInKelvin) * ln(pressure / pressureAtSeaLevel) /
