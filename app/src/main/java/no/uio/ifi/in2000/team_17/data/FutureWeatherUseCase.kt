@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.team_17.data
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import no.uio.ifi.in2000.team_17.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.WeatherPointNew
+import kotlin.properties.Delegates
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
@@ -12,27 +12,35 @@ class FutureWeatherUseCase(
     // cca. 85-88 indexes in timeseries
     //needs to be tested
 
-    suspend fun next24H(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    var date: String by Delegates.observable("") { _, old, new ->
+        if (old != new) {
+            println("Variable has changed state")
+        } else {
+            println("Variable has not changed state")
+        }
+    }
+
+    suspend fun next24H(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(0, 23)
     }
 
-    suspend fun next48h(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    suspend fun next48h(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(24, 47)
     }
 
-    suspend fun next3D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    suspend fun next3D(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(48, 71)
     }
 
-    suspend fun next4D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    suspend fun next4D(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(72, 75)
     }
 
-    suspend fun next5D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    suspend fun next5D(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(76, 83)
     }
 
-    suspend fun next6D(): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    suspend fun next6D(): List<WeatherPointNew> {
         return repository.getListOfWeatherPointsLists(84, 88)
     }
 
