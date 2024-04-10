@@ -47,6 +47,7 @@ import java.lang.NumberFormatException
 
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
+
     Input(title = "Input Screen", logo = R.drawable.logor)
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,11 +58,25 @@ fun AppTopBar(
     logoId: Int
  ){
     TopAppBar(
-        title = { Image(painter = painterResource(id = logoId), contentDescription = "Test") },
+        
+        title = {
+
+            Row (modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween){
+                Image(painter = painterResource(id = logoId), contentDescription = "Logo")
+                Text(text = "Oslo", modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.search_24px),
+                    contentDescription = "Search",
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                )
+            }
+        },
+
+
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.White.copy(alpha = 0.65f)
             //MaterialTheme.colorScheme.primaryContainer
-
         )
     )
 }
@@ -84,9 +99,7 @@ fun App(
                 currentScreen = Screen.Home,
                 logoId = Screen.Home.logo,
                 modifier = Modifier
-
-                    .background(Color.Green.copy(alpha = 0.7f))
-
+                    .background(Color.White.copy(alpha = 0.7f))
             )
         },
         bottomBar = {
