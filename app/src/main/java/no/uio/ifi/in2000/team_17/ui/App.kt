@@ -2,7 +2,9 @@ package no.uio.ifi.in2000.team_17.ui
 
 import android.graphics.Paint.Align
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -42,7 +46,7 @@ import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String, val logo: Int) {
-    Home(title = "Home Screen", logo = R.drawable.logor),
+    Home(title = "Home Screen", logo = R.drawable.logoicon),
     Input(title = "Input Screen", logo = R.drawable.logor)
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +59,9 @@ fun AppTopBar(
     TopAppBar(
         title = { Image(painter = painterResource(id = logoId), contentDescription = "Test") },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = Color.White.copy(alpha = 0.65f)
+            //MaterialTheme.colorScheme.primaryContainer
+
         )
     )
 }
@@ -71,12 +77,16 @@ fun App(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+
     Scaffold(
         topBar = {
             AppTopBar(
                 currentScreen = Screen.Home,
                 logoId = Screen.Home.logo,
-                modifier = Modifier.padding(horizontal = 5.dp)
+                modifier = Modifier
+
+                    .background(Color.Green.copy(alpha = 0.7f))
+
             )
         },
         bottomBar = {
@@ -98,10 +108,10 @@ fun App(
             startDestination = Screen.Home.name
         ){
             composable(route = Screen.Home.name){
-                HomeScreen(
+                newHomeScreen(
                     Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical),uiState = uiState)
+                        .verticalScroll(scrollStateVertical))
             }
             composable(route = Screen.Input.name){
                 InputScreen(Modifier.padding(innerPadding), uiState){latLngString, maxHeightString ->
