@@ -13,13 +13,14 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.MainActivity
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
-import no.uio.ifi.in2000.team_17.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 
 data class HomeScreenUiState(
-    val weatherPointList: List<WeatherPoint> = listOf(WeatherPoint()),
+    val weatherPointList: List<WeatherPointOld> = listOf(WeatherPointOld()),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
-    val canLaunch: Boolean = true
+    val canLaunch: Boolean = true,
+    val updated: String = "00"
 )
 
 class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
@@ -45,21 +46,13 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             _homeScreenUiState.update {
                 it.copy(
                     weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
-                        .asStateFlow().value,
+                        .value,
                     latLng = latLng,
-                    maxHeight = maxHeight
+                    maxHeight = maxHeight,
+                    updated = this@HomeScreenViewModel.repository.updatedAt()
                 )
             }
         }
-    }
-
-
-    fun setLatLng(latLng: LatLng) {
-        load(latLng, homeScreenUiState.value.maxHeight)
-    }
-
-    fun setMaxHeight(maxHeight: Int) {
-        load(homeScreenUiState.value.latLng, maxHeight)
     }
 
     fun findMaxSpeed(): Double {
@@ -80,9 +73,10 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             _homeScreenUiState.update {
                 it.copy(
                     weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
-                        .asStateFlow().value,
+                        .value,
                     latLng = homeScreenUiState.value.latLng,
-                    maxHeight = homeScreenUiState.value.maxHeight
+                    maxHeight = homeScreenUiState.value.maxHeight,
+                    updated = this@HomeScreenViewModel.repository.updatedAt()
                 )
             }
             canLaunch()
