@@ -17,22 +17,26 @@ class WeatherUseCase {
     //Luftfuktighet: 75%
     //Dew point: max 15 grader
 
-    fun canLaunch(
-        weatherPoint: WeatherPointOld,
-        maxWindSpeed: Double,
-        maxShearWind: Double
-    ): Boolean {
-        //tåke --- (connected to clouds, dew point and precipitation)
-        return (
-                weatherPoint.windSpeed < 8.6 &&
-                        weatherPoint.humidity < 75.0 &&
-                        weatherPoint.dewPoint < 15.0 &&
-                        weatherPoint.cloudFraction < 15.0 &&
-                        weatherPoint.rain < 0.1 &&
-                        weatherPoint.windShear < 24.5 &&
-                        weatherPoint.fog < 0.1 &&
-                        maxWindSpeed < 17.2 &&
-                        maxShearWind < 24.5)
+    companion object {
+        @JvmStatic
+        fun canLaunch(
+            weatherPoint: WeatherPointOld,
+            maxWindSpeed: Double,
+            maxShearWind: Double
+        ): Boolean {
+            //tåke --- (connected to clouds, dew point and precipitation)
+            return (
+                    weatherPoint.windSpeed < 8.6 &&
+                            weatherPoint.humidity < 75.0 &&
+                            weatherPoint.dewPoint < 15.0 &&
+                            weatherPoint.cloudFraction < 15.0 &&
+                            weatherPoint.rain < 0.1 &&
+                            weatherPoint.windShear < 24.5 &&
+                            weatherPoint.fog < 0.1 &&
+                            maxWindSpeed < 17.2 &&
+                            maxShearWind < 24.5
+                    )
+        }
     }
 }
 

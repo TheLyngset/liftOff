@@ -37,7 +37,6 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
     }
 
     val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
-    val useCase = WeatherUseCase()
     val homeScreenUiState = _homeScreenUiState.asStateFlow()
 
     fun load(latLng: LatLng, maxHeight: Int) {
@@ -87,7 +86,7 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
         viewModelScope.launch {
             _homeScreenUiState.update {
                 it.copy(
-                    canLaunch = useCase.canLaunch(
+                    canLaunch = WeatherUseCase.canLaunch(
                         homeScreenUiState.value.weatherPointList.first(),
                         findMaxSpeed(), findMaxShear()
                     )
