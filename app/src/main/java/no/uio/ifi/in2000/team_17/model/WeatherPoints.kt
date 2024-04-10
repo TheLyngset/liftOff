@@ -40,18 +40,19 @@ data class WeatherPointList(
     val weatherPoints: List<WeatherPointOld> = listOf(WeatherPointOld())
 )
 
-data class WeatherPointsResults(
-    val date: List<String> = emptyList(),
-    val time: List<String> = emptyList(),
-    val groundWindSpeed: List<Double> = emptyList(),
-    val windDirection: List<Double> = emptyList(),
-    val maxWindShear: List<Double> = emptyList(),
-    val maxWindSpeed: List<Double> = emptyList(),
-    val cloudFraction: List<Double> = emptyList(),
-    val rain: List<Double> = emptyList(),
-    val humidity: List<Double> = emptyList(),
-    val dewPoint: List<Double> = emptyList(),
-    val fog: List<Double> = emptyList()
-)
 
+//object holding lists of values for each variable that needs to be displyed and used in the resultsUI
+data class WeatherPointsResults(
+    var date: MutableList<String> = mutableListOf(),
+    var time: MutableList<String> = mutableListOf(),
+    var groundWindSpeed: MutableList<Double> = mutableListOf(),
+    var windDirection: MutableList<Double> = mutableListOf(),
+    var maxWindShear: MutableList<Double> = mutableListOf(),
+    var maxWindSpeed: MutableList<Double> = mutableListOf(),
+    var cloudFraction: MutableList<Double> = mutableListOf(),
+    var rain: MutableList<Double> = mutableListOf(),
+    var humidity: MutableList<Double> = mutableListOf(),
+    var dewPoint: MutableList<Double> = mutableListOf(),
+    var fog: MutableList<Double> = mutableListOf()
+)
 
