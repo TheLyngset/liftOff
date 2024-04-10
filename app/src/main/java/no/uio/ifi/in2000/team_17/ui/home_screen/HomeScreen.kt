@@ -74,16 +74,33 @@ fun HomeScreen(
             }
         }
         LaunchClearanceCard("Launch clearance for current input: ${homeScreenUiState.canLaunch}")
+        DateTime(
+            homeScreenUiState.weatherPointList.first().date!!,
+            homeScreenUiState.weatherPointList.first().time!!
+        )
+        LastUpdated(homeScreenUiState.updated)
         WeatherCard(
             weatherInfoList = listOf(
                 Triple("Ground wind", homeScreenUiState.weatherPointList.first().windSpeed, "m/s"),
-                Triple("Max wind", homeScreenUiState.weatherPointList.maxOf { it.windSpeed }, "m/s"),
-                Triple("Max Shear", homeScreenUiState.weatherPointList.maxOf { it.windShear }, "m/s")
+                Triple(
+                    "Max wind",
+                    homeScreenUiState.weatherPointList.maxOf { it.windSpeed },
+                    "m/s"
+                ),
+                Triple(
+                    "Max Shear",
+                    homeScreenUiState.weatherPointList.maxOf { it.windShear },
+                    "m/s"
+                )
             )
         )
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Cloud coverage", homeScreenUiState.weatherPointList.first().cloudFraction, "%"),
+                Triple(
+                    "Cloud coverage",
+                    homeScreenUiState.weatherPointList.first().cloudFraction,
+                    "%"
+                ),
                 Triple("Rain", homeScreenUiState.weatherPointList.first().rain, "mm"),
                 Triple("Fog", homeScreenUiState.weatherPointList.first().fog, "%"),
                 Triple("Humidity", homeScreenUiState.weatherPointList.first().humidity, "%"),
@@ -139,6 +156,52 @@ fun WeatherCard(weatherInfoList: List<Triple<String, Double, String>>) {
 }
 
 @Composable
+fun DateTime(date: String, time: String) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+            .padding(horizontal = 16.dp)
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "$date kl. $time", style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun LastUpdated(time: String) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+            .padding(horizontal = 16.dp)
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                "Updated at: $time", style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            )
+        }
+    }
+}
+
+@Composable
 fun LaunchClearanceCard(canLaunch: String) {
     Card(
         Modifier
@@ -176,10 +239,12 @@ fun InputSheet(
     }
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { sheetState = false }) {
-            InputSheetContent(homeScreenUiState = homeScreenUiState, onValidate = { latLngString, maxHeightText ->
-                onValidate(latLngString, maxHeightText)
-                sheetState = false
-            }
+            InputSheetContent(
+                homeScreenUiState = homeScreenUiState,
+                onValidate = { latLngString, maxHeightText ->
+                    onValidate(latLngString, maxHeightText)
+                    sheetState = false
+                }
             )
         }
     }
