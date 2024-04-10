@@ -14,6 +14,7 @@ import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSourc
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.WeatherPointNew
 import no.uio.ifi.in2000.team_17.model.WeatherPointOld
+import no.uio.ifi.in2000.team_17.model.WeatherPointsResults
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsUiState
@@ -43,6 +44,7 @@ interface Repository {
     fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState)
     suspend fun updatedAt(): String
     suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew>
+    suspend fun getWeatherPointsResults(): WeatherPointsResults
 }
 
 /**
@@ -72,18 +74,23 @@ class RepositoryImplementation : Repository {
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
 
-    //does this need to be a state flow?
+    //makes a list of weatherPoint with ground level data and lists of layers in alltitude
     val weatherPointList = MutableStateFlow<List<WeatherPointOld>>(listOf())
-
     var flowOfWeatherPointLists =
         MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPointOld>>>())
     var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPointOld>>>()
 
-
+    //makes a list of weather points, each holding only data neeeded for the UI
     private var listOfWeatherPoints = mutableListOf(WeatherPointNew())
     override suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew> {
 
         return listOfWeatherPoints
+    }
+
+    //updatable variable that holds an object with lists of values for each of the variables that are used in the ResultsUI
+    private var weatherPointsResults = WeatherPointsResults()
+    override suspend fun getWeatherPointsResults(): WeatherPointsResults {
+        return weatherPointsResults
     }
 
     /**
@@ -205,6 +212,7 @@ class RepositoryImplementation : Repository {
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
 
+        //safechecks maxwind speed and share before adding it to the weather point object
         var maxWindSpeed = windSpeed.maxOrNull()
         var maxWindShear = windShear.maxOrNull()
 
@@ -214,7 +222,7 @@ class RepositoryImplementation : Repository {
         if (maxWindShear == null) {
             maxWindShear = -1.0
         }
-
+        //adds the relevant values to a weatherPoint that holds only information that is needed for the Ui
         val newWeatherPoint = WeatherPointNew(
             date = groundWeatherPoint.date,
             time = groundWeatherPoint.time,
@@ -227,9 +235,23 @@ class RepositoryImplementation : Repository {
             dewPoint = groundWeatherPoint.dewPoint,
             fog = groundWeatherPoint.fog
         )
-
+        //adds the weatherpoint above to a list of weather points
         listOfWeatherPoints.add(newWeatherPoint)
 
+        ///adding values to weatherPointsResults for each variable used for the results UI
+        groundWeatherPoint.date?.let { weatherPointsResults.date.add(it) }
+        groundWeatherPoint.time?.let { weatherPointsResults.time.add(it) }
+        groundWeatherPoint.windSpeed?.let { weatherPointsResults.groundWindSpeed.add(it) }
+        maxWindSpeed?.let { weatherPointsResults.maxWindSpeed.add(it) }
+        maxWindShear?.let { weatherPointsResults.maxWindShear.add(it) }
+        groundWeatherPoint.cloudFraction?.let { weatherPointsResults.cloudFraction.add(it) }
+        groundWeatherPoint.rain?.let { weatherPointsResults.rain.add(it) }
+        groundWeatherPoint.humidity?.let { weatherPointsResults.humidity.add(it) }
+        groundWeatherPoint.dewPoint?.let { weatherPointsResults.dewPoint.add(it) }
+        groundWeatherPoint.fog?.let { weatherPointsResults.fog.add(it) }
+
+
+        //this is the pointList used on the homescreen in MVP
         return weatherPointList
 
     }
