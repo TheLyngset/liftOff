@@ -53,7 +53,6 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
     fun findMaxSpeed(): Double {
         return homeScreenUiState.value.weatherPointList.maxOf { it.windSpeed }
     }
@@ -94,5 +93,4 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricURL
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
@@ -149,7 +150,8 @@ class RepositoryImplementation : Repository {
             isoBaricData.update {
                 isobaricDataSource.getData(
                     coordinates.latitude,
-                    coordinates.longitude
+                    coordinates.longitude,
+                    isoBaricURL = IsoBaricURL.IN_9_OR_12
                 )
             }
         } catch (e: IOException) {
