@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.data
 
+import android.content.Context
 import android.icu.util.Calendar
 import android.os.Build
 import android.util.Log
@@ -18,7 +19,6 @@ import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 import no.uio.ifi.in2000.team_17.model.WeatherPointsResults
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsUiState
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,6 +34,7 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
+
 interface Repository {
     suspend fun load(latLng: LatLng, heigth: Int)
     suspend fun getListOfWeatherPointsLists(
@@ -42,7 +43,6 @@ interface Repository {
     ): List<WeatherPointNew>
 
     suspend fun getWeatherPointList(): StateFlow<List<WeatherPointOld>>
-    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState)
     suspend fun updatedAt(): String
     suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew>
     suspend fun getWeatherPointsResults(): WeatherPointsResults
@@ -84,7 +84,6 @@ class RepositoryImplementation : Repository {
     //makes a list of weather points, each holding only data neeeded for the UI
     private var listOfWeatherPoints = mutableListOf(WeatherPointNew())
     override suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew> {
-
         return listOfWeatherPoints
     }
 
@@ -93,6 +92,8 @@ class RepositoryImplementation : Repository {
     override suspend fun getWeatherPointsResults(): WeatherPointsResults {
         return weatherPointsResults
     }
+
+
 
     /**
      * Calls both loadLocationForecast() and loadIsoBaricData()
@@ -277,10 +278,6 @@ class RepositoryImplementation : Repository {
         flowOfWeatherPointLists = MutableStateFlow(listOfWeatherPointLists)
 
         return listOfWeatherPoints.toList()
-    }
-
-    override fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState) {
-        Log.d(LOG_NAME, "${advancedSettingsUiState.groundWindSpeed}")
     }
 
     /**
