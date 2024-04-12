@@ -48,6 +48,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
+    toAdvancedSettings: () -> Unit,
     onValidate: (String, String) -> Unit
 ) {
     val cameraPositionState = rememberCameraPositionState {
@@ -109,7 +110,8 @@ fun HomeScreen(
         )
         InputSheet(
             Modifier.fillMaxWidth(),
-            homeScreenUiState = homeScreenUiState
+            homeScreenUiState = homeScreenUiState,
+            toAdvancedSettings = toAdvancedSettings
         ) { latLngString, maxHeightText -> onValidate(latLngString, maxHeightText) }
     }
 }
@@ -229,6 +231,7 @@ fun LaunchClearanceCard(canLaunch: String) {
 fun InputSheet(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
+    toAdvancedSettings: () -> Unit,
     onValidate: (String, String) -> Unit
 ) {
     var sheetState by remember { mutableStateOf(false) }
@@ -241,9 +244,9 @@ fun InputSheet(
         ModalBottomSheet(onDismissRequest = { sheetState = false }) {
             InputSheetContent(
                 homeScreenUiState = homeScreenUiState,
+                toAdvancedSettings = toAdvancedSettings,
                 onValidate = { latLngString, maxHeightText ->
                     onValidate(latLngString, maxHeightText)
-                    sheetState = false
                 }
             )
         }
@@ -254,12 +257,12 @@ fun InputSheet(
 fun InputSheetContent(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
+    toAdvancedSettings:()->Unit,
     onValidate: (String, String) -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
-    var showAdvancedSettings by remember { mutableStateOf(false) }
     Column(
         modifier
             .fillMaxSize(),
@@ -270,7 +273,7 @@ fun InputSheetContent(
             value = maxHeightText,
             onValueChange = { maxHeightText = it },
             label = "Maximum height in km"
-        )
+        ){ onValidate("$latString, $lngString", maxHeightText) }
         Row(
             Modifier.padding(horizontal = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -280,17 +283,13 @@ fun InputSheetContent(
                 onValueChange = { latString = it },
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
-            )
+            ){ onValidate("$latString, $lngString", maxHeightText) }
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
-            )
-        }
-        Button(
-            onClick = { onValidate("$latString, $lngString", maxHeightText) }) {
-            Text("Validate")
+            ){ onValidate("$latString, $lngString", maxHeightText) }
         }
         ListItem(
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
@@ -309,33 +308,22 @@ fun InputSheetContent(
                         modifier = Modifier.padding(horizontal = 24.dp),
                         text = "The settings under are set with apropriate standard values, read more about why theese values have been chosen here"
                     )
-                    if (!showAdvancedSettings)
-                        Button(onClick = { showAdvancedSettings = true }) {
-                            Text("Show advanced settings")
-                        }
-                    else {
-                        Button(onClick = { showAdvancedSettings = false }) {
-                            Text("Hide advanced settings")
-                        }
-                        OutlinedTextField(value = "Advanced setting 1", onValueChange = {})
-                        OutlinedTextField(value = "Advanced setting 2", onValueChange = {})
-                        OutlinedTextField(value = "Advanced setting 3", onValueChange = {})
-                        Button(onClick = { /*TODO*/ }) {
-                            Text("Reset advanced settings")
-                        }
-                    }
                 }
             }
         )
+        Button(onClick = {toAdvancedSettings()}) {
+            Text(text = "Advanced settings")
+        }
     }
 }
 
 @Composable
 fun InputTextField(
+    modifier: Modifier = Modifier,
     value: String,
-    onValueChange: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    onValueChange: (String) -> Unit,
+    onDone: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
@@ -350,6 +338,7 @@ fun InputTextField(
         keyboardActions = KeyboardActions(
             onDone = {
                 keyboardController?.hide()
+                onDone(value)
             }
         ),
         modifier = modifier
