@@ -1,18 +1,253 @@
 package no.uio.ifi.in2000.team_17.ui.advanced_settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team_17.ui.home_screen.InputTextField
+import java.lang.NumberFormatException
 
 @Composable
 fun AdvancedSettingsScreen(
     modifier: Modifier = Modifier,
-    uiState: AdvancedSettingsUiState
+    viewModel: AdvancedSettingsViewModel,
+    Navigate:()->Unit,
+    wrongInputFormat:()->Unit
 ){
-    Column(modifier = modifier.fillMaxSize()) {
-        InputTextField(value = "Test", onValueChange = {}, label = "Label")
+    val uiState = viewModel.advancedSettingsUIState.collectAsState().value
+    //strings for inputfields
+    var groundWindSpeedText by remember { mutableStateOf("")}
+    var maxWindSpeedText by remember { mutableStateOf("")}
+    var maxWindShearText by remember { mutableStateOf("")}
+    var cloudFractionText by remember { mutableStateOf("")}
+    var fogText by remember { mutableStateOf("")}
+    var rainText by remember { mutableStateOf("")}
+    var humidityText by remember { mutableStateOf("")}
+    var dewPointText by remember { mutableStateOf("")}
+    var marginText by remember { mutableStateOf("")}
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        //Ground wind speed
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            InputTextField(
+                value = groundWindSpeedText,
+                onValueChange = { groundWindSpeedText = it },
+                label = "Max ground wind speed"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.groundWindSpeed
+                }
+                viewModel.setGroundWind(newValue)
+                groundWindSpeedText = newValue.toString()
+            }
+            Text(uiState.groundWindSpeed.toString())
+        }
+
+        //Max wind speed
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = maxWindSpeedText,
+                onValueChange = { maxWindSpeedText = it },
+                label = "Max air wind speed"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.maxWindSpeed
+                }
+                viewModel.setMaxWind(newValue)
+                maxWindSpeedText = newValue.toString()
+            }
+            Text(uiState.maxWindSpeed.toString())
+        }
+
+        //max wind shear
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = maxWindShearText,
+                onValueChange = { maxWindShearText = it },
+                label = "Max wind shear"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.maxWindShear
+                }
+                viewModel.setMaxWindShear(newValue)
+                maxWindShearText = newValue.toString()
+            }
+            Text(uiState.maxWindShear.toString())
+        }
+
+        //max cloud fraction
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = cloudFractionText,
+                onValueChange = { cloudFractionText = it },
+                label = "Max cloud fraction in percent"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.cloudFraction
+                }
+                viewModel.setCloudFraction(newValue)
+                cloudFractionText = newValue.toString()
+            }
+            Text(uiState.cloudFraction.toString())
+        }
+
+        //max fog
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = fogText,
+                onValueChange = { fogText = it },
+                label = "Max fog"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.fog
+                }
+                viewModel.setFog(newValue)
+                fogText = newValue.toString()
+            }
+            Text(uiState.fog.toString())
+        }
+
+        //max rain
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = rainText,
+                onValueChange = { rainText = it },
+                label = "Max allowed rain in mm"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.rain
+                }
+                viewModel.setRain(newValue)
+                rainText = newValue.toString()
+            }
+            Text(uiState.rain.toString())
+        }
+
+        //max humidity
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = humidityText,
+                onValueChange = { humidityText = it },
+                label = "Max humidity"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.humidity
+                }
+                viewModel.setHumiditiy(newValue)
+                humidityText = newValue.toString()
+            }
+            Text(uiState.humidity.toString())
+        }
+
+        //max dewPoint
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = dewPointText,
+                onValueChange = { dewPointText = it },
+                label = "Highest dew point allowed"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.dewPoint
+                }
+                viewModel.setDewPoint(newValue)
+                dewPointText = newValue.toString()
+            }
+            Text(uiState.dewPoint.toString())
+        }
+
+        //margin
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            InputTextField(
+                value = marginText,
+                onValueChange = { marginText = it },
+                label = "Safety margin"
+            ) {
+                val newValue = try {
+                    it.toDouble()
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat()
+                    uiState.margin
+                }
+                viewModel.setMargin(newValue)
+                marginText = newValue.toString()
+            }
+            Text(uiState.margin.toString())
+        }
+
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Button(onClick = {
+                viewModel.reset()
+                groundWindSpeedText = ""
+                maxWindSpeedText = ""
+                maxWindShearText = ""
+                cloudFractionText = ""
+                fogText = ""
+                rainText = ""
+                humidityText = ""
+                dewPointText = ""
+                marginText = ""
+
+            }) {
+                Text(text = "Reset Advanced Settings")
+            }
+
+            Button(onClick = { Navigate() }) {
+                Text("HomeScreen")
+            }
+        }
+
     }
 }
