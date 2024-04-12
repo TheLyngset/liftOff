@@ -102,7 +102,7 @@ fun App(
                     .background(Color.White.copy(alpha = 0.7f))
             )
         },
-        bottomBar = {
+        /*bottomBar = {
             BottomAppBar {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
                     Button(onClick = { navController.navigate(Screen.Input.name) }) {
@@ -113,7 +113,7 @@ fun App(
                     }
                 }
             }
-        },
+        }, */
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ){innerPadding ->
         NavHost(

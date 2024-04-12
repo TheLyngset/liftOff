@@ -1,17 +1,51 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.rememberCameraPositionState
 import no.uio.ifi.in2000.team_17.R
@@ -23,7 +57,6 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
     }
     Box(modifier = Modifier
         .fillMaxSize(1f)
-        .background(Color.Cyan)
 
 
     ){
@@ -39,9 +72,174 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
 
             )
     }
+    Box(modifier = Modifier
+        .fillMaxSize(1f),
+        contentAlignment = Alignment.BottomCenter
+    ){
+        BottomCard()
 
-
+    }
 }
+//skriften er satt, må endre til om den er true eller ikke
+//jeg satte også noen verdier, i stedenfor å legge til uiState
+@Composable
+fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
+    val (selectedIndex, setSelectedIndex) = remember { mutableIntStateOf(0) }
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(2.dp)
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 10.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            //LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
+            LaunchClearanceCard1("You're good to go!")
+            /*if (uiState.canLaunch){
+                LaunchClearanceCard1(canLaunch = "You're good to go!")
+            }
+            else{
+                LaunchClearanceCard1(canLaunch = "Hold off for now!")
+            } */
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            //IconRow(modifier = Modifier.fillMaxWidth())
+
+            LazyVerticalGridWithFourCards(weatherInfoList = listOf(
+                WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon))
+            ))
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            SegmentedButton(modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+//la trafikkbilde inn her, må gjøre så det blir riktig, i tillegg til å velge grønn farge
+@Composable
+fun LaunchClearanceCard1(canLaunch: String) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+    ) {
+        Column(
+            Modifier
+                .background(color = Color.Green.copy(alpha = 0.4f))
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(Modifier.fillMaxWidth()) {
+                Image(
+                    painter = painterResource(id = R.drawable.greenlight),
+                    contentDescription = "GreenLightIcon",
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .size(60.dp)
+                )
+
+                Spacer(modifier = Modifier.width(38.dp))
+                Text(canLaunch, Modifier.padding(vertical = 18.dp), style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SegmentedButton(modifier: Modifier){
+    val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                selected = selectedIndex == index,
+                onClick = { selectedIndex = index},
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size))
+            {
+                Text(text = option)
+            }
+        }
+    }
+}
+
+@Composable
+fun CardItem(title: String, image: Painter, value: Double, unit: String) {
+    Card(
+        modifier = Modifier
+            .padding(3.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
+            .fillMaxSize()
+            .size(110.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth()
+                        .size(35.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "$value $unit",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+        }
+    }
+}
+
+@Composable
+fun LazyVerticalGridWithFourCards(weatherInfoList: List<WeatherInfo>) {
+    Card {
+        LazyVerticalGrid(
+            GridCells.Fixed(3),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White.copy(alpha = 0.3f))
+        ) {
+            items(weatherInfoList) { weatherInfo ->
+                CardItem(
+                    title = weatherInfo.title,
+                    value = weatherInfo.value,
+                    unit = weatherInfo.unit,
+                    image = weatherInfo.image
+                )
+            }
+        }
+    }
+}
+
+data class WeatherInfo(
+    val title: String,
+    val value: Double,
+    val unit: String,
+    val image: Painter
+)
+
 
 @Preview
 @Composable
