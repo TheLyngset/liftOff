@@ -1,7 +1,11 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.protobuf") version "0.9.4"
     kotlin("plugin.serialization") version "1.9.21"
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
+
 }
 
 android {
@@ -78,9 +82,41 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
-    val serialization_version = "1.5.10"
     implementation("org.slf4j:slf4j-simple:1.7.30")
+
+    implementation ("androidx.datastore:datastore:1.0.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.google.maps.android:maps-compose:4.3.3")
     api ("com.google.android.gms:play-services-location:9.6.1")
+
+    implementation  ("androidx.datastore:datastore:1.0.0")
+    implementation  ("com.google.protobuf:protobuf-javalite:3.21.7")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    //Dagger - Hilt
+    implementation("com.google.dagger:hilt-android:2.45")
+    kapt("com.google.dagger:hilt-android-compiler:2.45")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+}
+protobuf{
+    protoc{
+        artifact = "com.google.protobuf:protoc:3.21.7"
+    }
+    plugins{
+        generateProtoTasks{
+            all().forEach {
+                it.builtins {
+                    create("java"){
+                        option("lite")
+                    }
+                }
+            }
+        }
+    }
 }
