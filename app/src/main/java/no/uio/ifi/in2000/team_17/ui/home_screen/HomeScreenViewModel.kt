@@ -15,6 +15,7 @@ import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
+import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 import kotlin.math.ln
 
@@ -40,7 +41,8 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
             canLaunch = WeatherUseCase.canLaunch(
                 weatherPoint = weatherPointList.first(),
                 maxWindSpeed = advancedSettings.maxWindSpeed,
-                maxShearWind = advancedSettings.maxWindShear
+                maxShearWind = advancedSettings.maxWindShear,
+                threshholds = advancedSettings
             ),
             updated = updatedAt
         )

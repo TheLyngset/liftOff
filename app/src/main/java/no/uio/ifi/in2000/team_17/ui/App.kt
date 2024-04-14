@@ -95,7 +95,7 @@ fun App(
                 HomeScreen(
                     Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical), homeScreenUiState = homeScreenUiState,
+                        .verticalScroll(scrollStateVertical), homeScreenUiState = homeScreenViewModel.homeScreenUiState,
                     toAdvancedSettings = {navController.navigate(Screen.AdvancedSettings.name)},
                     setMaxHeight = { try{homeScreenViewModel.setMaxHeight(it.toInt())} catch (e: NumberFormatException){ coroutineScope.launch{ snackbarHostState.showSnackbar("Invalid input") } } },
                     setLat = {try{homeScreenViewModel.setLat(it.toDouble())} catch (e: NumberFormatException){ coroutineScope.launch{ snackbarHostState.showSnackbar("Invalid input") } } },
