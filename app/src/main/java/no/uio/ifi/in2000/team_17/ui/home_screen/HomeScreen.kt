@@ -49,7 +49,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
     toAdvancedSettings: () -> Unit,
-    onValidate: (String, String) -> Unit
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
+    onLoad: () -> Unit
 ) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(homeScreenUiState.latLng, 11f)
@@ -111,8 +114,12 @@ fun HomeScreen(
         InputSheet(
             Modifier.fillMaxWidth(),
             homeScreenUiState = homeScreenUiState,
-            toAdvancedSettings = toAdvancedSettings
-        ) { latLngString, maxHeightText -> onValidate(latLngString, maxHeightText) }
+            toAdvancedSettings = toAdvancedSettings,
+            setMaxHeight = { setMaxHeight(it) },
+            setLat = { setLat(it) },
+            setLng = { setLng(it) },
+            onLoad = onLoad
+        )
     }
 }
 
@@ -232,7 +239,10 @@ fun InputSheet(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
     toAdvancedSettings: () -> Unit,
-    onValidate: (String, String) -> Unit
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
+    onLoad: () -> Unit
 ) {
     var sheetState by remember { mutableStateOf(false) }
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -245,8 +255,12 @@ fun InputSheet(
             InputSheetContent(
                 homeScreenUiState = homeScreenUiState,
                 toAdvancedSettings = toAdvancedSettings,
-                onValidate = { latLngString, maxHeightText ->
-                    onValidate(latLngString, maxHeightText)
+                setMaxHeight = { setMaxHeight(it) },
+                setLat = {setLat(it)},
+                setLng = {setLng(it)},
+                onLoad = {
+                    onLoad()
+                    sheetState = false
                 }
             )
         }
@@ -258,39 +272,47 @@ fun InputSheetContent(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
     toAdvancedSettings:()->Unit,
-    onValidate: (String, String) -> Unit
+    setMaxHeight:(String) -> Unit,
+    setLat:(String) -> Unit,
+    setLng:(String) -> Unit,
+    onLoad:() -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
-    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
-    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
+    var maxHeightText by remember { mutableStateOf("") }
+    var latString by remember { mutableStateOf("") }
+    var lngString by remember { mutableStateOf("") }
     Column(
         modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InputTextField(
-            value = maxHeightText,
-            onValueChange = { maxHeightText = it },
-            label = "Maximum height in km"
-        ){ onValidate("$latString, $lngString", maxHeightText) }
-        Row(
-            Modifier.padding(horizontal = 40.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            InputTextField(
+                value = maxHeightText,
+                onValueChange = { maxHeightText = it },
+                label = "Maximum height in km"
+            ) { setMaxHeight(maxHeightText) }
+            Text(homeScreenUiState.maxHeight.toString())
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
                 value = latString,
                 onValueChange = { latString = it },
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
-            ){ onValidate("$latString, $lngString", maxHeightText) }
+            ){ setLat(latString) }
+            Text(homeScreenUiState.latLng.latitude.toString())
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
-            ){ onValidate("$latString, $lngString", maxHeightText) }
+            ){ setLng(lngString) }
+            Text(homeScreenUiState.latLng.longitude.toString())
         }
+        Button(onClick = onLoad) { Text(text = "Load new settings")}
         ListItem(
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
             headlineContent = {

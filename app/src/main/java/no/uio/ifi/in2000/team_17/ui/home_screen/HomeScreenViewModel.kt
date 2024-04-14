@@ -1,19 +1,22 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team_17.MainActivity
+import no.uio.ifi.in2000.team17.AdvancedSettings
+import no.uio.ifi.in2000.team17.Settings
+import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
+import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherPointOld
+import kotlin.math.ln
 
 data class HomeScreenUiState(
     val weatherPointList: List<WeatherPointOld> = listOf(WeatherPointOld()),
@@ -23,36 +26,50 @@ data class HomeScreenUiState(
     val updated: String = "00"
 )
 
-class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val repository = MainActivity.repository
-                HomeScreenViewModel(
-                    repository = repository
-                )
-            }
-        }
-    }
-
-    val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
-    val homeScreenUiState = _homeScreenUiState.asStateFlow()
-
-    fun load(latLng: LatLng, maxHeight: Int) {
+class HomeScreenViewModel(private val repository: Repository, private val settingsRepository: SettingsRepository, private val advancedSettingsRepository: AdvancedSettingsRepository) : ViewModel() {
+    val homeScreenUiState: StateFlow<HomeScreenUiState> = combine(
+        repository.getWeatherPointList(),
+        settingsRepository.settingsFlow,
+        advancedSettingsRepository.advancedSettingsFlow,
+        repository.updatedAt
+    ){weatherPointList: List<WeatherPointOld>, settings: Settings, advancedSettings: AdvancedSettings, updatedAt:String ->
+        return@combine HomeScreenUiState(
+            weatherPointList = weatherPointList,
+            latLng = LatLng(settings.lat, settings.lng),
+            maxHeight = settings.maxHeight,
+            canLaunch = WeatherUseCase.canLaunch(
+                weatherPoint = weatherPointList.first(),
+                maxWindSpeed = advancedSettings.maxWindSpeed,
+                maxShearWind = advancedSettings.maxWindShear
+            ),
+            updated = updatedAt
+        )
+    }.stateIn(
+        viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = HomeScreenUiState()
+    )
+    fun load() {
         viewModelScope.launch {
-            this@HomeScreenViewModel.repository.load(latLng, maxHeight)
-            _homeScreenUiState.update {
-                it.copy(
-                    weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
-                        .value,
-                    latLng = latLng,
-                    maxHeight = maxHeight,
-                    updated = this@HomeScreenViewModel.repository.updatedAt()
-                )
-            }
+            repository.load(homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
         }
     }
+    fun setLat(lat:Double){
+        viewModelScope.launch {
+            settingsRepository.setLat(lat)
+        }
+    }
+    fun setLng(lng:Double){
+        viewModelScope.launch {
+            settingsRepository.setLng(lng)
+        }
+    }
+    fun setMaxHeight(height: Int){
+        viewModelScope.launch{
+            settingsRepository.setMaxHeight(height)
+        }
+    }
+/*
     fun findMaxSpeed(): Double {
         return homeScreenUiState.value.weatherPointList.maxOf { it.windSpeed }
     }
@@ -61,27 +78,15 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
         return homeScreenUiState.value.weatherPointList.maxOf { it.windShear }
 
     }
+*/
 
     init {
         viewModelScope.launch {
-            this@HomeScreenViewModel.repository.load(
-                latLng = homeScreenUiState.value.latLng,
-                homeScreenUiState.value.maxHeight
-            )
-            _homeScreenUiState.update {
-                it.copy(
-                    weatherPointList = this@HomeScreenViewModel.repository.getWeatherPointList()
-                        .value,
-                    latLng = homeScreenUiState.value.latLng,
-                    maxHeight = homeScreenUiState.value.maxHeight,
-                    updated = this@HomeScreenViewModel.repository.updatedAt()
-                )
-            }
-            canLaunch()
+            repository.load(homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
         }
     }
 
-    fun canLaunch() {
+/*    fun canLaunch() {
         viewModelScope.launch {
             _homeScreenUiState.update {
                 it.copy(
@@ -92,5 +97,5 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                 )
             }
         }
-    }
+    }*/
 }

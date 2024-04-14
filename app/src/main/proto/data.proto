@@ -13,3 +13,9 @@ message AdvancedSettings{
     double dewPoint = 8;
     double margin = 9;
 }
+
+message Settings{
+    int32 maxHeight = 1;
+    double lat = 2;
+    double lng = 3;
+}
