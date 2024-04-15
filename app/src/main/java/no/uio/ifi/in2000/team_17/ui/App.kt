@@ -34,6 +34,7 @@ import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.ResultsScreen.ResultsScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
@@ -99,6 +100,7 @@ fun App(
             )
         }
     )
+
     val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -109,6 +111,17 @@ fun App(
             AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
         }
     )
+
+    val resultsScreenViewModel: ResultsScreenViewModel = viewModel(
+        factory = viewModelFactory {
+            ResultsScreenViewModel(
+                App.appModule.repository,
+                App.appModule.settingsRepository,
+                App.appModule.advancedSettingsRepository
+            )
+        }
+    )
+
 
     Scaffold(
         topBar = {
