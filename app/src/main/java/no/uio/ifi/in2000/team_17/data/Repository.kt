@@ -4,6 +4,7 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,6 @@ import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 import no.uio.ifi.in2000.team_17.model.WeatherPointsResults
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsUiState
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,16 +34,17 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
+
 interface Repository {
     suspend fun load(latLng: LatLng, heigth: Int)
-    suspend fun getListOfWeatherPointsLists(
+    suspend fun getListOfWeatherPoints(
         from: Int,
         to: Int
     ): List<WeatherPointNew>
 
-    suspend fun getWeatherPointList(): StateFlow<List<WeatherPointOld>>
-    fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState)
-    suspend fun updatedAt(): String
+    fun getWeatherPointList(): StateFlow<List<WeatherPointOld>>
+
+    val updatedAt: StateFlow<String>
     suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew>
     suspend fun getWeatherPointsResults(): WeatherPointsResults
 }
@@ -63,8 +64,8 @@ interface Repository {
 class RepositoryImplementation : Repository {
     private val LOG_NAME = "REPOSITORY"
     private var dayligthSavingAdd = 2
-    private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
-    private var maxHeight: Int = 3
+    //private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
+    //private var maxHeight: Int = 3
 
     // Load data from isoBaricDataSource and locationForecast
     private val locationForecastDataSource: LocationForecastDataSource =
@@ -76,7 +77,7 @@ class RepositoryImplementation : Repository {
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
 
     //makes a list of weatherPoint with ground level data and lists of layers in alltitude
-    val weatherPointList = MutableStateFlow<List<WeatherPointOld>>(listOf())
+    val weatherPointList = MutableStateFlow(listOf(WeatherPointOld()))
     var flowOfWeatherPointLists =
         MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPointOld>>>())
     var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPointOld>>>()
@@ -84,7 +85,6 @@ class RepositoryImplementation : Repository {
     //makes a list of weather points, each holding only data neeeded for the UI
     private var listOfWeatherPoints = mutableListOf(WeatherPointNew())
     override suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew> {
-
         return listOfWeatherPoints
     }
 
@@ -94,6 +94,13 @@ class RepositoryImplementation : Repository {
         return weatherPointsResults
     }
 
+
+    private val _updatedAt = MutableStateFlow("00")
+    @RequiresApi(Build.VERSION_CODES.O)
+    override val updatedAt = _updatedAt.asStateFlow()
+
+
+
     /**
      * Calls both loadLocationForecast() and loadIsoBaricData()
      * @param latLng is a latitude and longitude object
@@ -101,19 +108,21 @@ class RepositoryImplementation : Repository {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun load(latLng: LatLng, heigth: Int) {
-        coordinates = latLng
-        maxHeight = heigth
-        loadLocationForecast()
-        loadIsobaric()
-        generateWeatherPointList(generateGroundWeatherPoint(0))
+/*        coordinates = latLng
+        maxHeight = heigth*/
+
+        loadLocationForecast(latLng)
+        loadIsobaric(latLng)
+        generateWeatherPointList(generateGroundWeatherPoint(0), heigth)
+        _updatedAt.update { updatedAt() }
     }
 
-    override suspend fun getWeatherPointList(): StateFlow<List<WeatherPointOld>> {
+    override fun getWeatherPointList(): StateFlow<List<WeatherPointOld>> {
         return weatherPointList.asStateFlow()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun updatedAt(): String {
+    private fun updatedAt(): String {
         val dateTimeString =
             locationForecastData.value.properties?.meta?.updated_at
         val dateTime = LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME)
@@ -128,12 +137,12 @@ class RepositoryImplementation : Repository {
      * @param latLng latitudal and longitudal coordinate
      * @return LocationforecastDTO()
      */
-    private suspend fun loadLocationForecast() {
+    private suspend fun loadLocationForecast(latLng: LatLng) {
         locationForecastData.update {
             try {
                 locationForecastDataSource.fetchLocationforecast(
-                    round(coordinates.latitude),
-                    round(coordinates.longitude)
+                    round(latLng.latitude),
+                    round(latLng.longitude)
                 )
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
@@ -145,13 +154,13 @@ class RepositoryImplementation : Repository {
         }
     }
 
-    private suspend fun loadIsobaric() {
+    private suspend fun loadIsobaric(latLng: LatLng) {
         try {
             isoBaricData.update {
                 isobaricDataSource.getData(
-                    coordinates.latitude,
-                    coordinates.longitude,
-                    isoBaricURL = IsoBaricURL.IN_9_OR_12
+                    latLng.latitude,
+                    latLng.longitude,
+                    isoBaricURL = IsoBaricURL.NOW
                 )
             }
         } catch (e: IOException) {
@@ -171,7 +180,8 @@ class RepositoryImplementation : Repository {
      * @param groundWeatherPoint weather data at ground-height
      */
     private fun generateWeatherPointList(
-        groundWeatherPoint: WeatherPointOld
+        groundWeatherPoint: WeatherPointOld,
+        maxHeight: Int
     ): MutableStateFlow<List<WeatherPointOld>> {
         val pressureAtSeaLevel = groundWeatherPoint.pressure
 
@@ -259,7 +269,7 @@ class RepositoryImplementation : Repository {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun getListOfWeatherPointsLists(
+    override suspend fun getListOfWeatherPoints(
         from: Int,
         to: Int
     ): List<WeatherPointNew> {
@@ -270,17 +280,13 @@ class RepositoryImplementation : Repository {
                 generateWeatherPointList(
                     generateGroundWeatherPoint(
                         index
-                    )
+                    ),3
                 )
             )
         }
         flowOfWeatherPointLists = MutableStateFlow(listOfWeatherPointLists)
 
         return listOfWeatherPoints.toList()
-    }
-
-    override fun setSettings(advancedSettingsUiState: AdvancedSettingsUiState) {
-        Log.d(LOG_NAME, "${advancedSettingsUiState.groundWindSpeed}")
     }
 
     /**

@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team_17.data
 
+import no.uio.ifi.in2000.team17.AdvancedSettings
+import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
@@ -22,19 +24,19 @@ class WeatherUseCase {
         fun canLaunch(
             weatherPoint: WeatherPointOld,
             maxWindSpeed: Double,
-            maxShearWind: Double
+            maxShearWind: Double,
+            threshholds: AdvancedSettings
         ): Boolean {
             //tåke --- (connected to clouds, dew point and precipitation)
             return (
-                    weatherPoint.windSpeed < 8.6 &&
-                            weatherPoint.humidity < 75.0 &&
-                            weatherPoint.dewPoint < 15.0 &&
-                            weatherPoint.cloudFraction < 15.0 &&
-                            weatherPoint.rain < 0.1 &&
-                            weatherPoint.windShear < 24.5 &&
-                            weatherPoint.fog < 0.1 &&
-                            maxWindSpeed < 17.2 &&
-                            maxShearWind < 24.5
+                    weatherPoint.windSpeed < threshholds.maxWindSpeed &&
+                            weatherPoint.humidity < threshholds.humidity &&
+                            weatherPoint.dewPoint < threshholds.dewPoint &&
+                            weatherPoint.cloudFraction < threshholds.cloudFraction &&
+                            weatherPoint.rain < threshholds.rain &&
+                            weatherPoint.fog < threshholds.fog &&
+                            maxWindSpeed < threshholds.maxWindSpeed &&
+                            maxShearWind < threshholds.maxWindShear
                     )
         }
     }

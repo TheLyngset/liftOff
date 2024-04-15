@@ -24,13 +24,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
+import no.uio.ifi.in2000.team_17.viewModelFactory
 import java.lang.NumberFormatException
 
 
@@ -59,14 +60,22 @@ fun App(
 
 ){
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-    val homeScreenViewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
+    //Todo implemnt the new viewModelFactory for this viewModel
+    val homeScreenViewModel: HomeScreenViewModel = viewModel(
+        factory = viewModelFactory {
+            HomeScreenViewModel(App.appModule.repository, App.appModule.settingsRepository, App.appModule.advancedSettingsRepository)
+        }
+    )
     val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    val advancedSettingsViewModel: AdvancedSettingsViewModel = viewModel(factory = AdvancedSettingsViewModel.Factory)
-    val advancedSettingsUiState by advancedSettingsViewModel.advancedSettingsUiState.collectAsState()
+    val advancedSettingsViewModel = viewModel<AdvancedSettingsViewModel>(
+        factory = viewModelFactory {
+            AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -86,27 +95,22 @@ fun App(
                 HomeScreen(
                     Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical), homeScreenUiState = homeScreenUiState
+                        .verticalScroll(scrollStateVertical), homeScreenUiState = homeScreenViewModel.homeScreenUiState,
+                    toAdvancedSettings = {navController.navigate(Screen.AdvancedSettings.name)},
+                    setMaxHeight = { try{homeScreenViewModel.setMaxHeight(it.toInt())} catch (e: NumberFormatException){ coroutineScope.launch{ snackbarHostState.showSnackbar("Invalid input") } } },
+                    setLat = {try{homeScreenViewModel.setLat(it.toDouble())} catch (e: NumberFormatException){ coroutineScope.launch{ snackbarHostState.showSnackbar("Invalid input") } } },
+                    setLng = {try{homeScreenViewModel.setLng(it.toDouble())} catch (e: NumberFormatException){ coroutineScope.launch{ snackbarHostState.showSnackbar("Invalid input") } } },
+                    onLoad = { homeScreenViewModel.load() }
                 )
-                { latLngString, maxHeightString ->
-                    try {
-                        val latLng = LatLng(
-                            latLngString.split(", ")[0].toDouble(),
-                            latLngString.split(", ")[1].toDouble()
+            }
+            composable(route = Screen.AdvancedSettings.name){
+                AdvancedSettingsScreen(Modifier.padding(innerPadding),viewModel = advancedSettingsViewModel, Navigate = {navController.navigate(Screen.Home.name)}){
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Invalid input"
                         )
-                        val maxHeight = maxHeightString.toInt()
-                        homeScreenViewModel.load(latLng, maxHeight)
-                    } catch (e: NumberFormatException) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Invalid input"
-                            )
-                        }
                     }
                 }
-            }
-            composable(route = Screen.AdvancedSettings.name) {
-                AdvancedSettingsScreen(Modifier.padding(innerPadding), uiState = advancedSettingsUiState)
             }
         }
     }

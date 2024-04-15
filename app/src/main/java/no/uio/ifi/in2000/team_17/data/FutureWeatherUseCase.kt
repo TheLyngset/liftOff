@@ -21,27 +21,27 @@ class FutureWeatherUseCase(
     }
 
     suspend fun next24H(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(0, 23)
+        return repository.getListOfWeatherPoints(0, 23)
     }
 
     suspend fun next48h(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(24, 47)
+        return repository.getListOfWeatherPoints(24, 47)
     }
 
     suspend fun next3D(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(48, 71)
+        return repository.getListOfWeatherPoints(48, 71)
     }
 
     suspend fun next4D(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(72, 75)
+        return repository.getListOfWeatherPoints(72, 75)
     }
 
     suspend fun next5D(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(76, 83)
+        return repository.getListOfWeatherPoints(76, 83)
     }
 
     suspend fun next6D(): List<WeatherPointNew> {
-        return repository.getListOfWeatherPointsLists(84, 88)
+        return repository.getListOfWeatherPoints(84, 88)
     }
 
 

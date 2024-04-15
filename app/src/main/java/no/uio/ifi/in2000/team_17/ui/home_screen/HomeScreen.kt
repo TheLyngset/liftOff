@@ -22,6 +22,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,15 +44,21 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
-    onValidate: (String, String) -> Unit
+    homeScreenUiState: StateFlow<HomeScreenUiState>,
+    toAdvancedSettings: () -> Unit,
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
+    onLoad: () -> Unit
 ) {
+
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(homeScreenUiState.latLng, 11f)
+        position = CameraPosition.fromLatLngZoom(homeScreenUiState.value.latLng, 11f)
     }
 
     Column(modifier.fillMaxSize()) {
@@ -67,29 +74,29 @@ fun HomeScreen(
                 properties = MapProperties(mapType = MapType.SATELLITE)
             ) {
                 Marker(
-                    state = MarkerState(position = homeScreenUiState.latLng),
+                    state = MarkerState(position = homeScreenUiState.collectAsState().value.latLng),
                     title = "Test",
                     snippet = "Marker not in Singapore"
                 )
             }
         }
-        LaunchClearanceCard("Launch clearance for current input: ${homeScreenUiState.canLaunch}")
+        LaunchClearanceCard("Launch clearance for current input: ${homeScreenUiState.collectAsState().value.canLaunch}")
         DateTime(
-            homeScreenUiState.weatherPointList.first().date!!,
-            homeScreenUiState.weatherPointList.first().time!!
+            homeScreenUiState.collectAsState().value.weatherPointList.first().date!!,
+            homeScreenUiState.collectAsState().value.weatherPointList.first().time!!
         )
-        LastUpdated(homeScreenUiState.updated)
+        LastUpdated(homeScreenUiState.collectAsState().value.updated)
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Ground wind", homeScreenUiState.weatherPointList.first().windSpeed, "m/s"),
+                Triple("Ground wind", homeScreenUiState.collectAsState().value.weatherPointList.first().windSpeed, "m/s"),
                 Triple(
                     "Max wind",
-                    homeScreenUiState.weatherPointList.maxOf { it.windSpeed },
+                    homeScreenUiState.collectAsState().value.weatherPointList.maxOf { it.windSpeed },
                     "m/s"
                 ),
                 Triple(
                     "Max Shear",
-                    homeScreenUiState.weatherPointList.maxOf { it.windShear },
+                    homeScreenUiState.collectAsState().value.weatherPointList.maxOf { it.windShear },
                     "m/s"
                 )
             )
@@ -98,19 +105,24 @@ fun HomeScreen(
             weatherInfoList = listOf(
                 Triple(
                     "Cloud coverage",
-                    homeScreenUiState.weatherPointList.first().cloudFraction,
+                    homeScreenUiState.collectAsState().value.weatherPointList.first().cloudFraction,
                     "%"
                 ),
-                Triple("Rain", homeScreenUiState.weatherPointList.first().rain, "mm"),
-                Triple("Fog", homeScreenUiState.weatherPointList.first().fog, "%"),
-                Triple("Humidity", homeScreenUiState.weatherPointList.first().humidity, "%"),
-                Triple("Dewpoint", homeScreenUiState.weatherPointList.first().dewPoint, "˚C"),
+                Triple("Rain", homeScreenUiState.collectAsState().value.weatherPointList.first().rain, "mm"),
+                Triple("Fog", homeScreenUiState.collectAsState().value.weatherPointList.first().fog, "%"),
+                Triple("Humidity", homeScreenUiState.collectAsState().value.weatherPointList.first().humidity, "%"),
+                Triple("Dewpoint", homeScreenUiState.collectAsState().value.weatherPointList.first().dewPoint, "˚C"),
             )
         )
         InputSheet(
             Modifier.fillMaxWidth(),
-            homeScreenUiState = homeScreenUiState
-        ) { latLngString, maxHeightText -> onValidate(latLngString, maxHeightText) }
+            homeScreenUiState = homeScreenUiState.collectAsState().value,
+            toAdvancedSettings = toAdvancedSettings,
+            setMaxHeight = { setMaxHeight(it) },
+            setLat = { setLat(it) },
+            setLng = { setLng(it) },
+            onLoad = onLoad
+        )
     }
 }
 
@@ -229,7 +241,11 @@ fun LaunchClearanceCard(canLaunch: String) {
 fun InputSheet(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
-    onValidate: (String, String) -> Unit
+    toAdvancedSettings: () -> Unit,
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
+    onLoad: () -> Unit
 ) {
     var sheetState by remember { mutableStateOf(false) }
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -241,8 +257,12 @@ fun InputSheet(
         ModalBottomSheet(onDismissRequest = { sheetState = false }) {
             InputSheetContent(
                 homeScreenUiState = homeScreenUiState,
-                onValidate = { latLngString, maxHeightText ->
-                    onValidate(latLngString, maxHeightText)
+                toAdvancedSettings = toAdvancedSettings,
+                setMaxHeight = { setMaxHeight(it) },
+                setLat = {setLat(it)},
+                setLng = {setLng(it)},
+                onLoad = {
+                    onLoad()
                     sheetState = false
                 }
             )
@@ -254,44 +274,48 @@ fun InputSheet(
 fun InputSheetContent(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
-    onValidate: (String, String) -> Unit
+    toAdvancedSettings:()->Unit,
+    setMaxHeight:(String) -> Unit,
+    setLat:(String) -> Unit,
+    setLng:(String) -> Unit,
+    onLoad:() -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
-    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
-    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
-    var showAdvancedSettings by remember { mutableStateOf(false) }
+    var maxHeightText by remember { mutableStateOf("") }
+    var latString by remember { mutableStateOf("") }
+    var lngString by remember { mutableStateOf("") }
     Column(
         modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InputTextField(
-            value = maxHeightText,
-            onValueChange = { maxHeightText = it },
-            label = "Maximum height in km"
-        )
-        Row(
-            Modifier.padding(horizontal = 40.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            InputTextField(
+                value = maxHeightText,
+                onValueChange = { maxHeightText = it },
+                label = "Maximum height in km"
+            ) { setMaxHeight(maxHeightText) }
+            Text(homeScreenUiState.maxHeight.toString())
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
                 value = latString,
                 onValueChange = { latString = it },
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
-            )
+            ){ setLat(latString) }
+            Text(homeScreenUiState.latLng.latitude.toString())
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
-            )
+            ){ setLng(lngString) }
+            Text(homeScreenUiState.latLng.longitude.toString())
         }
-        Button(
-            onClick = { onValidate("$latString, $lngString", maxHeightText) }) {
-            Text("Validate")
-        }
+        Button(onClick = onLoad) { Text(text = "Load new settings")}
         ListItem(
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
             headlineContent = {
@@ -309,33 +333,22 @@ fun InputSheetContent(
                         modifier = Modifier.padding(horizontal = 24.dp),
                         text = "The settings under are set with apropriate standard values, read more about why theese values have been chosen here"
                     )
-                    if (!showAdvancedSettings)
-                        Button(onClick = { showAdvancedSettings = true }) {
-                            Text("Show advanced settings")
-                        }
-                    else {
-                        Button(onClick = { showAdvancedSettings = false }) {
-                            Text("Hide advanced settings")
-                        }
-                        OutlinedTextField(value = "Advanced setting 1", onValueChange = {})
-                        OutlinedTextField(value = "Advanced setting 2", onValueChange = {})
-                        OutlinedTextField(value = "Advanced setting 3", onValueChange = {})
-                        Button(onClick = { /*TODO*/ }) {
-                            Text("Reset advanced settings")
-                        }
-                    }
                 }
             }
         )
+        Button(onClick = {toAdvancedSettings()}) {
+            Text(text = "Advanced settings")
+        }
     }
 }
 
 @Composable
 fun InputTextField(
+    modifier: Modifier = Modifier,
     value: String,
-    onValueChange: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    onValueChange: (String) -> Unit,
+    onDone: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
@@ -350,6 +363,7 @@ fun InputTextField(
         keyboardActions = KeyboardActions(
             onDone = {
                 keyboardController?.hide()
+                onDone(value)
             }
         ),
         modifier = modifier
