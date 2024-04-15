@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.maps.android.compose.rememberCameraPositionState
 import no.uio.ifi.in2000.team_17.R
+import kotlin.reflect.jvm.internal.impl.types.TypeCheckerState.SupertypesPolicy.None
 
 @Composable
 fun newHomeScreen(modifier: Modifier = Modifier) {
@@ -162,7 +163,9 @@ fun SegmentedButton(modifier: Modifier){
             SegmentedButton(
                 selected = selectedIndex == index,
                 onClick = { selectedIndex = index},
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size))
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                icon = {}
+            )
             {
                 Text(text = option)
             }
@@ -194,7 +197,8 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
                 Image(
                     painter = image,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .size(35.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
