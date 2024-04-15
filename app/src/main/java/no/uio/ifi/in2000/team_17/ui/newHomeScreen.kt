@@ -53,6 +53,7 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
         .fillMaxSize(1f)
 
 
+
     ){
         Image(painter = painterResource(id = R.drawable.sky),
             contentDescription = null, contentScale = ContentScale.FillBounds,
