@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -65,7 +68,18 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
                     translationX = 100f
                 )
 
+        )
+        Image(painter = painterResource(id = R.drawable.rakett),
+            contentDescription = null, contentScale = ContentScale.FillBounds,
+            modifier = Modifier.graphicsLayer (
+                scaleX = 0.27f,
+                scaleY = 0.47f,
+                translationY = -250f
             )
+            .alpha(0.85f)
+        )
+
+
     }
     Box(modifier = Modifier
         .fillMaxSize(1f),
@@ -106,10 +120,11 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
             WeatherCardGrid(weatherInfoList = listOf(
                 WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon))
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+
             ))
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             SegmentedButton(modifier = Modifier.fillMaxWidth())
         }
@@ -131,7 +146,10 @@ fun LaunchClearanceCard1(canLaunch: String) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(Modifier.fillMaxWidth()) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                        ) {
                 Image(
                     painter = painterResource(id = R.drawable.greenlight),
                     contentDescription = "GreenLightIcon",
@@ -194,7 +212,8 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
                 Image(
                     painter = image,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .size(35.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -208,6 +227,8 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     }
 }
 
+//.verticalScroll(rememberScrollState())
+//cloud coverage, lazy row, liste med alle objektene, sorteres etter
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>) {
     Card {
