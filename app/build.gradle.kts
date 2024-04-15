@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
@@ -89,6 +90,7 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.google.maps.android:maps-compose:4.3.3")
+    //noinspection GradleCompatible
     api ("com.google.android.gms:play-services-location:9.6.1")
 
     implementation  ("androidx.datastore:datastore:1.0.0")
