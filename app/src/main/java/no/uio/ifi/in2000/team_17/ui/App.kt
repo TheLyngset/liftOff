@@ -2,11 +2,6 @@ package no.uio.ifi.in2000.team_17.ui
 
 import android.graphics.Paint.Align
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,14 +36,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
+import no.uio.ifi.in2000.team_17.viewModelFactory
 import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String, val logo: Int) {
-    Home(title = "Home Screen", logo = R.drawable.logoicon),
-
-    Input(title = "Input Screen", logo = R.drawable.logor)
+    Home(title = "Home Screen", logo = R.drawable.logor),
+    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor)
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +58,7 @@ fun AppTopBar(
     logoId: Int
  ){
     TopAppBar(
-        
+
         title = {
 
             Row (modifier = Modifier.fillMaxWidth(),
@@ -86,12 +86,23 @@ fun App(
     navController:NavHostController = rememberNavController(),
 
 ){
-    val uiViewModel: UiViewModel = viewModel()
-    val uiState by uiViewModel.uiState.collectAsState()
+    //Using viewModel Factories to take the repository created in Main activity as a parameter
+    //Todo implemnt the new viewModelFactory for this viewModel
+    val homeScreenViewModel: HomeScreenViewModel = viewModel(
+        factory = viewModelFactory {
+            HomeScreenViewModel(App.appModule.repository, App.appModule.settingsRepository, App.appModule.advancedSettingsRepository)
+        }
+    )
+    val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    val advancedSettingsViewModel = viewModel<AdvancedSettingsViewModel>(
+        factory = viewModelFactory {
+            AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -126,19 +137,12 @@ fun App(
                         .padding(innerPadding)
                         .verticalScroll(scrollStateVertical))
             }
-            composable(route = Screen.Input.name){
-                InputScreen(Modifier.padding(innerPadding), uiState){latLngString, maxHeightString ->
-                    try {
-                        val latLng = LatLng(latLngString.split(", ")[0].toDouble(),latLngString.split(", ")[1].toDouble())
-                        val maxHeight = maxHeightString.toInt()
-                        uiViewModel.load(latLng, maxHeight)
-                        navController.navigate(Screen.Home.name)
-                    }catch (e:NumberFormatException){
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Invalid input"
-                            )
-                        }
+            composable(route = Screen.AdvancedSettings.name){
+                AdvancedSettingsScreen(Modifier.padding(innerPadding),viewModel = advancedSettingsViewModel, Navigate = {navController.navigate(Screen.Home.name)}){
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Invalid input"
+                        )
                     }
                 }
             }

@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team_17.dataLayerUnitTests
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import no.uio.ifi.in2000.team_17.data.launchClearance
-import no.uio.ifi.in2000.team_17.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.WeatherPointOld
 import org.junit.Test
 
 class LaunchClearanceUnitTest {
@@ -24,7 +24,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -61,7 +61,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -99,7 +99,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -138,7 +138,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -176,7 +176,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 25.0
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -214,7 +214,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -252,7 +252,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.5
         val fog = 0.5
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,
@@ -289,7 +289,7 @@ class LaunchClearanceUnitTest {
         val maxWindShear = 24.0
         val fog = 0.0
 
-        val mockGroundWeatherPoint = WeatherPoint(
+        val mockGroundWeatherPoint = WeatherPointOld(
             windSpeed = windSpeed,
             windDirection = windFromDirection,
             windShear = windShear,

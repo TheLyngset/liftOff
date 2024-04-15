@@ -1,17 +1,27 @@
 package no.uio.ifi.in2000.team_17.data
 
 import android.icu.util.Calendar
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricURL
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
-import no.uio.ifi.in2000.team_17.model.WeatherPoint
+import no.uio.ifi.in2000.team_17.model.WeatherPointNew
+import no.uio.ifi.in2000.team_17.model.WeatherPointOld
+import no.uio.ifi.in2000.team_17.model.WeatherPointsResults
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Details
 import no.uio.ifi.in2000.team_17.model.weatherDTO.LocationforecastDTO
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
@@ -24,12 +34,19 @@ const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 
+
 interface Repository {
     suspend fun load(latLng: LatLng, heigth: Int)
-    suspend fun getListOfWeatherPointsLists(
+    suspend fun getListOfWeatherPoints(
         from: Int,
         to: Int
-    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>>
+    ): List<WeatherPointNew>
+
+    fun getWeatherPointList(): StateFlow<List<WeatherPointOld>>
+
+    val updatedAt: StateFlow<String>
+    suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew>
+    suspend fun getWeatherPointsResults(): WeatherPointsResults
 }
 
 /**
@@ -46,9 +63,9 @@ interface Repository {
  */
 class RepositoryImplementation : Repository {
     private val LOG_NAME = "REPOSITORY"
-    private var hourIndex = 2
-    private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
-    private var maxHeight: Int = 3
+    private var dayligthSavingAdd = 2
+    //private var coordinates: LatLng = LatLng(59.96144907197439, 10.713250420850423)
+    //private var maxHeight: Int = 3
 
     // Load data from isoBaricDataSource and locationForecast
     private val locationForecastDataSource: LocationForecastDataSource =
@@ -59,11 +76,29 @@ class RepositoryImplementation : Repository {
     private val isoBaricData = MutableStateFlow(IsoBaricModel())
     private val locationForecastData = MutableStateFlow(LocationforecastDTO(null, null, null))
 
-    //does this need to be a state flow?
-    val weatherPointList = MutableStateFlow<List<WeatherPoint>>(listOf())
+    //makes a list of weatherPoint with ground level data and lists of layers in alltitude
+    val weatherPointList = MutableStateFlow(listOf(WeatherPointOld()))
     var flowOfWeatherPointLists =
-        MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPoint>>>())
-    var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPoint>>>()
+        MutableStateFlow(mutableListOf<MutableStateFlow<List<WeatherPointOld>>>())
+    var listOfWeatherPointLists = mutableListOf<MutableStateFlow<List<WeatherPointOld>>>()
+
+    //makes a list of weather points, each holding only data neeeded for the UI
+    private var listOfWeatherPoints = mutableListOf(WeatherPointNew())
+    override suspend fun getListOfWeatherPointsNew(): List<WeatherPointNew> {
+        return listOfWeatherPoints
+    }
+
+    //updatable variable that holds an object with lists of values for each of the variables that are used in the ResultsUI
+    private var weatherPointsResults = WeatherPointsResults()
+    override suspend fun getWeatherPointsResults(): WeatherPointsResults {
+        return weatherPointsResults
+    }
+
+
+    private val _updatedAt = MutableStateFlow("00")
+    @RequiresApi(Build.VERSION_CODES.O)
+    override val updatedAt = _updatedAt.asStateFlow()
+
 
 
     /**
@@ -71,12 +106,29 @@ class RepositoryImplementation : Repository {
      * @param latLng is a latitude and longitude object
      * @param maxHeight sets maximum needed height for showing later
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun load(latLng: LatLng, heigth: Int) {
-        coordinates = latLng
-        maxHeight = heigth
-        loadLocationForecast()
-        loadIsobaric()
-        generateWeatherPointList(generateGroundWeatherPoint(hourIndex))
+/*        coordinates = latLng
+        maxHeight = heigth*/
+
+        loadLocationForecast(latLng)
+        loadIsobaric(latLng)
+        generateWeatherPointList(generateGroundWeatherPoint(0), heigth)
+        _updatedAt.update { updatedAt() }
+    }
+
+    override fun getWeatherPointList(): StateFlow<List<WeatherPointOld>> {
+        return weatherPointList.asStateFlow()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updatedAt(): String {
+        val dateTimeString =
+            locationForecastData.value.properties?.meta?.updated_at
+        val dateTime = LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME)
+        val time = dateTime.toLocalTime()
+        val updatedTime = time.plusHours(dayligthSavingAdd.toLong())
+        return updatedTime.toString()
     }
 
     /**
@@ -85,12 +137,12 @@ class RepositoryImplementation : Repository {
      * @param latLng latitudal and longitudal coordinate
      * @return LocationforecastDTO()
      */
-    private suspend fun loadLocationForecast() {
+    private suspend fun loadLocationForecast(latLng: LatLng) {
         locationForecastData.update {
             try {
                 locationForecastDataSource.fetchLocationforecast(
-                    round(coordinates.latitude),
-                    round(coordinates.longitude)
+                    round(latLng.latitude),
+                    round(latLng.longitude)
                 )
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
@@ -102,12 +154,13 @@ class RepositoryImplementation : Repository {
         }
     }
 
-    private suspend fun loadIsobaric() {
+    private suspend fun loadIsobaric(latLng: LatLng) {
         try {
             isoBaricData.update {
                 isobaricDataSource.getData(
-                    coordinates.latitude,
-                    coordinates.longitude
+                    latLng.latitude,
+                    latLng.longitude,
+                    isoBaricURL = IsoBaricURL.NOW
                 )
             }
         } catch (e: IOException) {
@@ -117,20 +170,19 @@ class RepositoryImplementation : Repository {
             Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
             IsoBaricModel()
         }
-
     }
-
 
     /**
      * Loads data from [isobaricDataSource]
-     * based on locationForecasst ground weather points creates [WeatherPoint]'s.
+     * based on locationForecasst ground weather points creates [WeatherPointOld]'s.
      * These are loaded into weatherPointList
      * Creates weatherpoints and adds them to weatherPointList
      * @param groundWeatherPoint weather data at ground-height
      */
     private fun generateWeatherPointList(
-        groundWeatherPoint: WeatherPoint
-    ): MutableStateFlow<List<WeatherPoint>> {
+        groundWeatherPoint: WeatherPointOld,
+        maxHeight: Int
+    ): MutableStateFlow<List<WeatherPointOld>> {
         val pressureAtSeaLevel = groundWeatherPoint.pressure
 
         // Parses data from isoBaricData into relevant values
@@ -160,7 +212,7 @@ class RepositoryImplementation : Repository {
                     listOf(speed, direction, temperature, shear)
                 }
                 .zip(pressures) { (speed, direction, temperature, shear), pressure ->
-                    WeatherPoint(
+                    WeatherPointOld(
                         windSpeed = speed,
                         windDirection = direction,
                         windShear = shear,
@@ -171,21 +223,70 @@ class RepositoryImplementation : Repository {
                 }
             allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
         }
+
+        //safechecks maxwind speed and share before adding it to the weather point object
+        var maxWindSpeed = windSpeed.maxOrNull()
+        var maxWindShear = windShear.maxOrNull()
+
+        if (maxWindSpeed == null) {
+            maxWindSpeed = -1.0
+        }
+        if (maxWindShear == null) {
+            maxWindShear = -1.0
+        }
+        //adds the relevant values to a weatherPoint that holds only information that is needed for the Ui
+        val newWeatherPoint = WeatherPointNew(
+            date = groundWeatherPoint.date,
+            time = groundWeatherPoint.time,
+            groundWindSpeed = groundWeatherPoint.windSpeed,
+            maxWindSpeed = maxWindSpeed,
+            maxWindShear = maxWindShear,
+            cloudFraction = groundWeatherPoint.cloudFraction,
+            rain = groundWeatherPoint.rain,
+            humidity = groundWeatherPoint.humidity,
+            dewPoint = groundWeatherPoint.dewPoint,
+            fog = groundWeatherPoint.fog
+        )
+        //adds the weatherpoint above to a list of weather points
+        listOfWeatherPoints.add(newWeatherPoint)
+
+        ///adding values to weatherPointsResults for each variable used for the results UI
+        groundWeatherPoint.date?.let { weatherPointsResults.date.add(it) }
+        groundWeatherPoint.time?.let { weatherPointsResults.time.add(it) }
+        groundWeatherPoint.windSpeed?.let { weatherPointsResults.groundWindSpeed.add(it) }
+        maxWindSpeed?.let { weatherPointsResults.maxWindSpeed.add(it) }
+        maxWindShear?.let { weatherPointsResults.maxWindShear.add(it) }
+        groundWeatherPoint.cloudFraction?.let { weatherPointsResults.cloudFraction.add(it) }
+        groundWeatherPoint.rain?.let { weatherPointsResults.rain.add(it) }
+        groundWeatherPoint.humidity?.let { weatherPointsResults.humidity.add(it) }
+        groundWeatherPoint.dewPoint?.let { weatherPointsResults.dewPoint.add(it) }
+        groundWeatherPoint.fog?.let { weatherPointsResults.fog.add(it) }
+
+
+        //this is the pointList used on the homescreen in MVP
         return weatherPointList
 
     }
 
-    override suspend fun getListOfWeatherPointsLists(
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun getListOfWeatherPoints(
         from: Int,
         to: Int
-    ): MutableStateFlow<MutableList<MutableStateFlow<List<WeatherPoint>>>> {
+    ): List<WeatherPointNew> {
         // adding this existing weather point list to the list of lists
-        //index 2 : NO time, index 53 - 48 hours from NO time
+        //index 2 : norwegian time, index 53 - 48 hours from NO time
         for (index in from..to) {
-            listOfWeatherPointLists.add(generateWeatherPointList(generateGroundWeatherPoint(index)))
+            listOfWeatherPointLists.add(
+                generateWeatherPointList(
+                    generateGroundWeatherPoint(
+                        index
+                    ),3
+                )
+            )
         }
         flowOfWeatherPointLists = MutableStateFlow(listOfWeatherPointLists)
-        return flowOfWeatherPointLists
+
+        return listOfWeatherPoints.toList()
     }
 
     /**
@@ -193,31 +294,37 @@ class RepositoryImplementation : Repository {
      * @return weatherpoint with ground level information
      * @author Lelia
      */
-    private fun generateGroundWeatherPoint(hourIndex: Int): WeatherPoint {
-        //rain data available: next hour, next 6 hours, next 12 hours.
-        //default rain: next hour.
-        //default time: UTC
-
-        //Compute local time from UTC + timezone + DST.
-        // UTC time for current day is at index 0 - Norwegian time is UTC + 2 (from last sunday in March) during summer and UTC + 1 during winter (from last sunday in October) .
-        // DST changes: Last sunday in March and last sunday in October
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun generateGroundWeatherPoint(hourIndex: Int): WeatherPointOld {
 
         changeDSTBasedOnDate() //resetting addDaylightSave to 1 or 2 based on current month
-
-        val timeSeriesInstantDetails: Details? = // Reduces boilerplate later on
+        val timeSerieDetails: Details? =
             locationForecastData.value.properties?.timeseries?.getOrNull(hourIndex)?.data?.instant?.details
 
-        return WeatherPoint(
-            windSpeed = timeSeriesInstantDetails!!.wind_speed,
-            windDirection = timeSeriesInstantDetails.wind_from_direction,
-            temperature = timeSeriesInstantDetails.air_temperature,
-            pressure = timeSeriesInstantDetails.air_pressure_at_sea_level,
-            cloudFraction = timeSeriesInstantDetails.cloud_area_fraction,
+        //dateTime extraction
+        val dateTimeString =
+            locationForecastData.value.properties?.timeseries?.getOrNull(hourIndex)?.time
+
+        val dateTime = LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME)
+
+        val date = dateTime.toLocalDate()
+        val time = dateTime.toLocalTime()
+        val updatedTime = time.plusHours(dayligthSavingAdd.toLong())
+
+
+        return WeatherPointOld(
+            date = date.toString(),
+            time = (updatedTime).toString(),
+            windSpeed = timeSerieDetails!!.wind_speed,
+            windDirection = timeSerieDetails.wind_from_direction,
+            temperature = timeSerieDetails.air_temperature,
+            pressure = timeSerieDetails.air_pressure_at_sea_level,
+            cloudFraction = timeSerieDetails.cloud_area_fraction,
             rain = locationForecastData.value.properties!!.timeseries.getOrNull(hourIndex)!!.data.next_1_hours.details.precipitation_amount,
-            humidity = timeSeriesInstantDetails.relative_humidity,
+            humidity = timeSerieDetails.relative_humidity,
             height = locationForecastData.value.geometry?.coordinates?.getOrNull(2)!!,
-            dewPoint = timeSeriesInstantDetails.dew_point_temperature,
-            fog = timeSeriesInstantDetails.fog_area_fraction
+            dewPoint = timeSerieDetails.dew_point_temperature,
+            fog = timeSerieDetails.fog_area_fraction
         )
     }
 
@@ -232,9 +339,9 @@ class RepositoryImplementation : Repository {
         // Note: months are 0-based (January is 0)
         // Change the value of the variable based on the date
         if (month >= 3 && month <= 10) { //April to (including) October.
-            hourIndex = 2
+            dayligthSavingAdd = 2
         } else { // December - March
-            hourIndex = 1
+            dayligthSavingAdd = 1
         }
     }
 }
@@ -243,13 +350,8 @@ class RepositoryImplementation : Repository {
 internal fun calculateHeight(
     pressure: Double, temperature: Double, pressureAtSeaLevel: Double
 ): Double {
-    //https://en.wikipedia.org/wiki/Barometric_formula
+    // https://en.wikipedia.org/wiki/Barometric_formula
     val tempInKelvin = temperature + 273.15
-
-    /* round(
-        (MOLAR_GAS_CONSTANT / GRAVITATIONAL_ACCELERATION) * tempInKelvin
-                * ln((pressureAtSeaLevel / pressure))
-    ) */
 
     return round(
         (-MOLAR_GAS_CONSTANT * tempInKelvin) * ln(pressure / pressureAtSeaLevel) /
@@ -278,21 +380,3 @@ internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doub
     )
 }
 
-/**
- * Calculates the dew point at ground level considering the temperature and the relative humidity.
- * Uses the formula: T - ((100 - RH) / 5), where T is the temperature and RH is the relative humidity.
- * Note: This relationship is fairly accurate for relative humidity values above 50%.
- * @param temperature Observed temperature
- * @param relativeHumidity Relative humidity
- * @return Dew point at ground level, if temperature and relative humidity are not null. Otherwise, returns -1.
- */
-/*internal fun computeDewPointGround(temperature: Double?, relativeHumidity: Double?): Double {
-    //https://iridl.ldeo.columbia.edu/dochelp/QA/Basic/dewpoint.html
-    // accuracy within 1 Celcius for relative humidity over 50%
-    if (temperature != null && relativeHumidity != null) {
-        return round((temperature - ((100 - relativeHumidity) / 5)))
-    }
-    return -1.0
-}
-
- */
