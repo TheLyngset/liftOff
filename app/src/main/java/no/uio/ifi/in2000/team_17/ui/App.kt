@@ -2,6 +2,10 @@ package no.uio.ifi.in2000.team_17.ui
 
 import android.graphics.Paint.Align
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -47,7 +51,7 @@ import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String, val logo: Int) {
-    Home(title = "Home Screen", logo = R.drawable.logor),
+    Home(title = "Home Screen", logo = R.drawable.logoicon),
     AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor)
 }
 @OptIn(ExperimentalMaterial3Api::class)

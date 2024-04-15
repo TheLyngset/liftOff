@@ -90,6 +90,7 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.google.maps.android:maps-compose:4.3.3")
+    //noinspection GradleCompatible
     api ("com.google.android.gms:play-services-location:9.6.1")
 
     implementation  ("androidx.datastore:datastore:1.0.0")
