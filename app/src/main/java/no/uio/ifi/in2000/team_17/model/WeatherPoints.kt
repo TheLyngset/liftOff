@@ -56,3 +56,26 @@ data class WeatherPointsResults(
     var fog: MutableList<Double> = mutableListOf()
 )
 
+/*
+A data class containing lists for each parameter where indexes correspond to hours in the future
+*/
+data class WeatherDataLists(
+    val date: List<String> = listOf(),
+    val time: List<String> = listOf(),
+    val groundWind: List<WindLayer> = listOf(),
+    val maxWindShear: List<Double> = listOf(),
+    val maxWindSpeed: List<WindLayer> = listOf(),
+    val cloudFraction: List<Double> = listOf(),
+    val rain: List<Double> = listOf(),
+    val humidity: List<Double> = listOf(),
+    val dewPoint: List<Double> = listOf(),
+    val fog: List<Double> = listOf()
+)
+
+data class WindLayer(
+    val speed: Double = 0.0,
+    val height: Double = 0.0,
+    val direction: Double = 0.0
+)
+
+
