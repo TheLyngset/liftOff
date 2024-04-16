@@ -72,26 +72,22 @@ fun newHomeScreen(
         )
         Image(painter = painterResource(id = R.drawable.rakett),
             contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier.graphicsLayer (
-                scaleX = 0.27f,
-                scaleY = 0.47f,
-                translationY = -250f
-            )
-            .alpha(0.85f)
+            modifier = Modifier
+                .graphicsLayer(
+                    scaleX = 0.27f,
+                    scaleY = 0.47f,
+                    translationY = -250f
+                )
+                .alpha(0.85f)
         )
-
-
     }
     Box(modifier = Modifier
         .fillMaxSize(1f),
         contentAlignment = Alignment.BottomCenter
     ){
         BottomCard(homeScreenUiState)
-
     }
 }
-//skriften er satt, må endre til om den er true eller ikke
-//jeg satte også noen verdier, i stedenfor å legge til uiState
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
     Card(
@@ -103,7 +99,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             Modifier
                 .fillMaxWidth()
 
-                .padding(top = 10.dp, bottom = 10.dp)
+                .padding(top = 10.dp, bottom = 70.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -160,27 +156,6 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SegmentedButton(){
-    val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
-    var selectedIndex by remember { mutableIntStateOf(0) }
-
-    SingleChoiceSegmentedButtonRow {
-        options.forEachIndexed { index, option ->
-            SegmentedButton(
-                selected = selectedIndex == index,
-                onClick = { selectedIndex = index},
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                icon = {}
-            )
-            {
-                Text(text = option)
             }
         }
     }
