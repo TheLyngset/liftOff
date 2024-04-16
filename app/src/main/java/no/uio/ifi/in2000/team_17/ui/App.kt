@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
@@ -201,6 +202,20 @@ fun SegmentedButton(){
                 onClick = { selectedIndex = index},
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
+                colors = SegmentedButtonColors(
+                    activeContainerColor = Color(0xFF9DDDF9),
+                    activeBorderColor = Color.DarkGray,
+                    activeContentColor = Color.Black,
+                    inactiveBorderColor = Color.DarkGray,
+                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContentColor = Color.Black,
+                    disabledActiveBorderColor = Color.DarkGray,
+                    disabledActiveContainerColor = Color.Unspecified,
+                    disabledActiveContentColor = Color.Black,
+                    disabledInactiveBorderColor = Color.DarkGray,
+                    disabledInactiveContainerColor = Color.Unspecified,
+                    disabledInactiveContentColor = Color.Black
+                ),
                 modifier = Modifier
                     .padding(bottom = 15.dp)
             )
