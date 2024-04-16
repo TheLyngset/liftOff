@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -32,11 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -64,7 +61,8 @@ enum class Screen(val title: String, val logo: Int) {
 @Composable
 fun AppTopBar(
     logoId: Int,
-    onSearchClick : () -> Unit
+    onSearchClick : () -> Unit,
+    onLogoClick : () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -72,7 +70,12 @@ fun AppTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Image(painter = painterResource(id = logoId), contentDescription = "Logo")
+                Image(
+                    painter = painterResource(id = logoId),
+                    contentDescription = "Logo",
+                    modifier = Modifier.clickable {onLogoClick() }
+                    )
+
                 Text(
                     text = "Oslo",
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
@@ -129,7 +132,8 @@ fun App(
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
-                onSearchClick = {sheetState = true}
+                onSearchClick = {sheetState = true},
+                onLogoClick = {navController.navigate("Home")}
             )
         },
         bottomBar = {
