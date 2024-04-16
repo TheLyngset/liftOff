@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
@@ -27,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -51,8 +54,8 @@ import java.lang.NumberFormatException
 
 
 enum class Screen(val title: String, val logo: Int) {
-    Home(title = "Home Screen", logo = R.drawable.logoicon),
-    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor)
+    Home(title = "Home Screen", logo = R.drawable.logos),
+    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logos)
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,30 +63,47 @@ fun AppTopBar(
     modifier: Modifier = Modifier,
     currentScreen: Screen,
     logoId: Int
- ){
+) {
     TopAppBar(
-
         title = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Each child of Row takes up equal space
+                Image(
+                    painter = painterResource(id = logoId),
+                    contentDescription = "Logo",
+                    modifier = Modifier
 
-            Row (modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween){
-                Image(painter = painterResource(id = logoId), contentDescription = "Logo")
-                Text(text = "Oslo", modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp))
+                        .padding(5.dp)
+                        .size(70.dp)
+                )
+                Text(
+                    text = "Oslo",
+                    modifier = Modifier
+
+                        .padding(10.dp)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
+                )
                 Image(
                     painter = painterResource(id = R.drawable.search_24px),
                     contentDescription = "Search",
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                    modifier = Modifier
+                        
+                        .padding(5.dp)
+                        .size(40.dp)
                 )
             }
         },
-
-
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.White.copy(alpha = 0.65f)
-            //MaterialTheme.colorScheme.primaryContainer
         )
     )
 }
+
 
 @Composable
 fun App(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
@@ -58,6 +60,7 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
 
 
 
+
     ){
         Image(painter = painterResource(id = R.drawable.sky),
             contentDescription = null, contentScale = ContentScale.FillBounds,
@@ -98,12 +101,16 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
         Modifier
             .fillMaxWidth()
             .padding(2.dp)
+
+
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
+
                 .padding(top = 10.dp, bottom = 10.dp)
                 .padding(horizontal = 16.dp),
+
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -122,7 +129,12 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
                 WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-
+                //Ekstra verdier for test
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
             ))
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -161,7 +173,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
 
                 Spacer(modifier = Modifier.width(38.dp))
                 Text(canLaunch, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                        fontSize = 16.sp,
+                        fontSize = 25.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
@@ -196,9 +208,9 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     Card(
         modifier = Modifier
             .padding(3.dp)
-            .padding(top = 10.dp, bottom = 10.dp)
-            .fillMaxSize()
-            .size(110.dp)
+            .padding(top = 5.dp, bottom = 5.dp)
+            .size(120.dp)
+
     ) {
         Column(
             modifier = Modifier
@@ -235,10 +247,11 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>) {
     Card {
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
+        LazyHorizontalGrid(
+            GridCells.Fixed(1),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(130.dp)
         ) {
             items(weatherInfoList) { weatherInfo ->
                 CardItem(
