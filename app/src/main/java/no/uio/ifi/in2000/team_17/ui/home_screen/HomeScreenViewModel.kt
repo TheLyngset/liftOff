@@ -3,11 +3,9 @@ package no.uio.ifi.in2000.team_17.ui.home_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.AdvancedSettings
@@ -69,26 +67,4 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
     fun setTimeIndex(index: Int){
         viewModelScope.launch { settingsRepository.setTimeIndex(index) }
     }
-/*
-    fun findMaxSpeed(): Double {
-        return homeScreenUiState.value.weatherPointList.maxOf { it.windSpeed }
-    }
-
-    fun findMaxShear(): Double {
-        return homeScreenUiState.value.weatherPointList.maxOf { it.windShear }
-
-    }
-*/
-/*    fun canLaunch() {
-        viewModelScope.launch {
-            _homeScreenUiState.update {
-                it.copy(
-                    canLaunch = WeatherUseCase.canLaunch(
-                        homeScreenUiState.value.weatherPointList.first(),
-                        findMaxSpeed(), findMaxShear()
-                    )
-                )
-            }
-        }
-    }*/
 }

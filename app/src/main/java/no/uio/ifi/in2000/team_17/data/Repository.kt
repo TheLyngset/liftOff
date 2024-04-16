@@ -143,7 +143,7 @@ class RepositoryImplementation : Repository {
      * has lists of varying length depending in the data available
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    private suspend fun updateWeatherDataLists(maxHeight: Int) {
+    private fun updateWeatherDataLists(maxHeight: Int) {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
             val isobaricData = isoBaricData.value

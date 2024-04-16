@@ -13,7 +13,6 @@ import androidx.datastore.dataStore
 import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsSerializer
-import no.uio.ifi.in2000.team_17.data.RepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme

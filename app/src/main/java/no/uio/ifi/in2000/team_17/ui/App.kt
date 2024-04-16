@@ -51,14 +51,10 @@ enum class Screen(val title: String, val logo: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier,
-    currentScreen: Screen,
     logoId: Int
 ) {
     TopAppBar(
-
         title = {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -75,8 +71,6 @@ fun AppTopBar(
                 )
             }
         },
-
-
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.White.copy(alpha = 0.65f)
             //MaterialTheme.colorScheme.primaryContainer
@@ -116,10 +110,7 @@ fun App(
     Scaffold(
         topBar = {
             AppTopBar(
-                currentScreen = Screen.Home,
                 logoId = Screen.Home.logo,
-                modifier = Modifier
-                    .background(Color.White.copy(alpha = 0.7f))
             )
         },
         /*bottomBar = {

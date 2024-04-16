@@ -13,14 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
@@ -47,13 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.maps.android.compose.rememberCameraPositionState
 import no.uio.ifi.in2000.team_17.R
-import kotlin.reflect.jvm.internal.impl.types.TypeCheckerState.SupertypesPolicy.None
 
 @Composable
 fun newHomeScreen(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .fillMaxSize(1f)
 
 
@@ -129,7 +122,7 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            SegmentedButton(modifier = Modifier.fillMaxWidth())
+            SegmentedButton()
         }
     }
 }
@@ -174,7 +167,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SegmentedButton(modifier: Modifier){
+fun SegmentedButton(){
     val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -264,7 +257,7 @@ data class WeatherInfo(
 
 @Preview
 @Composable
-fun prehs(){
+fun Prehs(){
     newHomeScreen()
 }
 
