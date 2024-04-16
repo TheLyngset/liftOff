@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,18 +41,21 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
-import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
+import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.home_screen.newHomeScreen
+import no.uio.ifi.in2000.team_17.ui.judicial_screen.JudicialScreen
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
 
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
     AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor),
-    ResultsScreen(title = "Results Screen", logo = R.drawable.logor),
-    LawScreen(title = "Law Screen", logo = R.drawable.logor),
+    Data(title = "Data Screen", logo = R.drawable.logor),
+    Judicial(title = "Judicial Screen", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
 
 }
@@ -126,6 +128,17 @@ fun App(
             AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
         }
     )
+    val dataScreenViewModel = viewModel<DataScreenViewModel>(
+        factory = viewModelFactory {
+            DataScreenViewModel(
+                App.appModule.repository,
+                App.appModule.settingsRepository,
+                App.appModule.advancedSettingsRepository
+            )
+        }
+    )
+    val dataScreenUiState by dataScreenViewModel.dataScreenUiState.collectAsState()
+
     var sheetState by remember { mutableStateOf(false) }
 
 
@@ -138,7 +151,13 @@ fun App(
             )
         },
         bottomBar = {
-            BottomBar(modifier = Modifier.fillMaxWidth())
+            BottomBar(modifier = Modifier.fillMaxWidth()){
+                when(it){
+                    0 -> navController.navigate(Screen.Home.name)
+                    1 -> navController.navigate(Screen.Data.name)
+                    2 -> navController.navigate(Screen.Judicial.name)
+                }
+            }
                     },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
@@ -161,6 +180,15 @@ fun App(
                     }
                 }
             }
+            composable(route = Screen.Data.name){
+                DataScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    dataScreenUiState
+                    )
+            }
+            composable(route = Screen.Judicial.name){
+                JudicialScreen(modifier = Modifier.padding(innerPadding))
+            }
         }
     }
     //TODO: unitTesting
@@ -179,27 +207,34 @@ fun App(
 }
 
 @Composable
-fun BottomBar(modifier : Modifier){
+fun BottomBar(
+    modifier : Modifier,
+    onNavigate:(Int)-> Unit
+){
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SegmentedButton()
+        SegmentedButton(){onNavigate(it)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SegmentedButton(){
-    val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
+fun SegmentedButton(
+    onNavigate:(Int)->Unit
+){
+    val options = remember{ mutableStateListOf("Home", "Data", "Juridisk") }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 selected = selectedIndex == index,
-                onClick = { selectedIndex = index},
+                onClick = { selectedIndex = index
+                          onNavigate(index)},
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
                 colors = SegmentedButtonColors(

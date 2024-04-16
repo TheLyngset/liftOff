@@ -100,14 +100,15 @@ class RepositoryImplementation : Repository {
         var isoBaricNow = IsoBaricModel.Ranges()
         var isoBaricIn3 = IsoBaricModel.Ranges()
         var isoBaricIn9 = IsoBaricModel.Ranges()
-        try {
-            isoBaricNow = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges
-            isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges
-            isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges
-        } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
-            newIsoBaricModel.add(IsoBaricModel.Ranges())
-        }
+        try { isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
+        try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
+        try { isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
         for (i: Int in startIndex..8) {
             newIsoBaricModel.add(
                 when(i){
@@ -186,7 +187,7 @@ class RepositoryImplementation : Repository {
                     val index = windShear.indexOf(windShear.max())
                     WindShear(maxWindShear, it[index].height)
                 },
-                maxWindSpeed = listOfWeatherPointList.map {
+                maxWind = listOfWeatherPointList.map {
                     val windSpeed = it.map { it.windSpeed }
                     val maxWindSpeed = windSpeed.max()
                     val index = windSpeed.indexOf(maxWindSpeed)
