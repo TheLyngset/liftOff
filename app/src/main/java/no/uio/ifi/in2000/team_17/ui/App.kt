@@ -34,7 +34,7 @@ import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.ResultsScreen.ResultsScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
@@ -112,16 +112,6 @@ fun App(
         }
     )
 
-    val resultsScreenViewModel: ResultsScreenViewModel = viewModel(
-        factory = viewModelFactory {
-            ResultsScreenViewModel(
-                App.appModule.repository,
-                App.appModule.settingsRepository,
-                App.appModule.advancedSettingsRepository
-            )
-        }
-    )
-
 
     Scaffold(
         topBar = {
@@ -151,10 +141,16 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                newHomeScreen(
-                    Modifier
+                HomeScreen(
+                    modifier = Modifier
                         .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical)
+                        .verticalScroll(scrollStateVertical),
+                    homeScreenUiState = homeScreenUiState,
+                    toAdvancedSettings = { navController.navigate(Screen.AdvancedSettings.name) },
+                    setLat = {homeScreenViewModel.setLat(it.toDouble())},
+                    setLng = {homeScreenViewModel.setLng(it.toDouble())},
+                    setMaxHeight = {homeScreenViewModel.setMaxHeight(it.toInt())},
+                    onLoad = {}
                 )
             }
             composable(route = Screen.AdvancedSettings.name) {
