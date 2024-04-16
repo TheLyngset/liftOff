@@ -42,7 +42,7 @@ class LocationForecastDataSource {
      */
     suspend fun fetchLocationforecast(lat: Double, lon: Double): LocationforecastDTO {
 
-        var path = "weatherapi//locationforecast/2.0/complete?lat=${lat}&lon=${lon}"
+        val path = "weatherapi//locationforecast/2.0/complete?lat=${lat}&lon=${lon}"
 
         val response = client.get(path)
         Log.d("FetchLocationforecast", "${response.status}")

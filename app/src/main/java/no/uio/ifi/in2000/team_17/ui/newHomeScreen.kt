@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -50,9 +53,6 @@ import kotlin.reflect.jvm.internal.impl.types.TypeCheckerState.SupertypesPolicy.
 
 @Composable
 fun newHomeScreen(modifier: Modifier = Modifier) {
-    val cameraPositionState = rememberCameraPositionState {
-
-    }
     Box(modifier = Modifier
         .fillMaxSize(1f)
 
@@ -104,7 +104,7 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 10.dp)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
@@ -122,7 +122,9 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
                 WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-
+                WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
             ))
 
             Spacer(modifier = Modifier.height(5.dp))
