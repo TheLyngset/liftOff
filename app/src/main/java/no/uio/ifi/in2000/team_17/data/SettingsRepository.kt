@@ -16,4 +16,7 @@ class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     suspend fun setLng(lng: Double){
         settingsStore.updateData { it.toBuilder().setLng(lng).build() }
     }
+    suspend fun setTimeIndex(index: Int){
+        settingsStore.updateData { it.toBuilder().setTimeIndex(index).build() }
+    }
 }

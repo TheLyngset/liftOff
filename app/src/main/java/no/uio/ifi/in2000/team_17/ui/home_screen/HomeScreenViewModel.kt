@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -15,12 +14,11 @@ import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
-import no.uio.ifi.in2000.team_17.model.Thresholds
-import no.uio.ifi.in2000.team_17.model.WeatherPointOld
-import kotlin.math.ln
+import no.uio.ifi.in2000.team_17.model.WeatherDataLists
+import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 
 data class HomeScreenUiState(
-    val weatherPointList: List<WeatherPointOld> = listOf(WeatherPointOld()),
+    val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
     val canLaunch: Boolean = true,
@@ -29,33 +27,27 @@ data class HomeScreenUiState(
 
 class HomeScreenViewModel(private val repository: Repository, private val settingsRepository: SettingsRepository, private val advancedSettingsRepository: AdvancedSettingsRepository) : ViewModel() {
     val homeScreenUiState: StateFlow<HomeScreenUiState> = combine(
-        repository.getWeatherPointList(),
+        repository.weatherDataList,
         settingsRepository.settingsFlow,
         advancedSettingsRepository.advancedSettingsFlow,
-        repository.updatedAt
-    ){weatherPointList: List<WeatherPointOld>, settings: Settings, advancedSettings: AdvancedSettings, updatedAt:String ->
-        return@combine HomeScreenUiState(
-            weatherPointList = weatherPointList,
+    ){weatherDataList: WeatherDataLists, settings: Settings, advancedSettings: AdvancedSettings->
+        repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
+        val weatherPointInTime = weatherDataList.get(settings.timeIndex)
+        HomeScreenUiState(
+            weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
             canLaunch = WeatherUseCase.canLaunch(
-                weatherPoint = weatherPointList.first(),
-                maxWindSpeed = advancedSettings.maxWindSpeed,
-                maxShearWind = advancedSettings.maxWindShear,
-                threshholds = advancedSettings
+                weatherPointInTime,
+                advancedSettings
             ),
-            updated = updatedAt
+            updated = weatherDataList.updated
         )
     }.stateIn(
         viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HomeScreenUiState()
     )
-    fun load() {
-        viewModelScope.launch {
-            repository.load(homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
-        }
-    }
     fun setLat(lat:Double){
         viewModelScope.launch {
             settingsRepository.setLat(lat)
@@ -71,33 +63,8 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
             settingsRepository.setMaxHeight(height)
         }
     }
-/*
-    fun findMaxSpeed(): Double {
-        return homeScreenUiState.value.weatherPointList.maxOf { it.windSpeed }
+
+    fun setTimeIndex(index: Int){
+        viewModelScope.launch { settingsRepository.setTimeIndex(index) }
     }
-
-    fun findMaxShear(): Double {
-        return homeScreenUiState.value.weatherPointList.maxOf { it.windShear }
-
-    }
-*/
-
-    init {
-        viewModelScope.launch {
-            repository.load(homeScreenUiState.value.latLng, homeScreenUiState.value.maxHeight)
-        }
-    }
-
-/*    fun canLaunch() {
-        viewModelScope.launch {
-            _homeScreenUiState.update {
-                it.copy(
-                    canLaunch = WeatherUseCase.canLaunch(
-                        homeScreenUiState.value.weatherPointList.first(),
-                        findMaxSpeed(), findMaxShear()
-                    )
-                )
-            }
-        }
-    }*/
 }

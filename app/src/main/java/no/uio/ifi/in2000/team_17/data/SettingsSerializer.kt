@@ -13,6 +13,7 @@ object SettingsSerializer: Serializer<Settings>{
             .setMaxHeight(3)
             .setLat(59.96)
             .setLng(10.71)
+            .setTimeIndex(0)
             .build()
 
     override suspend fun readFrom(input: InputStream): Settings {

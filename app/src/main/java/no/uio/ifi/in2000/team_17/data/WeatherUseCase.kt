@@ -1,8 +1,8 @@
 package no.uio.ifi.in2000.team_17.data
 
 import no.uio.ifi.in2000.team17.AdvancedSettings
-import no.uio.ifi.in2000.team_17.model.Thresholds
-import no.uio.ifi.in2000.team_17.model.WeatherPointOld
+import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
+import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 
 //har tilgang til repository og returnerer use case data. F. eks temperatur
 //henter data fra alle repo som trengs.
@@ -22,28 +22,26 @@ class WeatherUseCase {
     companion object {
         @JvmStatic
         fun canLaunch(
-            weatherPoint: WeatherPointOld,
-            maxWindSpeed: Double,
-            maxShearWind: Double,
+            weatherPointInTime: WeatherPointInTime,
             threshholds: AdvancedSettings
         ): Boolean {
             //tåke --- (connected to clouds, dew point and precipitation)
             return (
-                    weatherPoint.windSpeed < threshholds.maxWindSpeed &&
-                            weatherPoint.humidity < threshholds.humidity &&
-                            weatherPoint.dewPoint < threshholds.dewPoint &&
-                            weatherPoint.cloudFraction < threshholds.cloudFraction &&
-                            weatherPoint.rain < threshholds.rain &&
-                            weatherPoint.fog < threshholds.fog &&
-                            maxWindSpeed < threshholds.maxWindSpeed &&
-                            maxShearWind < threshholds.maxWindShear
+                    weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed &&
+                            weatherPointInTime.humidity < threshholds.humidity &&
+                            weatherPointInTime.dewPoint < threshholds.dewPoint &&
+                            weatherPointInTime.cloudFraction < threshholds.cloudFraction &&
+                            weatherPointInTime.rain.median < threshholds.rain &&
+                            weatherPointInTime.fog < threshholds.fog &&
+                            weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed &&
+                            weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear
                     )
         }
     }
 }
 
 internal fun launchClearance(
-    weatherPoint: WeatherPointOld,
+    weatherPoint: WeatherPointLayer,
     maxWindSpeed: Double,
     maxShearWind: Double
 ): Boolean {
