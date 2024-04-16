@@ -22,7 +22,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +43,11 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeScreenUiState: StateFlow<HomeScreenUiState>,
+    homeScreenUiState: HomeScreenUiState,
     toAdvancedSettings: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
@@ -58,7 +56,7 @@ fun HomeScreen(
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(homeScreenUiState.value.latLng, 11f)
+        position = CameraPosition.fromLatLngZoom(homeScreenUiState.latLng, 11f)
     }
 
     Column(modifier.fillMaxSize()) {
@@ -74,29 +72,31 @@ fun HomeScreen(
                 properties = MapProperties(mapType = MapType.SATELLITE)
             ) {
                 Marker(
-                    state = MarkerState(position = homeScreenUiState.collectAsState().value.latLng),
+                    state = MarkerState(position = homeScreenUiState.latLng),
                     title = "Test",
                     snippet = "Marker not in Singapore"
                 )
             }
         }
-        LaunchClearanceCard("Launch clearance for current input: ${homeScreenUiState.collectAsState().value.canLaunch}")
+        Card {
+            Text(text = "Can launch with current input: ${homeScreenUiState.canLaunch}")
+        }
         DateTime(
-            homeScreenUiState.collectAsState().value.weatherPointList.first().date!!,
-            homeScreenUiState.collectAsState().value.weatherPointList.first().time!!
+            homeScreenUiState.weatherPointInTime.date,
+            homeScreenUiState.weatherPointInTime.time
         )
-        LastUpdated(homeScreenUiState.collectAsState().value.updated)
+        LastUpdated(homeScreenUiState.updated)
         WeatherCard(
             weatherInfoList = listOf(
-                Triple("Ground wind", homeScreenUiState.collectAsState().value.weatherPointList.first().windSpeed, "m/s"),
+                Triple("Ground wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s"),
                 Triple(
                     "Max wind",
-                    homeScreenUiState.collectAsState().value.weatherPointList.maxOf { it.windSpeed },
+                    homeScreenUiState.weatherPointInTime.maxWind.speed,
                     "m/s"
                 ),
                 Triple(
                     "Max Shear",
-                    homeScreenUiState.collectAsState().value.weatherPointList.maxOf { it.windShear },
+                    homeScreenUiState.weatherPointInTime.maxWindShear.speed,
                     "m/s"
                 )
             )
@@ -105,18 +105,18 @@ fun HomeScreen(
             weatherInfoList = listOf(
                 Triple(
                     "Cloud coverage",
-                    homeScreenUiState.collectAsState().value.weatherPointList.first().cloudFraction,
+                    homeScreenUiState.weatherPointInTime.cloudFraction,
                     "%"
                 ),
-                Triple("Rain", homeScreenUiState.collectAsState().value.weatherPointList.first().rain, "mm"),
-                Triple("Fog", homeScreenUiState.collectAsState().value.weatherPointList.first().fog, "%"),
-                Triple("Humidity", homeScreenUiState.collectAsState().value.weatherPointList.first().humidity, "%"),
-                Triple("Dewpoint", homeScreenUiState.collectAsState().value.weatherPointList.first().dewPoint, "˚C"),
+                Triple("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm"),
+                Triple("Fog", homeScreenUiState.weatherPointInTime.fog, "%"),
+                Triple("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%"),
+                Triple("Dewpoint", homeScreenUiState.weatherPointInTime.dewPoint, "˚C"),
             )
         )
         InputSheet(
             Modifier.fillMaxWidth(),
-            homeScreenUiState = homeScreenUiState.collectAsState().value,
+            homeScreenUiState = homeScreenUiState,
             toAdvancedSettings = toAdvancedSettings,
             setMaxHeight = { setMaxHeight(it) },
             setLat = { setLat(it) },
