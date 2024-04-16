@@ -1,13 +1,17 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import android.view.Surface
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -30,7 +34,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,7 +70,8 @@ enum class Screen(val title: String, val logo: Int) {
 fun AppTopBar(
     logoId: Int,
     onSearchClick : () -> Unit,
-    onLogoClick : () -> Unit
+    onLogoClick : () -> Unit,
+    //modifier: Modifier
 ) {
     TopAppBar(
         title = {
@@ -128,13 +136,13 @@ fun App(
     )
     var sheetState by remember { mutableStateOf(false) }
 
-
     Scaffold(
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
                 onSearchClick = {sheetState = true},
-                onLogoClick = {navController.navigate("Home")}
+                onLogoClick = {navController.navigate("Home")},
+                //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
         bottomBar = {
@@ -163,6 +171,7 @@ fun App(
             }
         }
     }
+
     //TODO: unitTesting
     InputSheet(
         homeScreenUiState = homeScreenUiState,
@@ -176,6 +185,7 @@ fun App(
         sheetState = sheetState,
         onDismiss = {sheetState = false}
     )
+
 }
 
 @Composable
