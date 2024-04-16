@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team_17.model
 
+import android.text.BoringLayout
+
 // data class with relevant date for a weather point
 data class WeatherPointLayer(
     val windSpeed: Double = -1.0,
@@ -61,6 +63,7 @@ data class WeatherDataLists(
     val humidity: List<Double> = listOf(),
     val dewPoint: List<Double> = listOf(),
     val fog: List<Double> = listOf(),
+    val temperature : List<Double> = listOf(),
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ){
@@ -85,7 +88,8 @@ data class WeatherDataLists(
                 rain = availableIndexes.rain > index,
                 humidity = availableIndexes.humidity > index,
                 dewPoint = availableIndexes.dewPoint > index,
-                fog = availableIndexes.fog > index
+                fog = availableIndexes.fog > index,
+                temperature = availableIndexes.temperature > index
             )
         )
     }
@@ -99,7 +103,8 @@ data class WeatherDataLists(
             rain = rain.size,
             humidity = humidity.size,
             dewPoint = dewPoint.size,
-            fog = fog.size
+            fog = fog.size,
+            temperature = temperature.size
         )
     }
 }
@@ -114,7 +119,8 @@ data class AvailableIndexes(
     val rain: Int = 0,
     val humidity: Int = 0,
     val dewPoint: Int = 0,
-    val fog: Int = 0
+    val fog: Int = 0,
+    val temperature: Int = 0
 )
 data class Available(
     val date:Boolean = false,
@@ -126,8 +132,24 @@ data class Available(
     val rain:Boolean = false,
     val humidity:Boolean = false,
     val dewPoint:Boolean = false,
-    val fog: Boolean = false
-)
+    val fog: Boolean = false,
+    val temperature : Boolean = false
+){
+    fun get(title : String): Boolean {
+        return when(title){
+            "Ground wind" -> groundWind
+            "Max wind" -> maxWindSpeed
+            "Max Shear" -> maxWindShear
+            "Temperature" -> temperature
+            "Cloudiness" -> cloudFraction
+            "Rain" -> rain
+            "Humidity" -> humidity
+            "Fog" -> fog
+            else -> false
+        }
+    }
+}
+
 data class WindLayer(
     val speed: Double = 0.0,
     val height: Double = 0.0,
@@ -142,3 +164,5 @@ data class Rain(
     val median: Double = 0.0,
     val max: Double = 0.0
 )
+
+

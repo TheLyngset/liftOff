@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +19,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -51,7 +54,8 @@ enum class Screen(val title: String, val logo: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    logoId: Int
+    logoId: Int,
+    onSearchClick : () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -67,7 +71,11 @@ fun AppTopBar(
                 Image(
                     painter = painterResource(id = R.drawable.search_24px),
                     contentDescription = "Search",
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 12.dp)
+                        .clickable {
+                            onSearchClick()
+                        }
                 )
             }
         },
@@ -105,26 +113,17 @@ fun App(
             AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
         }
     )
+    var sheetState by remember { mutableStateOf(false) }
 
 
     Scaffold(
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
+                onSearchClick = {sheetState = true}
             )
         },
-        /*bottomBar = {
-            BottomAppBar {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-                    Button(onClick = { navController.navigate(Screen.Input.name) }) {
-                        Text(Screen.Input.title)
-                    }
-                    Button(onClick = {navController.navigate(Screen.Home.name)}) {
-                        Text(Screen.Home.title)
-                    }
-                }
-            }
-        }, */
+        bottomBar = { SegmentedButton() },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         NavHost(
@@ -132,17 +131,7 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                HomeScreen(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(scrollStateVertical),
-                    homeScreenUiState = homeScreenUiState,
-                    toAdvancedSettings = { navController.navigate(Screen.AdvancedSettings.name) },
-                    setLat = {homeScreenViewModel.setLat(it.toDouble())},
-                    setLng = {homeScreenViewModel.setLng(it.toDouble())},
-                    setMaxHeight = {homeScreenViewModel.setMaxHeight(it.toInt())},
-                    onLoad = {}
-                )
+                newHomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
             }
             composable(route = Screen.AdvancedSettings.name) {
                 AdvancedSettingsScreen(
@@ -158,4 +147,18 @@ fun App(
             }
         }
     }
+    //TODO: unitTesting
+    InputSheet(
+        homeScreenUiState = homeScreenUiState,
+        toAdvancedSettings = {
+            navController.navigate(Screen.AdvancedSettings.name)
+            sheetState = false
+        },
+        setMaxHeight = {homeScreenViewModel.setMaxHeight(it.toInt())},
+        setLat = {homeScreenViewModel.setLat(it.toDouble())},
+        setLng = {homeScreenViewModel.setLng(it.toDouble())},
+        sheetState = sheetState,
+        onDismiss = {sheetState = false}
+    )
 }
+

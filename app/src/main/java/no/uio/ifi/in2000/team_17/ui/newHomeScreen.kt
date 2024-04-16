@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
@@ -43,12 +45,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.model.Available
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 
 @Composable
-fun newHomeScreen(modifier: Modifier = Modifier) {
+fun newHomeScreen(
+    modifier: Modifier = Modifier,
+    homeScreenUiState: HomeScreenUiState
+) {
     Box(modifier = modifier
         .fillMaxSize(1f)
-
 
 
     ){
@@ -79,56 +86,49 @@ fun newHomeScreen(modifier: Modifier = Modifier) {
         .fillMaxSize(1f),
         contentAlignment = Alignment.BottomCenter
     ){
-        BottomCard()
+        BottomCard(homeScreenUiState)
 
     }
 }
 //skriften er satt, må endre til om den er true eller ikke
 //jeg satte også noen verdier, i stedenfor å legge til uiState
 @Composable
-fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
+fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
     Card(
         Modifier
-            .fillMaxWidth()
-            .padding(2.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
+
                 .padding(top = 10.dp, bottom = 10.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
-            LaunchClearanceCard1("You're good to go!")
-            /*if (uiState.canLaunch){
-                LaunchClearanceCard1(canLaunch = "You're good to go!")
-            }
-            else{
-                LaunchClearanceCard1(canLaunch = "Hold off for now!")
-            } */
-
-            Spacer(modifier = Modifier.height(5.dp))
-
+            LaunchClearanceCard1(homeScreenUiState.canLaunch)
+            /**
+            //TODO: finne ikoner, alle tre verdier på rain?
+            //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardGrid(weatherInfoList = listOf(
-                WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-            ))
+                WeatherInfo("Ground wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Max wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.rainicon)),
+            ), homeScreenUiState.weatherPointInTime.available)
 
-            Spacer(modifier = Modifier.height(5.dp))
-
-            SegmentedButton()
         }
     }
 }
 //la trafikklyset inn her, må gjøre så det blir riktig, i tillegg til å velge grønn farge
 @Composable
-fun LaunchClearanceCard1(canLaunch: String) {
+fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
     Card(
         Modifier
             .fillMaxWidth()
@@ -136,7 +136,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
     ) {
         Column(
             Modifier
-                .background(color = Color.Green.copy(alpha = 0.4f))
+                .background(trafficLightColor.color)
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 8.dp),
             verticalArrangement = Arrangement.Center,
@@ -147,7 +147,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
                     .fillMaxWidth()
                         ) {
                 Image(
-                    painter = painterResource(id = R.drawable.greenlight),
+                    painter = painterResource(id = trafficLightColor.image),
                     contentDescription = "GreenLightIcon",
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
@@ -155,8 +155,8 @@ fun LaunchClearanceCard1(canLaunch: String) {
                 )
 
                 Spacer(modifier = Modifier.width(38.dp))
-                Text(canLaunch, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                        fontSize = 16.sp,
+                Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(
+                        fontSize = 25.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
@@ -191,9 +191,9 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     Card(
         modifier = Modifier
             .padding(3.dp)
-            .padding(top = 10.dp, bottom = 10.dp)
-            .fillMaxSize()
-            .size(110.dp)
+            .padding(top = 5.dp, bottom = 5.dp)
+            .size(120.dp)
+
     ) {
         Column(
             modifier = Modifier
@@ -225,23 +225,26 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     }
 }
 
-//.verticalScroll(rememberScrollState())
+
 //cloud coverage, lazy row, liste med alle objektene, sorteres etter
 @Composable
-fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>) {
+fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
     Card {
-        LazyVerticalGrid(
-            GridCells.Fixed(3),
+        LazyHorizontalGrid(
+            GridCells.Fixed(1),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(130.dp)
         ) {
             items(weatherInfoList) { weatherInfo ->
-                CardItem(
-                    title = weatherInfo.title,
-                    value = weatherInfo.value,
-                    unit = weatherInfo.unit,
-                    image = weatherInfo.image,
-                )
+                if(available.get(weatherInfo.title)) {
+                    CardItem(
+                        title = weatherInfo.title,
+                        value = weatherInfo.value,
+                        unit = weatherInfo.unit,
+                        image = weatherInfo.image,
+                    )
+                }
             }
         }
     }
@@ -258,6 +261,6 @@ data class WeatherInfo(
 @Preview
 @Composable
 fun Prehs(){
-    newHomeScreen()
+    newHomeScreen(homeScreenUiState = HomeScreenUiState())
 }
 
