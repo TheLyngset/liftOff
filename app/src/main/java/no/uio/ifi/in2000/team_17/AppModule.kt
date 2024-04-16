@@ -2,11 +2,12 @@ package no.uio.ifi.in2000.team_17
 
 import android.content.Context
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
+import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.RepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 
 interface AppModule{
-    val repository: RepositoryImplementation
+    val repository: Repository
     val settingsRepository: SettingsRepository
     val advancedSettingsRepository: AdvancedSettingsRepository
 }

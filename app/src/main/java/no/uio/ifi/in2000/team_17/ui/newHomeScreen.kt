@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,11 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
@@ -46,18 +42,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.maps.android.compose.rememberCameraPositionState
 import no.uio.ifi.in2000.team_17.R
-import kotlin.reflect.jvm.internal.impl.types.TypeCheckerState.SupertypesPolicy.None
 
 @Composable
 fun newHomeScreen(modifier: Modifier = Modifier) {
-    val cameraPositionState = rememberCameraPositionState {
-
-    }
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .fillMaxSize(1f)
-
 
 
 
@@ -101,17 +91,13 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
         Modifier
             .fillMaxWidth()
             .padding(2.dp)
-
-
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-
                 .padding(top = 10.dp, bottom = 10.dp)
                 .padding(horizontal = 16.dp),
-
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //LaunchClearanceCard("Launch clearance for current input: ${uiState.canLaunch}")
@@ -129,17 +115,14 @@ fun BottomCard() { //weatherInfoList: List<Triple<String, Double, String>>
                 WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-                //Ekstra verdier for test
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Ground wind", 0.2, "m/s", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Max wind", 0.3, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Max Shear", 0.4, "m/s", painterResource(id = R.drawable.windicon)),
             ))
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            SegmentedButton(modifier = Modifier.fillMaxWidth())
+            SegmentedButton()
         }
     }
 }
@@ -173,7 +156,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
 
                 Spacer(modifier = Modifier.width(38.dp))
                 Text(canLaunch, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                        fontSize = 25.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
@@ -184,7 +167,7 @@ fun LaunchClearanceCard1(canLaunch: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SegmentedButton(modifier: Modifier){
+fun SegmentedButton(){
     val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -208,9 +191,9 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     Card(
         modifier = Modifier
             .padding(3.dp)
-            .padding(top = 5.dp, bottom = 5.dp)
-            .size(120.dp)
-
+            .padding(top = 10.dp, bottom = 10.dp)
+            .fillMaxSize()
+            .size(110.dp)
     ) {
         Column(
             modifier = Modifier
@@ -247,11 +230,10 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>) {
     Card {
-        LazyHorizontalGrid(
-            GridCells.Fixed(1),
+        LazyVerticalGrid(
+            GridCells.Fixed(3),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(130.dp)
         ) {
             items(weatherInfoList) { weatherInfo ->
                 CardItem(
@@ -275,7 +257,7 @@ data class WeatherInfo(
 
 @Preview
 @Composable
-fun prehs(){
+fun Prehs(){
     newHomeScreen()
 }
 

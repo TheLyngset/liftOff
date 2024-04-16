@@ -13,8 +13,6 @@ import androidx.datastore.dataStore
 import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsSerializer
-import no.uio.ifi.in2000.team_17.data.Repository
-import no.uio.ifi.in2000.team_17.data.RepositoryImplementation
 import no.uio.ifi.in2000.team_17.data.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
@@ -28,10 +26,6 @@ val Context.settingsStore: DataStore<Settings> by dataStore(
     serializer = SettingsSerializer
 )
 class MainActivity : ComponentActivity() {
-    val repository: RepositoryImplementation by lazy {
-        RepositoryImplementation()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

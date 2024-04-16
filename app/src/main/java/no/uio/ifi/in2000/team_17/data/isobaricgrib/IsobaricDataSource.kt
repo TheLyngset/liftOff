@@ -19,21 +19,18 @@ import no.uio.ifi.in2000.team_17.model.IsoBaricModel
  * The class abstracts away the networking logic and error handling, providing a simple interface
  * for retrieving the IsoBaricModel objects that contain the requested isobaric data.
  */
-enum class IsoBaricURL(val URL:String){
+enum class IsoBaricTime(val URL:String){
     NOW("http://158.39.75.8:5000/collections/isobaric/position"),
     IN_3("http://158.39.75.8:5001/collections/isobaric/position"),
     IN_9_OR_12("http://158.39.75.8:5002/collections/isobaric/position")
 }
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
-    private val BASE_URL_NOW = "http://158.39.75.8:5000/collections/isobaric/position"
-    private val BASE_URL_IN_3 = "http://158.39.75.8:5001/collections/isobaric/position"
-    private val BASE_URL_IN_9_OR_12 = "http://158.39.75.8:5002/collections/isobaric/position"
     private val client = HttpClient { install(ContentNegotiation) { gson() } }
 
     // Returns empty IsoBaricModel object on fail
-    suspend fun getData(north: Double, east: Double, isoBaricURL: IsoBaricURL = IsoBaricURL.NOW): IsoBaricModel {
-        val queryUrl = "${isoBaricURL.URL}?coords=POINT%28$east%20$north%29"
+    suspend fun getData(lat: Double, lng: Double, isoBaricTime: IsoBaricTime = IsoBaricTime.NOW): IsoBaricModel {
+        val queryUrl = "${isoBaricTime.URL}?coords=POINT%28$lng%20$lat%29"
         return try {
             Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
             client.get(queryUrl).body<IsoBaricModel>()
