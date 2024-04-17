@@ -184,26 +184,26 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed, 10.0, it.first().windDirection) },
+                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed.toString(), "10", it.first().windDirection.toString()) },
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
                     val index = windShear.indexOf(windShear.max())
-                    WindShear(maxWindShear, it[index].height)
+                    WindShear(maxWindShear.toString(), it[index].height.toString())
                 },
                 maxWind = listOfWeatherPointList.map {
                     val windSpeed = it.map { it.windSpeed }
                     val maxWindSpeed = windSpeed.max()
                     val index = windSpeed.indexOf(maxWindSpeed)
-                    WindLayer(maxWindSpeed, it[index].height, it[index].windDirection)
+                    WindLayer(maxWindSpeed.toString(), it[index].height.toString(), it[index].windDirection.toString())
                 },
                 cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction },
                 rain = locationData.timeseries.map {
                     val data = it.data.next_1_hours.details
                     Rain(
-                       data.precipitation_amount_min,
-                       data.precipitation_amount,
-                       data.precipitation_amount_max
+                       data.precipitation_amount_min.toString(),
+                       data.precipitation_amount.toString(),
+                       data.precipitation_amount_max.toString()
                    )
                 },
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },

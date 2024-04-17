@@ -164,7 +164,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 }
 
 @Composable
-fun CardItem(title: String, image: Painter, value: Double, unit: String) {
+fun CardItem(title: String, image: Painter, value: String, unit: String) {
     ElevatedCard(
         modifier = Modifier
             .padding(3.dp)
@@ -233,7 +233,7 @@ fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
 
 data class WeatherInfo(
     val title: String,
-    val value: Double,
+    val value: String,
     val unit: String,
     val image: Painter
 )

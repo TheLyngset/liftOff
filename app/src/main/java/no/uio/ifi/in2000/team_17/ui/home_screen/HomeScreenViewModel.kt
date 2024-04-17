@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -42,7 +41,7 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
         advancedSettingsRepository.advancedSettingsFlow,
     ){weatherDataList: WeatherDataLists, settings: Settings, advancedSettings: AdvancedSettings->
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
-        val weatherPointInTime = weatherDataList.get(settings.timeIndex)
+        val weatherPointInTime = weatherDataList.getWeatherPoint(settings.timeIndex)
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),

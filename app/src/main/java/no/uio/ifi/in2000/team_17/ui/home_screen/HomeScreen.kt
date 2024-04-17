@@ -127,7 +127,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun WeatherInfo(title: String, value: Double, unit: String) {
+fun WeatherInfo(title: String, value: String, unit: String) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
             title, style = TextStyle(
@@ -145,7 +145,7 @@ fun WeatherInfo(title: String, value: Double, unit: String) {
 }
 
 @Composable
-fun WeatherCard(weatherInfoList: List<Triple<String, Double, String>>) {
+fun WeatherCard(weatherInfoList: List<Triple<String, String, String>>) {
     Card(
         Modifier
             .fillMaxWidth()

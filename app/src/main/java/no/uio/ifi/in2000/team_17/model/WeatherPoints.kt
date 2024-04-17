@@ -21,14 +21,14 @@ data class WeatherPointInTime(
     val groundWind: WindLayer = WindLayer(),
     val maxWindShear: WindShear = WindShear(),
     val maxWind: WindLayer =  WindLayer(),
-    val temperature: Double = -1.0,
-    val pressure: Double = -1.0,
-    val height: Double = -1.0,
-    val cloudFraction: Double = -1.0,
+    val temperature: String = "-1.0",
+    val pressure: String = "-1.0",
+    val height: String = "-1.0",
+    val cloudFraction: String = "-1.0",
     val rain: Rain = Rain(),
-    val humidity: Double = -1.0,
-    val dewPoint: Double = -1.0,
-    val fog: Double = -1.0,
+    val humidity: String = "-1.0",
+    val dewPoint: String = "-1.0",
+    val fog: String = "-1.0",
     val available: Available = Available()
 )
 
@@ -65,18 +65,18 @@ data class WeatherDataLists(
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ){
-    fun get(index: Int): WeatherPointInTime {
+    fun getWeatherPoint(index: Int): WeatherPointInTime {
         return WeatherPointInTime(
             date = date.getOrElse(index){""},
             time = time.getOrElse(index){"00"},
             groundWind = groundWind.getOrElse(index){ WindLayer() },
             maxWindShear = maxWindShear.getOrElse(index){ WindShear() },
             maxWind = maxWind.getOrElse(index){WindLayer()},
-            cloudFraction = cloudFraction.getOrElse(index){0.0},
+            cloudFraction = cloudFraction.getOrElse(index){0.0}.toString(),
             rain = rain.getOrElse(index){ Rain() },
-            humidity = humidity.getOrElse(index){0.0},
-            dewPoint = dewPoint.getOrElse(index){0.0},
-            fog = fog.getOrElse(index){0.0},
+            humidity = humidity.getOrElse(index){0.0}.toString(),
+            dewPoint = dewPoint.getOrElse(index){0.0}.toString(),
+            fog = fog.getOrElse(index){0.0}.toString(),
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,
@@ -152,18 +152,18 @@ data class Available(
 }
 
 data class WindLayer(
-    val speed: Double = 0.0,
-    val height: Double = 0.0,
-    val direction: Double = 0.0
+    val speed: String = "-1.0",
+    val height: String = "-1.0",
+    val direction: String = "-1.0"
 )
 data class WindShear(
-    val speed: Double = 0.0,
-    val height: Double = 0.0
+    val speed: String = "-1.0",
+    val height: String = "-1.0"
 )
 data class Rain(
-    val min: Double = 0.0,
-    val median: Double = 0.0,
-    val max: Double = 0.0
+    val min: String = "-1.0",
+    val median: String = "-1.0",
+    val max: String = "-1.0"
 )
 
 

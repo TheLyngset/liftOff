@@ -177,7 +177,7 @@ fun App(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.name
+            startDestination = Screen.Data.name
         ) {
             composable(route = Screen.Home.name) {
                 newHomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
