@@ -14,11 +14,9 @@ import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
-import no.uio.ifi.in2000.team_17.data.CanLaunch
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
-import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 
@@ -49,17 +47,7 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
-            canLaunch = CanLaunch(weatherPointInTime, Thresholds(
-                windSpeed = advancedSettings.groundWindSpeed,
-                maxWindSpeed = advancedSettings.maxWindSpeed,
-                maxWindShear = advancedSettings.maxWindShear,
-                cloudFraction = advancedSettings.cloudFraction,
-                fog = advancedSettings.fog,
-                rain = advancedSettings.rain,
-                humidity = advancedSettings.humidity,
-                dewPoint = advancedSettings.dewPoint,
-                margin = advancedSettings.margin
-            ))
+            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, advancedSettings)
             ,
             updated = weatherDataList.updated
         )

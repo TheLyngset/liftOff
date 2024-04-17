@@ -298,36 +298,3 @@ private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doubl
         )).pow(2)
     )
 }
-
-internal fun CanLaunch(
-    weatherPointInTime: WeatherPointInTime,
-    threshholds: Thresholds
-): TrafficLightColor {
-    //tåke --- (connected to clouds, dew point and precipitation)
-    if(
-        weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed &&
-        weatherPointInTime.humidity < threshholds.humidity &&
-        weatherPointInTime.dewPoint < threshholds.dewPoint &&
-        weatherPointInTime.cloudFraction < threshholds.cloudFraction &&
-        weatherPointInTime.rain.median < threshholds.rain &&
-        weatherPointInTime.fog < threshholds.fog &&
-        weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed &&
-        weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear
-    ){
-        return if(
-            weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
-            weatherPointInTime.humidity < threshholds.humidity * threshholds.margin &&
-            weatherPointInTime.dewPoint < threshholds.dewPoint * threshholds.margin &&
-            weatherPointInTime.cloudFraction < threshholds.cloudFraction * threshholds.margin &&
-            weatherPointInTime.rain.median < threshholds.rain * threshholds.margin &&
-            weatherPointInTime.fog < threshholds.fog * threshholds.margin &&
-            weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
-            weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear * threshholds.margin
-        ){
-            TrafficLightColor.GREEN
-        } else{
-            TrafficLightColor.YELLOW
-        }
-    }
-    return TrafficLightColor.RED
-}
