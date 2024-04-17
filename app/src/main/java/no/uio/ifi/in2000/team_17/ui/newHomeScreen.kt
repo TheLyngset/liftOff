@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -157,7 +159,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 
                 Spacer(modifier = Modifier.width(38.dp))
                 Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                        fontSize = 25.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
@@ -168,7 +170,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String) {
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .padding(3.dp)
             .padding(top = 5.dp, bottom = 5.dp)
@@ -177,8 +179,9 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     ) {
         Column(
             modifier = Modifier
-                .background(Color.White.copy(alpha = 0.3f))
+                .background(Color.LightGray.copy(0.02f))
                 .padding(8.dp)
+
         ) {
                 Text(
                     text = title,
@@ -209,7 +212,6 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 //cloud coverage, lazy row, liste med alle objektene, sorteres etter
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
-    Card {
         LazyHorizontalGrid(
             GridCells.Fixed(1),
             modifier = Modifier
@@ -227,7 +229,6 @@ fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
                 }
             }
         }
-    }
 }
 
 data class WeatherInfo(

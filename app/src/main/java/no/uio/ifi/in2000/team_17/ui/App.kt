@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -87,6 +88,7 @@ fun AppTopBar(
 
                 Text(
                     text = "Oslo",
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 30.sp),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
                 )
                 Image(
