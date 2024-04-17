@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,7 +43,6 @@ import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
 import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
-import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
@@ -62,8 +60,8 @@ enum class Screen(val title: String, val logo: Int) {
 @Composable
 fun AppTopBar(
     logoId: Int,
-    onSearchClick : () -> Unit,
-    onLogoClick : () -> Unit
+    onSearchClick: () -> Unit,
+    onLogoClick: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -74,8 +72,8 @@ fun AppTopBar(
                 Image(
                     painter = painterResource(id = logoId),
                     contentDescription = "Logo",
-                    modifier = Modifier.clickable {onLogoClick() }
-                    )
+                    modifier = Modifier.clickable { onLogoClick() }
+                )
 
                 Text(
                     text = "Oslo",
@@ -105,7 +103,7 @@ fun App(
 
     ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-    //Todo implemnt the new viewModelFactory for this viewModel
+    //Todo implement the new viewModelFactory for this viewModel
     val homeScreenViewModel: HomeScreenViewModel = viewModel(
         factory = viewModelFactory {
             HomeScreenViewModel(
@@ -133,13 +131,13 @@ fun App(
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
-                onSearchClick = {sheetState = true},
-                onLogoClick = {navController.navigate("Home")}
+                onSearchClick = { sheetState = true },
+                onLogoClick = { navController.navigate("Home") }
             )
         },
         bottomBar = {
             BottomBar(modifier = Modifier.fillMaxWidth())
-                    },
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         NavHost(
@@ -170,16 +168,16 @@ fun App(
             navController.navigate(Screen.AdvancedSettings.name)
             sheetState = false
         },
-        setMaxHeight = {homeScreenViewModel.setMaxHeight(it.toInt())},
-        setLat = {homeScreenViewModel.setLat(it.toDouble())},
-        setLng = {homeScreenViewModel.setLng(it.toDouble())},
+        setMaxHeight = { homeScreenViewModel.setMaxHeight(it.toInt()) },
+        setLat = { homeScreenViewModel.setLat(it.toDouble()) },
+        setLng = { homeScreenViewModel.setLng(it.toDouble()) },
         sheetState = sheetState,
-        onDismiss = {sheetState = false}
+        onDismiss = { sheetState = false }
     )
 }
 
 @Composable
-fun BottomBar(modifier : Modifier){
+fun BottomBar(modifier: Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
@@ -191,15 +189,15 @@ fun BottomBar(modifier : Modifier){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SegmentedButton(){
-    val options = remember{ mutableStateListOf<String>("Home", "Data", "Juridisk") }
+fun SegmentedButton() {
+    val options = remember { mutableStateListOf<String>("Home", "Data", "Juridisk") }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 selected = selectedIndex == index,
-                onClick = { selectedIndex = index},
+                onClick = { selectedIndex = index },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
                 colors = SegmentedButtonColors(

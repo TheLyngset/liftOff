@@ -259,8 +259,8 @@ fun InputSheet(
                 homeScreenUiState = homeScreenUiState,
                 toAdvancedSettings = toAdvancedSettings,
                 setMaxHeight = { setMaxHeight(it) },
-                setLat = {setLat(it)},
-                setLng = {setLng(it)},
+                setLat = { setLat(it) },
+                setLng = { setLng(it) },
                 onLoad = {
                     onLoad()
                     sheetState = false
@@ -274,11 +274,11 @@ fun InputSheet(
 fun InputSheetContent(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings:()->Unit,
-    setMaxHeight:(String) -> Unit,
-    setLat:(String) -> Unit,
-    setLng:(String) -> Unit,
-    onLoad:() -> Unit
+    toAdvancedSettings: () -> Unit,
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
+    onLoad: () -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf("") }
     var latString by remember { mutableStateOf("") }
@@ -289,8 +289,10 @@ fun InputSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             InputTextField(
                 value = maxHeightText,
                 onValueChange = { maxHeightText = it },
@@ -298,24 +300,26 @@ fun InputSheetContent(
             ) { setMaxHeight(maxHeightText) }
             Text(homeScreenUiState.maxHeight.toString())
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             InputTextField(
                 value = latString,
                 onValueChange = { latString = it },
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
-            ){ setLat(latString) }
+            ) { setLat(latString) }
             Text(homeScreenUiState.latLng.latitude.toString())
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
-            ){ setLng(lngString) }
+            ) { setLng(lngString) }
             Text(homeScreenUiState.latLng.longitude.toString())
         }
-        Button(onClick = onLoad) { Text(text = "Load new settings")}
+        Button(onClick = onLoad) { Text(text = "Load new settings") }
         ListItem(
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
             headlineContent = {
@@ -331,12 +335,12 @@ fun InputSheetContent(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 24.dp),
-                        text = "The settings under are set with apropriate standard values, read more about why theese values have been chosen here"
+                        text = "The settings under are set with appropriate standard values, read more about why these values have been chosen here"
                     )
                 }
             }
         )
-        Button(onClick = {toAdvancedSettings()}) {
+        Button(onClick = { toAdvancedSettings() }) {
             Text(text = "Advanced settings")
         }
     }
