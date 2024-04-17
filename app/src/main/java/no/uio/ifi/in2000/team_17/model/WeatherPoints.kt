@@ -20,7 +20,7 @@ data class WeatherPointInTime(
     val time: String = "",
     val groundWind: WindLayer = WindLayer(),
     val maxWindShear: WindShear = WindShear(),
-    val maxWind: WindLayer =  WindLayer(),
+    val maxWind: WindLayer = WindLayer(),
     val temperature: Double = -1.0,
     val pressure: Double = -1.0,
     val height: Double = -1.0,
@@ -61,22 +61,22 @@ data class WeatherDataLists(
     val humidity: List<Double> = listOf(),
     val dewPoint: List<Double> = listOf(),
     val fog: List<Double> = listOf(),
-    val temperature : List<Double> = listOf(),
+    val temperature: List<Double> = listOf(),
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
-){
+) {
     fun get(index: Int): WeatherPointInTime {
         return WeatherPointInTime(
-            date = date.getOrElse(index){""},
-            time = time.getOrElse(index){"00"},
-            groundWind = groundWind.getOrElse(index){ WindLayer() },
-            maxWindShear = maxWindShear.getOrElse(index){ WindShear() },
-            maxWind = maxWind.getOrElse(index){WindLayer()},
-            cloudFraction = cloudFraction.getOrElse(index){0.0},
-            rain = rain.getOrElse(index){ Rain() },
-            humidity = humidity.getOrElse(index){0.0},
-            dewPoint = dewPoint.getOrElse(index){0.0},
-            fog = fog.getOrElse(index){0.0},
+            date = date.getOrElse(index) { "" },
+            time = time.getOrElse(index) { "00" },
+            groundWind = groundWind.getOrElse(index) { WindLayer() },
+            maxWindShear = maxWindShear.getOrElse(index) { WindShear() },
+            maxWind = maxWind.getOrElse(index) { WindLayer() },
+            cloudFraction = cloudFraction.getOrElse(index) { 0.0 },
+            rain = rain.getOrElse(index) { Rain() },
+            humidity = humidity.getOrElse(index) { 0.0 },
+            dewPoint = dewPoint.getOrElse(index) { 0.0 },
+            fog = fog.getOrElse(index) { 0.0 },
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,
@@ -92,6 +92,7 @@ data class WeatherDataLists(
             )
         )
     }
+
     init {
         availableIndexes = AvailableIndexes(
             date = date.size,
@@ -122,21 +123,22 @@ data class AvailableIndexes(
     val fog: Int = 0,
     val temperature: Int = 0
 )
+
 data class Available(
-    val date:Boolean = false,
-    val time:Boolean = false,
-    val groundWind:Boolean = false,
-    val maxWindShear:Boolean = false,
-    val maxWind:Boolean = false,
-    val cloudFraction:Boolean = false,
-    val rain:Boolean = false,
-    val humidity:Boolean = false,
-    val dewPoint:Boolean = false,
+    val date: Boolean = false,
+    val time: Boolean = false,
+    val groundWind: Boolean = false,
+    val maxWindShear: Boolean = false,
+    val maxWind: Boolean = false,
+    val cloudFraction: Boolean = false,
+    val rain: Boolean = false,
+    val humidity: Boolean = false,
+    val dewPoint: Boolean = false,
     val fog: Boolean = false,
-    val temperature : Boolean = false
-){
-    fun get(title : String): Boolean {
-        return when(title){
+    val temperature: Boolean = false
+) {
+    fun get(title: String): Boolean {
+        return when (title) {
             "Ground Wind" -> groundWind
             "Max Wind" -> maxWind
             "Max Shear" -> maxWindShear
@@ -156,13 +158,15 @@ data class WindLayer(
     val height: Double = 0.0,
     val direction: Double = 0.0
 )
+
 data class WindShear(
     val speed: Double = 0.0,
     val height: Double = 0.0
 )
+
 data class Rain(
     val min: Double = 0.0,
-    val median: Double = 0.0,
+    val median: Double = 0.0, // is this precipitation amount? There is no median in the API
     val max: Double = 0.0
 )
 
