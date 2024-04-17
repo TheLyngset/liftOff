@@ -1,8 +1,10 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
-import android.content.res.Resources
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +21,19 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -54,8 +64,9 @@ fun newHomeScreen(
                 .matchParentSize()
                 .graphicsLayer(
                     scaleX = 2.4f,
-                    scaleY = 1.6f,
-                    translationX = 100f
+                    scaleY = 1.4f,
+                    translationX = 100f,
+                    translationY = 150f
                 )
 
         )
@@ -67,7 +78,7 @@ fun newHomeScreen(
                 .graphicsLayer(
                     scaleX = 0.27f,
                     scaleY = 0.47f,
-                    translationY = -250f
+                    translationY = -132f
                 )
                 .alpha(0.85f)
         )
@@ -81,15 +92,16 @@ fun newHomeScreen(
 }
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
-    Card(
+    ElevatedCard(
         Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+        ,
+        //elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-
                 .padding(top = 10.dp, bottom = 70.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -100,21 +112,20 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             //TODO: finne ikoner, alle tre verdier på rain?
             //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardGrid(weatherInfoList = listOf(
-                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.windicon)),
-                WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Dew Point", homeScreenUiState.weatherPointInTime.dewPoint, "℃", painterResource(id = R.drawable.rainicon))
+                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.wind)),
+                WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.wind)),
+                WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.shearwind)),
+                WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.temperature)),
+                WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.cloud)),
+                WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rain)),
+                WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.humidity)),
+                WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.fog)),
+
             ), homeScreenUiState.weatherPointInTime.available)
 
         }
     }
 }
-//la trafikklyset inn her, må gjøre så det blir riktig, i tillegg til å velge grønn farge
 @Composable
 fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
     Card(
@@ -147,7 +158,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 
                 Spacer(modifier = Modifier.width(38.dp))
                 Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                        fontSize = 25.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 )
@@ -158,7 +169,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String) {
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .padding(3.dp)
             .padding(top = 5.dp, bottom = 5.dp)
@@ -167,8 +178,9 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     ) {
         Column(
             modifier = Modifier
-                .background(Color.White.copy(alpha = 0.3f))
+                .background(Color.LightGray.copy(0.02f))
                 .padding(8.dp)
+
         ) {
                 Text(
                     text = title,
@@ -199,7 +211,6 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 //cloud coverage, lazy row, liste med alle objektene, sorteres etter
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
-    Card {
         LazyHorizontalGrid(
             GridCells.Fixed(1),
             modifier = Modifier
@@ -217,7 +228,6 @@ fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
                 }
             }
         }
-    }
 }
 
 data class WeatherInfo(
