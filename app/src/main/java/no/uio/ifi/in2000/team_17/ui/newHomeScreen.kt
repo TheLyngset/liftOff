@@ -1,7 +1,9 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -25,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -156,16 +160,21 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
 
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String) {
-    OutlinedCard(
+    ElevatedCard(
         modifier = Modifier
             .padding(3.dp)
             .padding(top = 5.dp, bottom = 5.dp)
-            .size(120.dp)
+            .size(120.dp),
+        colors = CardColors(
+            containerColor = Color.White,
+            contentColor = Color.Unspecified,
+            disabledContainerColor = Color.Unspecified,
+            disabledContentColor = Color.Unspecified
+        )
 
     ) {
         Column(
             modifier = Modifier
-                .background(Color.LightGray.copy(0.02f))
                 .padding(8.dp)
 
         ) {
