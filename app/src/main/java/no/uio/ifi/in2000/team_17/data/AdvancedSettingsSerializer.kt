@@ -6,23 +6,24 @@ import no.uio.ifi.in2000.team17.AdvancedSettings
 import java.io.InputStream
 import java.io.OutputStream
 
-object AdvancedSettingsSerializer : Serializer<AdvancedSettings>{
+object AdvancedSettingsSerializer : Serializer<AdvancedSettings> {
     override val defaultValue: AdvancedSettings
         get() = AdvancedSettings.getDefaultInstance().toBuilder()
             .setGroundWindSpeed(8.6)
             .setMaxWindSpeed(17.2)
             .setMaxWindShear(24.5)
             .setCloudFraction(15.0)
-            .setFog(0.1)
-            .setRain(0.1)
+            .setFog(0.001)
+            .setRain(0.001)
             .setHumidity(75.0)
             .setDewPoint(15.0)
             .setMargin(0.6)
             .build()
+
     override suspend fun readFrom(input: InputStream): AdvancedSettings {
         return try {
             AdvancedSettings.parseFrom(input)
-        }catch (e: InvalidProtocolBufferException){
+        } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
             defaultValue
         }

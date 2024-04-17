@@ -5,8 +5,8 @@ data class Thresholds(
     val maxWindSpeed: Double = 17.2,
     val maxWindShear: Double = 24.5,
     val cloudFraction: Double = 15.0,
-    val fog: Double = 0.01,
-    val rain: Double = 0.01,
+    val fog: Double = 0.001,
+    val rain: Double = 0.001,
     val humidity: Double = 75.0,
     val dewPoint: Double = 15.0,
     val margin: Double = 0.6
