@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,10 +24,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +57,7 @@ fun InputSheet(
                 setLng = {setLng(it)},
                 onDismiss = {
                     onDismiss()
-                }
+                },
             )
         }
     }
@@ -73,11 +79,12 @@ fun InputSheetContent(
     Column(
         modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier.padding(horizontal = 15.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically) 
+        {
             InputTextField(
                 value = maxHeightText,
                 onValueChange = { maxHeightText = it },
@@ -85,7 +92,7 @@ fun InputSheetContent(
             ) { setMaxHeight(maxHeightText) }
             Text(homeScreenUiState.maxHeight.toString())
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+        Row(modifier.padding(horizontal = 15.dp), horizontalArrangement = Arrangement.spacedBy(24.dp),
             verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
                 value = latString,
@@ -103,11 +110,16 @@ fun InputSheetContent(
             Text(homeScreenUiState.latLng.longitude.toString())
         }
         ListItem(
+            modifier = modifier.padding(top=15.dp),
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
             headlineContent = {
                 Text(
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    text = "Advanced settings"
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp, vertical = 7.dp)
+                        .padding(top = 7.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    text = "Advanced settings",
+                    style = TextStyle(fontSize = 17.sp, color = Color.DarkGray)
                 )
             },
             supportingContent = {
@@ -117,8 +129,8 @@ fun InputSheetContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                        text = "The settings under are set with apropriate standard values, read more about why theese values have been chosen here"
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp),
+                        text = "The settings under are set with appropriate standard values, read more about why these values have been chosen here"
                     )
                     Button(onClick = {toAdvancedSettings()}) {
                         Text(text = "Advanced settings")

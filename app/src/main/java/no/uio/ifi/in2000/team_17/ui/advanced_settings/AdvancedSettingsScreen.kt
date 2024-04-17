@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +60,9 @@ fun AdvancedSettingsScreen(
     var dewPointText by remember { mutableStateOf("")}
     var marginText by remember { mutableStateOf("")}
 
+    val state = rememberScrollState()
+    LaunchedEffect(Unit) { state.animateScrollTo(50) }
+
     Box(modifier = Modifier.fillMaxSize() ){
         Image(painter = painterResource(id = R.drawable.sky),
             contentDescription = null, contentScale = ContentScale.FillBounds,
@@ -80,7 +84,7 @@ fun AdvancedSettingsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(state)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
