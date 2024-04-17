@@ -56,12 +56,12 @@ data class WeatherDataLists(
     val groundWind: List<WindLayer> = listOf(),
     val maxWindShear: List<WindShear> = listOf(),
     val maxWind: List<WindLayer> = listOf(),
-    val cloudFraction: List<Double> = listOf(),
+    val cloudFraction: List<String> = listOf(),
     val rain: List<Rain> = listOf(),
-    val humidity: List<Double> = listOf(),
-    val dewPoint: List<Double> = listOf(),
-    val fog: List<Double> = listOf(),
-    val temperature : List<Double> = listOf(),
+    val humidity: List<String> = listOf(),
+    val dewPoint: List<String> = listOf(),
+    val fog: List<String> = listOf(),
+    val temperature : List<String> = listOf(),
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ){
@@ -165,5 +165,17 @@ data class Rain(
     val median: String = "-1.0",
     val max: String = "-1.0"
 )
+
+enum class WeatherParameter{
+    TIME,
+    GROUNDWIND,
+    MAXWINDSHEAR,
+    MAXWIND,
+    CLOUDFRACTION,
+    RAIN,
+    HUMIDITY,
+    DEWPOINT,
+    FOG
+}
 
 

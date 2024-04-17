@@ -184,7 +184,7 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed.toString(), "10", it.first().windDirection.toString()) },
+                groundWind = locationData.timeseries.map { WindLayer(it.data.instant.details.wind_speed.toString(), "10", it.data.instant.details.wind_from_direction.toString())},
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
@@ -197,7 +197,7 @@ class RepositoryImplementation : Repository {
                     val index = windSpeed.indexOf(maxWindSpeed)
                     WindLayer(maxWindSpeed.toString(), it[index].height.toString(), it[index].windDirection.toString())
                 },
-                cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction },
+                cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction.toString()},
                 rain = locationData.timeseries.map {
                     val data = it.data.next_1_hours.details
                     Rain(
@@ -206,9 +206,9 @@ class RepositoryImplementation : Repository {
                        data.precipitation_amount_max.toString()
                    )
                 },
-                humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
-                dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
-                fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
+                humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity.toString() },
+                dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature.toString()},
+                fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction.toString() },
                 updated = LocalDateTime.parse(locationData.meta.updated_at, DateTimeFormatter.ISO_DATE_TIME)
                     .toLocalTime()
                     .plusHours(2)//TODO: now summertime only

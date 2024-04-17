@@ -28,9 +28,9 @@ data class HomeScreenUiState(
 )
 
 enum class TrafficLightColor(val color: Color, val description : String, val image : Int) {
-    RED (Color(0xffFF8282), "Hold off for now!", R.drawable.redlight),
-    YELLOW(Color(0xffffde38), "Proceed with caution!", R.drawable.yellowlight),
-    GREEN(Color(0xff76ff5e), "You're good to go!", R.drawable.greenlight),
+    RED (Color(0x88FF8282), "Hold off for now!", R.drawable.redlight),
+    YELLOW(Color(0x88ffde38), "Proceed with caution!", R.drawable.yellowlight),
+    GREEN(Color(0x8876ff5e), "You're good to go!", R.drawable.greenlight),
     WHITE(Color(0x00ffffff), "", 0)
 }
 

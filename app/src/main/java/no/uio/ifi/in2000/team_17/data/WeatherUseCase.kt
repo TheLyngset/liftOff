@@ -57,6 +57,7 @@ class WeatherUseCase {
     }
 }
 
+
 internal fun launchClearance(
     weatherPoint: WeatherPointLayer,
     maxWindSpeed: Double,
