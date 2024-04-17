@@ -62,7 +62,7 @@ fun DataScreen(
 
         ) {
 //            pre()
-            /// LinesGraph(dataScreenUiState.weatherDataLists)
+
             ThresholdGraph(dataScreenUiState.weatherDataLists, dataScreenUiState.advancedSettings)
 
         }

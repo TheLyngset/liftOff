@@ -78,8 +78,7 @@ val data1 = listOf(
     Point(13f, 20f),
     Point(14f, 30f),
     Point(15f, 40f),
-
-    )
+)
 
 
 @Composable
@@ -271,7 +270,7 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
                 ),
                 createLine(
                     pointsMaxWindShear,
-                    Color.Yellow,
+                    Color.LightGray,
                     Color.Green,
                 ),
                 createLine(
@@ -326,7 +325,7 @@ fun ChartHistory() {
             Spacer(modifier = Modifier.width(2.dp))
             Text(text = "Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Max Wind Shear ", style = TextStyle(color = Color.Yellow))
+            Text(text = "Max Wind Shear ", style = TextStyle(color = Color.LightGray))
             Spacer(modifier = Modifier.width(2.dp))
         }
         Row(horizontalArrangement = Arrangement.Center) {
