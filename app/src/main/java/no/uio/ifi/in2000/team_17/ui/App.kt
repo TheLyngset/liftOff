@@ -110,7 +110,6 @@ fun App(
 
     ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-    //Todo implement the new viewModelFactory for this viewModel
     val homeScreenViewModel: HomeScreenViewModel = viewModel(
         factory = viewModelFactory {
             HomeScreenViewModel(

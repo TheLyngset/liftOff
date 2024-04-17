@@ -101,7 +101,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
         ) {
             LaunchClearanceCard1(homeScreenUiState.canLaunch)
             /**
-            //TODO: finne ikoner, alle tre verdier på rain?
+            //TODO: alle tre verdier på rain?
             //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardGrid(weatherInfoList = listOf(
                 WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.wind)),
