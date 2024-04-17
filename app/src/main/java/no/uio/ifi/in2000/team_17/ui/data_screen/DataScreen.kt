@@ -76,5 +76,6 @@ fun DataScreen(
 
             }
         }
+    //dataScreenUiState.weatherDataLists.fog[0]
 
 }
