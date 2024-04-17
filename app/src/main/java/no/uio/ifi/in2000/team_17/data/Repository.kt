@@ -8,16 +8,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
+import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -293,4 +296,37 @@ private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doubl
             d_0_rad
         )).pow(2)
     )
+}
+
+internal fun CanLaunch(
+    weatherPointInTime: WeatherPointInTime,
+    threshholds: AdvancedSettings
+): TrafficLightColor {
+    //tåke --- (connected to clouds, dew point and precipitation)
+    if(
+        weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed &&
+        weatherPointInTime.humidity < threshholds.humidity &&
+        weatherPointInTime.dewPoint < threshholds.dewPoint &&
+        weatherPointInTime.cloudFraction < threshholds.cloudFraction &&
+        weatherPointInTime.rain.median < threshholds.rain &&
+        weatherPointInTime.fog < threshholds.fog &&
+        weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed &&
+        weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear
+    ){
+        return if(
+            weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
+            weatherPointInTime.humidity < threshholds.humidity * threshholds.margin &&
+            weatherPointInTime.dewPoint < threshholds.dewPoint * threshholds.margin &&
+            weatherPointInTime.cloudFraction < threshholds.cloudFraction * threshholds.margin &&
+            weatherPointInTime.rain.median < threshholds.rain * threshholds.margin &&
+            weatherPointInTime.fog < threshholds.fog * threshholds.margin &&
+            weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
+            weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear * threshholds.margin
+        ){
+            TrafficLightColor.GREEN
+        } else{
+            TrafficLightColor.YELLOW
+        }
+    }
+    return TrafficLightColor.RED
 }

@@ -14,6 +14,7 @@ import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
+import no.uio.ifi.in2000.team_17.data.CanLaunch
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
@@ -46,7 +47,7 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
-            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, advancedSettings)
+            canLaunch = CanLaunch(weatherPointInTime,advancedSettings)
             ,
             updated = weatherDataList.updated
         )
