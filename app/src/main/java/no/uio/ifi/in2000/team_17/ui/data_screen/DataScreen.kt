@@ -45,7 +45,7 @@ fun DataScreen(
                         Text(text = weatherPointInTime.groundWind.speed.toString())
                         Text(weatherPointInTime.maxWindShear.speed.toString())
                         Text(weatherPointInTime.cloudFraction.toString())
-                        Text(weatherPointInTime.rain.median.toString())
+                        Text(weatherPointInTime.rain.max.toString())
                         Text(weatherPointInTime.humidity.toString())
                         Text(weatherPointInTime.dewPoint.toString())
                         Text(weatherPointInTime.fog.toString())
