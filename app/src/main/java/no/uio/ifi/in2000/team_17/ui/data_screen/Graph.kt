@@ -49,13 +49,43 @@ val data = listOf(
     Point(12f, 80f),
     Point(13f, 70f),
     Point(14f, 60f),
+    Point(6f, 10f),
+    Point(7f, 60f),
+    Point(8f, 20f),
+    Point(9f, 30f),
+    Point(10f, 60f),
+    Point(11f, 80f),
+    Point(12f, 50f),
+    Point(13f, 30f),
+    Point(14f, 10f),
+    Point(15f, 90f)
+)
+
+val data1 = listOf(
+    Point(0f, 10f),
+    Point(1f, 20f),
+    Point(2f, 30f),
+    Point(3f, 40f),
+    Point(4f, 50f),
+    Point(5f, 20f),
+    Point(6f, 66f),
+    Point(7f, 30f),
+    Point(8f, 10f),
+    Point(9f, 79f),
+    Point(10f, 40f),
+    Point(11f, 20f),
+    Point(12f, 10f),
+    Point(13f, 20f),
+    Point(14f, 30f),
+    Point(15f, 40f),
 
     )
 
 
 @Composable
-private fun SingleLineChartWithGridLines(pointsData: List<Point>) {
-    val steps = 12
+
+private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: List<Point>) {
+    val steps = 11
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .topPadding(105.dp)
@@ -63,6 +93,7 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>) {
         .labelData { i -> pointsData[i].x.toInt().toString() }
         .labelAndAxisLinePadding(15.dp)
         .build()
+
     val yAxisData = AxisData.Builder()
         .steps(steps)
         .labelAndAxisLinePadding(20.dp)
@@ -72,7 +103,9 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>) {
             val yMax = pointsData.maxOf { it.y }
             val yScale = (yMax - yMin) / steps
             ((i * yScale) + yMin).formatToSinglePrecision()
-        }.build()
+        }
+        .build()
+
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -90,11 +123,36 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>) {
         yAxisData = yAxisData,
         gridLines = GridLines()
     )
+
+    val data1 = LineChartData(
+        linePlotData = LinePlotData(
+            lines = listOf(
+                Line(
+                    dataPoints = pointsData1,
+                    LineStyle(),
+                    IntersectionPoint(),
+                    SelectionHighlightPoint(),
+                    ShadowUnderLine(),
+                    SelectionHighlightPopUp()
+                )
+            )
+        ),
+        xAxisData = xAxisData,
+        yAxisData = yAxisData,
+        gridLines = GridLines()
+    )
+
     LineChart(
         modifier = Modifier
-            .fillMaxWidth()
+
             .height(300.dp),
         lineChartData = data
+    )
+
+    LineChart(
+        modifier = Modifier
+            .height(300.dp),
+        lineChartData = data1
     )
 }
 
@@ -325,5 +383,5 @@ fun rescalePoint(realValue: Double?, threshold: Double?): Double {
 @Composable
 @Preview
 fun pre() {
-    SingleLineChartWithGridLines(data)
+    SingleLineChartWithGridLines(data, data1)
 }

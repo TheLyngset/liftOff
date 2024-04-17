@@ -55,6 +55,7 @@ fun DataScreen(
                 }
             }
         }
+
         Spacer(Modifier.size(20.dp))
         Row(
             Modifier
