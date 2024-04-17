@@ -73,9 +73,9 @@ fun InputSheetContent(
     setLng:(String) -> Unit,
     onDismiss:() -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf("") }
-    var latString by remember { mutableStateOf("") }
-    var lngString by remember { mutableStateOf("") }
+    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
+    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
+    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
     Column(
         modifier
             .fillMaxSize(),
@@ -90,7 +90,6 @@ fun InputSheetContent(
                 onValueChange = { maxHeightText = it },
                 label = "Maximum height in km"
             ) { setMaxHeight(maxHeightText) }
-            Text(homeScreenUiState.maxHeight.toString())
         }
         Row(modifier.padding(horizontal = 15.dp), horizontalArrangement = Arrangement.spacedBy(24.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -100,14 +99,12 @@ fun InputSheetContent(
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
             ){ setLat(latString) }
-            Text(homeScreenUiState.latLng.latitude.toString())
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
             ){ setLng(lngString) }
-            Text(homeScreenUiState.latLng.longitude.toString())
         }
         ListItem(
             modifier = modifier.padding(top=15.dp),

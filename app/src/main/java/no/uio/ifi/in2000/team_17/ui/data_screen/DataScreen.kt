@@ -40,8 +40,6 @@ import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-
-const val INDEXES = 10
 @Composable
 fun DataScreen(
     modifier: Modifier = Modifier,
@@ -90,21 +88,21 @@ fun DataScreen(
             val width = 50 * dataScreenUiState.weatherDataLists.time.size
             GradientBox(dataScreenUiState.weatherDataLists.time,dataScreenUiState.advancedSettings,WeatherParameter.TIME)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.groundWind.map { it.speed }, dataScreenUiState.advancedSettings, WeatherParameter.GROUNDWIND)
+            GradientBox(dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.GROUNDWIND)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.maxWind.map { it.speed }, dataScreenUiState.advancedSettings, WeatherParameter.MAXWIND)
+            GradientBox(dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.MAXWIND)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed }, dataScreenUiState.advancedSettings, WeatherParameter.MAXWINDSHEAR)
+            GradientBox(dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.MAXWINDSHEAR)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.cloudFraction, dataScreenUiState.advancedSettings, WeatherParameter.CLOUDFRACTION)
+            GradientBox(dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.CLOUDFRACTION)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.rain.map { it.median }, dataScreenUiState.advancedSettings, WeatherParameter.RAIN)
+            GradientBox(dataScreenUiState.weatherDataLists.rain.map { it.median.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.RAIN)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.humidity, dataScreenUiState.advancedSettings, WeatherParameter.HUMIDITY)
+            GradientBox(dataScreenUiState.weatherDataLists.humidity.map { it.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.HUMIDITY)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.dewPoint, dataScreenUiState.advancedSettings, WeatherParameter.DEWPOINT)
+            GradientBox(dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.DEWPOINT)
             HorizontalDivider(Modifier.width(width.dp))
-            GradientBox(dataScreenUiState.weatherDataLists.fog, dataScreenUiState.advancedSettings, WeatherParameter.FOG)
+            GradientBox(dataScreenUiState.weatherDataLists.fog.map { it.toString() }, dataScreenUiState.advancedSettings, WeatherParameter.FOG)
             HorizontalDivider(Modifier.width(width.dp))
 
 
@@ -123,22 +121,22 @@ fun GradientBox(infoList : List<String>, advancedSettings: AdvancedSettings, wea
                     when (weatherParameter) {
                         WeatherParameter.GROUNDWIND -> WeatherPointInTime(
                             groundWind = WindLayer(
-                                speed = it
+                                speed = it.toDouble()
                             )
                         )
 
                         WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(
                             maxWindShear = WindShear(
-                                speed = it
+                                speed = it.toDouble()
                             )
                         )
 
-                        WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it)
-                        WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it)
-                        WeatherParameter.FOG -> WeatherPointInTime(fog = it)
-                        WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it)
-                        WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(speed = it))
-                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(median = it))
+                        WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it.toDouble())
+                        WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it.toDouble())
+                        WeatherParameter.FOG -> WeatherPointInTime(fog = it.toDouble())
+                        WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it.toDouble())
+                        WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(speed = it.toDouble()))
+                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(median = it.toDouble()))
                         else -> WeatherPointInTime()
                     }, advancedSettings
                 ).color

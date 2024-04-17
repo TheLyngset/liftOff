@@ -41,7 +41,7 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
         advancedSettingsRepository.advancedSettingsFlow,
     ){weatherDataList: WeatherDataLists, settings: Settings, advancedSettings: AdvancedSettings->
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
-        val weatherPointInTime = weatherDataList.getWeatherPoint(settings.timeIndex)
+        val weatherPointInTime = weatherDataList.get(settings.timeIndex)
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),

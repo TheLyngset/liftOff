@@ -1,376 +1,243 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
+import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.model.Available
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings: () -> Unit,
-    setMaxHeight: (String) -> Unit,
-    setLat: (String) -> Unit,
-    setLng: (String) -> Unit,
-    onLoad: () -> Unit
+    homeScreenUiState: HomeScreenUiState
 ) {
+    Box(modifier = modifier
+        .fillMaxSize(1f)
 
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(homeScreenUiState.latLng, 11f)
+
+    ){
+        Image(painter = painterResource(id = R.drawable.sky),
+            contentDescription = null, contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .matchParentSize()
+                .graphicsLayer(
+                    scaleX = 2.4f,
+                    scaleY = 1.4f,
+                    translationX = 100f,
+                    translationY = 150f
+                )
+
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.rakett),
+            contentDescription = null, contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .graphicsLayer(
+                    scaleX = 0.27f,
+                    scaleY = 0.47f,
+                    translationY = -132f
+                )
+                .alpha(0.85f)
+        )
     }
-
-    Column(modifier.fillMaxSize()) {
-        Card(
+    Box(modifier = Modifier
+        .fillMaxSize(1f),
+        contentAlignment = Alignment.BottomCenter
+    ){
+        BottomCard(homeScreenUiState)
+    }
+}
+@Composable
+fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
+    ElevatedCard(
+        Modifier
+            .fillMaxWidth()
+        ,
+        //elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+    ) {
+        Column(
             Modifier
                 .fillMaxWidth()
-                .size(300.dp)
-                .padding(16.dp)
+                .padding(top = 10.dp, bottom = 70.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GoogleMap(
-                cameraPositionState = cameraPositionState,
-                uiSettings = MapUiSettings(mapToolbarEnabled = false, zoomControlsEnabled = false),
-                properties = MapProperties(mapType = MapType.SATELLITE)
+            LaunchClearanceCard1(homeScreenUiState.canLaunch)
+            /**
+            //TODO: finne ikoner, alle tre verdier på rain?
+            //WARNING: if you change a title you need to change it in [Available.get] as well */
+            WeatherCardGrid(weatherInfoList = listOf(
+                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.wind)),
+                WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.wind)),
+                WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.shearwind)),
+                WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.temperature)),
+                WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.cloud)),
+                WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rain)),
+                WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.humidity)),
+                WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.fog)),
+
+                ), homeScreenUiState.weatherPointInTime.available)
+
+        }
+    }
+}
+@Composable
+fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+    ) {
+        Column(
+            Modifier
+                .background(trafficLightColor.color)
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
             ) {
-                Marker(
-                    state = MarkerState(position = homeScreenUiState.latLng),
-                    title = "Test",
-                    snippet = "Marker not in Singapore"
-                )
-            }
-        }
-        Card {
-            Text(text = "Can launch with current input: ${homeScreenUiState.canLaunch}")
-        }
-        DateTime(
-            homeScreenUiState.weatherPointInTime.date,
-            homeScreenUiState.weatherPointInTime.time
-        )
-        LastUpdated(homeScreenUiState.updated)
-        WeatherCard(
-            weatherInfoList = listOf(
-                Triple("Ground wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s"),
-                Triple(
-                    "Max wind",
-                    homeScreenUiState.weatherPointInTime.maxWind.speed,
-                    "m/s"
-                ),
-                Triple(
-                    "Max Shear",
-                    homeScreenUiState.weatherPointInTime.maxWindShear.speed,
-                    "m/s"
-                )
-            )
-        )
-        WeatherCard(
-            weatherInfoList = listOf(
-                Triple(
-                    "Cloud coverage",
-                    homeScreenUiState.weatherPointInTime.cloudFraction,
-                    "%"
-                ),
-                Triple("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm"),
-                Triple("Fog", homeScreenUiState.weatherPointInTime.fog, "%"),
-                Triple("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%"),
-                Triple("Dewpoint", homeScreenUiState.weatherPointInTime.dewPoint, "˚C"),
-            )
-        )
-        InputSheet(
-            Modifier.fillMaxWidth(),
-            homeScreenUiState = homeScreenUiState,
-            toAdvancedSettings = toAdvancedSettings,
-            setMaxHeight = { setMaxHeight(it) },
-            setLat = { setLat(it) },
-            setLng = { setLng(it) },
-            onLoad = onLoad
-        )
-    }
-}
 
-@Composable
-fun WeatherInfo(title: String, value: String, unit: String) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(
-            title, style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        )
-        Text(
-            text = "$value $unit",
-            style = TextStyle(
-                fontSize = 16.sp
-            )
-        )
-    }
-}
-
-@Composable
-fun WeatherCard(weatherInfoList: List<Triple<String, String, String>>) {
-    Card(
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-                .padding(horizontal = 16.dp)
-        ) {
-            weatherInfoList.forEach {
-                Spacer(modifier = Modifier.size(5.dp))
-                WeatherInfo(title = it.first, value = it.second, unit = it.third)
-                Divider()
-                Spacer(modifier = Modifier.size(7.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun DateTime(date: String, time: String) {
-    Card(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .padding(horizontal = 16.dp)
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                "$date kl. $time", style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun LastUpdated(time: String) {
-    Card(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .padding(horizontal = 16.dp)
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                "Updated at: $time", style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun LaunchClearanceCard(canLaunch: String) {
-    Card(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
-            .padding(horizontal = 16.dp)
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                canLaunch, style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InputSheet(
-    modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings: () -> Unit,
-    setMaxHeight: (String) -> Unit,
-    setLat: (String) -> Unit,
-    setLng: (String) -> Unit,
-    onLoad: () -> Unit
-) {
-    var sheetState by remember { mutableStateOf(false) }
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { sheetState = true }) {
-            Text(text = "Change input")
-        }
-    }
-    if (sheetState) {
-        ModalBottomSheet(onDismissRequest = { sheetState = false }) {
-            InputSheetContent(
-                homeScreenUiState = homeScreenUiState,
-                toAdvancedSettings = toAdvancedSettings,
-                setMaxHeight = { setMaxHeight(it) },
-                setLat = { setLat(it) },
-                setLng = { setLng(it) },
-                onLoad = {
-                    onLoad()
-                    sheetState = false
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun InputSheetContent(
-    modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings: () -> Unit,
-    setMaxHeight: (String) -> Unit,
-    setLat: (String) -> Unit,
-    setLng: (String) -> Unit,
-    onLoad: () -> Unit
-) {
-    var maxHeightText by remember { mutableStateOf("") }
-    var latString by remember { mutableStateOf("") }
-    var lngString by remember { mutableStateOf("") }
-    Column(
-        modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            InputTextField(
-                value = maxHeightText,
-                onValueChange = { maxHeightText = it },
-                label = "Maximum height in km"
-            ) { setMaxHeight(maxHeightText) }
-            Text(homeScreenUiState.maxHeight.toString())
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            InputTextField(
-                value = latString,
-                onValueChange = { latString = it },
-                label = "Latitude",
-                modifier = Modifier.weight(1f)
-            ) { setLat(latString) }
-            Text(homeScreenUiState.latLng.latitude.toString())
-            InputTextField(
-                value = lngString,
-                onValueChange = { lngString = it },
-                label = "Longitude",
-                modifier = Modifier.weight(1f)
-            ) { setLng(lngString) }
-            Text(homeScreenUiState.latLng.longitude.toString())
-        }
-        Button(onClick = onLoad) { Text(text = "Load new settings") }
-        ListItem(
-            colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
-            headlineContent = {
-                Text(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    text = "Advanced settings"
-                )
-            },
-            supportingContent = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        text = "The settings under are set with appropriate standard values, read more about why these values have been chosen here"
+                if(trafficLightColor != TrafficLightColor.WHITE){
+                    Image(
+                        painter = painterResource(id = trafficLightColor.image),
+                        contentDescription = "GreenLightIcon",
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(60.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.width(38.dp))
+                Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                )
             }
-        )
-        Button(onClick = { toAdvancedSettings() }) {
-            Text(text = "Advanced settings")
         }
     }
 }
 
 @Composable
-fun InputTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    label: String,
-    onValueChange: (String) -> Unit,
-    onDone: (String) -> Unit
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Number
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                onDone(value)
-            }
-        ),
-        modifier = modifier
-    )
+fun CardItem(title: String, image: Painter, value: Double, unit: String) {
+    ElevatedCard(
+        modifier = Modifier
+            .padding(3.dp)
+            .padding(top = 5.dp, bottom = 5.dp)
+            .size(120.dp),
+        colors = CardColors(
+            containerColor = Color.White,
+            contentColor = Color.Unspecified,
+            disabledContainerColor = Color.Unspecified,
+            disabledContentColor = Color.Unspecified
+        )
 
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+
+        ) {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(35.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "$value $unit",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
 }
+
+
+//cloud coverage, lazy row, liste med alle objektene, sorteres etter
+@Composable
+fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
+    LazyHorizontalGrid(
+        GridCells.Fixed(1),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(130.dp)
+    ) {
+        items(weatherInfoList) { weatherInfo ->
+            if(available.get(weatherInfo.title)) {
+                CardItem(
+                    title = weatherInfo.title,
+                    value = weatherInfo.value,
+                    unit = weatherInfo.unit,
+                    image = weatherInfo.image,
+                )
+            }
+        }
+    }
+}
+
+data class WeatherInfo(
+    val title: String,
+    val value: Double,
+    val unit: String,
+    val image: Painter
+)
+
+
+@Preview
+@Composable
+fun Prehs(){
+    HomeScreen(homeScreenUiState = HomeScreenUiState())
+}
+

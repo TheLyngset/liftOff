@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.ui.home_screen.InputTextField
+import no.uio.ifi.in2000.team_17.ui.InputTextField
 import java.lang.NumberFormatException
 import java.time.format.TextStyle
 

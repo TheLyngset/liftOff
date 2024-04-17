@@ -184,31 +184,31 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = locationData.timeseries.map { WindLayer(it.data.instant.details.wind_speed.toString(), "10", it.data.instant.details.wind_from_direction.toString())},
+                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed, 10.0, it.first().windDirection) },
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
                     val index = windShear.indexOf(windShear.max())
-                    WindShear(maxWindShear.toString(), it[index].height.toString())
+                    WindShear(maxWindShear, it[index].height)
                 },
                 maxWind = listOfWeatherPointList.map {
                     val windSpeed = it.map { it.windSpeed }
                     val maxWindSpeed = windSpeed.max()
                     val index = windSpeed.indexOf(maxWindSpeed)
-                    WindLayer(maxWindSpeed.toString(), it[index].height.toString(), it[index].windDirection.toString())
+                    WindLayer(maxWindSpeed, it[index].height, it[index].windDirection)
                 },
-                cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction.toString()},
+                cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction },
                 rain = locationData.timeseries.map {
                     val data = it.data.next_1_hours.details
                     Rain(
-                       data.precipitation_amount_min.toString(),
-                       data.precipitation_amount.toString(),
-                       data.precipitation_amount_max.toString()
-                   )
+                        data.precipitation_amount_min,
+                        data.precipitation_amount,
+                        data.precipitation_amount_max
+                    )
                 },
-                humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity.toString() },
-                dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature.toString()},
-                fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction.toString() },
+                humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
+                dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
+                fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
                 updated = LocalDateTime.parse(locationData.meta.updated_at, DateTimeFormatter.ISO_DATE_TIME)
                     .toLocalTime()
                     .plusHours(2)//TODO: now summertime only

@@ -21,14 +21,14 @@ data class WeatherPointInTime(
     val groundWind: WindLayer = WindLayer(),
     val maxWindShear: WindShear = WindShear(),
     val maxWind: WindLayer =  WindLayer(),
-    val temperature: String = "-1.0",
-    val pressure: String = "-1.0",
-    val height: String = "-1.0",
-    val cloudFraction: String = "-1.0",
+    val temperature: Double = -1.0,
+    val pressure: Double = -1.0,
+    val height: Double = -1.0,
+    val cloudFraction: Double = -1.0,
     val rain: Rain = Rain(),
-    val humidity: String = "-1.0",
-    val dewPoint: String = "-1.0",
-    val fog: String = "-1.0",
+    val humidity: Double = -1.0,
+    val dewPoint: Double = -1.0,
+    val fog: Double = -1.0,
     val available: Available = Available()
 )
 
@@ -56,27 +56,27 @@ data class WeatherDataLists(
     val groundWind: List<WindLayer> = listOf(),
     val maxWindShear: List<WindShear> = listOf(),
     val maxWind: List<WindLayer> = listOf(),
-    val cloudFraction: List<String> = listOf(),
+    val cloudFraction: List<Double> = listOf(),
     val rain: List<Rain> = listOf(),
-    val humidity: List<String> = listOf(),
-    val dewPoint: List<String> = listOf(),
-    val fog: List<String> = listOf(),
-    val temperature : List<String> = listOf(),
+    val humidity: List<Double> = listOf(),
+    val dewPoint: List<Double> = listOf(),
+    val fog: List<Double> = listOf(),
+    val temperature : List<Double> = listOf(),
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ){
-    fun getWeatherPoint(index: Int): WeatherPointInTime {
+    fun get(index: Int): WeatherPointInTime {
         return WeatherPointInTime(
             date = date.getOrElse(index){""},
             time = time.getOrElse(index){"00"},
             groundWind = groundWind.getOrElse(index){ WindLayer() },
             maxWindShear = maxWindShear.getOrElse(index){ WindShear() },
             maxWind = maxWind.getOrElse(index){WindLayer()},
-            cloudFraction = cloudFraction.getOrElse(index){0.0}.toString(),
+            cloudFraction = cloudFraction.getOrElse(index){0.0},
             rain = rain.getOrElse(index){ Rain() },
-            humidity = humidity.getOrElse(index){0.0}.toString(),
-            dewPoint = dewPoint.getOrElse(index){0.0}.toString(),
-            fog = fog.getOrElse(index){0.0}.toString(),
+            humidity = humidity.getOrElse(index){0.0},
+            dewPoint = dewPoint.getOrElse(index){0.0},
+            fog = fog.getOrElse(index){0.0},
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,
@@ -152,18 +152,18 @@ data class Available(
 }
 
 data class WindLayer(
-    val speed: String = "-1.0",
-    val height: String = "-1.0",
-    val direction: String = "-1.0"
+    val speed: Double = 0.0,
+    val height: Double = 0.0,
+    val direction: Double = 0.0
 )
 data class WindShear(
-    val speed: String = "-1.0",
-    val height: String = "-1.0"
+    val speed: Double = 0.0,
+    val height: Double = 0.0
 )
 data class Rain(
-    val min: String = "-1.0",
-    val median: String = "-1.0",
-    val max: String = "-1.0"
+    val min: Double = 0.0,
+    val median: Double = 0.0,
+    val max: Double = 0.0
 )
 
 enum class WeatherParameter{
@@ -177,5 +177,3 @@ enum class WeatherParameter{
     DEWPOINT,
     FOG
 }
-
-
