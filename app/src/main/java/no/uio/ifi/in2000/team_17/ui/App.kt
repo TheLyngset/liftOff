@@ -218,8 +218,12 @@ fun App(
 
 }
 
+
 @Composable
-fun BottomBar(modifier : Modifier){
+fun BottomBar(
+    modifier : Modifier,
+    onNavigate:(Int)-> Unit
+){
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
