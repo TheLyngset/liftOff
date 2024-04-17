@@ -24,7 +24,7 @@ data class HomeScreenUiState(
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
-    val canLaunch: TrafficLightColor = TrafficLightColor.RED,
+    val canLaunch: TrafficLightColor = TrafficLightColor.WHITE,
     val updated: String = "00"
 )
 
@@ -32,6 +32,7 @@ enum class TrafficLightColor(val color: Color, val description : String, val ima
     RED (Color(0xffFF8282), "Hold off for now!", R.drawable.redlight),
     YELLOW(Color(0xffffde38), "Proceed with caution!", R.drawable.yellowlight),
     GREEN(Color(0xff76ff5e), "You're good to go!", R.drawable.greenlight),
+    WHITE(Color(0x00ffffff), "", 0)
 }
 
 class HomeScreenViewModel(private val repository: Repository, private val settingsRepository: SettingsRepository, private val advancedSettingsRepository: AdvancedSettingsRepository) : ViewModel() {

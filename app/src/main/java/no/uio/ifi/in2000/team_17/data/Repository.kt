@@ -8,16 +8,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.Rain
+import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
+import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -100,14 +104,15 @@ class RepositoryImplementation : Repository {
         var isoBaricNow = IsoBaricModel.Ranges()
         var isoBaricIn3 = IsoBaricModel.Ranges()
         var isoBaricIn9 = IsoBaricModel.Ranges()
-        try {
-            isoBaricNow = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges
-            isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges
-            isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges
-        } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
-            newIsoBaricModel.add(IsoBaricModel.Ranges())
-        }
+        try { isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
+        try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
+        try { isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges }
+        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+
         for (i: Int in startIndex..8) {
             newIsoBaricModel.add(
                 when(i){
@@ -186,7 +191,7 @@ class RepositoryImplementation : Repository {
                     val index = windShear.indexOf(windShear.max())
                     WindShear(maxWindShear, it[index].height)
                 },
-                maxWindSpeed = listOfWeatherPointList.map {
+                maxWind = listOfWeatherPointList.map {
                     val windSpeed = it.map { it.windSpeed }
                     val maxWindSpeed = windSpeed.max()
                     val index = windSpeed.indexOf(maxWindSpeed)

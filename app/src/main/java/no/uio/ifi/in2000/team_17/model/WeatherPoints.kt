@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.team_17.model
 
-import android.text.BoringLayout
-
 // data class with relevant date for a weather point
 data class WeatherPointLayer(
     val windSpeed: Double = -1.0,
@@ -57,7 +55,7 @@ data class WeatherDataLists(
     val time: List<String> = listOf(),
     val groundWind: List<WindLayer> = listOf(),
     val maxWindShear: List<WindShear> = listOf(),
-    val maxWindSpeed: List<WindLayer> = listOf(),
+    val maxWind: List<WindLayer> = listOf(),
     val cloudFraction: List<Double> = listOf(),
     val rain: List<Rain> = listOf(),
     val humidity: List<Double> = listOf(),
@@ -73,6 +71,7 @@ data class WeatherDataLists(
             time = time.getOrElse(index){"00"},
             groundWind = groundWind.getOrElse(index){ WindLayer() },
             maxWindShear = maxWindShear.getOrElse(index){ WindShear() },
+            maxWind = maxWind.getOrElse(index){WindLayer()},
             cloudFraction = cloudFraction.getOrElse(index){0.0},
             rain = rain.getOrElse(index){ Rain() },
             humidity = humidity.getOrElse(index){0.0},
@@ -83,7 +82,7 @@ data class WeatherDataLists(
                 time = availableIndexes.time > index,
                 groundWind = availableIndexes.groundWind > index,
                 maxWindShear = availableIndexes.maxWindShear > index,
-                maxWindSpeed = availableIndexes.maxWindSpeed > index,
+                maxWind = availableIndexes.maxWind > index,
                 cloudFraction = availableIndexes.cloudFraction > index,
                 rain = availableIndexes.rain > index,
                 humidity = availableIndexes.humidity > index,
@@ -99,6 +98,7 @@ data class WeatherDataLists(
             time = time.size,
             groundWind = groundWind.size,
             maxWindShear = maxWindShear.size,
+            maxWind = maxWind.size,
             cloudFraction = cloudFraction.size,
             rain = rain.size,
             humidity = humidity.size,
@@ -114,7 +114,7 @@ data class AvailableIndexes(
     val time: Int = 0,
     val groundWind: Int = 0,
     val maxWindShear: Int = 0,
-    val maxWindSpeed: Int = 0,
+    val maxWind: Int = 0,
     val cloudFraction: Int = 0,
     val rain: Int = 0,
     val humidity: Int = 0,
@@ -127,7 +127,7 @@ data class Available(
     val time:Boolean = false,
     val groundWind:Boolean = false,
     val maxWindShear:Boolean = false,
-    val maxWindSpeed:Boolean = false,
+    val maxWind:Boolean = false,
     val cloudFraction:Boolean = false,
     val rain:Boolean = false,
     val humidity:Boolean = false,
@@ -137,14 +137,15 @@ data class Available(
 ){
     fun get(title : String): Boolean {
         return when(title){
-            "Ground wind" -> groundWind
-            "Max wind" -> maxWindSpeed
+            "Ground Wind" -> groundWind
+            "Max Wind" -> maxWind
             "Max Shear" -> maxWindShear
             "Temperature" -> temperature
             "Cloudiness" -> cloudFraction
             "Rain" -> rain
             "Humidity" -> humidity
             "Fog" -> fog
+            "Dew Point" -> dewPoint
             else -> false
         }
     }
