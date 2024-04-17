@@ -186,7 +186,7 @@ fun App(
                 DataScreen(
                     modifier = Modifier.padding(innerPadding),
                     dataScreenUiState
-                    )
+                    ){dataScreenViewModel.setTimeIndex(it)}
             }
             composable(route = Screen.Judicial.name){
                 JudicialScreen(modifier = Modifier.padding(innerPadding))
