@@ -9,4 +9,5 @@ data class Thresholds(
     val rain: Double = 0.0,
     val humidity: Double = 75.0,
     val dewPoint: Double = 15.0,
+    val margin: Double = 0.6
 )

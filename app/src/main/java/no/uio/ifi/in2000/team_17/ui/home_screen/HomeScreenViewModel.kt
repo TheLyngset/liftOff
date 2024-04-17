@@ -18,6 +18,7 @@ import no.uio.ifi.in2000.team_17.data.CanLaunch
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
+import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 
@@ -25,7 +26,7 @@ data class HomeScreenUiState(
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
-    val canLaunch: TrafficLightColor = TrafficLightColor.RED,
+    val canLaunch: TrafficLightColor = TrafficLightColor.WHITE,
     val updated: String = "00"
 )
 
@@ -33,6 +34,7 @@ enum class TrafficLightColor(val color: Color, val description : String, val ima
     RED (Color(0xffFF8282), "Hold off for now!", R.drawable.redlight),
     YELLOW(Color(0xffffde38), "Proceed with caution!", R.drawable.yellowlight),
     GREEN(Color(0xff76ff5e), "You're good to go!", R.drawable.greenlight),
+    WHITE(Color(0x00ffffff), "", 0)
 }
 
 class HomeScreenViewModel(private val repository: Repository, private val settingsRepository: SettingsRepository, private val advancedSettingsRepository: AdvancedSettingsRepository) : ViewModel() {
@@ -47,7 +49,17 @@ class HomeScreenViewModel(private val repository: Repository, private val settin
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
-            canLaunch = CanLaunch(weatherPointInTime,advancedSettings)
+            canLaunch = CanLaunch(weatherPointInTime, Thresholds(
+                windSpeed = advancedSettings.groundWindSpeed,
+                maxWindSpeed = advancedSettings.maxWindSpeed,
+                maxWindShear = advancedSettings.maxWindShear,
+                cloudFraction = advancedSettings.cloudFraction,
+                fog = advancedSettings.fog,
+                rain = advancedSettings.rain,
+                humidity = advancedSettings.humidity,
+                dewPoint = advancedSettings.dewPoint,
+                margin = advancedSettings.margin
+            ))
             ,
             updated = weatherDataList.updated
         )

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +59,9 @@ fun newHomeScreen(
                 )
 
         )
-        Image(painter = painterResource(id = R.drawable.rakett),
+
+        Image(
+            painter = painterResource(id = R.drawable.rakett),
             contentDescription = null, contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .graphicsLayer(
@@ -97,14 +100,15 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             //TODO: finne ikoner, alle tre verdier på rain?
             //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardGrid(weatherInfoList = listOf(
-                WeatherInfo("Ground wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.rainicon)),
-                WeatherInfo("Max wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.windicon)),
+                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.windicon)),
                 WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.rainicon)),
                 WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.rainicon)),
+                WeatherInfo("Dew Point", homeScreenUiState.weatherPointInTime.dewPoint, "℃", painterResource(id = R.drawable.rainicon))
             ), homeScreenUiState.weatherPointInTime.available)
 
         }
@@ -130,13 +134,16 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
                 Modifier
                     .fillMaxWidth()
                         ) {
-                Image(
-                    painter = painterResource(id = trafficLightColor.image),
-                    contentDescription = "GreenLightIcon",
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .size(60.dp)
-                )
+
+                if(trafficLightColor != TrafficLightColor.WHITE){
+                    Image(
+                        painter = painterResource(id = trafficLightColor.image),
+                        contentDescription = "GreenLightIcon",
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(60.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(38.dp))
                 Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(

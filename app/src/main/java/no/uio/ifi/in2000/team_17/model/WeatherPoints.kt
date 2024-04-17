@@ -137,14 +137,15 @@ data class Available(
 ){
     fun get(title : String): Boolean {
         return when(title){
-            "Ground wind" -> groundWind
-            "Max wind" -> maxWind
+            "Ground Wind" -> groundWind
+            "Max Wind" -> maxWind
             "Max Shear" -> maxWindShear
             "Temperature" -> temperature
             "Cloudiness" -> cloudFraction
             "Rain" -> rain
             "Humidity" -> humidity
             "Fog" -> fog
+            "Dew Point" -> dewPoint
             else -> false
         }
     }
