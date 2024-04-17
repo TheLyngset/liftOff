@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -200,13 +201,16 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
     val pointsMedianRain: List<Point> = weatherDataLists.rain.mapIndexed { index, value ->
         Point(
             x = index.toFloat(),
-            y = (rescalePoint(weatherDataLists.rain[index].median, thresholds.rain + 1)).toFloat()
+            y = (rescalePoint(
+                weatherDataLists.rain[index].max,
+                thresholds.rain + 0.00001
+            )).toFloat()
         )
     }
     val pointsFog: List<Point> = weatherDataLists.fog.mapIndexed { index, value ->
         Point(
             x = index.toFloat(),
-            y = (rescalePoint(weatherDataLists.fog[index], thresholds.fog + 1)).toFloat()
+            y = (rescalePoint(weatherDataLists.fog[index], thresholds.fog + 0.00001)).toFloat()
         )
     }
     val pointsHumidity: List<Point> = weatherDataLists.humidity.mapIndexed { index, value ->
@@ -241,12 +245,19 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
         .axisStepSize(40.dp)
         .topPadding(50.dp)
         .steps(size - 1)
+        .labelData { i -> i.toString() }
+        .labelAndAxisLinePadding(20.dp)
+        .axisLabelDescription { "Time indexes" }
         .labelAndAxisLinePadding(15.dp)
+        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
+        .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .steps(5)
         .labelAndAxisLinePadding(20.dp)
+        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
+        .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
             val yMax = 1f
             val yScale = yMax / 5
