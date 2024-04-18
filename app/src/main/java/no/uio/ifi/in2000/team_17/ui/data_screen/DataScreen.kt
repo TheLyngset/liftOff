@@ -208,7 +208,8 @@ fun GradientBox(modifier: Modifier = Modifier, infoList : List<String>, advanced
                     .width(35.dp)
                     .background(
                         //color = colorList.first()
-                        brush = Brush.horizontalGradient(listOf(colorList.first().copy(alpha = 0.0f), colorList.first(), colorList.first()))
+                        brush = Brush.horizontalGradient(listOf(colorList.first().copy(alpha = 0.0f), colorList.first(), colorList.first())
+                        )
                     )
                 ){
                     Text(text = "")
@@ -226,7 +227,11 @@ fun GradientBox(modifier: Modifier = Modifier, infoList : List<String>, advanced
                 }
                 Box(modifier = modifier
                     .width(35.dp)
-                    .background(colorList.last())
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(colorList.last(), colorList.last(), colorList.last().copy(0.0f))
+                        )
+                    )
                 ){
                     Text(text = "")
                 }
