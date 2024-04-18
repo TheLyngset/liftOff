@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -10,11 +11,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,6 +63,7 @@ fun DataScreen(
     setTimeIndex: (Int) -> Unit
 ) {
     var toggleState by remember { mutableStateOf(Toggle.TABLE) }
+    var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
 
     BackGroundImage(0.82f)
 
@@ -70,7 +74,10 @@ fun DataScreen(
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
-                GradientTable(Modifier, dataScreenUiState, 60) { setTimeIndex(it) }
+                GradientTable(Modifier, dataScreenUiState, 60, selectedTimeIndex) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
+                }
             }
 
             Toggle.GRAPH -> {
@@ -91,6 +98,7 @@ fun GradientTable(
     modifier: Modifier = Modifier,
     dataScreenUiState: DataScreenUiState,
     rowHeight: Int,
+    selectedTimeIndex: Int,
     setTimeIndex: (Int) -> Unit
 ) {
     LazyColumn(
@@ -104,7 +112,9 @@ fun GradientTable(
                     Modifier.horizontalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    val dividerWidth = 50.dp
+                    val dividerWidth = 95.dp
+                    TitleBox(text = "")
+                    HorizontalDivider(Modifier.width(dividerWidth))
                     TitleBox(text = "Time")
                     HorizontalDivider(Modifier.width(dividerWidth))
                     TitleBox(Modifier.height(rowHeight.dp), text = "Ground \nWind")
@@ -126,72 +136,80 @@ fun GradientTable(
                 }
                 LazyRow {
                     item {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            val width = 50 * dataScreenUiState.weatherDataLists.time.size
-                            TimeRow(
-                                dataScreenUiState.weatherDataLists.time,
-                                dataScreenUiState.selectedTimeIndex
-                            ) { setTimeIndex(it) }
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.GROUNDWIND
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.MAXWIND
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.MAXWINDSHEAR
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.CLOUDFRACTION
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.rain.map { it.median.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.RAIN
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.humidity.map { it.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.HUMIDITY
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.DEWPOINT
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
-                            GradientBox(
-                                Modifier.height(rowHeight.dp),
-                                dataScreenUiState.weatherDataLists.fog.map { it.toString() },
-                                dataScreenUiState.advancedSettings,
-                                WeatherParameter.FOG
-                            )
-                            HorizontalDivider(Modifier.width(width.dp))
+                        Box {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                val width = 50 * dataScreenUiState.weatherDataLists.time.size
+                                DateRow(
+                                    dataScreenUiState.weatherDataLists.date,
+                                    dataScreenUiState.weatherDataLists.time
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                TimeRow(
+                                    dataScreenUiState.weatherDataLists.time,
+                                    selectedTimeIndex
+                                ) { setTimeIndex(it) }
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.GROUNDWIND
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.MAXWIND
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.MAXWINDSHEAR
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.CLOUDFRACTION
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.rain.map { it.median.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.RAIN
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.humidity.map { it.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.HUMIDITY
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.DEWPOINT
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
+                                GradientBox(
+                                    Modifier.height(rowHeight.dp),
+                                    dataScreenUiState.weatherDataLists.fog.map { it.toString() },
+                                    dataScreenUiState.advancedSettings,
+                                    WeatherParameter.FOG
+                                )
+                                HorizontalDivider(Modifier.width(width.dp))
 
+                            }
+                            SelectedBox(selectedTimeIndex, dataScreenUiState)
                         }
                     }
                 }
@@ -203,6 +221,28 @@ fun GradientTable(
     }
 }
 
+@Composable
+fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
+    val state = rememberLazyListState()
+    Row{
+        (1..index).forEach {
+            InfoBox(info = "")
+        }
+        val date = dataScreenUiState.weatherDataLists.date.getOrElse(index + 2){"           "}
+        Box {
+            InfoBox(info ="${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
+            InfoBox(
+                Modifier
+                    .offset(y = 32.dp)
+                    .height(586.dp)
+                    .background(Color.White.copy(0.3f))
+                    .clip(shape = RoundedCornerShape(5.dp))
+                    .border(1.dp, Color.Black, RoundedCornerShape(5.dp)),
+                ""
+            )
+        }
+    }
+}
 
 @Composable
 fun GradientBox(
@@ -284,7 +324,22 @@ fun GradientBox(
         }
     }
 }
-
+@Composable
+fun DateRow(
+    dateList: List<String>,
+    timeList: List<String>
+) {
+    Row {
+        dateList.forEachIndexed {index, date ->
+            if(timeList.getOrElse(index){""} == "00:00" || index == 0){
+                InfoBox(info = "${dateList.getOrElse(index + 2){date}.subSequence(8, 10)}.${date.subSequence(5, 7)}")
+            }
+            else{
+                InfoBox(info = "")
+            }
+        }
+    }
+}
 @Composable
 fun TimeRow(
     timeList: List<String>,
@@ -293,15 +348,7 @@ fun TimeRow(
 ) {
     Row {
         timeList.forEachIndexed { index, time ->
-            if (index == currentTimeIndex) {
-                InfoBox(
-                    Modifier
-                        .clip(shape = RoundedCornerShape(5.dp))
-                        .background(Color.LightGray.copy(alpha = 0.3f)), info = time
-                )
-            } else {
-                InfoBox(Modifier.clickable { setTimeIndex(index) }, info = time)
-            }
+            InfoBox(Modifier.clickable { setTimeIndex(index) }, info = time)
         }
     }
 }
@@ -343,8 +390,7 @@ fun ToggleButton(
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = Modifier
-                    .padding(bottom = 15.dp)
-                    .requiredHeight(100.dp),
+                    .padding(bottom = 15.dp),
                 selected = selectedIndex == index,
                 onClick = {
                     selectedIndex = index

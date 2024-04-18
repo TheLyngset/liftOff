@@ -51,7 +51,7 @@ data class WeatherPointsResults(
 A data class containing lists for each parameter where indexes correspond to hours in the future
 */
 data class WeatherDataLists(
-    val date: List<String> = listOf(""),
+    val date: List<String> = listOf("0000-00-00"),
     val time: List<String> = listOf(""),
     val groundWind: List<WindLayer> = listOf(WindLayer()),
     val maxWindShear: List<WindShear> = listOf(WindShear()),
