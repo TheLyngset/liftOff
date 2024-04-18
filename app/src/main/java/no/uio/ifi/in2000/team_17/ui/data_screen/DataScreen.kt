@@ -223,7 +223,7 @@ fun GradientTable(
 fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
     val state = rememberLazyListState()
     Row{
-        Box(Modifier.width((index*70).dp)) //Change Width here
+        repeat(index){ InfoBox(info = "") }
         val date = dataScreenUiState.weatherDataLists.date.getOrElse(index + 2){"           "}
         Box {
             InfoBox(info ="${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
@@ -288,7 +288,12 @@ fun GradientBox(
                     .width(35.dp)
                     .background(
                         //color = colorList.first()
-                        brush = Brush.horizontalGradient(listOf(colorList.first().copy(alpha = 0.0f), colorList.first(), colorList.first())
+                        brush = Brush.horizontalGradient(
+                            listOf(
+                                colorList
+                                    .first()
+                                    .copy(alpha = 0.0f), colorList.first(), colorList.first()
+                            )
                         )
                     )
                 ){
@@ -309,7 +314,13 @@ fun GradientBox(
                     .width(35.dp)
                     .background(
                         brush = Brush.horizontalGradient(
-                            listOf(colorList.last(), colorList.last(), colorList.last().copy(0.0f))
+                            listOf(
+                                colorList.last(),
+                                colorList.last(),
+                                colorList
+                                    .last()
+                                    .copy(0.0f)
+                            )
                         )
                     )
                 ){
