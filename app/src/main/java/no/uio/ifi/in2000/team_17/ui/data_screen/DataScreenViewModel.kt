@@ -18,7 +18,7 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val advancedSettings: AdvancedSettings = AdvancedSettings.getDefaultInstance(),
-    val timeIndex: Int = 0
+    val selectedTimeIndex: Int = 0
 )
 class DataScreenViewModel(
     private val repo:Repository,
