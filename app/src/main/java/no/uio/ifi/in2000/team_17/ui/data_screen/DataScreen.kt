@@ -203,9 +203,13 @@ fun GradientBox(modifier: Modifier = Modifier, infoList : List<String>, advanced
     if(!colorList.isEmpty()&& !infoList.isEmpty()){
         Box {
             Row {
+                //making half a box in the start
                 Box(modifier = modifier
                     .width(35.dp)
-                    .background(colorList.first())
+                    .background(
+                        //color = colorList.first()
+                        brush = Brush.horizontalGradient(listOf(colorList.first().copy(alpha = 0.0f), colorList.first(), colorList.first()))
+                    )
                 ){
                     Text(text = "")
                 }
