@@ -79,6 +79,10 @@ fun DataScreen(
         }
     }
 }
+@Composable
+fun SelectedBox(index:Int){
+
+}
 
 @Composable
 fun GradientTable(modifier: Modifier = Modifier, dataScreenUiState:DataScreenUiState, rowHeight: Int, setTimeIndex: (Int) -> Unit ){
@@ -253,7 +257,8 @@ fun TimeRow(
                 InfoBox(
                     Modifier
                         .clip(shape = RoundedCornerShape(5.dp))
-                        .background(Color.LightGray),info = time)
+                        .background(Color.LightGray.copy(alpha = 0.3f))
+                    ,info = time)
             }else{
                 InfoBox(Modifier.clickable { setTimeIndex(index) },info = time)
             }
