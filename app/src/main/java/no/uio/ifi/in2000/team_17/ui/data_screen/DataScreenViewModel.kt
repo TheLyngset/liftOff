@@ -14,7 +14,6 @@ import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.SettingsRepository
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
-
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val advancedSettings: AdvancedSettings = AdvancedSettings.getDefaultInstance(),
