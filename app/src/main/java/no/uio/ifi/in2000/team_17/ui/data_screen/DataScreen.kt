@@ -225,9 +225,7 @@ fun GradientTable(
 fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
     val state = rememberLazyListState()
     Row{
-        (1..index).forEach {
-            InfoBox(info = "")
-        }
+        Box(Modifier.width((index*70).dp)) //Change Width here
         val date = dataScreenUiState.weatherDataLists.date.getOrElse(index + 2){"           "}
         Box {
             InfoBox(info ="${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
@@ -353,9 +351,7 @@ fun TimeRow(
     }
 }
 
-/**
- * Warning: [InfoBox] and [TitleBox] needs to have the same height
- */
+
 @Composable
 fun TitleBox(modifier: Modifier = Modifier, text: String) {
     Column(
@@ -367,6 +363,9 @@ fun TitleBox(modifier: Modifier = Modifier, text: String) {
     }
 }
 
+/**
+ * Warning: [InfoBox] and [SelectedBox] needs to have the same width
+ */
 @Composable
 fun InfoBox(modifier: Modifier = Modifier, info: String) {
     Box(
