@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -41,7 +40,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import no.uio.ifi.in2000.team17.AdvancedSettings
+import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
@@ -154,56 +153,56 @@ fun GradientTable(
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.GROUNDWIND
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.MAXWIND
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.MAXWINDSHEAR
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.CLOUDFRACTION
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.rain.map { it.median.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.RAIN
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.humidity.map { it.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.HUMIDITY
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.DEWPOINT
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
                                     Modifier.height(rowHeight.dp),
                                     dataScreenUiState.weatherDataLists.fog.map { it.toString() },
-                                    dataScreenUiState.advancedSettings,
+                                    dataScreenUiState.thresholds,
                                     WeatherParameter.FOG
                                 )
                                 HorizontalDivider(Modifier.width(width.dp))
@@ -244,7 +243,7 @@ fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
 fun GradientBox(
     modifier: Modifier = Modifier,
     infoList: List<String>,
-    advancedSettings: AdvancedSettings,
+    thresholds: Thresholds,
     weatherParameter: WeatherParameter
 ) {
 
@@ -273,7 +272,7 @@ fun GradientBox(
                         WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(speed = it.toDouble()))
                         WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(median = it.toDouble()))
                         else -> WeatherPointInTime()
-                    }, advancedSettings
+                    }, thresholds
                 ).color
             }
     }

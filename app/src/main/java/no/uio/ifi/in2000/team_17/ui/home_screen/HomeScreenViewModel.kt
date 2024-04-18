@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
+import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
-import no.uio.ifi.in2000.team_17.data.SettingsRepository
+import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
@@ -34,19 +34,23 @@ enum class TrafficLightColor(val color: Color, val description : String, val ima
     WHITE(Color(0x00ffffff), "", 0)
 }
 
-class HomeScreenViewModel(private val repository: Repository, private val settingsRepository: SettingsRepository, private val advancedSettingsRepository: AdvancedSettingsRepository) : ViewModel() {
+class HomeScreenViewModel(
+    private val repository: Repository,
+    private val settingsRepository: SettingsRepository,
+    private val thresholdsRepository: ThresholdsRepository) : ViewModel() {
+
     val homeScreenUiState: StateFlow<HomeScreenUiState> = combine(
         repository.weatherDataList,
         settingsRepository.settingsFlow,
-        advancedSettingsRepository.advancedSettingsFlow,
-    ){weatherDataList: WeatherDataLists, settings: Settings, advancedSettings: AdvancedSettings->
+        thresholdsRepository.thresholdsFlow,
+    ){weatherDataList: WeatherDataLists, settings: Settings, thresholds: Thresholds->
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
         val weatherPointInTime = weatherDataList.get(settings.timeIndex)
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
-            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, advancedSettings)
+            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, thresholds)
             ,
             updated = weatherDataList.updated
         )

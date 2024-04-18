@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data
+package no.uio.ifi.in2000.team_17.data.settings
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow

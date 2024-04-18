@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team_17.data
 
-import no.uio.ifi.in2000.team17.AdvancedSettings
+import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
@@ -24,7 +24,7 @@ class WeatherUseCase {
         @JvmStatic
         fun canLaunch(
             weatherPointInTime: WeatherPointInTime,
-            threshholds: AdvancedSettings
+            threshholds: Thresholds
         ): TrafficLightColor {
             //tåke --- (connected to clouds, dew point and precipitation)
             if(

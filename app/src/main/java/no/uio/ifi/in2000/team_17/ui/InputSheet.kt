@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -41,7 +39,7 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
 fun InputSheet(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings: () -> Unit,
+    toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
@@ -52,7 +50,7 @@ fun InputSheet(
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
             InputSheetContent(
                 homeScreenUiState = homeScreenUiState,
-                toAdvancedSettings = toAdvancedSettings,
+                toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
@@ -114,25 +112,23 @@ fun InputSheetContent(
             headlineContent = {
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = 5.dp, vertical = 7.dp)
+                        .padding(horizontal = 5.dp)
                         .padding(top = 7.dp),
                     fontWeight = FontWeight.SemiBold,
-                    text = "Advanced settings",
+                    text = "Thresholds",
                     style = TextStyle(fontSize = 17.sp, color = Color.DarkGray)
                 )
             },
             supportingContent = {
                 Column(
-                    Modifier.height(200.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp),
-                        text = "The settings under are set with appropriate standard values, read more about why these values have been chosen here"
+                        text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
                     )
                     Button(onClick = {toAdvancedSettings()}) {
-                        Text(text = "Advanced settings")
+                        Text(text = "Thresholds")
                     }
                 }
             }

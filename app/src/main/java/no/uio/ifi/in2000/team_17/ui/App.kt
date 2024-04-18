@@ -44,8 +44,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.ThresholdsScreen
+import no.uio.ifi.in2000.team_17.ui.advanced_settings.ThresholdsViewModel
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
@@ -55,7 +55,7 @@ import no.uio.ifi.in2000.team_17.viewModelFactory
 
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
-    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor),
+    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     Data(title = "Data Screen", logo = R.drawable.logor),
     Judicial(title = "Judicial Screen", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
@@ -116,7 +116,7 @@ fun App(
             HomeScreenViewModel(
                 App.appModule.repository,
                 App.appModule.settingsRepository,
-                App.appModule.advancedSettingsRepository
+                App.appModule.thresholdsRepository
             )
         }
     )
@@ -126,9 +126,9 @@ fun App(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    val advancedSettingsViewModel = viewModel<AdvancedSettingsViewModel>(
+    val thresholdsViewModel = viewModel<ThresholdsViewModel>(
         factory = viewModelFactory {
-            AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
+            ThresholdsViewModel(App.appModule.thresholdsRepository)
         }
     )
     val dataScreenViewModel = viewModel<DataScreenViewModel>(
@@ -136,7 +136,7 @@ fun App(
             DataScreenViewModel(
                 App.appModule.repository,
                 App.appModule.settingsRepository,
-                App.appModule.advancedSettingsRepository
+                App.appModule.thresholdsRepository
             )
         }
     )
@@ -173,11 +173,10 @@ fun App(
             composable(route = Screen.Home.name) {
                 HomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
             }
-            composable(route = Screen.AdvancedSettings.name) {
-                AdvancedSettingsScreen(
+            composable(route = Screen.Thresholds.name) {
+                ThresholdsScreen(
                     Modifier.padding(innerPadding),
-                    viewModel = advancedSettingsViewModel,
-                    Navigate = { navController.navigate(Screen.Home.name) }) {
+                    viewModel = thresholdsViewModel) {
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
                             message = "Invalid input"
@@ -199,8 +198,8 @@ fun App(
 
     InputSheet(
         homeScreenUiState = homeScreenUiState,
-        toAdvancedSettings = {
-            navController.navigate(Screen.AdvancedSettings.name)
+        toThresholdsScreen = {
+            navController.navigate(Screen.Thresholds.name)
             sheetState = false
         },
         setMaxHeight = {
