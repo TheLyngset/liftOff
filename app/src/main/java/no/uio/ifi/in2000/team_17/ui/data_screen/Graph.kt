@@ -177,7 +177,7 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
 @Composable
 fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSettings) {
 
-    val size = weatherDataLists.date.size
+    val size = weatherDataLists.time.size
 
     val pointsGroundWind: List<Point> = weatherDataLists.groundWind.mapIndexed { index, value ->
         Point(
