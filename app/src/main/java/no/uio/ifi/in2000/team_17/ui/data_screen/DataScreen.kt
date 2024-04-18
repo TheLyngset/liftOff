@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -91,111 +93,116 @@ fun GradientTable(
     rowHeight: Int,
     setTimeIndex: (Int) -> Unit
 ) {
-    Row(
+    LazyColumn(
         modifier
             .padding(top = 24.dp)
     ) {
+        item {
+            Row {
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            val dividerWidth = 50.dp
-            TitleBox(text = "Time")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Ground \nWind")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Max \nWind")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Max Wind \nShear")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Cloud \nfraction")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Rain")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Humidity")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Dew \nPoint")
-            HorizontalDivider(Modifier.width(dividerWidth))
-            TitleBox(Modifier.height(rowHeight.dp), text = "Fog \nfraction")
-            HorizontalDivider(Modifier.width(dividerWidth))
-        }
-
-
-        LazyRow {
-            item {
                 Column(
+                    Modifier.horizontalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    val width = 50 * dataScreenUiState.weatherDataLists.time.size
-                    TimeRow(
-                        dataScreenUiState.weatherDataLists.time,
-                        dataScreenUiState.selectedTimeIndex
-                    ) { setTimeIndex(it) }
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.GROUNDWIND
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.MAXWIND
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.MAXWINDSHEAR
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.CLOUDFRACTION
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.rain.map { it.median.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.RAIN
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.humidity.map { it.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.HUMIDITY
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.DEWPOINT
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
-                    GradientBox(
-                        Modifier.height(rowHeight.dp),
-                        dataScreenUiState.weatherDataLists.fog.map { it.toString() },
-                        dataScreenUiState.advancedSettings,
-                        WeatherParameter.FOG
-                    )
-                    HorizontalDivider(Modifier.width(width.dp))
+                    val dividerWidth = 50.dp
+                    TitleBox(text = "Time")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Ground \nWind")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Max \nWind")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Max Wind \nShear")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Cloud \nfraction")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Rain")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Humidity")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Dew \nPoint")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                    TitleBox(Modifier.height(rowHeight.dp), text = "Fog \nfraction")
+                    HorizontalDivider(Modifier.width(dividerWidth))
+                }
+                LazyRow {
+                    item {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            val width = 50 * dataScreenUiState.weatherDataLists.time.size
+                            TimeRow(
+                                dataScreenUiState.weatherDataLists.time,
+                                dataScreenUiState.selectedTimeIndex
+                            ) { setTimeIndex(it) }
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.groundWind.map { it.speed.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.GROUNDWIND
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.maxWind.map { it.speed.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.MAXWIND
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.maxWindShear.map { it.speed.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.MAXWINDSHEAR
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.cloudFraction.map { it.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.CLOUDFRACTION
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.rain.map { it.median.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.RAIN
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.humidity.map { it.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.HUMIDITY
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.dewPoint.map { it.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.DEWPOINT
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
+                            GradientBox(
+                                Modifier.height(rowHeight.dp),
+                                dataScreenUiState.weatherDataLists.fog.map { it.toString() },
+                                dataScreenUiState.advancedSettings,
+                                WeatherParameter.FOG
+                            )
+                            HorizontalDivider(Modifier.width(width.dp))
 
+                        }
+                    }
                 }
             }
+
         }
+
+
     }
-
-
 }
+
 
 @Composable
 fun GradientBox(
@@ -290,8 +297,7 @@ fun TimeRow(
                 InfoBox(
                     Modifier
                         .clip(shape = RoundedCornerShape(5.dp))
-                        .background(Color.LightGray.copy(alpha = 0.3f))
-                    , info = time
+                        .background(Color.LightGray.copy(alpha = 0.3f)), info = time
                 )
             } else {
                 InfoBox(Modifier.clickable { setTimeIndex(index) }, info = time)
