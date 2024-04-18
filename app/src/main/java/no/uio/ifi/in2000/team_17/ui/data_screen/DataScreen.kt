@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.data.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.Rain
+import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WindLayer
@@ -55,24 +57,17 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ){
-    val timeState = rememberLazyListState()
-    val groundWindState = rememberLazyListState()
+    GradientTable(modifier,dataScreenUiState, { setTimeIndex(it) })
+}
 
-    val scope = rememberCoroutineScope()
-    val scrollState = rememberScrollableState{delta ->
-        scope.launch{
-            timeState.scrollBy(-delta)
-            groundWindState.scrollBy(-delta)
-        }
-        delta
-    }
-
+@Composable
+fun GradientTable(modifier: Modifier = Modifier, dataScreenUiState:DataScreenUiState, setTimeIndex: (Int) -> Unit ){
     Row(
         modifier
             .fillMaxSize()
             .background(Color.White.copy(alpha = 0.75f))
     ) {
-        Column(Modifier.scrollable(scrollState, Orientation.Horizontal, flingBehavior = ScrollableDefaults.flingBehavior()),
+        Column(Modifier.horizontalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp)) {
             val dividerWidth = 130.dp
             Text(text = "Time:")
