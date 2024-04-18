@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team17.Thresholds
-import no.uio.ifi.in2000.team_17.data.WeatherUseCase
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
@@ -63,6 +63,7 @@ fun DataScreen(
 ) {
     var toggleState by remember { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    if(dataScreenUiState.weatherDataLists.date.size > 1){selectedTimeIndex = dataScreenUiState.selectedTimeIndex}
 
     BackGroundImage(0.82f)
 
@@ -147,7 +148,6 @@ fun GradientTable(
                                 HorizontalDivider(Modifier.width(width.dp))
                                 TimeRow(
                                     dataScreenUiState.weatherDataLists.time,
-                                    selectedTimeIndex
                                 ) { setTimeIndex(it) }
                                 HorizontalDivider(Modifier.width(width.dp))
                                 GradientBox(
@@ -223,7 +223,7 @@ fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
     val state = rememberLazyListState()
     Row{
         repeat(index){ InfoBox(info = "") }
-        val date = dataScreenUiState.weatherDataLists.date.getOrElse(index + 2){"           "}
+        val date = dataScreenUiState.weatherDataLists.date.getOrElse(index){"           "}
         Box {
             InfoBox(info ="${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
             InfoBox(
@@ -356,7 +356,6 @@ fun DateRow(
 @Composable
 fun TimeRow(
     timeList: List<String>,
-    currentTimeIndex: Int,
     setTimeIndex: (Int) -> Unit
 ) {
     Row {

@@ -5,6 +5,7 @@ import com.google.protobuf.InvalidProtocolBufferException
 import no.uio.ifi.in2000.team17.Settings
 import java.io.InputStream
 import java.io.OutputStream
+import java.time.LocalDateTime
 
 
 object SettingsSerializer: Serializer<Settings>{
@@ -13,7 +14,7 @@ object SettingsSerializer: Serializer<Settings>{
             .setMaxHeight(3)
             .setLat(59.96)
             .setLng(10.71)
-            .setTimeIndex(0)
+            .setTime(LocalDateTime.now().toString())
             .build()
 
     override suspend fun readFrom(input: InputStream): Settings {

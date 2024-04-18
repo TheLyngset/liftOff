@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data
+package no.uio.ifi.in2000.team_17.usecases
 
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime

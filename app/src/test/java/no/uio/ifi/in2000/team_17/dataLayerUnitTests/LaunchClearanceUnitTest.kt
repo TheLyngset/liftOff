@@ -2,7 +2,7 @@ package no.uio.ifi.in2000.team_17.dataLayerUnitTests
 
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import no.uio.ifi.in2000.team_17.data.launchClearance
+import no.uio.ifi.in2000.team_17.usecases.launchClearance
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import org.junit.Test
 
