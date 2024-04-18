@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team_17.data.isobaricgrib
 import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
@@ -26,7 +27,12 @@ enum class IsoBaricTime(val URL:String){
 }
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
-    private val client = HttpClient { install(ContentNegotiation) { gson() } }
+    private val client = HttpClient {
+        install(ContentNegotiation) { gson() }
+        install(HttpTimeout){
+            requestTimeoutMillis = 1000
+        }
+    }
 
     // Returns empty IsoBaricModel object on fail
     suspend fun getData(lat: Double, lng: Double, isoBaricTime: IsoBaricTime = IsoBaricTime.NOW): IsoBaricModel {
