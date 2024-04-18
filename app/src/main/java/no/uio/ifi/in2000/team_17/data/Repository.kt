@@ -145,7 +145,7 @@ class RepositoryImplementation : Repository {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
             val isobaricData = isoBaricData.value
-            val listOfWeatherPointList = isobaricData.zip(locationData.timeseries.slice(1..80)){isoBaric, location ->
+            val listOfWeatherPointList = isobaricData.zip(locationData.timeseries){isoBaric, location ->
                 val locationDetails = location.data.instant.details
                 val groundWeatherPoint = WeatherPointLayer(
                     windSpeed = locationDetails.wind_speed,
