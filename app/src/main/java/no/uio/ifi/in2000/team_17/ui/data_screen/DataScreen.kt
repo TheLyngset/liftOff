@@ -70,6 +70,7 @@ fun DataScreen(
     Row(
         modifier
             .fillMaxSize()
+            .background(Color.White.copy(alpha = 0.75f))
     ) {
         Column(Modifier.scrollable(scrollState, Orientation.Horizontal, flingBehavior = ScrollableDefaults.flingBehavior()),
             verticalArrangement = Arrangement.spacedBy(4.dp)) {

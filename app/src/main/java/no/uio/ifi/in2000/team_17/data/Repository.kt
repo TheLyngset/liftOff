@@ -55,7 +55,6 @@ private val PRESSURES: List<Double> = listOf(
 const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
-
 interface Repository {
     suspend fun load(latLng: LatLng, maxHeight: Int)
     val weatherDataList: StateFlow<WeatherDataLists>
@@ -184,7 +183,7 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed, 10.0, it.first().windDirection) },
+                groundWind = locationData.timeseries.map { WindLayer(it.data.instant.details.wind_speed, 10.0, it.data.instant.details.wind_from_direction)  },
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
