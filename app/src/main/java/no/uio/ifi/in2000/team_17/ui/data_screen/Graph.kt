@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,12 +27,22 @@ import co.yml.charts.ui.linechart.model.Line
 import co.yml.charts.ui.linechart.model.LineChartData
 import co.yml.charts.ui.linechart.model.LinePlotData
 import co.yml.charts.ui.linechart.model.LineStyle
+import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 
+data class DataPoint(
+    val y: Double = 0.0,
+    val x: Int = 0
+)
+
+data class TimePoint(
+    val y: String = "00",
+    val x: Int = 0
+)
 
 val data = listOf(
     Point(0f, 40f),
@@ -240,9 +251,16 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
 
     }
 
+    val pointsTime: List<TimePoint> = weatherDataLists.time.mapIndexed { index, value ->
+        TimePoint(
+            x = index,
+            y = weatherDataLists.time[index]
+        )
+    }
+
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .axisStepSize(40.dp)
+        .axisStepSize(60.dp)
         .topPadding(50.dp)
         .steps(size - 1)
         .labelData { i -> i.toString() }
@@ -357,6 +375,7 @@ fun ChartHistory() {
     }
 }
 
+@Composable
 fun createLine(
     points: List<Point>,
     lineColour: Color,
@@ -364,10 +383,21 @@ fun createLine(
 ): Line {
     return Line(
         dataPoints = points,
-        LineStyle(color = lineColour),
-        IntersectionPoint(radius = 0.1.dp),
-        SelectionHighlightPoint(),
-        ShadowUnderLine(color = fillColour, alpha = 0.03f),
+        LineStyle(
+            color = lineColour,
+            lineType = LineType.SmoothCurve(isDotted = false)
+        ),
+        IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+        SelectionHighlightPoint(color = MaterialTheme.colorScheme.primary),
+        ShadowUnderLine(//color = fillColour,
+            alpha = 0.5f,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    MaterialTheme.colorScheme.inversePrimary,
+                    Color.Transparent
+                )
+            )
+        ),
         SelectionHighlightPopUp()
     )
 }
@@ -382,8 +412,8 @@ fun absMinDew(weatherDataLists: WeatherDataLists): Double {
 fun rescalePoint(realValue: Double?, threshold: Double?): Double {
     if (threshold is Double && realValue is Double) {
         var rescaled = ((realValue) / threshold)
-        if (rescaled > 10.0)
-            rescaled = 10.0
+        if (rescaled > 2.0)
+            rescaled = 2.0
         return rescaled
     }
 
