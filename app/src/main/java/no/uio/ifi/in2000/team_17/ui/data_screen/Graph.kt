@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -253,7 +254,14 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
     val thresholdLine = weatherDataLists.date.mapIndexed { index, value ->
         Point(
             x = index.toFloat(),
-            y = 1f
+            y = 1f,
+        )
+
+    }
+    val upperLine = weatherDataLists.date.mapIndexed { index, value ->
+        Point(
+            x = index.toFloat(),
+            y = 2f,
         )
 
     }
@@ -297,47 +305,53 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
                 createLine(
                     pointsGroundWind,
                     Color.Black,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsMaxAirWind,
                     Color.Gray,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsMaxWindShear,
                     Color.LightGray,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsCloudFraction,
                     Color.Cyan,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsMedianRain,
                     Color.Magenta,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsFog,
                     Color.DarkGray,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     pointsHumidity,
                     Color.Blue,
-                    Color.Green,
+                    false
+
                 ),
                 createLine(
                     pointsDewPoint,
                     Color.Red,
-                    Color.Green,
+                    false
                 ),
                 createLine(
                     thresholdLine,
                     Color.Green,
-                    Color.Green,
+                    false
+                ),
+                createLine(
+                    upperLine,
+                    Color.Red,
+                    true,
                 ),
             )
         ),
@@ -349,6 +363,21 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp),
+            /*.background(
+                alpha = 1f,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Red,
+                        Color.Yellow,
+                        Color.Green
+                    )
+                )
+
+
+            ),
+             */
+
+
         lineChartData = data
     )
 }
@@ -380,31 +409,50 @@ fun ChartHistory() {
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
+
 }
+
 
 @Composable
 fun createLine(
     points: List<Point>,
-    lineColour: Color,
-    fillColour: Color
+    lineColor: Color,
+    fillColor: Boolean
 ): Line {
+    var colorStops : Array<Pair<Float,Color>> = arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    if(fillColor){
+        colorStops = arrayOf(
+            0.0f to Color.Red,
+            0.6f to Color.Yellow,
+            0.4f to Color.Green
+        )
+    }
     return Line(
         dataPoints = points,
         LineStyle(
-            color = lineColour,
+            color = lineColor,
             lineType = LineType.SmoothCurve(isDotted = false)
         ),
         IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
-        SelectionHighlightPoint(color = MaterialTheme.colorScheme.primary),
-        ShadowUnderLine(//color = fillColour,
-            alpha = 0.5f,
+        SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+        ShadowUnderLine(
+            //color = fillColor,
+            alpha = 0.4f,
             brush = Brush.verticalGradient(
-                colors = listOf(
-                    MaterialTheme.colorScheme.inversePrimary,
-                    Color.Transparent
+                colorStops = colorStops
+                /*colors = listOf(
+                    fillColour,
+                    MaterialTheme.colorScheme.background,
+
                 )
+
+                 */
             )
+
+
         ),
+
+
         SelectionHighlightPopUp()
     )
 }
