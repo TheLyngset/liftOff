@@ -121,19 +121,17 @@ class RepositoryImplementation : Repository {
                 }
             }
         }
-
         _isoBaricData.update { newIsoBaricModel }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun load(latLng: LatLng, maxHeight: Int) {
-        if (latLng != lastLatLng){
+        if (latLng != lastLatLng) {
             loadLocationForecast(latLng)
             loadIsobaric(latLng)
             updateWeatherDataLists(maxHeight)
             lastLatLng = latLng
-        }
-        else if(maxHeight != lastMaxHeight){
+        } else if (maxHeight != lastMaxHeight) {
             updateWeatherDataLists(maxHeight)
         }
     }
@@ -200,15 +198,18 @@ class RepositoryImplementation : Repository {
                 rain = locationData.timeseries.map {
                     val data = it.data.next_1_hours.details
                     Rain(
-                        data.precipitation_amount_min,
-                        data.precipitation_amount,
-                        data.precipitation_amount_max
-                    )
+                       data.precipitation_amount_min,
+                       data.precipitation_amount,
+                       data.precipitation_amount_max
+                   )
                 },
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
-                updated = LocalDateTime.parse(locationData.meta.updated_at, DateTimeFormatter.ISO_DATE_TIME)
+                updated = LocalDateTime.parse(
+                    locationData.meta.updated_at,
+                    DateTimeFormatter.ISO_DATE_TIME
+                )
                     .toLocalTime()
                     .plusHours(2)//TODO: now summertime only
                     .toString()
