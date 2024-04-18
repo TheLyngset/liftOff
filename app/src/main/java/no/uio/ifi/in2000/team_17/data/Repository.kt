@@ -112,16 +112,16 @@ class RepositoryImplementation : Repository {
         try { isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges }
         catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
 
-        for (i: Int in startIndex..8) {
-            newIsoBaricModel.add(
-                when(i){
-                    in 0..2 -> isoBaricNow
-                    in 3..5-> isoBaricIn3
-                    in 6..8 -> isoBaricIn9
-                    else -> isoBaricNow
+        if(isoBaricNow.temperature.values.isNotEmpty()) {
+            (startIndex..2).forEach { newIsoBaricModel.add(isoBaricNow) }
+            if (isoBaricIn3.temperature.values.isNotEmpty()){
+                (1..3).forEach { newIsoBaricModel.add(isoBaricIn3) }
+                if (isoBaricIn9.temperature.values.isNotEmpty()){
+                    (1..3).forEach { newIsoBaricModel.add(isoBaricIn9) }
                 }
-            )
+            }
         }
+
         _isoBaricData.update { newIsoBaricModel }
     }
 

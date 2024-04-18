@@ -58,7 +58,10 @@ fun DataScreen(
 
     BackGroundImage(0.82f)
 
-    Column(modifier) {
+    Column(modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
         when (toggleState) {
             Toggle.TABLE -> {
                 GradientTable(Modifier,dataScreenUiState,60) { setTimeIndex(it) }
