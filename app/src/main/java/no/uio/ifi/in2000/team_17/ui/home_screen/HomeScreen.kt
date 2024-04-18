@@ -104,7 +104,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             //TODO: alle tre verdier på rain?
             //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardGrid(weatherInfoList = listOf(
-                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.wind)),
+                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.groundwind2)),
                 WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.wind)),
                 WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.shearwind)),
                 WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.temperature)),
