@@ -16,7 +16,7 @@ class SaveTimeUseCase {
             val now = LocalDateTime.now()
             val time = LocalDateTime.parse(timeString)
             return if (time.isBefore(now)){0}
-            else{ now.until(time, ChronoUnit.HOURS).toInt() + 1 } //Todo this aproach breaks on new year
+            else{ now.until(time, ChronoUnit.HOURS).toInt() + 1 }
         }
     }
 }
