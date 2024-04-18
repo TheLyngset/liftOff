@@ -14,6 +14,8 @@ import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
+import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
+import java.time.LocalDateTime
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
@@ -21,7 +23,7 @@ data class DataScreenUiState(
     val selectedTimeIndex: Int = 0
 )
 class DataScreenViewModel(
-    private val repo:Repository,
+    private val repo: Repository,
     private val settingsRepo: SettingsRepository,
     private val thresholdsRepository: ThresholdsRepository
 ) :ViewModel(){
@@ -33,7 +35,7 @@ class DataScreenViewModel(
         DataScreenUiState(
             weatherDataList,
             thresholds,
-            settings.timeIndex
+            SaveTimeUseCase.timeStringToIndex(settings.time)
         )
     }.stateIn(
         viewModelScope,
@@ -41,6 +43,6 @@ class DataScreenViewModel(
         initialValue = DataScreenUiState()
     )
     fun setTimeIndex(index:Int){
-        viewModelScope.launch { settingsRepo.setTimeIndex(index) }
+        viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
 }

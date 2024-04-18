@@ -92,7 +92,7 @@ class RepositoryImplementation : Repository {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private suspend fun loadIsobaric(latLng: LatLng) {
         val startIndex = LocalDateTime.now(ZoneId.systemDefault()).hour % 3
         val newIsoBaricModel = mutableListOf<IsoBaricModel.Ranges>()
@@ -120,7 +120,7 @@ class RepositoryImplementation : Repository {
         _isoBaricData.update { newIsoBaricModel }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override suspend fun load(latLng: LatLng, maxHeight: Int) {
         if (latLng != lastLatLng) {
             loadLocationForecast(latLng)
@@ -140,7 +140,7 @@ class RepositoryImplementation : Repository {
      * [maxWindSpeed] values when available. The resulting data class
      * has lists of varying length depending in the data available
      */
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun updateWeatherDataLists(maxHeight: Int) {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
@@ -168,6 +168,7 @@ class RepositoryImplementation : Repository {
             it.copy(
                 date = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
+                        .plusHours(2)//Todo this is summertime only
                         .toLocalDate()
                         .toString()
                 },

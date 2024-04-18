@@ -15,9 +15,10 @@ import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
-import no.uio.ifi.in2000.team_17.data.WeatherUseCase
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
+import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
 
 data class HomeScreenUiState(
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
@@ -45,7 +46,7 @@ class HomeScreenViewModel(
         thresholdsRepository.thresholdsFlow,
     ){weatherDataList: WeatherDataLists, settings: Settings, thresholds: Thresholds->
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
-        val weatherPointInTime = weatherDataList.get(settings.timeIndex)
+        val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time))
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
@@ -73,9 +74,5 @@ class HomeScreenViewModel(
         viewModelScope.launch{
             settingsRepository.setMaxHeight(height)
         }
-    }
-
-    fun setTimeIndex(index: Int){
-        viewModelScope.launch { settingsRepository.setTimeIndex(index) }
     }
 }
