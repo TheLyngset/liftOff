@@ -16,8 +16,8 @@ data class WeatherPointLayer(
 )
 
 data class WeatherPointInTime(
-    val date: String = "",
-    val time: String = "",
+    val date: String = "00",
+    val time: String = "00",
     val groundWind: WindLayer = WindLayer(),
     val maxWindShear: WindShear = WindShear(),
     val maxWind: WindLayer = WindLayer(),
