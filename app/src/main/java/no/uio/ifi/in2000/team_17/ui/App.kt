@@ -44,8 +44,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.ThresholdsScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.ThresholdsViewModel
+import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsScreen
+import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsViewModel
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
@@ -227,9 +227,7 @@ fun App(
         sheetState = sheetState,
         onDismiss = {sheetState = false}
     )
-
 }
-
 @Composable
 fun BottomBar(
     modifier: Modifier,

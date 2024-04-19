@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui.advanced_settings
+package no.uio.ifi.in2000.team_17.ui.thresholds
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -65,8 +65,8 @@ class ThresholdsViewModel(
     fun setMargin(margin:Double){
         viewModelScope.launch{ repo.setMargin(margin) }
     }
-    fun reset(){
-        viewModelScope.launch { repo.reset() }
+    fun reset(threshold: String = ""){
+        viewModelScope.launch { repo.reset(threshold) }
     }
 }
 
