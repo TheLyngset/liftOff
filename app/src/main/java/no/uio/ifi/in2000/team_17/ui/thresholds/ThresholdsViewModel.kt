@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui.advanced_settings
+package no.uio.ifi.in2000.team_17.ui.thresholds
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 
-data class AdvancedSettingsUIState(
+data class ThresholdsUiState(
     val groundWindSpeed: Double = 8.6,
     val maxWindSpeed: Double = 17.2,
     val maxWindShear: Double = 24.5,
@@ -19,11 +19,11 @@ data class AdvancedSettingsUIState(
     val dewPoint: Double = 15.0,
     val margin: Double = 0.6
 )
-class AdvancedSettingsViewModel(
-    private val repo: AdvancedSettingsRepository
+class ThresholdsViewModel(
+    private val repo: ThresholdsRepository
 ):ViewModel(){
-    val advancedSettingsUIState = repo.advancedSettingsFlow
-        .map { AdvancedSettingsUIState(
+    val thresholdsUiState = repo.thresholdsFlow
+        .map { ThresholdsUiState(
             it.groundWindSpeed,
             it.maxWindSpeed,
             it.maxWindShear,
@@ -36,7 +36,7 @@ class AdvancedSettingsViewModel(
         ) }.stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AdvancedSettingsUIState()
+            initialValue = ThresholdsUiState()
             )
     fun setGroundWind(groundWind:Double){
         viewModelScope.launch{ repo.setGroundWind(groundWind) }
@@ -65,8 +65,8 @@ class AdvancedSettingsViewModel(
     fun setMargin(margin:Double){
         viewModelScope.launch{ repo.setMargin(margin) }
     }
-    fun reset(){
-        viewModelScope.launch { repo.reset() }
+    fun reset(threshold: String = ""){
+        viewModelScope.launch { repo.reset(threshold) }
     }
 }
 

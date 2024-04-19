@@ -10,16 +10,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
-import no.uio.ifi.in2000.team_17.data.AdvancedSettingsSerializer
-import no.uio.ifi.in2000.team_17.data.SettingsSerializer
+import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
+import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.theme.Team17Theme
 
-val Context.advancedSettingsStore: DataStore<AdvancedSettings> by dataStore(
+val Context.thresholdsDataStore: DataStore<Thresholds> by dataStore(
     fileName = "advanced_settings",
-    serializer = AdvancedSettingsSerializer
+    serializer = ThresholdsSerializer
 )
 val Context.settingsStore: DataStore<Settings> by dataStore(
     fileName = "settings",

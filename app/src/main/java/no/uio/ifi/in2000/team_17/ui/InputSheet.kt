@@ -1,10 +1,10 @@
 package no.uio.ifi.in2000.team_17.ui
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -40,7 +39,7 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
 fun InputSheet(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState,
-    toAdvancedSettings: () -> Unit,
+    toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
@@ -51,7 +50,7 @@ fun InputSheet(
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
             InputSheetContent(
                 homeScreenUiState = homeScreenUiState,
-                toAdvancedSettings = toAdvancedSettings,
+                toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
@@ -73,9 +72,9 @@ fun InputSheetContent(
     setLng:(String) -> Unit,
     onDismiss:() -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf("") }
-    var latString by remember { mutableStateOf("") }
-    var lngString by remember { mutableStateOf("") }
+    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
+    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
+    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
     Column(
         modifier
             .fillMaxSize(),
@@ -86,11 +85,11 @@ fun InputSheetContent(
             verticalAlignment = Alignment.CenterVertically) 
         {
             InputTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = maxHeightText,
                 onValueChange = { maxHeightText = it },
                 label = "Maximum height in km"
             ) { setMaxHeight(maxHeightText) }
-            Text(homeScreenUiState.maxHeight.toString())
         }
         Row(modifier.padding(horizontal = 15.dp), horizontalArrangement = Arrangement.spacedBy(24.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -100,14 +99,12 @@ fun InputSheetContent(
                 label = "Latitude",
                 modifier = Modifier.weight(1f)
             ){ setLat(latString) }
-            Text(homeScreenUiState.latLng.latitude.toString())
             InputTextField(
                 value = lngString,
                 onValueChange = { lngString = it },
                 label = "Longitude",
                 modifier = Modifier.weight(1f)
             ){ setLng(lngString) }
-            Text(homeScreenUiState.latLng.longitude.toString())
         }
         ListItem(
             modifier = modifier.padding(top=15.dp),
@@ -115,25 +112,23 @@ fun InputSheetContent(
             headlineContent = {
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = 5.dp, vertical = 7.dp)
+                        .padding(horizontal = 5.dp)
                         .padding(top = 7.dp),
                     fontWeight = FontWeight.SemiBold,
-                    text = "Advanced settings",
+                    text = "Thresholds",
                     style = TextStyle(fontSize = 17.sp, color = Color.DarkGray)
                 )
             },
             supportingContent = {
                 Column(
-                    Modifier.height(200.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp),
-                        text = "The settings under are set with appropriate standard values, read more about why these values have been chosen here"
+                        text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
                     )
                     Button(onClick = {toAdvancedSettings()}) {
-                        Text(text = "Advanced settings")
+                        Text(text = "Thresholds")
                     }
                 }
             }

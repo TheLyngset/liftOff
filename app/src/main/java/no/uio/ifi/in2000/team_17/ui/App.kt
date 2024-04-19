@@ -1,19 +1,13 @@
 package no.uio.ifi.in2000.team_17.ui
 
-import android.view.Surface
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -36,16 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -54,21 +44,22 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsScreen
-import no.uio.ifi.in2000.team_17.ui.advanced_settings.AdvancedSettingsViewModel
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
-import no.uio.ifi.in2000.team_17.ui.home_screen.newHomeScreen
 import no.uio.ifi.in2000.team_17.ui.judicial_screen.JudicialScreen
+import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsScreen
+import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
 
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
-    AdvancedSettings(title = "Advanced Settings", logo = R.drawable.logor),
+    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     Data(title = "Data Screen", logo = R.drawable.logor),
     Judicial(title = "Judicial Screen", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
+    Empty("", 0)
 
 }
 
@@ -76,8 +67,8 @@ enum class Screen(val title: String, val logo: Int) {
 @Composable
 fun AppTopBar(
     logoId: Int,
-    onSearchClick : () -> Unit,
-    onLogoClick : () -> Unit,
+    onSearchClick: () -> Unit,
+    onLogoClick: () -> Unit,
     //modifier: Modifier
 ) {
     TopAppBar(
@@ -89,8 +80,8 @@ fun AppTopBar(
                 Image(
                     painter = painterResource(id = logoId),
                     contentDescription = "Logo",
-                    modifier = Modifier.clickable {onLogoClick() }
-                    )
+                    modifier = Modifier.clickable { onLogoClick() }
+                )
 
                 Text(
                     text = "Oslo",
@@ -121,13 +112,12 @@ fun App(
 
     ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-    //Todo implement the new viewModelFactory for this viewModel
     val homeScreenViewModel: HomeScreenViewModel = viewModel(
         factory = viewModelFactory {
             HomeScreenViewModel(
                 App.appModule.repository,
                 App.appModule.settingsRepository,
-                App.appModule.advancedSettingsRepository
+                App.appModule.thresholdsRepository
             )
         }
     )
@@ -137,9 +127,9 @@ fun App(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    val advancedSettingsViewModel = viewModel<AdvancedSettingsViewModel>(
+    val thresholdsViewModel = viewModel<ThresholdsViewModel>(
         factory = viewModelFactory {
-            AdvancedSettingsViewModel(App.appModule.advancedSettingsRepository)
+            ThresholdsViewModel(App.appModule.thresholdsRepository)
         }
     )
     val dataScreenViewModel = viewModel<DataScreenViewModel>(
@@ -147,7 +137,7 @@ fun App(
             DataScreenViewModel(
                 App.appModule.repository,
                 App.appModule.settingsRepository,
-                App.appModule.advancedSettingsRepository
+                App.appModule.thresholdsRepository
             )
         }
     )
@@ -155,24 +145,26 @@ fun App(
 
     var sheetState by remember { mutableStateOf(false) }
 
+
     Scaffold(
+        modifier = Modifier.paint(painterResource(id = R.drawable.sky)),
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
-                onSearchClick = {sheetState = true},
-                onLogoClick = {navController.navigate("Home")},
+                onSearchClick = { sheetState = true },
+                onLogoClick = { navController.navigate("Home") },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
         bottomBar = {
-            BottomBar(modifier = Modifier.fillMaxWidth()){
-                when(it){
+            BottomBar(modifier = Modifier.fillMaxWidth()) {
+                when (it) {
                     0 -> navController.navigate(Screen.Home.name)
                     1 -> navController.navigate(Screen.Data.name)
                     2 -> navController.navigate(Screen.Judicial.name)
                 }
             }
-                    },
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         NavHost(
@@ -180,13 +172,13 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                newHomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
+                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
             }
-            composable(route = Screen.AdvancedSettings.name) {
-                AdvancedSettingsScreen(
+            composable(route = Screen.Thresholds.name) {
+                ThresholdsScreen(
                     Modifier.padding(innerPadding),
-                    viewModel = advancedSettingsViewModel,
-                    Navigate = { navController.navigate(Screen.Home.name) }) {
+                    viewModel = thresholdsViewModel
+                ) {
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
                             message = "Invalid input"
@@ -194,57 +186,72 @@ fun App(
                     }
                 }
             }
-            composable(route = Screen.Data.name){
+            composable(route = Screen.Data.name) {
                 DataScreen(
                     modifier = Modifier.padding(innerPadding),
                     dataScreenUiState
-                    )
+                ) { dataScreenViewModel.setTimeIndex(it) }
             }
-            composable(route = Screen.Judicial.name){
+            composable(route = Screen.Judicial.name) {
                 JudicialScreen(modifier = Modifier.padding(innerPadding))
             }
         }
     }
 
-    //TODO: unitTesting
     InputSheet(
         homeScreenUiState = homeScreenUiState,
-        toAdvancedSettings = {
-            navController.navigate(Screen.AdvancedSettings.name)
+        toThresholdsScreen = {
+            navController.navigate(Screen.Thresholds.name)
             sheetState = false
         },
-        setMaxHeight = {homeScreenViewModel.setMaxHeight(it.toInt())},
-        setLat = {homeScreenViewModel.setLat(it.toDouble())},
-        setLng = {homeScreenViewModel.setLng(it.toDouble())},
+        setMaxHeight = {
+            try {
+                homeScreenViewModel.setMaxHeight(it.toInt())
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Max Height") }
+            }
+        },
+        setLat = {
+            try {
+                homeScreenViewModel.setLat(it.toDouble())
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Latitude") }
+            }
+        },
+        setLng = {
+            try {
+                homeScreenViewModel.setLng(it.toDouble())
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Longitude") }
+            }
+        },
         sheetState = sheetState,
-        onDismiss = {sheetState = false}
+        onDismiss = { sheetState = false }
     )
-
 }
-
 
 @Composable
 fun BottomBar(
-    modifier : Modifier,
-
-    onNavigate:(Int)-> Unit
-){
+    modifier: Modifier,
+    onNavigate: (Int) -> Unit
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        SegmentedButton(){onNavigate(it)
+        SegmentedNavigationButton() {
+            onNavigate(it)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SegmentedButton(
-    onNavigate:(Int)->Unit
-){
-    val options = remember{ mutableStateListOf("Home", "Data", "Juridisk") }
+fun SegmentedNavigationButton(
+    onNavigate: (Int) -> Unit
+) {
+    val options = remember { mutableStateListOf("Home", "Data", "Juridisk") }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
@@ -253,8 +260,10 @@ fun SegmentedButton(
                 modifier = Modifier
                     .padding(bottom = 15.dp),
                 selected = selectedIndex == index,
-                onClick = { selectedIndex = index
-                          onNavigate(index)},
+                onClick = {
+                    selectedIndex = index
+                    onNavigate(index)
+                },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
                 colors = SegmentedButtonColors(

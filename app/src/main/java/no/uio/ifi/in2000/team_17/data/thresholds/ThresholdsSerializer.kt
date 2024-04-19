@@ -1,14 +1,14 @@
-package no.uio.ifi.in2000.team_17.data
+package no.uio.ifi.in2000.team_17.data.thresholds
 
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
-import no.uio.ifi.in2000.team17.AdvancedSettings
+import no.uio.ifi.in2000.team17.Thresholds
 import java.io.InputStream
 import java.io.OutputStream
 
-object AdvancedSettingsSerializer : Serializer<AdvancedSettings> {
-    override val defaultValue: AdvancedSettings
-        get() = AdvancedSettings.getDefaultInstance().toBuilder()
+object ThresholdsSerializer : Serializer<Thresholds> {
+    override val defaultValue: Thresholds
+        get() = Thresholds.getDefaultInstance().toBuilder()
             .setGroundWindSpeed(8.6)
             .setMaxWindSpeed(17.2)
             .setMaxWindShear(24.5)
@@ -20,14 +20,14 @@ object AdvancedSettingsSerializer : Serializer<AdvancedSettings> {
             .setMargin(0.6)
             .build()
 
-    override suspend fun readFrom(input: InputStream): AdvancedSettings {
+    override suspend fun readFrom(input: InputStream): Thresholds {
         return try {
-            AdvancedSettings.parseFrom(input)
+            Thresholds.parseFrom(input)
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
             defaultValue
         }
     }
 
-    override suspend fun writeTo(t: AdvancedSettings, output: OutputStream) = t.writeTo(output)
+    override suspend fun writeTo(t: Thresholds, output: OutputStream) = t.writeTo(output)
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 option java_package = "no.uio.ifi.in2000.team17";
 option java_multiple_files = true;
 
-message AdvancedSettings{
+message Thresholds{
     double groundWindSpeed = 1;
     double maxWindSpeed = 2;
     double maxWindShear = 3;
@@ -18,5 +18,5 @@ message Settings{
     int32 maxHeight = 1;
     double lat = 2;
     double lng = 3;
-    int32 timeIndex = 4;
+    string time = 4;
 }

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.data
+package no.uio.ifi.in2000.team_17.data.settings
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     suspend fun setLng(lng: Double){
         settingsStore.updateData { it.toBuilder().setLng(lng).build() }
     }
-    suspend fun setTimeIndex(index: Int){
-        settingsStore.updateData { it.toBuilder().setTimeIndex(index).build() }
+    suspend fun setTime(time: String){
+        settingsStore.updateData { it.toBuilder().setTime(time).build() }
     }
 }

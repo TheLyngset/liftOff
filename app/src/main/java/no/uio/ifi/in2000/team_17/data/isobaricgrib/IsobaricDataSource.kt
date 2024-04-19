@@ -23,14 +23,16 @@ import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 enum class IsoBaricTime(val URL: String) {
     NOW("http://158.39.75.8:5000/collections/isobaric/position"),
     IN_3("http://158.39.75.8:5001/collections/isobaric/position"),
-    IN_9_OR_12("http://158.39.75.8:5002/collections/isobaric/position")
+    IN_6("http://158.39.75.8:5002/collections/isobaric/position")
 }
 
 class IsobaricDataSource {
     private val LOG_NAME = "ISOBARIC_DATASOURCE"
     private val client = HttpClient {
         install(ContentNegotiation) { gson() }
-        install(HttpTimeout) { requestTimeoutMillis = 1000 }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 1000
+        }
     }
 
     // Returns empty IsoBaricModel object on fail

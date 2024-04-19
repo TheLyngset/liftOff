@@ -7,33 +7,35 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team17.Settings
-import no.uio.ifi.in2000.team_17.data.AdvancedSettingsRepository
+import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
-import no.uio.ifi.in2000.team_17.data.SettingsRepository
+import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
-import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
+import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
+import java.time.LocalDateTime
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
-    val advancedSettings: AdvancedSettings = AdvancedSettings.getDefaultInstance(),
+    val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
     val selectedTimeIndex: Int = 0
 )
 class DataScreenViewModel(
-    private val repo:Repository,
+    private val repo: Repository,
     private val settingsRepo: SettingsRepository,
-    private val advancedSettingsRepo: AdvancedSettingsRepository
+    private val thresholdsRepository: ThresholdsRepository
 ) :ViewModel(){
     val dataScreenUiState: StateFlow<DataScreenUiState> = combine(
         repo.weatherDataList,
         settingsRepo.settingsFlow,
-        advancedSettingsRepo.advancedSettingsFlow
-    ){weatherDataList:WeatherDataLists, settings:Settings, advancedSettings:AdvancedSettings ->
+        thresholdsRepository.thresholdsFlow
+    ){weatherDataList:WeatherDataLists, settings:Settings, thresholds:Thresholds ->
         DataScreenUiState(
             weatherDataList,
-            advancedSettings,
-            settings.timeIndex
+            thresholds,
+            SaveTimeUseCase.timeStringToIndex(settings.time)
         )
     }.stateIn(
         viewModelScope,
@@ -41,6 +43,6 @@ class DataScreenViewModel(
         initialValue = DataScreenUiState()
     )
     fun setTimeIndex(index:Int){
-        viewModelScope.launch { settingsRepo.setTimeIndex(index) }
+        viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
 }

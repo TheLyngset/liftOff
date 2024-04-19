@@ -51,17 +51,17 @@ data class WeatherPointsResults(
 A data class containing lists for each parameter where indexes correspond to hours in the future
 */
 data class WeatherDataLists(
-    val date: List<String> = listOf(),
-    val time: List<String> = listOf(),
-    val groundWind: List<WindLayer> = listOf(),
-    val maxWindShear: List<WindShear> = listOf(),
-    val maxWind: List<WindLayer> = listOf(),
-    val cloudFraction: List<Double> = listOf(),
-    val rain: List<Rain> = listOf(),
-    val humidity: List<Double> = listOf(),
-    val dewPoint: List<Double> = listOf(),
-    val fog: List<Double> = listOf(),
-    val temperature: List<Double> = listOf(),
+    val date: List<String> = listOf("0000-00-00"),
+    val time: List<String> = listOf(""),
+    val groundWind: List<WindLayer> = listOf(WindLayer()),
+    val maxWindShear: List<WindShear> = listOf(WindShear()),
+    val maxWind: List<WindLayer> = listOf(WindLayer()),
+    val cloudFraction: List<Double> = listOf(-1.0),
+    val rain: List<Rain> = listOf(Rain()),
+    val humidity: List<Double> = listOf(-1.0),
+    val dewPoint: List<Double> = listOf(-1.0),
+    val fog: List<Double> = listOf(-1.0),
+    val temperature: List<Double> = listOf(-1.0),
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ) {
@@ -170,4 +170,14 @@ data class Rain(
     val max: Double = 0.0
 )
 
-
+enum class WeatherParameter {
+    TIME,
+    GROUNDWIND,
+    MAXWINDSHEAR,
+    MAXWIND,
+    CLOUDFRACTION,
+    RAIN,
+    HUMIDITY,
+    DEWPOINT,
+    FOG
+}

@@ -8,20 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.model.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.Rain
-import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
-import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.model.weatherDTO.Properties
-import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -55,7 +51,6 @@ private val PRESSURES: List<Double> = listOf(
 const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
-
 interface Repository {
     suspend fun load(latLng: LatLng, maxHeight: Int)
     val weatherDataList: StateFlow<WeatherDataLists>
@@ -97,44 +92,42 @@ class RepositoryImplementation : Repository {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private suspend fun loadIsobaric(latLng: LatLng) {
         val startIndex = LocalDateTime.now(ZoneId.systemDefault()).hour % 3
         val newIsoBaricModel = mutableListOf<IsoBaricModel.Ranges>()
         var isoBaricNow = IsoBaricModel.Ranges()
         var isoBaricIn3 = IsoBaricModel.Ranges()
-        var isoBaricIn9 = IsoBaricModel.Ranges()
+        var isoBaricIn6 = IsoBaricModel.Ranges()
         try { isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges }
         catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
 
         try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
         catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
 
-        try { isoBaricIn9 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_9_OR_12).ranges }
+        try { isoBaricIn6 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_6).ranges }
         catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
 
-        for (i: Int in startIndex..8) {
-            newIsoBaricModel.add(
-                when(i){
-                    in 0..2 -> isoBaricNow
-                    in 3..5-> isoBaricIn3
-                    in 6..8 -> isoBaricIn9
-                    else -> isoBaricNow
+        if(isoBaricNow.temperature.values.isNotEmpty()) {
+            (startIndex..2).forEach { newIsoBaricModel.add(isoBaricNow) }
+            if (isoBaricIn3.temperature.values.isNotEmpty()){
+                (1..3).forEach { newIsoBaricModel.add(isoBaricIn3) }
+                if (isoBaricIn6.temperature.values.isNotEmpty()){
+                    (1..3).forEach { newIsoBaricModel.add(isoBaricIn6) }
                 }
-            )
+            }
         }
         _isoBaricData.update { newIsoBaricModel }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override suspend fun load(latLng: LatLng, maxHeight: Int) {
-        if (latLng != lastLatLng){
+        if (latLng != lastLatLng) {
             loadLocationForecast(latLng)
             loadIsobaric(latLng)
             updateWeatherDataLists(maxHeight)
             lastLatLng = latLng
-        }
-        else if(maxHeight != lastMaxHeight){
+        } else if (maxHeight != lastMaxHeight) {
             updateWeatherDataLists(maxHeight)
         }
     }
@@ -147,7 +140,7 @@ class RepositoryImplementation : Repository {
      * [maxWindSpeed] values when available. The resulting data class
      * has lists of varying length depending in the data available
      */
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun updateWeatherDataLists(maxHeight: Int) {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
@@ -175,6 +168,7 @@ class RepositoryImplementation : Repository {
             it.copy(
                 date = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
+                        .plusHours(2)//Todo this is summertime only
                         .toLocalDate()
                         .toString()
                 },
@@ -184,7 +178,7 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = listOfWeatherPointList.map { WindLayer(it.first().windSpeed, 10.0, it.first().windDirection) },
+                groundWind = locationData.timeseries.map { WindLayer(it.data.instant.details.wind_speed, 10.0, it.data.instant.details.wind_from_direction)  },
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
@@ -209,7 +203,10 @@ class RepositoryImplementation : Repository {
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
-                updated = LocalDateTime.parse(locationData.meta.updated_at, DateTimeFormatter.ISO_DATE_TIME)
+                updated = LocalDateTime.parse(
+                    locationData.meta.updated_at,
+                    DateTimeFormatter.ISO_DATE_TIME
+                )
                     .toLocalTime()
                     .plusHours(2)//TODO: now summertime only
                     .toString()
@@ -289,7 +286,7 @@ internal fun calculateHeight(
  */
 
 private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-    //trenger vi egentlig polar koordinater her? Ja - Samuel
+    //trenger vi egentlig polar koordinater her? Ja, vind kommer med retning og lengde - Samuel
     val d_0_rad = d_0 * PI / 180
     val d_1_rad = d_1 * PI / 180
     return sqrt(

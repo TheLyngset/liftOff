@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui.advanced_settings
+package no.uio.ifi.in2000.team_17.ui.thresholds
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,41 +29,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.ui.home_screen.InputTextField
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
+import no.uio.ifi.in2000.team_17.ui.InputTextField
+import no.uio.ifi.in2000.team_17.ui.Screen
 import java.lang.NumberFormatException
-import java.time.format.TextStyle
 
 @Composable
-fun AdvancedSettingsScreen(
+fun ThresholdsScreen(
     modifier: Modifier = Modifier,
-    viewModel: AdvancedSettingsViewModel,
-    Navigate:()->Unit,
+    viewModel: ThresholdsViewModel,
     wrongInputFormat:()->Unit
 ){
-    val uiState = viewModel.advancedSettingsUIState.collectAsState().value
+    val uiState = viewModel.thresholdsUiState.collectAsState().value
     //strings for inputfields
-    var groundWindSpeedText by remember { mutableStateOf("")}
-    var maxWindSpeedText by remember { mutableStateOf("")}
-    var maxWindShearText by remember { mutableStateOf("")}
-    var cloudFractionText by remember { mutableStateOf("")}
-    var fogText by remember { mutableStateOf("")}
-    var rainText by remember { mutableStateOf("")}
-    var humidityText by remember { mutableStateOf("")}
-    var dewPointText by remember { mutableStateOf("")}
-    var marginText by remember { mutableStateOf("")}
+    var groundWindSpeedText by remember { mutableStateOf(uiState.groundWindSpeed.toString())}
+    var maxWindSpeedText by remember { mutableStateOf(uiState.maxWindSpeed.toString())}
+    var maxWindShearText by remember { mutableStateOf(uiState.maxWindShear.toString())}
+    var cloudFractionText by remember { mutableStateOf(uiState.cloudFraction.toString())}
+    var fogText by remember { mutableStateOf(uiState.fog.toString())}
+    var rainText by remember { mutableStateOf(uiState.rain.toString())}
+    var humidityText by remember { mutableStateOf(uiState.humidity.toString())}
+    var dewPointText by remember { mutableStateOf(uiState.dewPoint.toString())}
+    var marginText by remember { mutableStateOf(uiState.margin.toString())}
 
     val state = rememberScrollState()
+    val defaults = ThresholdsSerializer.defaultValue
     LaunchedEffect(Unit) { state.animateScrollTo(50) }
 
     Box(modifier = Modifier.fillMaxSize() ){
@@ -90,7 +92,7 @@ fun AdvancedSettingsScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "Advanced Setting",
+            text = Screen.Thresholds.title,
             fontWeight = FontWeight.Bold,
             style = androidx.compose.ui.text.TextStyle(fontSize = 30.sp),
         )
@@ -112,7 +114,12 @@ fun AdvancedSettingsScreen(
                 viewModel.setGroundWind(newValue)
                 groundWindSpeedText = newValue.toString()
             }
-            Text(uiState.groundWindSpeed.toString())
+            IconButton(onClick = {
+                viewModel.reset("groundWind")
+                groundWindSpeedText = defaults.groundWindSpeed.toString()
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //Max wind speed
@@ -132,7 +139,13 @@ fun AdvancedSettingsScreen(
                 viewModel.setMaxWind(newValue)
                 maxWindSpeedText = newValue.toString()
             }
-            Text(uiState.maxWindSpeed.toString())
+            IconButton(onClick = {
+                viewModel.reset("maxWind")
+                maxWindSpeedText = defaults.maxWindSpeed.toString()
+            }
+            ) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max wind shear
@@ -152,7 +165,12 @@ fun AdvancedSettingsScreen(
                 viewModel.setMaxWindShear(newValue)
                 maxWindShearText = newValue.toString()
             }
-            Text(uiState.maxWindShear.toString())
+            IconButton(onClick = {
+                viewModel.reset("maxShear")
+                maxWindShearText = defaults.maxWindShear.toString()
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max cloud fraction
@@ -172,7 +190,10 @@ fun AdvancedSettingsScreen(
                 viewModel.setCloudFraction(newValue)
                 cloudFractionText = newValue.toString()
             }
-            Text(uiState.cloudFraction.toString())
+            IconButton(onClick = {viewModel.reset("cloud")
+                cloudFractionText = defaults.cloudFraction.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max fog
@@ -192,7 +213,10 @@ fun AdvancedSettingsScreen(
                 viewModel.setFog(newValue)
                 fogText = newValue.toString()
             }
-            Text(uiState.fog.toString())
+            IconButton(onClick = {viewModel.reset("fog")
+                fogText = defaults.fog.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max rain
@@ -212,7 +236,10 @@ fun AdvancedSettingsScreen(
                 viewModel.setRain(newValue)
                 rainText = newValue.toString()
             }
-            Text(uiState.rain.toString())
+            IconButton(onClick = {viewModel.reset("rain")
+                rainText = defaults.rain.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max humidity
@@ -232,7 +259,10 @@ fun AdvancedSettingsScreen(
                 viewModel.setHumiditiy(newValue)
                 humidityText = newValue.toString()
             }
-            Text(uiState.humidity.toString())
+            IconButton(onClick = {viewModel.reset("humidity")
+                humidityText = defaults.humidity.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //max dewPoint
@@ -252,7 +282,10 @@ fun AdvancedSettingsScreen(
                 viewModel.setDewPoint(newValue)
                 dewPointText = newValue.toString()
             }
-            Text(uiState.dewPoint.toString())
+            IconButton(onClick = {viewModel.reset("dewPoint")
+                dewPointText = defaults.dewPoint.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //margin
@@ -272,26 +305,29 @@ fun AdvancedSettingsScreen(
                 viewModel.setMargin(newValue)
                 marginText = newValue.toString()
             }
-            Text(uiState.margin.toString())
+            IconButton(onClick = {viewModel.reset("margin")
+                marginText = defaults.margin.toString()}) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
                 viewModel.reset()
-                groundWindSpeedText = ""
-                maxWindSpeedText = ""
-                maxWindShearText = ""
-                cloudFractionText = ""
-                fogText = ""
-                rainText = ""
-                humidityText = ""
-                dewPointText = ""
-                marginText = ""
+                groundWindSpeedText = defaults.groundWindSpeed.toString()
+                maxWindSpeedText = defaults.maxWindSpeed.toString()
+                maxWindShearText = defaults.maxWindShear.toString()
+                cloudFractionText = defaults.cloudFraction.toString()
+                fogText = defaults.fog.toString()
+                rainText = defaults.rain.toString()
+                humidityText = defaults.humidity.toString()
+                dewPointText = defaults.dewPoint.toString()
+                marginText = defaults.margin.toString()
 
             }) {
-                Text(text = "Reset Advanced Settings")
+                Text(text = "Reset All")
+                Icon(Icons.Filled.Refresh, null)
             }
         }
-
     }
 }
