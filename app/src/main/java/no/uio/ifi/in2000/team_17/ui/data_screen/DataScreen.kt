@@ -70,11 +70,12 @@ fun DataScreen(
     }
     val configuration = LocalConfiguration.current
 
-    BackGroundImage(0.82f)
+    BackGroundImage(0.5f)
 
     LazyColumn(
         modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center
     ) {
         item {
             when (toggleState) {
@@ -88,11 +89,11 @@ fun DataScreen(
                 Toggle.GRAPH -> {
                     var heigth = 250
                     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                            heigth = 500
-                        ThresholdGraph(dataScreenUiState, heigth, selectedTimeIndex) {
-                            selectedTimeIndex = it
-                            setTimeIndex(it)
-                        }
+                        heigth = 500
+                    ThresholdGraph(dataScreenUiState, heigth, selectedTimeIndex) {
+                        selectedTimeIndex = it
+                        setTimeIndex(it)
+                    }
                 }
             }
         }
