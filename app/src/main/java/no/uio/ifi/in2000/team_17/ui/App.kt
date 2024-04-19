@@ -1,11 +1,13 @@
 package no.uio.ifi.in2000.team_17.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,7 +76,10 @@ fun AppTopBar(
     TopAppBar(
         title = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.Transparent),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
@@ -100,7 +105,8 @@ fun AppTopBar(
             }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = Color.White.copy(alpha = 0.65f)
+            containerColor = Color.Transparent
+            //containerColor = Color.White.copy(alpha = 0.65f)
             //MaterialTheme.colorScheme.primaryContainer
         )
     )
@@ -147,7 +153,10 @@ fun App(
 
 
     Scaffold(
-        modifier = Modifier.paint(painterResource(id = R.drawable.sky)),
+        modifier = Modifier
+            .paint(painterResource(id = R.drawable.sky))
+            .background(Color.Transparent),
+        // .height(60.dp),
         topBar = {
             AppTopBar(
                 logoId = Screen.Home.logo,
@@ -157,7 +166,12 @@ fun App(
             )
         },
         bottomBar = {
-            BottomBar(modifier = Modifier.fillMaxWidth()) {
+            BottomBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.Transparent)
+            ) {
                 when (it) {
                     0 -> navController.navigate(Screen.Home.name)
                     1 -> navController.navigate(Screen.Data.name)
