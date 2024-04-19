@@ -90,7 +90,7 @@ fun AppTopBar(
 
                 Text(
                     text = "Oslo",
-                    style = androidx.compose.ui.text.TextStyle(fontSize = 30.sp),
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 22.sp),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
                 )
                 Image(
@@ -108,15 +108,15 @@ fun AppTopBar(
             containerColor = Color.Transparent
             //containerColor = Color.White.copy(alpha = 0.65f)
             //MaterialTheme.colorScheme.primaryContainer
-        )
+        ),
+        modifier = Modifier.height(40.dp)
     )
 }
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
-
-    ) {
+) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
     val homeScreenViewModel: HomeScreenViewModel = viewModel(
         factory = viewModelFactory {
@@ -272,7 +272,7 @@ fun SegmentedNavigationButton(
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = Modifier
-                    .padding(bottom = 15.dp),
+                    .padding(bottom = 10.dp),
                 selected = selectedIndex == index,
                 onClick = {
                     selectedIndex = index

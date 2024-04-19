@@ -75,7 +75,8 @@ fun DataScreen(
     LazyColumn(
         modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         item {
             when (toggleState) {
@@ -127,7 +128,7 @@ fun GradientTable(
 ) {
     Column(
         modifier
-            .padding(top = 10.dp)
+            .padding(top = 8.dp)
     ) {
         Row {
 
@@ -422,7 +423,7 @@ fun InfoBox(modifier: Modifier = Modifier, info: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToggleButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.height(45.dp),
     onFlip: (Int) -> Unit
 ) {
     val options = remember { mutableStateListOf("Table", "Graph") }
@@ -432,7 +433,7 @@ fun ToggleButton(
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = Modifier
-                    .padding(bottom = 15.dp),
+                    .padding(bottom = 12.dp),
                 selected = selectedIndex == index,
                 onClick = {
                     selectedIndex = index

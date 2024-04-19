@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -273,20 +274,21 @@ fun ThresholdGraph(
     }
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .axisStepSize(60.dp)
-        .topPadding(50.dp)
+        .axisStepSize(10.dp)
+        .topPadding(5.dp)
+        .bottomPadding(5.dp)
         .steps(size - 1)
-        .labelData { i -> i.toString() }
-        .labelAndAxisLinePadding(20.dp)
-        .axisLabelDescription { "Time indexes" }
+        //.labelData { i -> i.toString() }
         .labelAndAxisLinePadding(15.dp)
+        .axisLabelDescription { "Time indexes" }
+        .axisLabelAngle(90.toFloat())
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .steps(5)
-        .labelAndAxisLinePadding(20.dp)
+        .labelAndAxisLinePadding(15.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
@@ -367,8 +369,8 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 10.dp,
-        bottomPadding = 10.dp,
+        paddingTop = 5.dp,
+        bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
         //accessibilityConfig =
@@ -386,28 +388,32 @@ fun ThresholdGraph(
 
 @Composable
 fun ChartHistory() {
-    Column(Modifier.padding(8.dp)) {
+    Column(
+        Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = "Max Wind (ground) ", style = TextStyle(color = Color.Black))
+            Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
+            Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Max Wind Shear ", style = TextStyle(color = Color.LightGray))
+            Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
             Spacer(modifier = Modifier.width(2.dp))
         }
-        Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = "Cloud Coverage ", style = TextStyle(color = Color.Cyan))
+        Row {
+            Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Rain ", style = TextStyle(color = Color.Magenta))
+            Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Fog ", style = TextStyle(color = Color.DarkGray))
+            Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Relative Humidity ", style = TextStyle(color = Color.Blue))
+            Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = "Dew Point ", style = TextStyle(color = Color.Red))
+            Text(text = " - Dew Point ", style = TextStyle(color = Color.Red))
         }
         Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = "Threshold Line ", style = TextStyle(color = Color.Green))
+            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Green))
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
