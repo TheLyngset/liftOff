@@ -44,7 +44,7 @@ data class DataPoint(
 )
 
 data class TimePoint(
-    val y: String = "00",
+    val y: String = "00:00",
     val x: Int = 0
 )
 
@@ -172,8 +172,14 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
 }
 
 @Composable
-fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: Thresholds) {
-
+fun ThresholdGraph(
+    dataScreenUiState: DataScreenUiState,
+    height: Int,
+    selectedTimeIndex: Int,
+    setTimeIndex: (Int) -> Unit
+) {
+    val weatherDataLists = dataScreenUiState.weatherDataLists
+    val thresholds = dataScreenUiState.thresholds
     val size = weatherDataLists.time.size
 
     val pointsGroundWind: List<Point> = weatherDataLists.groundWind.mapIndexed { index, value ->
@@ -266,7 +272,6 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: Thresholds) {
             y = weatherDataLists.time[index]
         )
     }
-
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .axisStepSize(60.dp)
@@ -349,17 +354,25 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: Thresholds) {
                 ),
             )
         ),
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = Color.Transparent,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
+        isZoomAllowed = true,
+        paddingTop = 10.dp,
+        bottomPadding = 10.dp,
+        paddingRight = 2.dp,
+        containerPaddingEnd = 2.dp,
+        //accessibilityConfig =
         //gridLines = GridLines()
     )
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp),
+            .height(height.dp),
+        //.fillMaxSize(1f),
         lineChartData = data
     )
+    ChartHistory()
 }
 
 @Composable
@@ -389,7 +402,6 @@ fun ChartHistory() {
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
-
 }
 
 
@@ -527,5 +539,5 @@ fun pre() {
 @Composable
 @Preview(showBackground = true)
 fun PreD() {
-    ThresholdGraph(dummyData, dummyThreasholds)
+    //ThresholdGraph(dummyData, dummyThreasholds)
 }
