@@ -273,7 +273,7 @@ fun ThresholdGraph(
         )
     }
     val xAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.Transparent)
+        .backgroundColor(color = Color.White)
         .axisStepSize(10.dp)
         .topPadding(5.dp)
         .bottomPadding(5.dp)
@@ -286,7 +286,7 @@ fun ThresholdGraph(
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .build()
     val yAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.Transparent)
+        .backgroundColor(color = Color.White)
         .steps(5)
         .labelAndAxisLinePadding(15.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
@@ -365,7 +365,7 @@ fun ThresholdGraph(
                 ),
             )
         ),
-        backgroundColor = Color.Transparent,
+        backgroundColor = Color.White,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
@@ -428,7 +428,7 @@ fun createLine(
     dotted: Boolean
 ): Line {
     var colorStops: Array<Pair<Float, Color>> =
-        arrayOf(0.0f to Color.Transparent, 0.0f to Color.Transparent)
+        arrayOf(0.0f to Color.White, 0.0f to Color.White)
     if (fillColor) {
         colorStops = arrayOf(
             0.0f to Color.Red,
