@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,11 +35,9 @@ import no.uio.ifi.in2000.team17.AdvancedSettings
 import no.uio.ifi.in2000.team_17.data.AdvancedSettingsSerializer
 import no.uio.ifi.in2000.team_17.model.AvailableIndexes
 import no.uio.ifi.in2000.team_17.model.Rain
-import no.uio.ifi.in2000.team_17.model.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-import no.uio.ifi.in2000.team_17.ui.Screen
 
 data class DataPoint(
     val y: Double = 0.0,
@@ -256,14 +253,12 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
             x = index.toFloat(),
             y = 1f,
         )
-
     }
     val upperLine = weatherDataLists.date.mapIndexed { index, value ->
         Point(
             x = index.toFloat(),
             y = 2f,
         )
-
     }
 
     val pointsTime: List<TimePoint> = weatherDataLists.time.mapIndexed { index, value ->
@@ -355,6 +350,7 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
                 ),
             )
         ),
+        backgroundColor = MaterialTheme.colorScheme.surface,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         //gridLines = GridLines()
@@ -363,21 +359,6 @@ fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSetti
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp),
-            /*.background(
-                alpha = 1f,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Red,
-                        Color.Yellow,
-                        Color.Green
-                    )
-                )
-
-
-            ),
-             */
-
-
         lineChartData = data
     )
 }
@@ -419,14 +400,15 @@ fun createLine(
     lineColor: Color,
     fillColor: Boolean
 ): Line {
-    var colorStops : Array<Pair<Float,Color>> = arrayOf(0.0f to Color.White, 0.0f to Color.White)
-    if(fillColor){
+    var colorStops: Array<Pair<Float, Color>> = arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    if (fillColor) {
         colorStops = arrayOf(
             0.0f to Color.Red,
-            0.6f to Color.Yellow,
-            0.4f to Color.Green
+            0.5f to Color.Yellow,
+            1.0f to Color.Green
         )
     }
+
     return Line(
         dataPoints = points,
         LineStyle(
@@ -436,23 +418,11 @@ fun createLine(
         IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
         SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
         ShadowUnderLine(
-            //color = fillColor,
             alpha = 0.4f,
             brush = Brush.verticalGradient(
                 colorStops = colorStops
-                /*colors = listOf(
-                    fillColour,
-                    MaterialTheme.colorScheme.background,
-
-                )
-
-                 */
             )
-
-
         ),
-
-
         SelectionHighlightPopUp()
     )
 }
@@ -474,34 +444,58 @@ fun rescalePoint(realValue: Double?, threshold: Double?): Double {
 
     return 0.0
 }
-val dummyData : WeatherDataLists = WeatherDataLists(
-    date = listOf("2024-04-18","2024-04-19", "2024-04-20", "2024-04-21", "2024-04-22", "2024-04-23", "2024-04-24", "2024-04-25", "2024-04-26", "2024-04-27"),
-    time = listOf("08:38", "09:00", "10:00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00"),
+
+val dummyData: WeatherDataLists = WeatherDataLists(
+    date = listOf(
+        "2024-04-18",
+        "2024-04-19",
+        "2024-04-20",
+        "2024-04-21",
+        "2024-04-22",
+        "2024-04-23",
+        "2024-04-24",
+        "2024-04-25",
+        "2024-04-26",
+        "2024-04-27"
+    ),
+    time = listOf(
+        "08:38",
+        "09:00",
+        "10:00",
+        "11.00",
+        "12.00",
+        "13.00",
+        "14.00",
+        "15.00",
+        "16.00",
+        "17.00"
+    ),
     groundWind = listOf(
-        WindLayer(1.2, 10.0, 123.5 ),
-        WindLayer(1.4, 10.0, 123.5 ),
-        WindLayer(3.4, 10.0, 123.5 ),
-        WindLayer(4.6, 10.0, 123.5 ),
-        WindLayer(6.5, 10.0, 123.5 ),
-        WindLayer(3.7, 10.0, 123.5 ),
-        WindLayer(8.5, 10.0, 123.5 ),
-        WindLayer(9.2, 10.0, 123.5 ),
-        WindLayer(10.4, 10.0, 123.5 ),
-        WindLayer(13.5, 10.0, 123.5 ) ),
+        WindLayer(1.2, 10.0, 123.5),
+        WindLayer(1.4, 10.0, 123.5),
+        WindLayer(3.4, 10.0, 123.5),
+        WindLayer(4.6, 10.0, 123.5),
+        WindLayer(6.5, 10.0, 123.5),
+        WindLayer(3.7, 10.0, 123.5),
+        WindLayer(8.5, 10.0, 123.5),
+        WindLayer(9.2, 10.0, 123.5),
+        WindLayer(10.4, 10.0, 123.5),
+        WindLayer(13.5, 10.0, 123.5)
+    ),
     maxWindShear = listOf(WindShear()),
     maxWind = listOf(
-        WindLayer(1.2, 10.0, 123.5 ),
-        WindLayer(1.4, 12.0, 123.5 ),
-        WindLayer(3.4, 18.0, 123.5 ),
-        WindLayer(4.6, 100.0, 123.5 ),
-        WindLayer(6.5, 120.0, 123.5 ),
-        WindLayer(3.7, 130.0, 123.5 ),
-        WindLayer(8.5, 140.0, 123.5 ),
-        WindLayer(9.2, 160.0, 123.5 ),
-        WindLayer(10.4, 189.0, 123.5 ),
-        WindLayer(13.5, 270.0, 123.5 )
+        WindLayer(1.2, 10.0, 123.5),
+        WindLayer(1.4, 12.0, 123.5),
+        WindLayer(3.4, 18.0, 123.5),
+        WindLayer(4.6, 100.0, 123.5),
+        WindLayer(6.5, 120.0, 123.5),
+        WindLayer(3.7, 130.0, 123.5),
+        WindLayer(8.5, 140.0, 123.5),
+        WindLayer(9.2, 160.0, 123.5),
+        WindLayer(10.4, 189.0, 123.5),
+        WindLayer(13.5, 270.0, 123.5)
     ),
-    cloudFraction = listOf(0.0, 10.0, 20.0, 30.0, 15.0, 40.0, 13.0, 34.0, 11.0 ),
+    cloudFraction = listOf(0.0, 10.0, 20.0, 30.0, 15.0, 40.0, 13.0, 34.0, 11.0),
     rain = listOf(
         Rain(0.0, 0.0, 0.1),
         Rain(0.0, 0.0, 0.0),
@@ -514,13 +508,13 @@ val dummyData : WeatherDataLists = WeatherDataLists(
         Rain(0.0, 0.0, 0.9),
         Rain(0.0, 0.0, 0.11)
     ),
-    humidity = listOf(51.0,57.0, 59.9, 60.00, 62.00, 68.0, 70.0, 71.0, 53.0, 54.0),
+    humidity = listOf(51.0, 57.0, 59.9, 60.00, 62.00, 68.0, 70.0, 71.0, 53.0, 54.0),
     fog = listOf(0.1, 0.2, 0.4, 0.5, 1.4, 1.2, 1.6, 1.7, 0.9, 0.85),
     temperature = listOf(-3.0, -2.0, 0.0, 12.0, 3.0, 19.0, 30.0, 14.0, 5.0, -15.0),
     updated = "08:38",
     availableIndexes = AvailableIndexes()
 )
-val dummyThreasholds : AdvancedSettings = AdvancedSettingsSerializer.defaultValue
+val dummyThreasholds: AdvancedSettings = AdvancedSettingsSerializer.defaultValue
 
 /*
 @Composable
