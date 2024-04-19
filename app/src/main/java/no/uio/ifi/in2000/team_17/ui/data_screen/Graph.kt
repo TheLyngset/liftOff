@@ -304,53 +304,63 @@ fun ThresholdGraph(
                 createLine(
                     pointsGroundWind,
                     Color.Black,
+                    false,
                     false
                 ),
                 createLine(
                     pointsMaxAirWind,
                     Color.Gray,
+                    false,
                     false
                 ),
                 createLine(
                     pointsMaxWindShear,
                     Color.LightGray,
+                    false,
                     false
                 ),
                 createLine(
                     pointsCloudFraction,
                     Color.Cyan,
+                    false,
                     false
                 ),
                 createLine(
                     pointsMedianRain,
                     Color.Magenta,
+                    false,
                     false
                 ),
                 createLine(
                     pointsFog,
                     Color.DarkGray,
+                    false,
                     false
                 ),
                 createLine(
                     pointsHumidity,
                     Color.Blue,
+                    false,
                     false
 
                 ),
                 createLine(
                     pointsDewPoint,
                     Color.Red,
+                    false,
                     false
                 ),
                 createLine(
                     thresholdLine,
                     Color.Green,
-                    false
+                    false,
+                    true
                 ),
                 createLine(
                     upperLine,
-                    Color.Red,
+                    Color.Transparent,
                     true,
+                    false
                 ),
             )
         ),
@@ -409,9 +419,11 @@ fun ChartHistory() {
 fun createLine(
     points: List<Point>,
     lineColor: Color,
-    fillColor: Boolean
+    fillColor: Boolean,
+    dotted: Boolean
 ): Line {
-    var colorStops: Array<Pair<Float, Color>> = arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.Transparent, 0.0f to Color.Transparent)
     if (fillColor) {
         colorStops = arrayOf(
             0.0f to Color.Red,
@@ -424,7 +436,7 @@ fun createLine(
         dataPoints = points,
         LineStyle(
             color = lineColor,
-            lineType = LineType.SmoothCurve(isDotted = false)
+            lineType = LineType.SmoothCurve(isDotted = dotted)
         ),
         IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
         SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
