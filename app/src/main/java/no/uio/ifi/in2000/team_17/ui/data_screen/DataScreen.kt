@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SegmentedButton
@@ -40,16 +39,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.json.Json.Default.configuration
 import no.uio.ifi.in2000.team17.Thresholds
-import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.BackGroundImage
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
 enum class Toggle {
     TABLE,
@@ -63,9 +64,12 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ) {
-    var toggleState by remember { mutableStateOf(Toggle.TABLE) }
+    var toggleState by remember { mutableStateOf(Toggle.GRAPH) }
     var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
-    if(dataScreenUiState.weatherDataLists.date.size > 1){selectedTimeIndex = dataScreenUiState.selectedTimeIndex}
+    if (dataScreenUiState.weatherDataLists.date.size > 1) {
+        selectedTimeIndex = dataScreenUiState.selectedTimeIndex
+    }
+    val configuration = LocalConfiguration.current
 
     BackGroundImage(0.82f)
 
@@ -73,9 +77,10 @@ fun DataScreen(
         modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.Center,
+
     ) {
-        item{
+        item {
             when (toggleState) {
                 Toggle.TABLE -> {
                     GradientTable(Modifier, dataScreenUiState, 60, selectedTimeIndex) {
@@ -85,15 +90,24 @@ fun DataScreen(
                 }
 
                 Toggle.GRAPH -> {
-                    Text("Definitely a graph")
-                    ThresholdGraph(dataScreenUiState.weatherDataLists, dataScreenUiState.thresholds)
-   }
-            } }
+                    var heigth = 250
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                            heigth = 500
+                        ThresholdGraph(dataScreenUiState, heigth, selectedTimeIndex) {
+                            selectedTimeIndex = it
+                            setTimeIndex(it)
+                        }
+                }
+            }
+        }
 
 
     }
 
-    Column(modifier.fillMaxSize().offset(y = 10.dp),
+    Column(
+        modifier
+            .fillMaxSize()
+            .offset(y = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
@@ -231,11 +245,11 @@ fun GradientTable(
 @Composable
 fun SelectedBox(index: Int, dataScreenUiState: DataScreenUiState) {
     val state = rememberLazyListState()
-    Row{
-        repeat(index){ InfoBox(info = "") }
-        val date = dataScreenUiState.weatherDataLists.date.getOrElse(index){"           "}
+    Row {
+        repeat(index) { InfoBox(info = "") }
+        val date = dataScreenUiState.weatherDataLists.date.getOrElse(index) { "           " }
         Box {
-            InfoBox(info ="${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
+            InfoBox(info = "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
             InfoBox(
                 Modifier
                     .offset(y = 32.dp)
@@ -293,19 +307,20 @@ fun GradientBox(
         Box {
             Row {
                 //making half a box in the start
-                Box(modifier = modifier
-                    .width(35.dp)
-                    .background(
-                        //color = colorList.first()
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                colorList
-                                    .first()
-                                    .copy(alpha = 0.0f), colorList.first(), colorList.first()
+                Box(
+                    modifier = modifier
+                        .width(35.dp)
+                        .background(
+                            //color = colorList.first()
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    colorList
+                                        .first()
+                                        .copy(alpha = 0.0f), colorList.first(), colorList.first()
+                                )
                             )
                         )
-                    )
-                ){
+                ) {
                     Text(text = "")
                 }
                 Box(
@@ -319,20 +334,21 @@ fun GradientBox(
                     }
 
                 }
-                Box(modifier = modifier
-                    .width(35.dp)
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                colorList.last(),
-                                colorList.last(),
-                                colorList
-                                    .last()
-                                    .copy(0.0f)
+                Box(
+                    modifier = modifier
+                        .width(35.dp)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    colorList.last(),
+                                    colorList.last(),
+                                    colorList
+                                        .last()
+                                        .copy(0.0f)
+                                )
                             )
                         )
-                    )
-                ){
+                ) {
                     Text(text = "")
                 }
             }
@@ -347,22 +363,27 @@ fun GradientBox(
         }
     }
 }
+
 @Composable
 fun DateRow(
     dateList: List<String>,
     timeList: List<String>
 ) {
     Row {
-        dateList.forEachIndexed {index, date ->
-            if(timeList.getOrElse(index){""} == "00:00" || index == 0){
-                InfoBox(info = "${dateList.getOrElse(index + 2){date}.subSequence(8, 10)}.${date.subSequence(5, 7)}")
-            }
-            else{
+        dateList.forEachIndexed { index, date ->
+            if (timeList.getOrElse(index) { "" } == "00:00" || index == 0) {
+                InfoBox(
+                    info = "${
+                        dateList.getOrElse(index + 2) { date }.subSequence(8, 10)
+                    }.${date.subSequence(5, 7)}"
+                )
+            } else {
                 InfoBox(info = "")
             }
         }
     }
 }
+
 @Composable
 fun TimeRow(
     timeList: List<String>,
