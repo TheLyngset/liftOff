@@ -31,8 +31,7 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import no.uio.ifi.in2000.team17.AdvancedSettings
-import no.uio.ifi.in2000.team_17.data.AdvancedSettingsSerializer
+import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.model.AvailableIndexes
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
@@ -173,7 +172,7 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
 }
 
 @Composable
-fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: AdvancedSettings) {
+fun ThresholdGraph(weatherDataLists: WeatherDataLists, thresholds: Thresholds) {
 
     val size = weatherDataLists.time.size
 
@@ -514,7 +513,7 @@ val dummyData: WeatherDataLists = WeatherDataLists(
     updated = "08:38",
     availableIndexes = AvailableIndexes()
 )
-val dummyThreasholds: AdvancedSettings = AdvancedSettingsSerializer.defaultValue
+val dummyThreasholds: Thresholds = Thresholds.getDefaultInstance()
 
 /*
 @Composable
