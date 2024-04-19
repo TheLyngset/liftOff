@@ -286,7 +286,7 @@ internal fun calculateHeight(
  */
 
 private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-    //trenger vi egentlig polar koordinater her? Ja - Samuel
+    //trenger vi egentlig polar koordinater her? Ja, vind kommer med retning og lengde - Samuel
     val d_0_rad = d_0 * PI / 180
     val d_1_rad = d_1 * PI / 180
     return sqrt(
