@@ -98,7 +98,6 @@ val data1 = listOf(
 
 
 @Composable
-
 private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: List<Point>) {
     val steps = 11
     val xAxisData = AxisData.Builder()

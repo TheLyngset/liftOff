@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.serialization.json.Json.Default.configuration
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
@@ -64,7 +63,7 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ) {
-    var toggleState by remember { mutableStateOf(Toggle.GRAPH) }
+    var toggleState by remember { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
@@ -75,10 +74,7 @@ fun DataScreen(
 
     LazyColumn(
         modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-
+            .fillMaxSize()
     ) {
         item {
             when (toggleState) {
@@ -130,7 +126,7 @@ fun GradientTable(
 ) {
     Column(
         modifier
-            .padding(top = 24.dp)
+            .padding(top = 10.dp)
     ) {
         Row {
 

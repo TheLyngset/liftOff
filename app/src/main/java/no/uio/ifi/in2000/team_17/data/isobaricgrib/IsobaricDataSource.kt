@@ -31,7 +31,7 @@ class IsobaricDataSource {
     private val client = HttpClient {
         install(ContentNegotiation) { gson() }
         install(HttpTimeout) {
-            requestTimeoutMillis = 1000
+            requestTimeoutMillis = 3000
         }
     }
 
