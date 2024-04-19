@@ -59,6 +59,7 @@ enum class Screen(val title: String, val logo: Int) {
     Data(title = "Data Screen", logo = R.drawable.logor),
     Judicial(title = "Judicial Screen", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
+    Empty("", 0)
 
 }
 
@@ -168,7 +169,7 @@ fun App(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Data.name
+            startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
                 HomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
@@ -231,8 +232,9 @@ fun App(
 
 @Composable
 fun BottomBar(
-    modifier : Modifier,
-    onNavigate:(Int)->Unit){
+    modifier: Modifier,
+    onNavigate:(Int)->Unit
+){
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
