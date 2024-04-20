@@ -273,17 +273,17 @@ fun ThresholdGraph(
             y = ("${
                 weatherDataLists.time[index].subSequence(
                     0,
-                    1
+                    2
                 )
-            }.${weatherDataLists.time[index].subSequence(3, 4)}").toFloat()
+            }.${weatherDataLists.time[index].subSequence(3, 5)}").toFloat()
         )
     }
     val pointsDate: List<Point> = weatherDataLists.date.mapIndexed { index, value ->
         Point(
             x = index.toFloat(),
             y = ("${
-                weatherDataLists.date[index].subSequence(8, 9)
-            }.${weatherDataLists.date[index].subSequence(5, 6)}").toFloat()
+                weatherDataLists.date[index].subSequence(8, 10)
+            }.${weatherDataLists.date[index].subSequence(5, 7)}").toFloat()
         )
     }
 
@@ -389,16 +389,16 @@ fun ThresholdGraph(
                     IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
                     SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
                     ShadowUnderLine(
-                        alpha = 0.4f,
+                        alpha = 0.05f,
                     ),
                     SelectionHighlightPopUp(popUpLabel =
-                    { x, y ->
+                    { x, _ ->
                         val index = x.toInt()
                         val date =
                             pointsDate[index].y
                         val time =
                             pointsTime[index].y
-                        val dateAndTime = "Date: $date Time: $time"
+                        val dateAndTime = "Date: $date Time: ${time}0"
                         "$dateAndTime"
                     })
                 )
