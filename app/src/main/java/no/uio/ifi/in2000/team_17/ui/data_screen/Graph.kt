@@ -181,6 +181,7 @@ fun ThresholdGraph(
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds
     val size = weatherDataLists.time.size
+    val lastUpdated: String = dataScreenUiState.weatherDataLists.updated
 
     val pointsGroundWind: List<Point> = weatherDataLists.groundWind.mapIndexed { index, value ->
         Point(
@@ -266,12 +267,26 @@ fun ThresholdGraph(
         )
     }
 
-    val pointsTime: List<TimePoint> = weatherDataLists.time.mapIndexed { index, value ->
-        TimePoint(
-            x = index,
-            y = weatherDataLists.time[index]
+    val pointsTime: List<Point> = weatherDataLists.time.mapIndexed { index, value ->
+        Point(
+            x = index.toFloat(),
+            y = ("${
+                weatherDataLists.time[index].subSequence(
+                    0,
+                    1
+                )
+            }.${weatherDataLists.time[index].subSequence(3, 4)}").toFloat()
         )
     }
+    val pointsDate: List<Point> = weatherDataLists.date.mapIndexed { index, value ->
+        Point(
+            x = index.toFloat(),
+            y = ("${
+                weatherDataLists.date[index].subSequence(8, 9)
+            }.${weatherDataLists.date[index].subSequence(5, 6)}").toFloat()
+        )
+    }
+
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.White)
         .axisStepSize(10.dp)
@@ -351,18 +366,42 @@ fun ThresholdGraph(
                     false,
                     false
                 ),
-                createLine(
-                    thresholdLine,
-                    Color.Green,
-                    false,
-                    true
-                ),
+                /*    createLine(
+                        thresholdLine,
+                        Color.Green,
+                        false,
+                        true
+                    ),
+
+                 */
                 createLine(
                     upperLine,
                     Color.Transparent,
                     true,
                     false
                 ),
+                Line(
+                    dataPoints = thresholdLine,
+                    LineStyle(
+                        color = Color.Green,
+                        lineType = LineType.SmoothCurve(isDotted = true)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        alpha = 0.4f,
+                    ),
+                    SelectionHighlightPopUp(popUpLabel =
+                    { x, y ->
+                        val index = x.toInt()
+                        val date =
+                            pointsDate[index].y
+                        val time =
+                            pointsTime[index].y
+                        val dateAndTime = "Date: $date Time: $time"
+                        "$dateAndTime"
+                    })
+                )
             )
         ),
         backgroundColor = Color.White,
@@ -373,17 +412,27 @@ fun ThresholdGraph(
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
-        //accessibilityConfig =
-        //gridLines = GridLines()
-    )
+
+        )
+
+    LastUpdated(lastUpdated)
+
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
             .height(height.dp),
         //.fillMaxSize(1f),
         lineChartData = data
+
     )
     ChartHistory()
+}
+
+@Composable
+fun LastUpdated(lastUpdated: String) {
+    Row(horizontalArrangement = Arrangement.Center) {
+        Text("Last updated at $lastUpdated UTC+2")
+    }
 }
 
 @Composable
@@ -451,7 +500,9 @@ fun createLine(
                 colorStops = colorStops
             )
         ),
-        SelectionHighlightPopUp()
+        SelectionHighlightPopUp(popUpLabel = { x, y ->
+            ""
+        })
     )
 }
 
