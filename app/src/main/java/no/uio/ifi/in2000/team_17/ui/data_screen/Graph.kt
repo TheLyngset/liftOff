@@ -289,7 +289,7 @@ fun ThresholdGraph(
 
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.White)
-        .axisStepSize(10.dp)
+        .axisStepSize(30.dp)
         .topPadding(5.dp)
         .bottomPadding(5.dp)
         .steps(size - 1)
