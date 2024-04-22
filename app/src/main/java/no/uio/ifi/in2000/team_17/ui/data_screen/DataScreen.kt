@@ -108,9 +108,6 @@ fun DataScreen(
             }
         }
 
-
-    }
-
     Column(
         modifier
             .fillMaxSize()
