@@ -82,7 +82,7 @@ fun DataScreen(
                     setTimeIndex(it)
                 }
                 if (showSwipe.value) {
-                    SwipeInfoDialog(
+                    GraphInfoDialog(
                         dontShowAgain = dataScreenUiState.dontShowAgain,
                         onDismiss = { showSwipe.value = false },
                         onDontShowAgain = {

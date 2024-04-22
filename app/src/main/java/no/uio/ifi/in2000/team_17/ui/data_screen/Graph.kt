@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -379,14 +380,6 @@ fun ThresholdGraph(
                     false,
                     "Dew Point"
                 ),
-                /*    createLine(
-                        thresholdLine,
-                        Color.Green,
-                        false,
-                        true
-                    ),
-
-                 */
                 createLine(
                     upperLine,
                     Color.Transparent,
@@ -402,18 +395,22 @@ fun ThresholdGraph(
                     IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
                     SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
                     ShadowUnderLine(
-                        alpha = 0.05f,
+                        color = Color.Green,
+                        alpha = 0.005f,
                     ),
-                    SelectionHighlightPopUp(popUpLabel =
-                    { x, _ ->
-                        val index = x.toInt()
-                        val date =
-                            pointsDate[index].y
-                        val time =
-                            pointsTime[index].y
-                        val dateAndTime = "Date: $date Time: ${time}0"
-                        "$dateAndTime"
-                    })
+                    SelectionHighlightPopUp(
+                        popUpLabel =
+                        { x, _ ->
+                            val index = x.toInt()
+                            val date =
+                                pointsDate[index].y
+                            val time =
+                                pointsTime[index].y
+                            val dateAndTime = "Date: $date \nTime: ${time}0"
+                            "$dateAndTime"
+                        },
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
                 )
             )
         ),
@@ -421,25 +418,25 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 5.dp,
+        paddingTop = 15.dp,
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
-
-        )
+    )
 
     LastUpdated(lastUpdated)
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
-            .height(height.dp),
-        lineChartData = data
+            .height(height.dp)
+            .background(Color.Transparent),
+        lineChartData = data,
     )
     ChartHistory()
 }
 
 @Composable
-fun SwipeInfoDialog(
+fun GraphInfoDialog(
     onDismiss: () -> Unit,
     onDontShowAgain: () -> Unit,
     dontShowAgain: Boolean,
@@ -461,9 +458,15 @@ fun SwipeInfoDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(350.dp)
-                    .padding(16.dp)
-                    .background(Color.Transparent.copy(alpha = 0.1f)),
+                    .padding(16.dp),
+                //.background(Color.White.copy(alpha = 0.1f)),
                 shape = RoundedCornerShape(16.dp),
+                colors = CardColors(
+                    containerColor = Color.White.copy(0.8f),
+                    contentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified,
+                    disabledContentColor = Color.Unspecified
+                )
             ) {
                 Column(
                     modifier = Modifier
@@ -574,7 +577,7 @@ fun createLine(
             color = lineColor,
             lineType = LineType.SmoothCurve(isDotted = false)
         ),
-        IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+        IntersectionPoint(radius = 0.05.dp, color = MaterialTheme.colorScheme.tertiary),
         SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
         ShadowUnderLine(
             alpha = 0.4f,
@@ -582,9 +585,20 @@ fun createLine(
                 colorStops = colorStops
             )
         ),
-        SelectionHighlightPopUp(popUpLabel = { x, y ->
-            text
-        })
+        SelectionHighlightPopUp(
+            popUpLabel = { x, y ->
+                text
+            },
+            paddingBetweenPopUpAndPoint = 2.dp,
+            labelAlignment = android.graphics.Paint.Align.LEFT,
+            //labelColor = Color.Black,
+            //backgroundColor = Color.White
+            /*draw = { offset, point ->
+              drawText(
+                  // topLeft = Offset(selectedOffset.x, selectedOffset.y - paddingBetweenPopUpAndPoint.toPx())
+               )
+            }*/
+        )
     )
 }
 
@@ -599,7 +613,9 @@ fun rescalePoint(realValue: Double?, threshold: Double?): Double {
     if (threshold is Double && realValue is Double) {
         var rescaled = ((realValue) / threshold)
         if (rescaled > 2.0)
-            rescaled = 2.0
+            rescaled = 1.95 //so that extremes are still visible on the graph
+        if (rescaled <= 0.0)
+            rescaled = 0.05 //so that extremes are still visible on the graph
         return rescaled
     }
 
