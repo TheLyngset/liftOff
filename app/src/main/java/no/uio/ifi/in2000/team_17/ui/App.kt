@@ -32,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -102,6 +103,7 @@ fun AppTopBar(
                         }
                         .padding(top = 8.dp)
                         .padding(end = 10.dp)
+                        .alpha(0.85f)
                 )
             }
         },
@@ -110,7 +112,7 @@ fun AppTopBar(
             //containerColor = Color.White.copy(alpha = 0.65f)
             //MaterialTheme.colorScheme.primaryContainer
         ),
-        modifier = Modifier.height(40.dp)
+        modifier = Modifier.height(50.dp)
     )
 }
 
