@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
@@ -454,7 +455,6 @@ fun ThresholdGraph(
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
     )
-
     LastUpdated(lastUpdated)
     LineChart(
         modifier = Modifier
@@ -552,6 +552,17 @@ fun LastUpdated(lastUpdated: String) {
 }
 
 @Composable
+fun PinDateTime(alreadyPinned: Boolean) {
+    Button(onClick = { PinDateTimeToHome(alreadyPinned) }) {
+        Text("Pin chart-selected Date/Time to homescreen")
+    }
+}
+
+fun PinDateTimeToHome(alreadyPinned: Boolean) {
+
+}
+
+@Composable
 fun ChartHistory() {
     Column(
         Modifier.padding(8.dp),
@@ -575,10 +586,10 @@ fun ChartHistory() {
             Spacer(modifier = Modifier.width(2.dp))
             Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Dew Point ", style = TextStyle(color = Color.Red))
+            Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
         }
         Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Green))
+            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
@@ -623,7 +634,7 @@ fun createLine(
             paddingBetweenPopUpAndPoint = 2.dp,
             labelAlignment = android.graphics.Paint.Align.LEFT,
             backgroundColor = Color.Transparent
-            
+
             //labelColor = Color.Black,
             //backgroundColor = Color.White
             /*draw = { offset, point ->
