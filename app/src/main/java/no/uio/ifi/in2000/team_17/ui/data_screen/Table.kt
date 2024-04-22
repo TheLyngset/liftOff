@@ -221,6 +221,7 @@ fun GradientRows(
     selectedIndex: Int,
     setIndex:(Int) -> Unit
 ) {
+    //Titles and icons Column
     LazyColumn(
     ){
         items(rows) { row ->
@@ -244,6 +245,7 @@ fun GradientRows(
 
     val state = rememberLazyListState()
 
+    //Column of gradient rows
     LazyColumn(Modifier.offset(x = 70.dp)){
         itemsIndexed(rows){i, row ->
             LazyRow(
@@ -321,12 +323,14 @@ fun GradientRows(
             HorizontalDivider(dividerModifier)
         }
     }
+    //SelectedTimeIndex box
     Column(
         Modifier
             .offset(x = 70.dp)
             .fillMaxSize()) {
         SelectedBox(overlayModifier, state, selectedIndex, rows[0].data,rows[1].data, boxWidth)
     }
+    //Making all rows scroll together by adding a big box on top
     val mainState = rememberLazyListState()
     LazyRow(state = mainState, modifier = Modifier
         .offset(x = 70.dp)){
