@@ -75,7 +75,7 @@ fun Table(
             overlayModifier = Modifier
                 .size(
                     width = boxWidth.dp,
-                    height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight).dp
+                    height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight + 3).dp
                 ) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
                 .offset(x = -(boxWidth.times(0.17)).dp),
             rows = uiState.weatherDataLists.iterator()
@@ -272,7 +272,7 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
         item {
             Box(
                 modifier
-                    .offset(y = (-5).dp)
+                    .offset(y = (-8).dp)
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
                     .offset(x = (boxWidth.times(0.17)).dp),
@@ -280,7 +280,7 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
 
                 ){
                 val date = dates.getOrElse(index){"            "}
-                Text("${date.subSequence(8, 10)}.${date.subSequence(5, 7)}", fontWeight = FontWeight.SemiBold, color = Color.Black.copy(0.57f))
+                Text("${date.subSequence(8, 10)}.${date.subSequence(5, 7)}", fontWeight = FontWeight.SemiBold, color = Color.Black.copy(0.57f),modifier = Modifier.offset( y = -2.dp))
             }
         }
         items(maxOf((dates.size - index - 1), 0)){
