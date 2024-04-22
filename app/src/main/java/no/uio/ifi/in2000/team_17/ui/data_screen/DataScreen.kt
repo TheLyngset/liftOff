@@ -87,14 +87,6 @@ fun DataScreen(
                     boxWidth = 70,
                     dividerPadding = 4,
                 )
-                /*GradientTable(
-                    Modifier,
-                    dataScreenUiState,
-                    60,
-                    selectedTimeIndex) {
-                    selectedTimeIndex = it
-                    setTimeIndex(it)
-                }*/
             }
 
                 Toggle.GRAPH -> {
@@ -125,6 +117,51 @@ fun DataScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ToggleButton(
+    modifier: Modifier = Modifier.height(45.dp),
+    onFlip: (Int) -> Unit
+) {
+    val options = remember { mutableStateListOf("Table", "Graph") }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    SingleChoiceSegmentedButtonRow(modifier) {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
+                selected = selectedIndex == index,
+                onClick = {
+                    selectedIndex = index
+                    onFlip(index)
+                },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                icon = {},
+                colors = SegmentedButtonColors(
+                    activeContainerColor = Color(0xFF9DDDF9),
+                    activeBorderColor = Color.DarkGray,
+                    activeContentColor = Color.Black,
+                    inactiveBorderColor = Color.DarkGray,
+                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContentColor = Color.Black,
+                    disabledActiveBorderColor = Color.DarkGray,
+                    disabledActiveContainerColor = Color.Unspecified,
+                    disabledActiveContentColor = Color.Black,
+                    disabledInactiveBorderColor = Color.DarkGray,
+                    disabledInactiveContainerColor = Color.Unspecified,
+                    disabledInactiveContentColor = Color.Black
+                ),
+            )
+            {
+                Text(text = option)
+            }
+        }
+    }
+}
+
+/* Old code for Table
 @Composable
 fun GradientTable(
     modifier: Modifier = Modifier,
@@ -276,7 +313,7 @@ fun GradientBox(
     weatherParameter: WeatherParameter
 ) {
 
-var colorList = listOf(Color.Unspecified, Color.Unspecified)
+    var colorList = listOf(Color.Unspecified, Color.Unspecified)
     colorList = infoList
         .map {
             WeatherUseCase.canLaunch(
@@ -302,7 +339,7 @@ var colorList = listOf(Color.Unspecified, Color.Unspecified)
                     else -> WeatherPointInTime()
                 }, thresholds
             ).color
-    }
+        }
 
 
 
@@ -411,9 +448,11 @@ fun TitleBox(modifier: Modifier = Modifier, text: String) {
     }
 }
 
+*/
 /**
  * Warning: [InfoBox] and [SelectedBox] needs to have the same width
- */
+ *//*
+
 @Composable
 fun InfoBox(modifier: Modifier = Modifier, info: String) {
     Box(
@@ -424,46 +463,4 @@ fun InfoBox(modifier: Modifier = Modifier, info: String) {
         Text(text = info)
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ToggleButton(
-    modifier: Modifier = Modifier.height(45.dp),
-    onFlip: (Int) -> Unit
-) {
-    val options = remember { mutableStateListOf("Table", "Graph") }
-    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
-
-    SingleChoiceSegmentedButtonRow(modifier) {
-        options.forEachIndexed { index, option ->
-            SegmentedButton(
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-                selected = selectedIndex == index,
-                onClick = {
-                    selectedIndex = index
-                    onFlip(index)
-                },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                icon = {},
-                colors = SegmentedButtonColors(
-                    activeContainerColor = Color(0xFF9DDDF9),
-                    activeBorderColor = Color.DarkGray,
-                    activeContentColor = Color.Black,
-                    inactiveBorderColor = Color.DarkGray,
-                    inactiveContainerColor = Color.Unspecified,
-                    inactiveContentColor = Color.Black,
-                    disabledActiveBorderColor = Color.DarkGray,
-                    disabledActiveContainerColor = Color.Unspecified,
-                    disabledActiveContentColor = Color.Black,
-                    disabledInactiveBorderColor = Color.DarkGray,
-                    disabledInactiveContainerColor = Color.Unspecified,
-                    disabledInactiveContentColor = Color.Black
-                ),
-            )
-            {
-                Text(text = option)
-            }
-        }
-    }
-}
+*/

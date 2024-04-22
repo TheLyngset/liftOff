@@ -9,21 +9,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,13 +33,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,7 +52,6 @@ import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
-
 @Composable
 fun Table(
     uiState: DataScreenUiState,
@@ -99,156 +89,6 @@ data class GradientRow(
     val type: WeatherParameter
 )
 @Composable
-fun GradientRows(
-    boxWidth: Int,
-    dividerModifier: Modifier,
-    rowModifier: Modifier,
-    dateTimeModifier: Modifier,
-    overlayModifier: Modifier,
-    rows: List<GradientRow>,
-    thresholds: Thresholds,
-    selectedIndex: Int,
-    setIndex:(Int) -> Unit
-    ) {
-    LazyColumn(
-    ){
-        items(rows) { row ->
-            when(row.type){
-                WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
-                WeatherParameter.MAXWINDSHEAR -> IconBox(modifier = rowModifier, image = R.drawable.shearwind)
-                WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
-                WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
-                WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
-                WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.temperature)
-                WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
-                else -> {
-                    val color = Color.White.copy(0.0f)
-                    InfoBox1(dateTimeModifier,"    ${row.type.title}",listOf(color, color))
-                }
-            }
-            HorizontalDivider(dividerModifier)
-        }
-    }
-
-    val state = rememberLazyListState()
-
-    LazyColumn(Modifier.offset(x = 70.dp)){
-        itemsIndexed(rows){i, row ->
-            LazyRow(
-                state = state,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                userScrollEnabled = false) {
-                item {
-                    when (row.type) {
-                        WeatherParameter.TIME -> {
-                            InfoBox1(
-                                dateTimeModifier,
-                                "",
-                                listOf(Color.Unspecified, Color.Unspecified)
-                            )
-                        }
-
-                        WeatherParameter.DATE -> {
-                            InfoBox1(
-                                dateTimeModifier,
-                                "",
-                                listOf(Color.Unspecified, Color.Unspecified)
-                            )
-                        }
-
-                        else -> {
-                            InfoBox1(
-                                rowModifier,
-                                "",
-                                listOf(
-                                    Color.White.copy(0.0f),
-                                    calculateColor(row.type, row.data.first(), thresholds)),
-                            )
-                        }
-                    }
-                }
-                itemsIndexed(rows[0].data) { i, _ ->
-                    if(i < row.data.size){
-                        val data = row.data[i]
-                        when (row.type) {
-                            WeatherParameter.DATE -> {
-                                val info = if (rows[1].data[i] == "00:00") {
-                                    "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
-                                } else {
-                                    ""
-                                }
-                                InfoBox1(
-                                    modifier = dateTimeModifier,
-                                    info = info,
-                                    colors = listOf(Color.Unspecified, Color.Unspecified)
-                                )
-                            }
-                            WeatherParameter.TIME -> {
-                                InfoBox1(dateTimeModifier, data, listOf(Color.Unspecified, Color.Unspecified))
-                            }
-                            else -> {
-                                val colorNow = calculateColor(row.type, data, thresholds)
-                                val colorsNow = listOf(colorNow, colorNow)
-                                val colorsAfter = if (i < row.data.size - 1) {
-                                    val colorAfter =
-                                        calculateColor(row.type, row.data[i + 1], thresholds)
-                                    listOf(colorAfter)
-                                } else {
-                                    listOf(Color.White.copy(0.0f))
-                                }
-                                InfoBox1(rowModifier, data, colorsNow + colorsAfter, bold = false)
-                            }
-                        }
-                    }
-                    else{
-                        InfoBox1(modifier = rowModifier, colors = listOf(Color.Unspecified, Color.Unspecified))
-                    }
-                }
-            }
-            HorizontalDivider(dividerModifier)
-        }
-    }
-    Column(
-        Modifier
-            .offset(x = 70.dp)
-            .fillMaxSize()) {
-        SelectedBox1(overlayModifier, state, selectedIndex, rows[0].data,rows[1].data, boxWidth)
-    }
-    val mainState = rememberLazyListState()
-    LazyRow(state = mainState, modifier = Modifier
-        .offset(x = 70.dp)){
-        rows[1].data.forEachIndexed { i, _ ->
-            if(i == 0){
-                item{
-                    InfoBox1(overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
-                }
-            }
-            else{
-                item {
-                    InfoBox1(
-                        modifier = overlayModifier
-                            .clickable { setIndex(i - 1) },
-                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                    )
-                }
-            }
-        }
-    }
-    LaunchedEffect(Unit){
-        mainState.scrollToItem(selectedIndex)
-        mainState.scrollBy(-60f)
-    }
-    LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
-        state.scrollToItem(
-            mainState.firstVisibleItemIndex,
-            mainState.firstVisibleItemScrollOffset
-        )
-    }
-}
-
-@Composable
 fun IconBox(modifier: Modifier, image: Int){
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
@@ -268,7 +108,7 @@ fun IconBox(modifier: Modifier, image: Int){
     }
 }
 @Composable
-fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, times: List<String>, boxWidth: Int) {
+fun SelectedBox(modifier: Modifier, state: LazyListState, index: Int, dates: List<String>, times: List<String>, boxWidth: Int) {
     LazyRow(state = state, userScrollEnabled = false) {
         items(index + 1){
             Spacer(modifier = modifier)
@@ -301,7 +141,7 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
 }
 
 @Composable
-fun InfoBox1(modifier: Modifier = Modifier, info: String? = null, colors: List<Color>, bold:Boolean = true) {
+fun InfoBox(modifier: Modifier = Modifier, info: String? = null, colors: List<Color>, bold:Boolean = true) {
     Box(
         modifier = modifier
             .background(brush = Brush.horizontalGradient(colors)),
@@ -320,47 +160,6 @@ fun InfoBox1(modifier: Modifier = Modifier, info: String? = null, colors: List<C
     }
 }
 
-fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds): Color {
-    return when(type){
-        WeatherParameter.CLOUDFRACTION-> WeatherUseCase.canLaunch(WeatherPointInTime(cloudFraction = value.toDouble()), thresholds)
-        WeatherParameter.GROUNDWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(groundWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.MAXWINDSHEAR -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWindShear = WindShear(value.toDouble())), thresholds)
-        WeatherParameter.MAXWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.RAIN -> WeatherUseCase.canLaunch(WeatherPointInTime(rain = Rain(median = value.toDouble())), thresholds)
-        WeatherParameter.HUMIDITY -> WeatherUseCase.canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
-        WeatherParameter.DEWPOINT -> WeatherUseCase.canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
-        WeatherParameter.FOG -> WeatherUseCase.canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
-        WeatherParameter.DATE -> TrafficLightColor.WHITE
-        WeatherParameter.TIME -> TrafficLightColor.WHITE
-    }.color
-}
-
-val testPoints = listOf(1.0, 3.0,14.0,24.0, 34.0)
-val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
-val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
-@Preview(showBackground = true)
-@Composable
-fun GradientRowPreview() {
-    GradientRows(
-        70,
-        Modifier.padding(vertical = 8.dp),
-        Modifier.size(height = 35.dp, width = 70.dp),
-        Modifier.size(height = 35.dp, width = 70.dp),
-        Modifier.size(width = 70.dp, height = 586.dp),
-        rows = listOf(
-            GradientRow(testDates.map { it.toString() }, WeatherParameter.DATE),
-            GradientRow(testTimes.map { it.toString() }, WeatherParameter.TIME),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.GROUNDWIND),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWIND),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWINDSHEAR),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.CLOUDFRACTION)
-        ),
-        thresholds = ThresholdsSerializer.defaultValue,
-        selectedIndex = 0,
-        setIndex = {}
-        )
-}
-
 @Composable
 fun AutoHeightText(
     text: String,
@@ -371,7 +170,7 @@ fun AutoHeightText(
     var shouldDraw by remember { mutableStateOf(false)}
     var resizedTextStyle by remember{ mutableStateOf(style)}
     val defaultFontSize = MaterialTheme.typography.bodySmall.fontSize
-    
+
     Text(text = text,
         style = resizedTextStyle,
         color = color,
@@ -395,3 +194,196 @@ fun AutoHeightText(
         }
     )
 }
+fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds): Color {
+    return when(type){
+        WeatherParameter.CLOUDFRACTION-> WeatherUseCase.canLaunch(WeatherPointInTime(cloudFraction = value.toDouble()), thresholds)
+        WeatherParameter.GROUNDWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(groundWind = WindLayer(value.toDouble())), thresholds)
+        WeatherParameter.MAXWINDSHEAR -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWindShear = WindShear(value.toDouble())), thresholds)
+        WeatherParameter.MAXWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWind = WindLayer(value.toDouble())), thresholds)
+        WeatherParameter.RAIN -> WeatherUseCase.canLaunch(WeatherPointInTime(rain = Rain(median = value.toDouble())), thresholds)
+        WeatherParameter.HUMIDITY -> WeatherUseCase.canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
+        WeatherParameter.DEWPOINT -> WeatherUseCase.canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
+        WeatherParameter.FOG -> WeatherUseCase.canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
+        WeatherParameter.DATE -> TrafficLightColor.WHITE
+        WeatherParameter.TIME -> TrafficLightColor.WHITE
+    }.color
+}
+
+@Composable
+fun GradientRows(
+    boxWidth: Int,
+    dividerModifier: Modifier,
+    rowModifier: Modifier,
+    dateTimeModifier: Modifier,
+    overlayModifier: Modifier,
+    rows: List<GradientRow>,
+    thresholds: Thresholds,
+    selectedIndex: Int,
+    setIndex:(Int) -> Unit
+) {
+    LazyColumn(
+    ){
+        items(rows) { row ->
+            when(row.type){
+                WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
+                WeatherParameter.MAXWINDSHEAR -> IconBox(modifier = rowModifier, image = R.drawable.shearwind)
+                WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
+                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
+                WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
+                WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
+                WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.temperature)
+                WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
+                else -> {
+                    val color = Color.White.copy(0.0f)
+                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(color, color))
+                }
+            }
+            HorizontalDivider(dividerModifier)
+        }
+    }
+
+    val state = rememberLazyListState()
+
+    LazyColumn(Modifier.offset(x = 70.dp)){
+        itemsIndexed(rows){i, row ->
+            LazyRow(
+                state = state,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                userScrollEnabled = false) {
+                item {
+                    when (row.type) {
+                        WeatherParameter.TIME -> {
+                            InfoBox(
+                                dateTimeModifier,
+                                "",
+                                listOf(Color.Unspecified, Color.Unspecified)
+                            )
+                        }
+
+                        WeatherParameter.DATE -> {
+                            InfoBox(
+                                dateTimeModifier,
+                                "",
+                                listOf(Color.Unspecified, Color.Unspecified)
+                            )
+                        }
+
+                        else -> {
+                            InfoBox(
+                                rowModifier,
+                                "",
+                                listOf(
+                                    Color.White.copy(0.0f),
+                                    calculateColor(row.type, row.data.first(), thresholds)),
+                            )
+                        }
+                    }
+                }
+                itemsIndexed(rows[0].data) { i, _ ->
+                    if(i < row.data.size){
+                        val data = row.data[i]
+                        when (row.type) {
+                            WeatherParameter.DATE -> {
+                                val info = if (rows[1].data[i] == "00:00") {
+                                    "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
+                                } else {
+                                    ""
+                                }
+                                InfoBox(
+                                    modifier = dateTimeModifier,
+                                    info = info,
+                                    colors = listOf(Color.Unspecified, Color.Unspecified)
+                                )
+                            }
+                            WeatherParameter.TIME -> {
+                                InfoBox(dateTimeModifier, data, listOf(Color.Unspecified, Color.Unspecified))
+                            }
+                            else -> {
+                                val colorNow = calculateColor(row.type, data, thresholds)
+                                val colorsNow = listOf(colorNow, colorNow)
+                                val colorsAfter = if (i < row.data.size - 1) {
+                                    val colorAfter =
+                                        calculateColor(row.type, row.data[i + 1], thresholds)
+                                    listOf(colorAfter)
+                                } else {
+                                    listOf(Color.White.copy(0.0f))
+                                }
+                                InfoBox(rowModifier, data, colorsNow + colorsAfter, bold = false)
+                            }
+                        }
+                    }
+                    else{
+                        InfoBox(modifier = rowModifier, colors = listOf(Color.Unspecified, Color.Unspecified))
+                    }
+                }
+            }
+            HorizontalDivider(dividerModifier)
+        }
+    }
+    Column(
+        Modifier
+            .offset(x = 70.dp)
+            .fillMaxSize()) {
+        SelectedBox(overlayModifier, state, selectedIndex, rows[0].data,rows[1].data, boxWidth)
+    }
+    val mainState = rememberLazyListState()
+    LazyRow(state = mainState, modifier = Modifier
+        .offset(x = 70.dp)){
+        rows[1].data.forEachIndexed { i, _ ->
+            if(i == 0){
+                item{
+                    InfoBox(overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
+                }
+            }
+            else{
+                item {
+                    InfoBox(
+                        modifier = overlayModifier
+                            .clickable { setIndex(i - 1) },
+                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                    )
+                }
+            }
+        }
+    }
+    LaunchedEffect(Unit){
+        mainState.scrollToItem(selectedIndex)
+        mainState.scrollBy(-60f)
+    }
+    LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
+        state.scrollToItem(
+            mainState.firstVisibleItemIndex,
+            mainState.firstVisibleItemScrollOffset
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun GradientRowPreview() {
+    val testPoints = listOf(1.0, 3.0,14.0,24.0, 34.0)
+    val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
+    val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
+    GradientRows(
+        70,
+        Modifier.padding(vertical = 8.dp),
+        Modifier.size(height = 35.dp, width = 70.dp),
+        Modifier.size(height = 35.dp, width = 70.dp),
+        Modifier.size(width = 70.dp, height = 586.dp),
+        rows = listOf(
+            GradientRow(testDates.map { it.toString() }, WeatherParameter.DATE),
+            GradientRow(testTimes.map { it.toString() }, WeatherParameter.TIME),
+            GradientRow(testPoints.map { it.toString() }, WeatherParameter.GROUNDWIND),
+            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWIND),
+            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWINDSHEAR),
+            GradientRow(testPoints.map { it.toString() }, WeatherParameter.CLOUDFRACTION)
+        ),
+        thresholds = ThresholdsSerializer.defaultValue,
+        selectedIndex = 0,
+        setIndex = {}
+        )
+}
+
