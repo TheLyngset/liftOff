@@ -327,10 +327,73 @@ fun ThresholdGraph(
         }
         .build()
 
+    //Builds colors for background
+    //@Author Hedda
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    colorStops = arrayOf(
+        0.0f to Color.Red,
+        0.5f to Color.Yellow,
+        1.0f to Color.Green
+    )
 
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
+                Line(
+                    dataPoints = upperLine,
+                    LineStyle(
+                        color = Color.Transparent,
+                        lineType = LineType.SmoothCurve(isDotted = false)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        alpha = 0.4f,
+                        brush = Brush.verticalGradient(
+                            colorStops = colorStops
+                        )
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel =
+                        { x, _ ->
+                            val index = x.toInt()
+                            val date =
+                                pointsDate[index].y
+                            val time =
+                                pointsTime[index].y
+                            val dateAndTime = "Date: $date \nTime: ${time}0"
+                            "$dateAndTime"
+                        },
+                        paddingBetweenPopUpAndPoint = 2.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        labelColor = Color.Black,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
+                Line(
+                    dataPoints = thresholdLine,
+                    LineStyle(
+                        color = Color.Red,
+                        lineType = LineType.SmoothCurve(isDotted = true)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        color = Color.Green,
+                        alpha = 0.005f,
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel = { x, _ ->
+                            "Treshold Line"
+                        },
+                        paddingBetweenPopUpAndPoint = 2.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
                 createLine(
                     pointsGroundWind,
                     Color.Black,
@@ -376,42 +439,10 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsDewPoint,
-                    Color.Red,
+                    Color.Green,
                     false,
                     "Dew Point"
                 ),
-                createLine(
-                    upperLine,
-                    Color.Transparent,
-                    true,
-                    ""
-                ),
-                Line(
-                    dataPoints = thresholdLine,
-                    LineStyle(
-                        color = Color.Green,
-                        lineType = LineType.SmoothCurve(isDotted = true)
-                    ),
-                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
-                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
-                    ShadowUnderLine(
-                        color = Color.Green,
-                        alpha = 0.005f,
-                    ),
-                    SelectionHighlightPopUp(
-                        popUpLabel =
-                        { x, _ ->
-                            val index = x.toInt()
-                            val date =
-                                pointsDate[index].y
-                            val time =
-                                pointsTime[index].y
-                            val dateAndTime = "Date: $date \nTime: ${time}0"
-                            "$dateAndTime"
-                        },
-                        //labelAlignment = android.graphics.Paint.Align.LEFT,
-                    )
-                )
             )
         ),
         backgroundColor = Color.White,
@@ -591,6 +622,8 @@ fun createLine(
             },
             paddingBetweenPopUpAndPoint = 2.dp,
             labelAlignment = android.graphics.Paint.Align.LEFT,
+            backgroundColor = Color.Transparent
+            
             //labelColor = Color.Black,
             //backgroundColor = Color.White
             /*draw = { offset, point ->
