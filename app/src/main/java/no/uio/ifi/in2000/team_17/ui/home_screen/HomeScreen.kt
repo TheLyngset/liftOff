@@ -79,7 +79,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             .fillMaxWidth(),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         colors = CardColors(
-            Color.White.copy(0.65f),
+            Color.White.copy(0.75f),
             contentColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified,
             disabledContainerColor = Color.Unspecified
