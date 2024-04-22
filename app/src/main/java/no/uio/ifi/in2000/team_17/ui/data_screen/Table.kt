@@ -119,7 +119,7 @@ fun GradientRows(
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
                 else -> {
                     val color = Color.White.copy(0.0f)
-                    InfoBox1(dateTimeModifier,row.type.title,listOf(color, color))
+                    InfoBox1(dateTimeModifier,"    ${row.type.title}",listOf(color, color))
                 }
             }
             HorizontalDivider(dividerModifier)
