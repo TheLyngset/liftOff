@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,8 +64,8 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ) {
-    var toggleState by remember { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
+    var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
     }
@@ -84,9 +85,7 @@ fun DataScreen(
                     uiState = dataScreenUiState,
                     setIndex ={ setTimeIndex(it) },
                     boxWidth = 70,
-                    boxHeight = 60,
                     dividerPadding = 4,
-                    dateTimeBoxHeight = 25
                 )
                 /*GradientTable(
                     Modifier,
@@ -433,7 +432,7 @@ fun ToggleButton(
     onFlip: (Int) -> Unit
 ) {
     val options = remember { mutableStateListOf("Table", "Graph") }
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
