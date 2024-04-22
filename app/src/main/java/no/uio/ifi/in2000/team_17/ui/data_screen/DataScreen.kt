@@ -70,22 +70,33 @@ fun DataScreen(
     }
     val configuration = LocalConfiguration.current
 
-    BackGroundImage(0.5f)
+    BackGroundImage(0.82f)
 
-    LazyColumn(
+    Column(
         modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        item {
-            when (toggleState) {
-                Toggle.TABLE -> {
-                    GradientTable(Modifier, dataScreenUiState, 60, selectedTimeIndex) {
-                        selectedTimeIndex = it
-                        setTimeIndex(it)
-                    }
-                }
+        when (toggleState) {
+            Toggle.TABLE -> {
+                Table(
+                    uiState = dataScreenUiState,
+                    setIndex ={ setTimeIndex(it) },
+                    boxWidth = 70,
+                    boxHeight = 60,
+                    dividerPadding = 4,
+                    dateTimeBoxHeight = 25
+                )
+                /*GradientTable(
+                    Modifier,
+                    dataScreenUiState,
+                    60,
+                    selectedTimeIndex) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
+                }*/
+            }
 
                 Toggle.GRAPH -> {
                     var heigth = 250
@@ -98,9 +109,6 @@ fun DataScreen(
                 }
             }
         }
-
-
-    }
 
     Column(
         modifier
@@ -269,34 +277,32 @@ fun GradientBox(
     weatherParameter: WeatherParameter
 ) {
 
-    var colorList = listOf(Color.Unspecified, Color.Unspecified)
-    if (weatherParameter != WeatherParameter.TIME) {
-        colorList = infoList
-            .map {
-                WeatherUseCase.canLaunch(
-                    when (weatherParameter) {
-                        WeatherParameter.GROUNDWIND -> WeatherPointInTime(
-                            groundWind = WindLayer(
-                                speed = it.toDouble()
-                            )
+var colorList = listOf(Color.Unspecified, Color.Unspecified)
+    colorList = infoList
+        .map {
+            WeatherUseCase.canLaunch(
+                when (weatherParameter) {
+                    WeatherParameter.GROUNDWIND -> WeatherPointInTime(
+                        groundWind = WindLayer(
+                            speed = it.toDouble()
                         )
+                    )
 
-                        WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(
-                            maxWindShear = WindShear(
-                                speed = it.toDouble()
-                            )
+                    WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(
+                        maxWindShear = WindShear(
+                            speed = it.toDouble()
                         )
+                    )
 
-                        WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it.toDouble())
-                        WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it.toDouble())
-                        WeatherParameter.FOG -> WeatherPointInTime(fog = it.toDouble())
-                        WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it.toDouble())
-                        WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(speed = it.toDouble()))
-                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(median = it.toDouble()))
-                        else -> WeatherPointInTime()
-                    }, thresholds
-                ).color
-            }
+                    WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it.toDouble())
+                    WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it.toDouble())
+                    WeatherParameter.FOG -> WeatherPointInTime(fog = it.toDouble())
+                    WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it.toDouble())
+                    WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(speed = it.toDouble()))
+                    WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(median = it.toDouble()))
+                    else -> WeatherPointInTime()
+                }, thresholds
+            ).color
     }
 
 
