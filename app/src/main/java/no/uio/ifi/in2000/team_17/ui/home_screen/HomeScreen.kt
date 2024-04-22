@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Available
+import no.uio.ifi.in2000.team_17.ui.BackGroundImage
 
 @Composable
 fun HomeScreen(
@@ -50,18 +51,7 @@ fun HomeScreen(
 
 
     ){
-        Image(painter = painterResource(id = R.drawable.sky),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .matchParentSize()
-                .graphicsLayer(
-                    scaleX = 2.4f,
-                    scaleY = 1.4f,
-                    translationX = 100f,
-                    translationY = 150f
-                )
-
-        )
+        BackGroundImage(alpha = 0.0f)
 
         Image(
             painter = painterResource(id = R.drawable.rakett),
