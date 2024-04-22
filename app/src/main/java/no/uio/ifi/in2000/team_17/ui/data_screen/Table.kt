@@ -55,11 +55,11 @@ import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
 fun Table(
     uiState: DataScreenUiState,
+    selectedIndex: Int,
     setIndex: (Int) -> Unit,
     boxWidth: Int,
     dividerPadding: Int,
 ){
-    var selectedIndex by rememberSaveable { mutableStateOf(uiState.selectedTimeIndex) }
     BoxWithConstraints {
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))*0.1
         GradientRows(
@@ -72,15 +72,12 @@ fun Table(
                     width = boxWidth.dp,
                     height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight + 3).dp
                 ) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
-                .offset(x = -(boxWidth.times(0.17)).dp),
+                .offset(x = -(boxWidth.times(0.25)).dp),
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
             thresholds = uiState.thresholds,
             selectedIndex = selectedIndex,
-            setIndex = {
-                setIndex(it)
-                selectedIndex = it
-            }
+            setIndex = { setIndex(it) }
         )
     }
 }
@@ -118,7 +115,7 @@ fun SelectedBox(modifier: Modifier, state: LazyListState, index: Int, dates: Lis
                 modifier
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
-                    .offset(x = (boxWidth.times(0.17)).dp),
+                    .offset(x = (boxWidth.times(0.19)).dp),
 
 
                 ){

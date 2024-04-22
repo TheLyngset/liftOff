@@ -65,7 +65,7 @@ fun DataScreen(
     setTimeIndex: (Int) -> Unit
 ) {
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    var selectedTimeIndex by rememberSaveable { mutableIntStateOf(dataScreenUiState.selectedTimeIndex) }
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
     }
@@ -83,7 +83,11 @@ fun DataScreen(
             Toggle.TABLE -> {
                 Table(
                     uiState = dataScreenUiState,
-                    setIndex ={ setTimeIndex(it) },
+                    selectedIndex = selectedTimeIndex,
+                    setIndex ={
+                        setTimeIndex(it)
+                        selectedTimeIndex = it
+                              },
                     boxWidth = 70,
                     dividerPadding = 4,
                 )
