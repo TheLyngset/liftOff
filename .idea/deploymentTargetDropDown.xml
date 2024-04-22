@@ -2,10 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="GradientRowPreview">
-        <State />
-      </entry>
-      <entry key="team17">
+      <entry key="app">
         <State />
       </entry>
     </value>
