@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +32,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +40,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
@@ -65,8 +67,12 @@ fun DataScreen(
 ) {
     var toggleState by remember { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    val showSwipe = remember { mutableStateOf(dataScreenUiState.showSwipe) }
+    val showDialog = rememberUpdatedState(showSwipe.value)
+
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
+        //showSwipe = dataScreenUiState.showSwipe.value
     }
     val configuration = LocalConfiguration.current
 
@@ -82,7 +88,7 @@ fun DataScreen(
             Toggle.TABLE -> {
                 Table(
                     uiState = dataScreenUiState,
-                    setIndex ={ setTimeIndex(it) },
+                    setIndex = { setTimeIndex(it) },
                     boxWidth = 70,
                     boxHeight = 60,
                     dividerPadding = 4,
@@ -98,17 +104,29 @@ fun DataScreen(
                 }*/
             }
 
-                Toggle.GRAPH -> {
-                    var heigth = 250
-                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                        heigth = 500
-                    ThresholdGraph(dataScreenUiState, heigth, selectedTimeIndex) {
-                        selectedTimeIndex = it
-                        setTimeIndex(it)
-                    }
+            Toggle.GRAPH -> {
+                var heigth = 250
+                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                    heigth = 500
+                ThresholdGraph(dataScreenUiState, heigth, selectedTimeIndex) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
                 }
+                if (showSwipe.value) {
+                    SwipeInfoDialog(
+                        dontShowAgain = dataScreenUiState.dontShowAgain,
+                        onDismiss = { showSwipe.value = false },
+                        onDontShowAgain = {
+                            showSwipe.value = false
+                        },
+                        painter = painterResource(id = R.drawable.swipe),
+                        text = "Scroll left to see more weather data.\nPinch to zoom."
+                    )
+                }
+
             }
         }
+    }
 
     Column(
         modifier
@@ -277,7 +295,7 @@ fun GradientBox(
     weatherParameter: WeatherParameter
 ) {
 
-var colorList = listOf(Color.Unspecified, Color.Unspecified)
+    var colorList = listOf(Color.Unspecified, Color.Unspecified)
     colorList = infoList
         .map {
             WeatherUseCase.canLaunch(
@@ -303,7 +321,7 @@ var colorList = listOf(Color.Unspecified, Color.Unspecified)
                     else -> WeatherPointInTime()
                 }, thresholds
             ).color
-    }
+        }
 
 
 

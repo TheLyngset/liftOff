@@ -1,23 +1,35 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.SecureFlagPolicy
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
@@ -38,6 +50,7 @@ import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
+
 
 data class DataPoint(
     val y: Double = 0.0,
@@ -416,17 +429,86 @@ fun ThresholdGraph(
         )
 
     LastUpdated(lastUpdated)
-
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
             .height(height.dp),
-        //.fillMaxSize(1f),
         lineChartData = data
-
     )
     ChartHistory()
 }
+
+@Composable
+fun SwipeInfoDialog(
+    onDismiss: () -> Unit,
+    onDontShowAgain: () -> Unit,
+    dontShowAgain: Boolean,
+    painter: Painter,
+    text: String
+) {
+    if (!dontShowAgain) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                securePolicy = SecureFlagPolicy.SecureOn,
+                usePlatformDefaultWidth = true,
+                decorFitsSystemWindows = true
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(16.dp)
+                    .background(Color.Transparent.copy(alpha = 0.1f)),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+
+                    ) {
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(15.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    Image(
+                        painter = painter,
+                        contentDescription = text,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .height(70.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        TextButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Dismiss")
+                        }
+                        TextButton(
+                            onClick = { onDontShowAgain() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Don't show again")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun LastUpdated(lastUpdated: String) {

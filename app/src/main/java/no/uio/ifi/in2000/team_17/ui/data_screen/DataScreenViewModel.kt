@@ -9,29 +9,31 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team17.Thresholds
-import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
-import java.time.LocalDateTime
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
-    val selectedTimeIndex: Int = 0
+    val selectedTimeIndex: Int = 0,
+    var showSwipe: Boolean = true,
+    var dontShowAgain: Boolean = false
 )
+
 class DataScreenViewModel(
     private val repo: Repository,
     private val settingsRepo: SettingsRepository,
     private val thresholdsRepository: ThresholdsRepository
-) :ViewModel(){
+) : ViewModel() {
     val dataScreenUiState: StateFlow<DataScreenUiState> = combine(
         repo.weatherDataList,
         settingsRepo.settingsFlow,
         thresholdsRepository.thresholdsFlow
-    ){weatherDataList:WeatherDataLists, settings:Settings, thresholds:Thresholds ->
+    ) { weatherDataList: WeatherDataLists, settings: Settings, thresholds: Thresholds ->
         DataScreenUiState(
             weatherDataList,
             thresholds,
@@ -42,7 +44,8 @@ class DataScreenViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = DataScreenUiState()
     )
-    fun setTimeIndex(index:Int){
+
+    fun setTimeIndex(index: Int) {
         viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
 }
