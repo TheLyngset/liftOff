@@ -74,7 +74,9 @@ fun DataScreen(
 
     Column(
         modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
