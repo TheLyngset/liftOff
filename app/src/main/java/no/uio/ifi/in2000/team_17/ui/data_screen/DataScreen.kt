@@ -78,9 +78,14 @@ fun DataScreen(
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
-                Table(uiState = dataScreenUiState){
-                    setTimeIndex(it)
-                }
+                Table(
+                    uiState = dataScreenUiState,
+                    setIndex ={ setTimeIndex(it) },
+                    boxWidth = 70,
+                    boxHeight = 60,
+                    dividerPadding = 4,
+                    dateTimeBoxHeight = 25
+                )
                 /*GradientTable(
                     Modifier,
                     dataScreenUiState,

@@ -52,17 +52,22 @@ import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
 fun Table(
     uiState: DataScreenUiState,
-    setIndex: (Int) -> Unit
+    setIndex: (Int) -> Unit,
+    boxWidth: Int,
+    boxHeight: Int,
+    dividerPadding: Int,
+    dateTimeBoxHeight: Int,
 ){
     var selectedIndex by remember { mutableStateOf(uiState.selectedTimeIndex) }
     Box {
         GradientRows(
-            dividerModifier = Modifier.padding(vertical = 4.dp),
-            rowModifier = Modifier.size(width = 70.dp, height = 60.dp),
-            dateTimeModifier = Modifier.size(width = 70.dp, height = 25.dp),
+            boxWidth = boxWidth,
+            dividerModifier = Modifier.padding(vertical = dividerPadding.dp),
+            rowModifier = Modifier.size(width = boxWidth.dp, height = boxHeight.dp),
+            dateTimeModifier = Modifier.size(width = boxWidth.dp, height = dateTimeBoxHeight.dp),
             overlayModifier = Modifier
-                .size(width = 70.dp, height = 617.dp)
-                .offset(x = (-13).dp),
+                .size(width = boxWidth.dp, height = (dividerPadding*18 + 14 + dateTimeBoxHeight * 2 + 8 * boxHeight).dp) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
+                .offset(x = -(boxWidth.times(0.18)).dp),
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
             thresholds = uiState.thresholds,
@@ -79,9 +84,9 @@ data class GradientRow(
     val type: WeatherParameter
 )
 @Composable
-fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>) {
+fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, boxWidth: Int) {
     LazyRow(state = state, userScrollEnabled = false) {
-        items(index + 1){
+        items(index){
             Spacer(modifier = modifier)
         }
         item { 
@@ -89,7 +94,7 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
                 modifier
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
-                    .offset(x = 13.dp),
+                    .offset(x = (boxWidth.times(0.18)).dp),
 
                 
             ){
@@ -105,6 +110,7 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
 
 @Composable
 fun GradientRows(
+    boxWidth: Int,
     dividerModifier: Modifier,
     rowModifier: Modifier,
     dateTimeModifier: Modifier,
@@ -169,7 +175,7 @@ fun GradientRows(
                         val data = row.data[i]
                         when (row.type) {
                             WeatherParameter.DATE -> {
-                                val info = if (rows[1].data[i] == "00:00" || i == selectedIndex) {
+                                val info = if (rows[1].data[i] == "00:00") {
                                     "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
                                 } else {
                                     ""
@@ -210,7 +216,7 @@ fun GradientRows(
             .offset(x = 70.dp)
             .fillMaxSize()) {
         HorizontalDivider(dividerModifier, color = Color.Unspecified)
-        SelectedBox1(overlayModifier, state, selectedIndex, rows[0].data)
+        SelectedBox1(overlayModifier, state, selectedIndex, rows[0].data, boxWidth)
     }
     val mainState = rememberLazyListState()
     LazyRow(state = mainState, modifier = Modifier
@@ -225,7 +231,7 @@ fun GradientRows(
                 if(i != 0){
                     InfoBox1(
                         modifier = overlayModifier
-                            .clickable { setIndex(i) },
+                            .clickable { setIndex(i + 1) },
                         colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
                     )
                 }
@@ -279,6 +285,7 @@ val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
 @Composable
 fun GradientRowPreview() {
     GradientRows(
+        70,
         Modifier.padding(vertical = 8.dp),
         Modifier.size(height = 35.dp, width = 70.dp),
         Modifier.size(height = 35.dp, width = 70.dp),
