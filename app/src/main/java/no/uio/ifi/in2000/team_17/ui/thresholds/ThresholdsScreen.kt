@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
+import no.uio.ifi.in2000.team_17.ui.BackGroundImage
 import no.uio.ifi.in2000.team_17.ui.InputTextField
 import no.uio.ifi.in2000.team_17.ui.Screen
 import java.lang.NumberFormatException
@@ -65,24 +66,7 @@ fun ThresholdsScreen(
     val defaults = ThresholdsSerializer.defaultValue
     LaunchedEffect(Unit) { state.animateScrollTo(50) }
 
-    Box(modifier = Modifier.fillMaxSize() ){
-        Image(painter = painterResource(id = R.drawable.sky),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .matchParentSize()
-                .graphicsLayer(
-                    scaleX = 2.4f,
-                    scaleY = 1.4f,
-                    translationX = 100f,
-                    translationY = 150f
-                ),
-        )
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White.copy(0.75f))){
-
-        }
-    }
+    BackGroundImage(alpha = 0.75f)
     Column(
         modifier = modifier
             .fillMaxSize()
