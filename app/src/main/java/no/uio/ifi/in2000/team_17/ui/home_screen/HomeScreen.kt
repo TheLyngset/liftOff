@@ -84,12 +84,17 @@ fun HomeScreen(
 }
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
-    ElevatedCard(
+    Card(
         Modifier
-            .fillMaxWidth()
-        ,
-        //elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        colors = CardColors(
+            Color.White.copy(0.65f),
+            contentColor = Color.Unspecified,
+            disabledContentColor = Color.Unspecified,
+            disabledContainerColor = Color.Unspecified
+        ),
+
     ) {
         Column(
             Modifier
@@ -176,7 +181,7 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
     ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(5.dp)
 
         ) {
             Text(
