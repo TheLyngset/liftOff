@@ -70,7 +70,7 @@ fun DataScreen(
     }
     val configuration = LocalConfiguration.current
 
-    BackGroundImage(0.5f)
+    BackGroundImage(0.82f)
 
     Column(
         modifier
