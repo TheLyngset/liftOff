@@ -90,9 +90,6 @@ dependencies {
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
-    implementation ("androidx.datastore:datastore:1.0.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     implementation("com.google.maps.android:maps-compose:4.3.3")
     //noinspection GradleCompatible
