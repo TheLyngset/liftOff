@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,12 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
@@ -112,7 +117,7 @@ fun GradientRows(
                 WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
                 WeatherParameter.MAXWINDSHEAR -> IconBox(modifier = rowModifier, image = R.drawable.shearwind)
                 WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.cloud)
+                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
                 WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
                 WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
                 WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.temperature)
@@ -209,8 +214,7 @@ fun GradientRows(
         Modifier
             .offset(x = 70.dp)
             .fillMaxSize()) {
-        HorizontalDivider(dividerModifier, color = Color.Unspecified)
-        SelectedBox1(overlayModifier, state, selectedIndex, rows[0].data, boxWidth)
+        SelectedBox1(overlayModifier, state, selectedIndex, rows[0].data,rows[1].data, boxWidth)
     }
     val mainState = rememberLazyListState()
     LazyRow(state = mainState, modifier = Modifier
@@ -264,7 +268,7 @@ fun IconBox(modifier: Modifier, image: Int){
     }
 }
 @Composable
-fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, boxWidth: Int) {
+fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, times: List<String>, boxWidth: Int) {
     LazyRow(state = state, userScrollEnabled = false) {
         items(index + 1){
             Spacer(modifier = modifier)
@@ -272,7 +276,6 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
         item {
             Box(
                 modifier
-                    .offset(y = (-8).dp)
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
                     .offset(x = (boxWidth.times(0.17)).dp),
@@ -280,7 +283,15 @@ fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List
 
                 ){
                 val date = dates.getOrElse(index){"            "}
-                Text("${date.subSequence(8, 10)}.${date.subSequence(5, 7)}", fontWeight = FontWeight.SemiBold, color = Color.Black.copy(0.57f),modifier = Modifier.offset( y = -2.dp))
+                val time = times.getOrElse(index){"00:00"}
+
+                if(time != "00:00"){
+                    Text(
+                        "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black.copy(0.57f),
+                    )
+                }
             }
         }
         items(maxOf((dates.size - index - 1), 0)){
@@ -303,7 +314,8 @@ fun InfoBox1(modifier: Modifier = Modifier, info: String? = null, colors: List<C
                 5 -> info
                 else -> info
             }
-            if (bold){ Text(text = newInfo, fontWeight = FontWeight.SemiBold) } else{Text(text = newInfo)}
+            if (bold){ AutoHeightText(text = newInfo, style = TextStyle(fontWeight = FontWeight.SemiBold)) }
+            else{AutoHeightText(text = newInfo, style = TextStyle())}
         }
     }
 }
@@ -347,4 +359,39 @@ fun GradientRowPreview() {
         selectedIndex = 0,
         setIndex = {}
         )
+}
+
+@Composable
+fun AutoHeightText(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = style.color
+){
+    var shouldDraw by remember { mutableStateOf(false)}
+    var resizedTextStyle by remember{ mutableStateOf(style)}
+    val defaultFontSize = MaterialTheme.typography.bodySmall.fontSize
+    
+    Text(text = text,
+        style = resizedTextStyle,
+        color = color,
+        softWrap = false,
+        modifier = modifier.drawWithContent { if(shouldDraw){ drawContent() } }
+        ,
+        onTextLayout = {result ->
+            if(result.hasVisualOverflow){
+                if(style.fontSize.isUnspecified){
+                    resizedTextStyle = resizedTextStyle.copy(
+                        fontSize = defaultFontSize
+                    )
+                }
+                resizedTextStyle = resizedTextStyle.copy(
+                    fontSize = resizedTextStyle.fontSize*0.95
+                )
+            }
+            else{
+                shouldDraw = true
+            }
+        }
+    )
 }
