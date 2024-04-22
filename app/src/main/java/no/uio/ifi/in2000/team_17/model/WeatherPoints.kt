@@ -108,6 +108,21 @@ data class WeatherDataLists(
             temperature = temperature.size
         )
     }
+
+    operator fun iterator(): List<Pair<WeatherParameter, List<Any>>> {
+            return listOf(
+                WeatherParameter.DATE to date,
+                WeatherParameter.TIME to time,
+                WeatherParameter.MAXWIND to maxWind,
+                WeatherParameter.MAXWINDSHEAR to maxWindShear,
+                WeatherParameter.GROUNDWIND to groundWind,
+                WeatherParameter.RAIN to rain,
+                WeatherParameter.HUMIDITY to humidity,
+                WeatherParameter.CLOUDFRACTION to cloudFraction,
+                WeatherParameter.DEWPOINT to dewPoint,
+                WeatherParameter.FOG to fog
+            )
+        }
 }
 
 data class AvailableIndexes(
@@ -158,26 +173,41 @@ data class WindLayer(
     val height: Double = 0.0,
     val direction: Double = 0.0
 )
+{
+    override fun toString(): String {
+        return speed.toString()
+    }
+}
 
 data class WindShear(
     val speed: Double = 0.0,
     val height: Double = 0.0
 )
+{
+    override fun toString(): String {
+        return speed.toString()
+    }
+}
 
 data class Rain(
     val min: Double = 0.0,
     val median: Double = 0.0, // is this precipitation amount? There is no median in the API
     val max: Double = 0.0
-)
+){
+    override fun toString(): String {
+        return median.toString()
+    }
+}
 
-enum class WeatherParameter {
-    TIME,
-    GROUNDWIND,
-    MAXWINDSHEAR,
-    MAXWIND,
-    CLOUDFRACTION,
-    RAIN,
-    HUMIDITY,
-    DEWPOINT,
-    FOG
+enum class WeatherParameter(val title: String) {
+    DATE("Date"),
+    TIME("Time"),
+    GROUNDWIND("Ground Wind"),
+    MAXWINDSHEAR("Wind Shear"),
+    MAXWIND("Max Wind"),
+    CLOUDFRACTION("Cloud Fraction"),
+    RAIN("Rain"),
+    HUMIDITY("Humidity"),
+    DEWPOINT("Dew point"),
+    FOG("Fog")
 }
