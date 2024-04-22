@@ -66,7 +66,10 @@ fun Table(
             rowModifier = Modifier.size(width = boxWidth.dp, height = boxHeight.dp),
             dateTimeModifier = Modifier.size(width = boxWidth.dp, height = dateTimeBoxHeight.dp),
             overlayModifier = Modifier
-                .size(width = boxWidth.dp, height = (dividerPadding*18 + 14 + dateTimeBoxHeight * 2 + 8 * boxHeight).dp) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
+                .size(
+                    width = boxWidth.dp,
+                    height = (dividerPadding * 18 + 14 + dateTimeBoxHeight * 2 + 8 * boxHeight).dp
+                ) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
                 .offset(x = -(boxWidth.times(0.18)).dp),
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
@@ -83,31 +86,6 @@ data class GradientRow(
     val data: List<String>,
     val type: WeatherParameter
 )
-@Composable
-fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, boxWidth: Int) {
-    LazyRow(state = state, userScrollEnabled = false) {
-        items(index){
-            Spacer(modifier = modifier)
-        }
-        item { 
-            Box(
-                modifier
-                    .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                    .background(Color.White.copy(0.3f))
-                    .offset(x = (boxWidth.times(0.18)).dp),
-
-                
-            ){
-                val date = dates.getOrElse(index){"            "}
-                Text("${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
-            }
-        }
-        items(maxOf((dates.size - index - 1), 0)){
-            Spacer(modifier = modifier)
-        }
-    }
-}
-
 @Composable
 fun GradientRows(
     boxWidth: Int,
@@ -221,17 +199,17 @@ fun GradientRows(
     val mainState = rememberLazyListState()
     LazyRow(state = mainState, modifier = Modifier
         .offset(x = 70.dp)){
-        item {
-            InfoBox1(modifier = overlayModifier,
-                colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-            )
-        }
         rows[1].data.forEachIndexed { i, _ ->
-            item {
-                if(i != 0){
+            if(i == 0){
+                item{
+                    InfoBox1(overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
+                }
+            }
+            else{
+                item {
                     InfoBox1(
                         modifier = overlayModifier
-                            .clickable { setIndex(i + 1) },
+                            .clickable { setIndex(i - 1) },
                         colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
                     )
                 }
@@ -247,6 +225,30 @@ fun GradientRows(
             mainState.firstVisibleItemIndex,
             mainState.firstVisibleItemScrollOffset
         )
+    }
+}
+@Composable
+fun SelectedBox1(modifier: Modifier,state: LazyListState,index: Int, dates: List<String>, boxWidth: Int) {
+    LazyRow(state = state, userScrollEnabled = false) {
+        items(index + 1){
+            Spacer(modifier = modifier)
+        }
+        item {
+            Box(
+                modifier
+                    .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
+                    .background(Color.White.copy(0.3f))
+                    .offset(x = (boxWidth.times(0.18)).dp),
+
+
+                ){
+                val date = dates.getOrElse(index){"            "}
+                Text("${date.subSequence(8, 10)}.${date.subSequence(5, 7)}")
+            }
+        }
+        items(maxOf((dates.size - index - 1), 0)){
+            Spacer(modifier = modifier)
+        }
     }
 }
 
