@@ -2,25 +2,13 @@ package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -33,25 +21,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.model.Rain
-import no.uio.ifi.in2000.team_17.model.WeatherParameter
-import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
-import no.uio.ifi.in2000.team_17.model.WindLayer
-import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.BackGroundImage
-import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
 enum class Toggle {
     TABLE,
@@ -90,18 +69,8 @@ fun DataScreen(
                     uiState = dataScreenUiState,
                     setIndex = { setTimeIndex(it) },
                     boxWidth = 70,
-                    boxHeight = 60,
                     dividerPadding = 4,
-                    dateTimeBoxHeight = 25
                 )
-                /*GradientTable(
-                    Modifier,
-                    dataScreenUiState,
-                    60,
-                    selectedTimeIndex) {
-                    selectedTimeIndex = it
-                    setTimeIndex(it)
-                }*/
             }
 
             Toggle.GRAPH -> {
@@ -144,6 +113,51 @@ fun DataScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ToggleButton(
+    modifier: Modifier = Modifier.height(45.dp),
+    onFlip: (Int) -> Unit
+) {
+    val options = remember { mutableStateListOf("Table", "Graph") }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    SingleChoiceSegmentedButtonRow(modifier) {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
+                selected = selectedIndex == index,
+                onClick = {
+                    selectedIndex = index
+                    onFlip(index)
+                },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                icon = {},
+                colors = SegmentedButtonColors(
+                    activeContainerColor = Color(0xFF9DDDF9),
+                    activeBorderColor = Color.DarkGray,
+                    activeContentColor = Color.Black,
+                    inactiveBorderColor = Color.DarkGray,
+                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContentColor = Color.Black,
+                    disabledActiveBorderColor = Color.DarkGray,
+                    disabledActiveContainerColor = Color.Unspecified,
+                    disabledActiveContentColor = Color.Black,
+                    disabledInactiveBorderColor = Color.DarkGray,
+                    disabledInactiveContainerColor = Color.Unspecified,
+                    disabledInactiveContentColor = Color.Black
+                ),
+            )
+            {
+                Text(text = option)
+            }
+        }
+    }
+}
+
+/* Old code for Table
 @Composable
 fun GradientTable(
     modifier: Modifier = Modifier,
@@ -430,9 +444,11 @@ fun TitleBox(modifier: Modifier = Modifier, text: String) {
     }
 }
 
+*/
 /**
  * Warning: [InfoBox] and [SelectedBox] needs to have the same width
- */
+ *//*
+
 @Composable
 fun InfoBox(modifier: Modifier = Modifier, info: String) {
     Box(
@@ -443,46 +459,4 @@ fun InfoBox(modifier: Modifier = Modifier, info: String) {
         Text(text = info)
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ToggleButton(
-    modifier: Modifier = Modifier.height(45.dp),
-    onFlip: (Int) -> Unit
-) {
-    val options = remember { mutableStateListOf("Table", "Graph") }
-    var selectedIndex by remember { mutableIntStateOf(0) }
-
-    SingleChoiceSegmentedButtonRow(modifier) {
-        options.forEachIndexed { index, option ->
-            SegmentedButton(
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-                selected = selectedIndex == index,
-                onClick = {
-                    selectedIndex = index
-                    onFlip(index)
-                },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                icon = {},
-                colors = SegmentedButtonColors(
-                    activeContainerColor = Color(0xFF9DDDF9),
-                    activeBorderColor = Color.DarkGray,
-                    activeContentColor = Color.Black,
-                    inactiveBorderColor = Color.DarkGray,
-                    inactiveContainerColor = Color.Unspecified,
-                    inactiveContentColor = Color.Black,
-                    disabledActiveBorderColor = Color.DarkGray,
-                    disabledActiveContainerColor = Color.Unspecified,
-                    disabledActiveContentColor = Color.Black,
-                    disabledInactiveBorderColor = Color.DarkGray,
-                    disabledInactiveContainerColor = Color.Unspecified,
-                    disabledInactiveContentColor = Color.Black
-                ),
-            )
-            {
-                Text(text = option)
-            }
-        }
-    }
-}
+*/

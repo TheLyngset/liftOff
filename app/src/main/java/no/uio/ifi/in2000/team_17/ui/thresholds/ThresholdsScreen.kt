@@ -94,11 +94,11 @@ fun ThresholdsScreen(
         Text(
             text = Screen.Thresholds.title,
             fontWeight = FontWeight.Bold,
-            style = androidx.compose.ui.text.TextStyle(fontSize = 30.sp),
+            style = TextStyle(fontSize = 30.sp),
         )
 
         //Ground wind speed
-        Row(horizontalArrangement = Arrangement.spacedBy(24.dp),
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
                 value = groundWindSpeedText,
