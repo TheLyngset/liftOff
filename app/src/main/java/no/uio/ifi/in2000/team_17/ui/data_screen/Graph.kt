@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
@@ -593,13 +591,14 @@ fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
     ) {
         Button(
             onClick = { registerPinDateTimeToHome(alreadyPinned) },
-            colors = ButtonColors(
-                containerColor = Color(0xFF9DDDF9),
-                contentColor = Color.Black,
-                disabledContainerColor = Color.Unspecified,
-                disabledContentColor = Color.Black,
-            ),
-            border = BorderStroke(1.dp, Color.Black)
+            /*  colors = ButtonColors(
+                  containerColor = Color(0xFF9DDDF9),
+                  contentColor = Color.Black,
+                  disabledContainerColor = Color.Unspecified,
+                  disabledContentColor = Color.Black,
+              ),
+              border = BorderStroke(1.dp, Color.Black)
+             */
         ) {
             Text("Pin $dateTime to homescreen")
         }
