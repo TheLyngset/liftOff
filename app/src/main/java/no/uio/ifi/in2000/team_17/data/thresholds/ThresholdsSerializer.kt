@@ -14,7 +14,7 @@ object ThresholdsSerializer : Serializer<Thresholds> {
             .setMaxWindShear(24.5)
             .setCloudFraction(15.0)
             .setFog(0.001)
-            .setRain(10.0)
+            .setRain(0.001)
             .setHumidity(75.0)
             .setDewPoint(15.0)
             .setMargin(0.6)
