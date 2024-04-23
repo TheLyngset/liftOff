@@ -4,6 +4,7 @@ package no.uio.ifi.in2000.team_17.ui.home_screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -137,7 +137,6 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
                     ),
                 ), homeScreenUiState.weatherPointInTime.available
             )
-
         }
     }
 }
@@ -149,30 +148,26 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
             .fillMaxWidth()
             .padding(vertical = 5.dp)
     ) {
-        Column(
+        Box(
             Modifier
                 .background(trafficLightColor.color)
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (trafficLightColor != TrafficLightColor.WHITE) {
+                Image(
+                    painter = painterResource(id = trafficLightColor.image),
+                    contentDescription = "GreenLightIcon",
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .size(60.dp)
+                )
+            }
             Row(
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-
-                if (trafficLightColor != TrafficLightColor.WHITE) {
-                    Image(
-                        painter = painterResource(id = trafficLightColor.image),
-                        contentDescription = "GreenLightIcon",
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(60.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(38.dp))
                 Text(
                     trafficLightColor.description,
                     Modifier.padding(vertical = 18.dp),
@@ -239,7 +234,8 @@ fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available: Available) {
         GridCells.Fixed(1),
         modifier = Modifier
             .fillMaxWidth()
-            .height(130.dp)
+            .height(130.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
         items(weatherInfoList) { weatherInfo ->
             if (available.get(weatherInfo.title)) {
