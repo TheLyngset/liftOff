@@ -14,3 +14,4 @@
 .cxx
 local.properties
 LocationforecastKey.kt
+app/src/main/java/no/uio/ifi/in2000/team_17/ui/data_screen/DialogBoxes.kt
