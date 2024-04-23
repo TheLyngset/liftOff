@@ -131,7 +131,7 @@ fun InputSheetContent(
                         .padding(top = 7.dp),
                     fontWeight = FontWeight.SemiBold,
                     text = "Thresholds",
-                    style = TextStyle(fontSize = 17.sp, color = Color.DarkGray)
+                    style = TextStyle(fontSize = 17.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
                 )
             },
             supportingContent = {
