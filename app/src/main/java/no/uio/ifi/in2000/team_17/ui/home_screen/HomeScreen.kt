@@ -45,7 +45,7 @@ fun HomeScreen(
 ) {
     Rocket()
     Column(
-        modifier.fillMaxSize(),
+        Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
 
@@ -70,7 +70,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(top = 10.dp, bottom = 70.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally

@@ -226,10 +226,10 @@ fun GradientRows(
                 WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
                 WeatherParameter.MAXWINDSHEAR -> IconBox(modifier = rowModifier, image = R.drawable.shearwind)
                 WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
+                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.cloud)
                 WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
                 WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
-                WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.temperature)
+                WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.dewpoint)
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
                 else -> {
                     val color = Color.White.copy(0.0f)
