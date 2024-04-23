@@ -77,6 +77,7 @@ data class WeatherDataLists(
             humidity = humidity.getOrElse(index) { 0.0 },
             dewPoint = dewPoint.getOrElse(index) { 0.0 },
             fog = fog.getOrElse(index) { 0.0 },
+            temperature = temperature.getOrElse(index){0.0},
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,
@@ -192,10 +193,11 @@ data class WindShear(
 data class Rain(
     val min: Double = 0.0,
     val median: Double = 0.0, // is this precipitation amount? There is no median in the API
-    val max: Double = 0.0
+    val max: Double = 0.0,
+    val probability: Double = 0.0
 ){
     override fun toString(): String {
-        return median.toString()
+        return probability.toString()
     }
 }
 

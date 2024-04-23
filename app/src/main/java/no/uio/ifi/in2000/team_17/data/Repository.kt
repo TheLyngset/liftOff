@@ -195,11 +195,13 @@ class RepositoryImplementation : Repository {
                 rain = locationData.timeseries.map {
                     val data = it.data.next_1_hours.details
                     Rain(
-                       data.precipitation_amount_min,
-                       data.precipitation_amount,
-                       data.precipitation_amount_max
+                        data.precipitation_amount_min,
+                        data.precipitation_amount,
+                        data.precipitation_amount_max,
+                        data.probability_of_precipitation
                    )
                 },
+                temperature = locationData.timeseries.map { it.data.instant.details.air_temperature},
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },

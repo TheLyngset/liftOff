@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,14 +17,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -41,7 +50,6 @@ import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.LineChart
-import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.Line
 import co.yml.charts.ui.linechart.model.LineChartData
@@ -58,146 +66,13 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 
-
-data class DataPoint(
-    val y: Double = 0.0,
-    val x: Int = 0
-)
-
-data class TimePoint(
-    val y: String = "00:00",
-    val x: Int = 0
-)
-
-val data = listOf(
-    Point(0f, 40f),
-    Point(1f, 20f),
-    Point(2f, 50f),
-    Point(3f, 10f),
-    Point(4f, 20f),
-    Point(5f, 30f),
-    Point(6f, 40f),
-    Point(7f, 50f),
-    Point(8f, 60f),
-    Point(9f, 70f),
-    Point(10f, 80f),
-    //Point(3f, 10f),
-    Point(11f, 90f),
-    Point(12f, 80f),
-    Point(13f, 70f),
-    Point(14f, 60f),
-    Point(6f, 10f),
-    Point(7f, 60f),
-    Point(8f, 20f),
-    Point(9f, 30f),
-    Point(10f, 60f),
-    Point(11f, 80f),
-    Point(12f, 50f),
-    Point(13f, 30f),
-    Point(14f, 10f),
-    Point(15f, 90f)
-)
-
-val data1 = listOf(
-    Point(0f, 10f),
-    Point(1f, 20f),
-    Point(2f, 30f),
-    Point(3f, 40f),
-    Point(4f, 50f),
-    Point(5f, 20f),
-    Point(6f, 66f),
-    Point(7f, 30f),
-    Point(8f, 10f),
-    Point(9f, 79f),
-    Point(10f, 40f),
-    Point(11f, 20f),
-    Point(12f, 10f),
-    Point(13f, 20f),
-    Point(14f, 30f),
-    Point(15f, 40f),
-)
-
-
-@Composable
-private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: List<Point>) {
-    val steps = 11
-    val xAxisData = AxisData.Builder()
-        .axisStepSize(30.dp)
-        .topPadding(105.dp)
-        .steps(pointsData.size - 1)
-        .labelData { i -> pointsData[i].x.toInt().toString() }
-        .labelAndAxisLinePadding(15.dp)
-        .build()
-
-    val yAxisData = AxisData.Builder()
-        .steps(steps)
-        .labelAndAxisLinePadding(20.dp)
-        .startDrawPadding(3.dp)
-        .labelData { i ->
-            // Add yMin to get the negative axis values to the scale
-            val yMin = pointsData.minOf { it.y }
-            val yMax = pointsData.maxOf { it.y }
-            val yScale = (yMax - yMin) / steps
-            ((i * yScale) + yMin).formatToSinglePrecision()
-        }
-        .build()
-
-    val data = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = pointsData,
-                    LineStyle(),
-                    IntersectionPoint(),
-                    SelectionHighlightPoint(),
-                    ShadowUnderLine(),
-                    SelectionHighlightPopUp()
-                )
-            )
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        gridLines = GridLines()
-    )
-
-    val data1 = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = pointsData1,
-                    LineStyle(),
-                    IntersectionPoint(),
-                    SelectionHighlightPoint(),
-                    ShadowUnderLine(),
-                    SelectionHighlightPopUp()
-                )
-            )
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        gridLines = GridLines()
-    )
-
-    LineChart(
-        modifier = Modifier
-
-            .height(300.dp),
-        lineChartData = data
-    )
-
-    LineChart(
-        modifier = Modifier
-            .height(300.dp),
-        lineChartData = data1
-    )
-}
-
 @Composable
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
     modifier: Modifier = Modifier
         .fillMaxHeight(0.7f),
+    // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -324,13 +199,13 @@ fun ThresholdGraph(
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .steps(5)
-        .labelAndAxisLinePadding(15.dp)
+        .steps(10)
+        .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
-            val yMax = 1f
-            val yScale = yMax / 5
+            val yMax = 2f
+            val yScale = yMax / 10
             ((i * yScale)).formatToSinglePrecision()
         }
         .build()
@@ -424,7 +299,7 @@ fun ThresholdGraph(
                     pointsCloudFraction,
                     Color.Cyan,
                     false,
-                    "Could Fraction"
+                    "Could Coverage"
                 ),
                 createLine(
                     pointsMedianRain,
@@ -464,16 +339,28 @@ fun ThresholdGraph(
     )
 
     PinDateTime(false, "//dateTime//")
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height.dp)
-            .background(Color.Transparent)
-            .clickable(onClick = ({ getIndexToPin(0) })),
-        lineChartData = data,
-    )
-    LastUpdated(lastUpdated)
-    //ChartHistory()
+    BoxWithConstraints {
+        val boxHeight = (maxHeight.value * 0.75)
+        LineChart(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(boxHeight.dp)
+                .background(Color.Transparent)
+                .clickable(onClick = ({ getIndexToPin(0) })),
+            lineChartData = data,
+        )
+    }
+    var show = false
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.fillMaxWidth(0.15f)) {
+            val info = InfoIcon()
+            show = info
+        }
+        Column(modifier = Modifier.fillMaxWidth(1f)) {
+            LastUpdated(lastUpdated)
+        }
+    }
+    ChartHistory(show)
 }
 
 @Composable
@@ -559,7 +446,7 @@ fun LastUpdated(lastUpdated: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
-        Text("Last updated at $lastUpdated UTC+2", textAlign = TextAlign.Right)
+        Text("Last updated at $lastUpdated UTC+2 ", textAlign = TextAlign.Right)
     }
 }
 
@@ -573,13 +460,14 @@ fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
     ) {
         Button(
             onClick = { registerPinDateTimeToHome(alreadyPinned) },
-            colors = ButtonColors(
-                containerColor = Color(0xFF9DDDF9),
-                contentColor = Color.Black,
-                disabledContainerColor = Color.Unspecified,
-                disabledContentColor = Color.Black,
-            ),
-            border = BorderStroke(1.dp, Color.Black)
+            /*  colors = ButtonColors(
+                  containerColor = Color(0xFF9DDDF9),
+                  contentColor = Color.Black,
+                  disabledContainerColor = Color.Unspecified,
+                  disabledContentColor = Color.Black,
+              ),
+              border = BorderStroke(1.dp, Color.Black)
+             */
         ) {
             Text("Pin $dateTime to homescreen")
         }
@@ -604,38 +492,74 @@ fun getIndexToPin(index: Int): Int {
 }
 
 @Composable
-fun ChartHistory() {
-    Column(
-        Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
-            Spacer(modifier = Modifier.width(2.dp))
-        }
-        Row {
-            Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
-        }
-        Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
-            Spacer(modifier = Modifier.width(2.dp))
+fun ChartHistory(
+    show: Boolean, //onDone: () -> Unit
+) {
+    if (show) {
+        ElevatedCard(
+            Modifier.fillMaxWidth(),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                disabledContentColor = Color.Unspecified,
+                disabledContainerColor = Color.Unspecified
+            )
+        ) {
+            Column(
+                Modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
+                }
+                Row {
+                    Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
+                }
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
+                    Spacer(modifier = Modifier.width(2.dp))
+                }
+                /* Button(onClick = { onDone() }) {
+                     Text(text = "Close")
+                 }
+                 */
+            }
         }
     }
 }
 
+@Composable
+fun InfoIcon(): Boolean {
+    var showDescription by remember { mutableStateOf(false) }
+    Column(Modifier.padding(5.dp)) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                Modifier.clickable {
+                    showDescription = !showDescription
+                }
+            )
+        }
+    }
+    return showDescription
+}
 
 @Composable
 fun createLine(
