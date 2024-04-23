@@ -15,16 +15,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,9 +40,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -311,7 +321,7 @@ fun ThresholdGraph(
     }
 
     val xAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.White)
+        .backgroundColor(color = Color.Transparent)
         .axisStepSize(30.dp)
         .topPadding(5.dp)
         .bottomPadding(5.dp)
@@ -324,9 +334,9 @@ fun ThresholdGraph(
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .build()
     val yAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.White)
+        .backgroundColor(color = Color.Transparent)
         .steps(5)
-        .labelAndAxisLinePadding(15.dp)
+        .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
@@ -476,8 +486,17 @@ fun ThresholdGraph(
             lineChartData = data,
         )
     }
-    LastUpdated(lastUpdated)
-    ChartHistory()
+    var show = false
+    Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+        Column(modifier = Modifier.fillMaxWidth(0.15f)) {
+          val  info = InfoIcon()
+          show = info  
+        }
+        Column(modifier = Modifier.fillMaxWidth(1f)){
+            LastUpdated(lastUpdated)
+        }
+    }
+   ChartHistory(show)
 }
 
 @Composable
@@ -563,7 +582,7 @@ fun LastUpdated(lastUpdated: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
-        Text("Last updated at $lastUpdated UTC+2", textAlign = TextAlign.Right)
+        Text("Last updated at $lastUpdated UTC+2 ", textAlign = TextAlign.Right)
     }
 }
 
@@ -607,38 +626,57 @@ fun getIndexToPin(index: Int): Int {
 }
 
 @Composable
-fun ChartHistory() {
-    Column(
-        Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
-            Spacer(modifier = Modifier.width(2.dp))
-        }
-        Row {
-            Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
-            Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
-        }
-        Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
-            Spacer(modifier = Modifier.width(2.dp))
+fun ChartHistory(show: Boolean) {
+    if(show){
+        Column(
+            Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
+                Spacer(modifier = Modifier.width(2.dp))
+            }
+            Row {
+                Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
+            }
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
+                Spacer(modifier = Modifier.width(2.dp))
+            }
         }
     }
 }
-
+@Composable
+fun InfoIcon(): Boolean {
+    var showDescription by remember { mutableStateOf(false) }
+    Column(Modifier.padding(5.dp)) {
+        Row(Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                Modifier.clickable {
+                    showDescription = !showDescription
+                }
+            )
+        }
+    }
+    return showDescription
+}
 
 @Composable
 fun createLine(
