@@ -14,8 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -47,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.google.ai.client.generativeai.type.content
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.Files.append
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
+import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 import org.w3c.dom.Comment
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,61 +95,111 @@ fun InputSheetContent(
     var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
-    Column(
-        modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Row(modifier.padding(horizontal = 15.dp),
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically) 
-        {
-            InputTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = maxHeightText,
-                onValueChange = { maxHeightText = it },
-                label = "Maximum height in km"
-            ) { setMaxHeight(maxHeightText) }
-        }
-        Row(modifier.padding(horizontal = 15.dp), horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            InputTextField(
-                value = latString,
-                onValueChange = { latString = it },
-                label = "Latitude",
-                modifier = Modifier.weight(1f)
-            ){ setLat(latString) }
-            InputTextField(
-                value = lngString,
-                onValueChange = { lngString = it },
-                label = "Longitude",
-                modifier = Modifier.weight(1f)
-            ){ setLng(lngString) }
-        }
-        ListItem(
-            modifier = modifier.fillMaxHeight(1f).padding(top=15.dp),
-            colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
-            headlineContent = {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 5.dp)
-                        .padding(top = 7.dp),
-                    fontWeight = FontWeight.SemiBold,
-                    text = "Thresholds",
-                    style = TextStyle(fontSize = 17.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                )
-            },
-            supportingContent = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+    var showInfoCard by remember { mutableStateOf(false) }
+    Box{
+        Column(
+            modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                modifier.padding(horizontal = 15.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                InputTextField(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    value = maxHeightText,
+                    onValueChange = { maxHeightText = it },
+                    label = "Maximum height in km"
+                ) { setMaxHeight(maxHeightText) }
+
+                Box(
+                    Modifier.fillMaxWidth(1f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    ConditionalText(text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:")
-                    Button(onClick = {toAdvancedSettings()}) {
-                        Text(text = "Thresholds")
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "Info",
+                        modifier = Modifier.clickable {
+                            showInfoCard = !showInfoCard
+                        })
+                }
+            }
+            Row(
+                modifier.padding(horizontal = 15.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                InputTextField(
+                    value = latString,
+                    onValueChange = { latString = it },
+                    label = "Latitude",
+                    modifier = Modifier.weight(1f)
+                ) { setLat(latString) }
+                InputTextField(
+                    value = lngString,
+                    onValueChange = { lngString = it },
+                    label = "Longitude",
+                    modifier = Modifier.weight(1f)
+                ) { setLng(lngString) }
+            }
+            ListItem(
+                modifier = modifier.padding(top = 15.dp),
+                colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
+                headlineContent = {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 7.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        text = "Thresholds",
+                        style = TextStyle(
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                },
+                supportingContent = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        ConditionalText(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(top = 7.dp),
+                            text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
+                        )
+                        Button(onClick = { toAdvancedSettings() }) {
+                            Text(text = "Thresholds")
+                        }
+                    }
+                }
+            )
+        }
+        if (showInfoCard) {
+            Box(
+                modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                ElevatedCard() {
+                    InfoSection(
+                        title = "Max height",
+                        description = "Max height is the maximum possible height the rocket can reach. This wil be the maximum height we wil consider when calculating if the rocket can launch or not."
+                    )
+                    Box(
+                        Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(onClick = { showInfoCard = !showInfoCard }) {
+                            Text(text = "Close")
+                        }
                     }
                 }
             }
-        )
+        }
     }
 }
 
@@ -180,7 +235,7 @@ fun InputTextField(
 
 
 @Composable
-fun ConditionalText(text: String){
+fun ConditionalText(modifier: Modifier = Modifier, text: String){
 
     val minimumLineLength = 1   //Change this to your desired value
 
@@ -189,7 +244,7 @@ fun ConditionalText(text: String){
     var showReadMoreButtonState by remember { mutableStateOf(false) }
     val maxLines = if (expandedState) 200 else minimumLineLength
 
-    Column {
+    Column(modifier) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
@@ -204,13 +259,15 @@ fun ConditionalText(text: String){
         if (showReadMoreButtonState) {
             Text(
                 text = if (expandedState) "Read Less" else "Read More",
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.secondary,
 
                 modifier = Modifier.clickable {
                     expandedState = !expandedState
                 },
 
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
 
             )
         }
