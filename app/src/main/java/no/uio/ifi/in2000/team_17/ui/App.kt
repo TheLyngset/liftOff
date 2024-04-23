@@ -312,7 +312,7 @@ fun SegmentedNavigationButton(
                     activeBorderColor = Color.DarkGray,
                     activeContentColor = Color.Black,
                     inactiveBorderColor = Color.DarkGray,
-                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContainerColor = MaterialTheme.colorScheme.background.copy(1.0f),
                     inactiveContentColor = Color.Black,
                     disabledActiveBorderColor = Color.DarkGray,
                     disabledActiveContainerColor = Color.Unspecified,

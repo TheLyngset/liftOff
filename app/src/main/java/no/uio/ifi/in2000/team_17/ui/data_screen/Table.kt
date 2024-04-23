@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +55,7 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
 fun Table(
+    scrollToItem: Int? = null,
     uiState: DataScreenUiState,
     selectedIndex: Int,
     setIndex: (Int) -> Unit,
@@ -63,6 +65,7 @@ fun Table(
     BoxWithConstraints {
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))*0.1
         GradientRows(
+            scrollToItem = scrollToItem,
             boxWidth = boxWidth,
             dividerModifier = Modifier.padding(vertical = dividerPadding.dp),
             rowModifier = Modifier.size(width = boxWidth.dp, height = boxHeight.dp),
@@ -208,6 +211,7 @@ fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds
 
 @Composable
 fun GradientRows(
+    scrollToItem: Int? = null,
     boxWidth: Int,
     dividerModifier: Modifier,
     rowModifier: Modifier,
@@ -348,9 +352,16 @@ fun GradientRows(
             }
         }
     }
-    LaunchedEffect(Unit){
-        mainState.scrollToItem(selectedIndex)
-        mainState.scrollBy(-60f)
+    if(scrollToItem != null){
+        LaunchedEffect(scrollToItem){
+            mainState.animateScrollToItem(scrollToItem)
+        }
+    }
+    else{
+        LaunchedEffect(Unit){
+            mainState.scrollToItem(selectedIndex)
+            mainState.scrollBy(-60f)
+        }
     }
     LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
         state.scrollToItem(
@@ -369,6 +380,7 @@ fun GradientRowPreview() {
     val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
     val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
     GradientRows(
+        null,
         70,
         Modifier.padding(vertical = 8.dp),
         Modifier.size(height = 35.dp, width = 70.dp),

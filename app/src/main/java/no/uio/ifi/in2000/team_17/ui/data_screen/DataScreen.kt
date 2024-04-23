@@ -1,19 +1,35 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.content.res.Configuration
+import android.widget.ToggleButton
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -29,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.Background
 
@@ -50,6 +67,8 @@ fun DataScreen(
     val showSwipe = remember { mutableStateOf(dataScreenUiState.showSwipe) }
     val showDialog = rememberUpdatedState(showSwipe.value)
 
+    var scrollToItem by remember { mutableStateOf<Int?>(null) }
+
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
         //showSwipe = dataScreenUiState.showSwipe.value
@@ -62,11 +81,12 @@ fun DataScreen(
         modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
                 Table(
+                    scrollToItem = scrollToItem,
                     uiState = dataScreenUiState,
                     selectedIndex = selectedTimeIndex,
                     setIndex = {
@@ -100,18 +120,31 @@ fun DataScreen(
             }
         }
     }
-
-    Column(
+    Box(
         modifier
             .fillMaxSize()
-            .offset(y = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        ToggleButton {
-            when (it) {
-                0 -> toggleState = Toggle.TABLE
-                1 -> toggleState = Toggle.GRAPH
+            .padding(bottom = 8.dp),
+        contentAlignment = Alignment.BottomCenter) {
+        Row(
+            Modifier.height(45.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ){
+            if (toggleState == Toggle.TABLE) {
+                TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
+                    Text(text = "Now")
+                }
+            }
+            ToggleButton {
+                when (it) {
+                    0 -> toggleState = Toggle.TABLE
+                    1 -> toggleState = Toggle.GRAPH
+                }
+            }
+            if (toggleState == Toggle.TABLE) {
+                TextButton(modifier = Modifier.width(80.dp),onClick = {scrollToItem = selectedTimeIndex}) {
+                    Text("Selected")
+                }
             }
         }
     }
@@ -121,7 +154,7 @@ fun DataScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToggleButton(
-    modifier: Modifier = Modifier.height(45.dp),
+    modifier: Modifier = Modifier,
     onFlip: (Int) -> Unit
 ) {
     val options = remember { mutableStateListOf("Table", "Graph") }
@@ -130,8 +163,7 @@ fun ToggleButton(
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
+                modifier = modifier,
                 selected = selectedIndex == index,
                 onClick = {
                     selectedIndex = index
@@ -140,11 +172,11 @@ fun ToggleButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
                 colors = SegmentedButtonColors(
-                    activeContainerColor = Color(0xFF9DDDF9),
+                    activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     activeBorderColor = Color.DarkGray,
                     activeContentColor = Color.Black,
                     inactiveBorderColor = Color.DarkGray,
-                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContainerColor = MaterialTheme.colorScheme.background.copy(1.0f),
                     inactiveContentColor = Color.Black,
                     disabledActiveBorderColor = Color.DarkGray,
                     disabledActiveContainerColor = Color.Unspecified,
@@ -159,6 +191,32 @@ fun ToggleButton(
             }
         }
     }
+}
+
+@Composable
+fun IconSwitch() {
+    var checked by remember { mutableStateOf(true) }
+    Switch(
+        checked = checked,
+        thumbContent = {
+            if(checked){
+                Icon(
+                    contentDescription = null,
+                    painter = painterResource(id = R.drawable.lock_locked),
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            } else{
+                Icon(
+                    contentDescription = null,
+                    painter = painterResource(id = R.drawable.lock_unlocked),
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+        },
+        onCheckedChange = {
+            checked = it
+        }
+    )
 }
 
 /* Old code for Table
