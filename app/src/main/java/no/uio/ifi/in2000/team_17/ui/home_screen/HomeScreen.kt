@@ -182,8 +182,8 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
                     WeatherInfo(
                         "Dew Point",
                         homeScreenUiState.weatherPointInTime.dewPoint,
-                        "%",
-                        painterResource(id = R.drawable.temperature)
+                        "℃",
+                        painterResource(id = R.drawable.dewpoint)
                     ),
                 ), homeScreenUiState.weatherPointInTime.available
             )
@@ -318,7 +318,9 @@ fun Modifier.simpleHorizontalScrollbar(
 }
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available: Available) {
+    val listState = rememberLazyGridState()
     LazyHorizontalGrid(
+        state = listState,
         rows = GridCells.Fixed(1),
         modifier = Modifier
             .simpleHorizontalScrollbar(state = listState, height = 8.dp)
