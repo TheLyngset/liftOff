@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -121,7 +122,7 @@ fun InputSheetContent(
             ){ setLng(lngString) }
         }
         ListItem(
-            modifier = modifier.padding(top=15.dp),
+            modifier = modifier.fillMaxHeight(1f).padding(top=15.dp),
             colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
             headlineContent = {
                 Text(

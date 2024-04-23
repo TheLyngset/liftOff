@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.Modifier
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
@@ -26,16 +28,18 @@ val Context.settingsStore: DataStore<Settings> by dataStore(
     serializer = SettingsSerializer
 )
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val windowSizeClass = calculateWindowSizeClass(this)
             AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    App()
+                    App(windowSizeClass = windowSizeClass)
                 }
             }
         }

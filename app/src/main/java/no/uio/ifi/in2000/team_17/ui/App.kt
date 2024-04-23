@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -69,54 +73,57 @@ enum class Screen(val title: String, val logo: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
+    windowSizeClass: WindowSizeClass,
     logoId: Int,
     onSearchClick: () -> Unit,
     onLogoClick: () -> Unit,
     //modifier: Modifier
 ) {
-    TopAppBar(
-        title = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .background(Color.Transparent),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = logoId),
-                    contentDescription = "Logo",
-                    modifier = Modifier.clickable { onLogoClick() }
-                )
-
-                Text(
-                    text = "Oslo",
-                    style = androidx.compose.ui.text.TextStyle(fontSize = 22.sp),
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.search_24px),
-                    contentDescription = "Search",
+    if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        TopAppBar(
+            title = {
+                Row(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 12.dp)
-                        .clickable {
-                            onSearchClick()
-                        }
-                )
-            }
-        },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = Color.Transparent
-            //containerColor = Color.White.copy(alpha = 0.65f)
-            //MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = Modifier.height(40.dp)
-    )
+                        .fillMaxWidth()
+                        .background(Color.Transparent),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painter = painterResource(id = logoId),
+                        contentDescription = "Logo",
+                        modifier = Modifier.clickable { onLogoClick() }
+                    )
+
+                    Text(
+                        text = "Oslo",
+                        style = TextStyle(fontSize = 22.sp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.search_24px),
+                        contentDescription = "Search",
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp, vertical = 12.dp)
+                            .clickable {
+                                onSearchClick()
+                            }
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = Color.Transparent
+                //containerColor = Color.White.copy(alpha = 0.65f)
+                //MaterialTheme.colorScheme.primaryContainer
+            ),
+            modifier = Modifier.height(40.dp)
+        )
+    }
 }
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
+    windowSizeClass: WindowSizeClass
 ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
     val homeScreenViewModel: HomeScreenViewModel = viewModel(
@@ -157,6 +164,7 @@ fun App(
         // .height(60.dp),
         topBar = {
             AppTopBar(
+                windowSizeClass,
                 logoId = Screen.Home.logo,
                 onSearchClick = { sheetState = true },
                 onLogoClick = { navController.navigate("Home") },
@@ -169,6 +177,7 @@ fun App(
                     .fillMaxWidth()
                     .height(50.dp)
                     .background(Color.Transparent)
+                ,windowSizeClass
             ) {
                 when (it) {
                     0 -> navController.navigate(Screen.Home.name)
@@ -246,16 +255,19 @@ fun App(
 @Composable
 fun BottomBar(
     modifier: Modifier,
+    windowSizeClass: WindowSizeClass,
     onNavigate: (Int) -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        SegmentedNavigationButton() {
-            onNavigate(it)
+    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Column(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            SegmentedNavigationButton() {
+                onNavigate(it)
+            }
         }
     }
 }
@@ -281,7 +293,7 @@ fun SegmentedNavigationButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 icon = {},
                 colors = SegmentedButtonColors(
-                    activeContainerColor = Color(0xFF9DDDF9),
+                    activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
                     activeBorderColor = Color.DarkGray,
                     activeContentColor = Color.Black,
                     inactiveBorderColor = Color.DarkGray,

@@ -47,10 +47,12 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState
 ) {
+    Rocket()
     Column(
         modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
+
         BottomCard(homeScreenUiState)
     }
 }
@@ -58,7 +60,7 @@ fun HomeScreen(
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
     Card(
         Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth(1f),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = Color.Unspecified,
