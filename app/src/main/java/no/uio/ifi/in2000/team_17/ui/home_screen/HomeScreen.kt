@@ -61,31 +61,19 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState
 ) {
-
         Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
             Column(modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
 
             ) {
+                var date = homeScreenUiState.weatherPointInTime.date
+                if (date.length < 10) date = "0000-00-00"
                 Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.secondary )
-                Text(text = homeScreenUiState.weatherPointInTime.date, style = TextStyle(fontSize = 14.sp), color = MaterialTheme.colorScheme.secondary)
-
+                Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 14.sp), color = MaterialTheme.colorScheme.secondary)
             }
-
-
         }
-
-
-
-
-
-
     Rocket()
-
-
-
-
     Column(
         modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -97,7 +85,8 @@ fun HomeScreen(
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
 
-    Box(modifier = Modifier.padding(16.dp, 5.dp)) {
+    Box(modifier = Modifier.padding(16.dp, 5.dp).fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd) {
         Text(
             text = (homeScreenUiState.weatherPointInTime.temperature.toString() + "°"),
             style = TextStyle(fontSize = 35.sp),
