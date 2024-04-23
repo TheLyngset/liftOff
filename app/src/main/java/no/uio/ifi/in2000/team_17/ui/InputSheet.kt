@@ -182,14 +182,14 @@ fun InputTextField(
 @Composable
 fun ConditionalText(text: String){
 
-    val minimumLineLength = 2   //Change this to your desired value
+    val minimumLineLength = 1   //Change this to your desired value
 
     //Adding States
     var expandedState by remember { mutableStateOf(false) }
     var showReadMoreButtonState by remember { mutableStateOf(false) }
     val maxLines = if (expandedState) 200 else minimumLineLength
 
-    Column(modifier = Modifier.padding(start = 35.dp, end = 5.dp)) {
+    Column {
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
