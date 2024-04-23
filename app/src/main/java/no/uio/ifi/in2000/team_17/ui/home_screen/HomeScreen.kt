@@ -4,7 +4,6 @@ package no.uio.ifi.in2000.team_17.ui.home_screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,11 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +52,7 @@ fun HomeScreen(
         BottomCard(homeScreenUiState)
     }
 }
+
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
     Card(
@@ -64,7 +61,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = Color.Unspecified,
-            disabledContainerColor =  MaterialTheme.colorScheme.background,
+            disabledContainerColor = MaterialTheme.colorScheme.background,
             disabledContentColor = Color.Unspecified
         ),
         //elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
@@ -82,21 +79,69 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
             /**
             //TODO: alle tre verdier på rain?
             //WARNING: if you change a title you need to change it in [Available.get] as well */
-            WeatherCardGrid(weatherInfoList = listOf(
-                WeatherInfo("Ground Wind", homeScreenUiState.weatherPointInTime.groundWind.speed, "m/s", painterResource(id = R.drawable.groundwind2)),
-                WeatherInfo("Max Wind", homeScreenUiState.weatherPointInTime.maxWind.speed, "m/s", painterResource(id = R.drawable.wind)),
-                WeatherInfo("Max Shear", homeScreenUiState.weatherPointInTime.maxWindShear.speed, "m/s", painterResource(id = R.drawable.shearwind)),
-                WeatherInfo("Temperature", homeScreenUiState.weatherPointInTime.temperature, "℃", painterResource(id = R.drawable.temperature)),
-                WeatherInfo("Cloudiness", homeScreenUiState.weatherPointInTime.cloudFraction, "%", painterResource(id = R.drawable.cloud)),
-                WeatherInfo("Rain", homeScreenUiState.weatherPointInTime.rain.median, "mm", painterResource(id = R.drawable.rain)),
-                WeatherInfo("Humidity", homeScreenUiState.weatherPointInTime.humidity, "%", painterResource(id = R.drawable.humidity)),
-                WeatherInfo("Fog", homeScreenUiState.weatherPointInTime.fog, "%", painterResource(id = R.drawable.fog)),
-
-                ), homeScreenUiState.weatherPointInTime.available)
+            WeatherCardGrid(
+                weatherInfoList = listOf(
+                    WeatherInfo(
+                        "Ground Wind",
+                        homeScreenUiState.weatherPointInTime.groundWind.speed,
+                        "m/s",
+                        painterResource(id = R.drawable.groundwind2)
+                    ),
+                    WeatherInfo(
+                        "Max Wind",
+                        homeScreenUiState.weatherPointInTime.maxWind.speed,
+                        "m/s",
+                        painterResource(id = R.drawable.wind)
+                    ),
+                    WeatherInfo(
+                        "Max Shear",
+                        homeScreenUiState.weatherPointInTime.maxWindShear.speed,
+                        "m/s",
+                        painterResource(id = R.drawable.shearwind)
+                    ),
+                    WeatherInfo(
+                        "Temperature",
+                        homeScreenUiState.weatherPointInTime.temperature,
+                        "℃",
+                        painterResource(id = R.drawable.temperature)
+                    ),
+                    WeatherInfo(
+                        "Cloudiness",
+                        homeScreenUiState.weatherPointInTime.cloudFraction,
+                        "%",
+                        painterResource(id = R.drawable.cloud)
+                    ),
+                    WeatherInfo(
+                        "Rain",
+                        homeScreenUiState.weatherPointInTime.rain.median,
+                        "mm",
+                        painterResource(id = R.drawable.rain)
+                    ),
+                    WeatherInfo(
+                        "Humidity",
+                        homeScreenUiState.weatherPointInTime.humidity,
+                        "%",
+                        painterResource(id = R.drawable.humidity)
+                    ),
+                    WeatherInfo(
+                        "Fog",
+                        homeScreenUiState.weatherPointInTime.fog,
+                        "%",
+                        painterResource(id = R.drawable.fog)
+                    ),
+                    WeatherInfo(
+                        "Dew Point",
+                        homeScreenUiState.weatherPointInTime.dewPoint,
+                        "%",
+                        painterResource(id = R.drawable.temperature)
+                    ),
+                ), homeScreenUiState.weatherPointInTime.available
+            )
 
         }
     }
 }
+
 @Composable
 fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
     Card(
@@ -117,7 +162,7 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
                     .fillMaxWidth()
             ) {
 
-                if(trafficLightColor != TrafficLightColor.WHITE){
+                if (trafficLightColor != TrafficLightColor.WHITE) {
                     Image(
                         painter = painterResource(id = trafficLightColor.image),
                         contentDescription = "GreenLightIcon",
@@ -128,10 +173,13 @@ fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
                 }
 
                 Spacer(modifier = Modifier.width(38.dp))
-                Text(trafficLightColor.description, Modifier.padding(vertical = 18.dp), style = TextStyle(
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                Text(
+                    trafficLightColor.description,
+                    Modifier.padding(vertical = 18.dp),
+                    style = TextStyle(
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
                 )
             }
         }
@@ -186,7 +234,7 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 
 //cloud coverage, lazy row, liste med alle objektene, sorteres etter
 @Composable
-fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
+fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available: Available) {
     LazyHorizontalGrid(
         GridCells.Fixed(1),
         modifier = Modifier
@@ -194,7 +242,7 @@ fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available : Available) {
             .height(130.dp)
     ) {
         items(weatherInfoList) { weatherInfo ->
-            if(available.get(weatherInfo.title)) {
+            if (available.get(weatherInfo.title)) {
                 CardItem(
                     title = weatherInfo.title,
                     value = weatherInfo.value,
@@ -216,7 +264,7 @@ data class WeatherInfo(
 
 @Preview
 @Composable
-fun Prehs(){
+fun Prehs() {
     HomeScreen(homeScreenUiState = HomeScreenUiState())
 }
 

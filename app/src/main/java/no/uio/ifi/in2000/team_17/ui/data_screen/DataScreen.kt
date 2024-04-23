@@ -68,7 +68,6 @@ fun DataScreen(
             Toggle.TABLE -> {
                 Table(
                     uiState = dataScreenUiState,
-
                     selectedIndex = selectedTimeIndex,
                     setIndex = {
                         setTimeIndex(it)
@@ -95,7 +94,6 @@ fun DataScreen(
                         text = "Scroll left to see more weather data.\nPinch to zoom."
                     )
                 }
-
             }
         }
     }
