@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
@@ -194,8 +196,8 @@ fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
     modifier: Modifier = Modifier
-        .fillMaxHeight(0.7f)
-    // .verticalScroll(rememberScrollState())
+        .fillMaxHeight(0.7f),
+    setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds
@@ -307,7 +309,7 @@ fun ThresholdGraph(
     }
 
     val xAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.White)
+        .backgroundColor(color = Color.Transparent)
         .axisStepSize(30.dp)
         .topPadding(5.dp)
         .bottomPadding(5.dp)
@@ -320,7 +322,7 @@ fun ThresholdGraph(
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .build()
     val yAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.White)
+        .backgroundColor(color = Color.Transparent)
         .steps(5)
         .labelAndAxisLinePadding(15.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
@@ -450,7 +452,7 @@ fun ThresholdGraph(
                 ),
             )
         ),
-        backgroundColor = Color.White,
+        backgroundColor = Color.Transparent,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
@@ -564,12 +566,20 @@ fun LastUpdated(lastUpdated: String) {
 fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 0.dp, 0.dp, 2.dp),
     ) {
         Button(
             onClick = { registerPinDateTimeToHome(alreadyPinned) },
-
-            ) {
+            colors = ButtonColors(
+                containerColor = Color(0xFF9DDDF9),
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Unspecified,
+                disabledContentColor = Color.Black,
+            ),
+            border = BorderStroke(1.dp, Color.Black)
+        ) {
             Text("Pin $dateTime to homescreen")
         }
     }
