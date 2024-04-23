@@ -622,7 +622,7 @@ fun createLine(
         IntersectionPoint(radius = 0.05.dp, color = MaterialTheme.colorScheme.tertiary),
         SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
         ShadowUnderLine(
-            alpha = 0.4f,
+            alpha = 0.15f,
             brush = Brush.verticalGradient(
                 colorStops = colorStops
             )
