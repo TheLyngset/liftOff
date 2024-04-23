@@ -30,6 +30,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -58,6 +60,7 @@ enum class Toggle {
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DataScreen(
+    windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
@@ -68,6 +71,7 @@ fun DataScreen(
     val showDialog = rememberUpdatedState(showSwipe.value)
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
+    var selectedTimeLocked by remember { mutableStateOf(true) }
 
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
@@ -79,13 +83,15 @@ fun DataScreen(
 
     Column(
         modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(bottom = 80.dp, top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
                 Table(
+                    selectedTimeLocked = selectedTimeLocked,
                     scrollToItem = scrollToItem,
                     uiState = dataScreenUiState,
                     selectedIndex = selectedTimeIndex,
@@ -96,6 +102,11 @@ fun DataScreen(
                     boxWidth = 70,
                     dividerPadding = 4,
                 )
+                if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
+                    IconSwitch(locked = selectedTimeLocked) {
+                        selectedTimeLocked = !selectedTimeLocked
+                    }
+                }
             }
 
             Toggle.GRAPH -> {
@@ -130,6 +141,13 @@ fun DataScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
+            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact && toggleState == Toggle.TABLE){
+                Box(Modifier.size(60.dp)) {
+                    IconSwitch(locked = selectedTimeLocked) {
+                        selectedTimeLocked = !selectedTimeLocked
+                    }
+                }
+            }
             if (toggleState == Toggle.TABLE) {
                 TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
                     Text(text = "Now")
@@ -146,6 +164,7 @@ fun DataScreen(
                     Text("Selected")
                 }
             }
+            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(60.dp)) {} }
         }
     }
 }
@@ -194,12 +213,11 @@ fun ToggleButton(
 }
 
 @Composable
-fun IconSwitch() {
-    var checked by remember { mutableStateOf(true) }
+fun IconSwitch(locked: Boolean, onFlip: () -> Unit) {
     Switch(
-        checked = checked,
+        checked = locked,
         thumbContent = {
-            if(checked){
+            if(locked){
                 Icon(
                     contentDescription = null,
                     painter = painterResource(id = R.drawable.lock_locked),
@@ -214,7 +232,7 @@ fun IconSwitch() {
             }
         },
         onCheckedChange = {
-            checked = it
+            onFlip()
         }
     )
 }

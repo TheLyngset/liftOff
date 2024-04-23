@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -55,6 +56,7 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
 fun Table(
+    selectedTimeLocked: Boolean,
     scrollToItem: Int? = null,
     uiState: DataScreenUiState,
     selectedIndex: Int,
@@ -63,8 +65,9 @@ fun Table(
     dividerPadding: Int,
 ){
     BoxWithConstraints {
-        val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))*0.1
+        val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))/8*0.9
         GradientRows(
+            selectedTimeLocked = selectedTimeLocked,
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
             dividerModifier = Modifier.padding(vertical = dividerPadding.dp),
@@ -211,6 +214,7 @@ fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds
 
 @Composable
 fun GradientRows(
+    selectedTimeLocked: Boolean,
     scrollToItem: Int? = null,
     boxWidth: Int,
     dividerModifier: Modifier,
@@ -245,7 +249,6 @@ fun GradientRows(
     }
 
     val state = rememberLazyListState()
-
     //Column of gradient rows
     LazyColumn(Modifier.offset(x = 70.dp)){
         itemsIndexed(rows){i, row ->
@@ -343,11 +346,20 @@ fun GradientRows(
             }
             else{
                 item {
-                    InfoBox(
-                        modifier = overlayModifier
-                            .clickable { setIndex(i - 1) },
-                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                    )
+                    if(!selectedTimeLocked){
+                        InfoBox(
+                            modifier = overlayModifier
+                                .clickable {
+                                    setIndex(i - 1)
+                                           },
+                            colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                        )
+                    }else{
+                        InfoBox(
+                            modifier = overlayModifier,
+                            colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                        )
+                    }
                 }
             }
         }
@@ -380,6 +392,7 @@ fun GradientRowPreview() {
     val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
     val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
     GradientRows(
+        false,
         null,
         70,
         Modifier.padding(vertical = 8.dp),
