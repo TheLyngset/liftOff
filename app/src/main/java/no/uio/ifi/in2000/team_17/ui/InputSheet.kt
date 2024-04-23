@@ -1,6 +1,10 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import android.graphics.fonts.FontStyle
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -26,13 +31,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.ai.client.generativeai.type.content
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.Files.append
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
+import org.w3c.dom.Comment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,10 +137,7 @@ fun InputSheetContent(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp),
-                        text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
-                    )
+                    ConditionalText(text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:")
                     Button(onClick = {toAdvancedSettings()}) {
                         Text(text = "Thresholds")
                     }
@@ -162,4 +173,46 @@ fun InputTextField(
         ),
         modifier = modifier
     )
+}
+
+
+
+
+@Composable
+fun ConditionalText(text: String){
+
+    val minimumLineLength = 2   //Change this to your desired value
+
+    //Adding States
+    var expandedState by remember { mutableStateOf(false) }
+    var showReadMoreButtonState by remember { mutableStateOf(false) }
+    val maxLines = if (expandedState) 200 else minimumLineLength
+
+    Column(modifier = Modifier.padding(start = 35.dp, end = 5.dp)) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            overflow = TextOverflow.Ellipsis,                   //Make sure to add this line
+            maxLines = maxLines,
+            onTextLayout = { textLayoutResult: TextLayoutResult ->
+                if (textLayoutResult.lineCount > minimumLineLength-1) {           //Adding this check to avoid ArrayIndexOutOfBounds Exception
+                    if (textLayoutResult.isLineEllipsized(minimumLineLength-1)) showReadMoreButtonState = true
+                }
+            }
+        )
+        if (showReadMoreButtonState) {
+            Text(
+                text = if (expandedState) "Read Less" else "Read More",
+                color = Color.Gray,
+
+                modifier = Modifier.clickable {
+                    expandedState = !expandedState
+                },
+
+                style = MaterialTheme.typography.bodySmall
+
+            )
+        }
+
+    }
 }

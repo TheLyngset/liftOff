@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,62 +40,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Available
+import no.uio.ifi.in2000.team_17.ui.Rocket
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState
 ) {
-    Box(modifier = modifier
-        .fillMaxSize(1f)
-
-
-    ){
-        Image(painter = painterResource(id = R.drawable.sky),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .matchParentSize()
-                .graphicsLayer(
-                    scaleX = 2.4f,
-                    scaleY = 1.4f,
-                    translationX = 100f,
-                    translationY = 150f
-                )
-
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.rakett),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .graphicsLayer(
-                    scaleX = 0.27f,
-                    scaleY = 0.47f,
-                    translationY = -132f
-                )
-                .alpha(0.85f)
-        )
-    }
-    Box(modifier = Modifier
-        .fillMaxSize(1f),
-        contentAlignment = Alignment.BottomCenter
-    ){
+    Column(
+        modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom
+    ) {
         BottomCard(homeScreenUiState)
     }
 }
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
-    ElevatedCard(
+    Card(
         Modifier
-            .fillMaxWidth()
-        ,
+            .fillMaxWidth(),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = Color.Unspecified,
+            disabledContainerColor =  MaterialTheme.colorScheme.background,
+            disabledContentColor = Color.Unspecified
+        ),
         //elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 70.dp)
+                .padding(vertical = 10.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally

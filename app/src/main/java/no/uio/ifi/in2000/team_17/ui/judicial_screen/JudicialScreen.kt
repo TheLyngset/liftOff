@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import no.uio.ifi.in2000.team_17.ui.Background
 
 @Composable
 fun JudicialScreen(modifier: Modifier) {
+    Background()
     Column(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

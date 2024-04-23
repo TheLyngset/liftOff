@@ -50,6 +50,7 @@ import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.BackGroundImage
+import no.uio.ifi.in2000.team_17.ui.Background
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
 enum class Toggle {
@@ -71,7 +72,7 @@ fun DataScreen(
     }
     val configuration = LocalConfiguration.current
 
-    BackGroundImage(0.82f)
+    Background()
 
     Column(
         modifier
