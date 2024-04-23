@@ -195,8 +195,9 @@ fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
     modifier: Modifier = Modifier
-        .fillMaxHeight(0.7f)
+        .fillMaxHeight(0.7f),
     // .verticalScroll(rememberScrollState())
+    setTimeIndex:(Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds

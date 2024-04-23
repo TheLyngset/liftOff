@@ -19,7 +19,7 @@ val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF410002)
 
 //backgorund color
-val backgroundLight = Color(0x80F5FAFD)
+val backgroundLight = Color(0x99F5FAFD)
 val onBackgroundLight = Color(0xFF171C1F)
 val surfaceLight = Color(0xFFF5FAFD)
 val onSurfaceLight = Color(0xFF171C1F)

@@ -82,7 +82,10 @@ fun DataScreen(
                 var heigth = 200
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                     heigth = 500
-                ThresholdGraph(dataScreenUiState, heigth)
+                ThresholdGraph(dataScreenUiState, heigth){
+                    setTimeIndex(it)
+                    selectedTimeIndex = it
+                }
                 if (showSwipe.value) {
                     GraphInfoDialog(
                         dontShowAgain = dataScreenUiState.dontShowAgain,

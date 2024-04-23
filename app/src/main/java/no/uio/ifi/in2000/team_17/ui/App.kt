@@ -260,8 +260,7 @@ fun BottomBar(
 ) {
     if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
         Column(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.background),
+            modifier = modifier,
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
