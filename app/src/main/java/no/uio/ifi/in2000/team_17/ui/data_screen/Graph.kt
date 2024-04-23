@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -40,11 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -335,13 +332,13 @@ fun ThresholdGraph(
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .steps(5)
+        .steps(10)
         .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
-            val yMax = 1f
-            val yScale = yMax / 5
+            val yMax = 2f
+            val yScale = yMax / 10
             ((i * yScale)).formatToSinglePrecision()
         }
         .build()
@@ -487,16 +484,16 @@ fun ThresholdGraph(
         )
     }
     var show = false
-    Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.fillMaxWidth(0.15f)) {
-          val  info = InfoIcon()
-          show = info  
+            val info = InfoIcon()
+            show = info
         }
-        Column(modifier = Modifier.fillMaxWidth(1f)){
+        Column(modifier = Modifier.fillMaxWidth(1f)) {
             LastUpdated(lastUpdated)
         }
     }
-   ChartHistory(show)
+    ChartHistory(show)
 }
 
 @Composable
@@ -627,7 +624,7 @@ fun getIndexToPin(index: Int): Int {
 
 @Composable
 fun ChartHistory(show: Boolean) {
-    if(show){
+    if (show) {
         Column(
             Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -659,11 +656,13 @@ fun ChartHistory(show: Boolean) {
         }
     }
 }
+
 @Composable
 fun InfoIcon(): Boolean {
     var showDescription by remember { mutableStateOf(false) }
     Column(Modifier.padding(5.dp)) {
-        Row(Modifier.fillMaxWidth(),
+        Row(
+            Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
