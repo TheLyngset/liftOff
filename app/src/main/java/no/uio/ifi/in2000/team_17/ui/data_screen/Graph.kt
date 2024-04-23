@@ -132,6 +132,7 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
     val yAxisData = AxisData.Builder()
         .steps(steps)
         .labelAndAxisLinePadding(20.dp)
+        .startDrawPadding(3.dp)
         .labelData { i ->
             // Add yMin to get the negative axis values to the scale
             val yMin = pointsData.minOf { it.y }
