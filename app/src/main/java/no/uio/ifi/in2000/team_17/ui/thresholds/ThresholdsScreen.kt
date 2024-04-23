@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.ui.thresholds
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +67,7 @@ fun ThresholdsScreen(
 
     val state = rememberScrollState()
     val defaults = ThresholdsSerializer.defaultValue
+    var showInfo by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { state.animateScrollTo(50) }
     Background()
     Column(
@@ -74,11 +78,19 @@ fun ThresholdsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = Screen.Thresholds.title,
-            fontWeight = FontWeight.Bold,
-            style = TextStyle(fontSize = 30.sp),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = Screen.Thresholds.title,
+                fontWeight = FontWeight.Bold,
+                style = TextStyle(fontSize = 30.sp),
+            )
+            Icon(imageVector = Icons.Outlined.Info, contentDescription = null,modifier = Modifier.clickable {
+                showInfo = true
+            })
+        }
 
         //Ground wind speed
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -254,7 +266,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = dewPointText,
                 onValueChange = { dewPointText = it },
-                label = "Highest dew point allowed"
+                label = "Max Dew Point"
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -312,5 +324,8 @@ fun ThresholdsScreen(
                 Icon(Icons.Filled.Refresh, null)
             }
         }
+    }
+    ThresholdsInfo(modifier,showInfo) {
+        showInfo = false
     }
 }
