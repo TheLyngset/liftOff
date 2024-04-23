@@ -46,35 +46,66 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
             ElevatedCard(
                 Modifier.fillMaxWidth(),
                 colors = CardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     disabledContentColor = Color.Unspecified,
                     disabledContainerColor = Color.Unspecified
                 )
-            ) {
-                Column(
-                    Modifier
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    InfoSection(title = "Max Ground Wind", description = "Max Ground Wind is the maximum wind speed at ground layer for which it is safe to launch the rocket")
-                    InfoSection(title = "Max Wind", description = "max wind is the maximum wind speed at any level for which it is safe to launch the rocket")
-                    InfoSection(title = "Max Wind Shear", description = "Max Wind Shear is the maximum wind shear at any level for which it is safe to launch the rocket")
-                    InfoSection(title = "Max Cloud Fraction", description = "Max Cloud Fraction is the maximum cloud coverage in % for which it is safe to launch the rocket")
-                    InfoSection(title = "Max Fog", description = "Max Fog is the maximum fog fraction in % for which it is safe to launch the rocket")
-                    InfoSection(title = "Max allowed rain", description = "Max allowed rain is the maximum amount of rain in mm/h for which it is safe to launch the rocket")
-                    InfoSection(title = "Max humidity", description = "Max humidity is the maximum relative humidity in % for which it is safe to launch the rocket")
-                    InfoSection(title = "Max Dew Point", description = "Max Dew Point is the maximum dew point temperature in ℃ for which it is safe to launch the rocket")
-                    InfoSection(title = "Safety margin", description = "Safety margin is how much of the threshold is colored Green and Yellow for each Threshold. For example a Threshold of 10.0 with the Margin set to 0.6 wil be colored green until 6.o, yellow until 10.0 and red for anything above 10 ")
-                    Button(onClick = { onDone() }) {
-                        Text(text = "Close")
-                    }
-                }
-                Box(
-                    contentAlignment = Alignment.BottomCenter
-                    ){
+            )
+            {
+                Box(){
+                    Column(
+                        Modifier
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        InfoSection(
+                            title = "Max Ground Wind",
+                            description = "Max Ground Wind is the maximum wind speed at ground layer for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max Wind",
+                            description = "max wind is the maximum wind speed at any level for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max Wind Shear",
+                            description = "Max Wind Shear is the maximum wind shear at any level for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max Cloud Fraction",
+                            description = "Max Cloud Fraction is the maximum cloud coverage in % for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max Fog",
+                            description = "Max Fog is the maximum fog fraction in % for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max allowed rain",
+                            description = "Max allowed rain is the maximum amount of rain in mm/h for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max humidity",
+                            description = "Max humidity is the maximum relative humidity in % for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Max Dew Point",
+                            description = "Max Dew Point is the maximum dew point temperature in ℃ for which it is safe to launch the rocket"
+                        )
+                        InfoSection(
+                            title = "Safety margin",
+                            description = "Safety margin is how much of the threshold is colored Green and Yellow for each Threshold. For example a Threshold of 10.0 with the Margin set to 0.6 wil be colored green until 6.o, yellow until 10.0 and red for anything above 10 "
+                        )
 
+                    }
+                    Box(
+                        Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Button(onClick = { onDone() }) {
+                            Text(text = "Close")
+                        }
+                    }
                 }
             }
         }
