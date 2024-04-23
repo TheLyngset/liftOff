@@ -1,23 +1,40 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.SecureFlagPolicy
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
@@ -38,6 +55,7 @@ import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
+
 
 data class DataPoint(
     val y: Double = 0.0,
@@ -175,8 +193,9 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
-    selectedTimeIndex: Int,
-    setTimeIndex: (Int) -> Unit
+    modifier: Modifier = Modifier
+        .fillMaxHeight(0.7f)
+    // .verticalScroll(rememberScrollState())
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds
@@ -313,10 +332,73 @@ fun ThresholdGraph(
         }
         .build()
 
+    //Builds colors for background
+    //@Author Hedda
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    colorStops = arrayOf(
+        0.0f to Color.Red,
+        0.5f to Color.Yellow,
+        1.0f to Color.Green
+    )
 
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
+                Line(
+                    dataPoints = upperLine,
+                    LineStyle(
+                        color = Color.Transparent,
+                        lineType = LineType.SmoothCurve(isDotted = false)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        alpha = 0.4f,
+                        brush = Brush.verticalGradient(
+                            colorStops = colorStops
+                        )
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel =
+                        { x, _ ->
+                            val index = x.toInt()
+                            val date =
+                                pointsDate[index].y
+                            val time =
+                                pointsTime[index].y
+                            val dateAndTime = "Date: $date \nTime: ${time}0"
+                            "$dateAndTime"
+                        },
+                        paddingBetweenPopUpAndPoint = 2.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        labelColor = Color.Black,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
+                Line(
+                    dataPoints = thresholdLine,
+                    LineStyle(
+                        color = Color.Red,
+                        lineType = LineType.SmoothCurve(isDotted = true)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        color = Color.Green,
+                        alpha = 0.005f,
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel = { x, _ ->
+                            "Treshold Line"
+                        },
+                        paddingBetweenPopUpAndPoint = 2.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
                 createLine(
                     pointsGroundWind,
                     Color.Black,
@@ -362,77 +444,152 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsDewPoint,
-                    Color.Red,
+                    Color.Green,
                     false,
                     "Dew Point"
                 ),
-                /*    createLine(
-                        thresholdLine,
-                        Color.Green,
-                        false,
-                        true
-                    ),
-
-                 */
-                createLine(
-                    upperLine,
-                    Color.Transparent,
-                    true,
-                    ""
-                ),
-                Line(
-                    dataPoints = thresholdLine,
-                    LineStyle(
-                        color = Color.Green,
-                        lineType = LineType.SmoothCurve(isDotted = true)
-                    ),
-                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
-                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
-                    ShadowUnderLine(
-                        alpha = 0.05f,
-                    ),
-                    SelectionHighlightPopUp(popUpLabel =
-                    { x, _ ->
-                        val index = x.toInt()
-                        val date =
-                            pointsDate[index].y
-                        val time =
-                            pointsTime[index].y
-                        val dateAndTime = "Date: $date Time: ${time}0"
-                        "$dateAndTime"
-                    })
-                )
             )
         ),
         backgroundColor = Color.White,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 5.dp,
+        paddingTop = 15.dp,
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
+    )
 
-        )
-
-    LastUpdated(lastUpdated)
-
+    PinDateTime(false, "//dateTime//")
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
-            .height(height.dp),
-        //.fillMaxSize(1f),
-        lineChartData = data
-
+            .height(height.dp)
+            .background(Color.Transparent)
+            .clickable(onClick = ({ getIndexToPin(0) })),
+        lineChartData = data,
     )
-    ChartHistory()
+    LastUpdated(lastUpdated)
+    //ChartHistory()
+}
+
+@Composable
+fun GraphInfoDialog(
+    onDismiss: () -> Unit,
+    onDontShowAgain: () -> Unit,
+    dontShowAgain: Boolean,
+    painter: Painter,
+    text: String
+) {
+    if (!dontShowAgain) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                securePolicy = SecureFlagPolicy.SecureOn,
+                usePlatformDefaultWidth = true,
+                decorFitsSystemWindows = true
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(16.dp),
+                //.background(Color.White.copy(alpha = 0.1f)),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardColors(
+                    containerColor = Color.White.copy(0.8f),
+                    contentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified,
+                    disabledContentColor = Color.Unspecified
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+
+                    ) {
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(15.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    Image(
+                        painter = painter,
+                        contentDescription = text,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .height(70.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        TextButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Dismiss")
+                        }
+                        TextButton(
+                            onClick = { onDontShowAgain() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Don't show again")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
 fun LastUpdated(lastUpdated: String) {
-    Row(horizontalArrangement = Arrangement.Center) {
-        Text("Last updated at $lastUpdated UTC+2")
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Text("Last updated at $lastUpdated UTC+2", textAlign = TextAlign.Right)
     }
+}
+
+@Composable
+fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(
+            onClick = { registerPinDateTimeToHome(alreadyPinned) },
+
+            ) {
+            Text("Pin $dateTime to homescreen")
+        }
+    }
+    if (alreadyPinned) {
+        Dialog(onDismissRequest = { /*TODO*/ }) {
+            //cancel
+
+            //replace pin
+        }
+
+    }
+}
+
+
+fun registerPinDateTimeToHome(alreadyPinned: Boolean): Boolean {
+    return false
+}
+
+fun getIndexToPin(index: Int): Int {
+    return index
 }
 
 @Composable
@@ -459,10 +616,10 @@ fun ChartHistory() {
             Spacer(modifier = Modifier.width(2.dp))
             Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
             Spacer(modifier = Modifier.width(2.dp))
-            Text(text = " - Dew Point ", style = TextStyle(color = Color.Red))
+            Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
         }
         Row(horizontalArrangement = Arrangement.Center) {
-            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Green))
+            Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
@@ -492,17 +649,30 @@ fun createLine(
             color = lineColor,
             lineType = LineType.SmoothCurve(isDotted = false)
         ),
-        IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+        IntersectionPoint(radius = 0.05.dp, color = MaterialTheme.colorScheme.tertiary),
         SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
         ShadowUnderLine(
-            alpha = 0.4f,
+            alpha = 0.15f,
             brush = Brush.verticalGradient(
                 colorStops = colorStops
             )
         ),
-        SelectionHighlightPopUp(popUpLabel = { x, y ->
-            text
-        })
+        SelectionHighlightPopUp(
+            popUpLabel = { x, y ->
+                text
+            },
+            paddingBetweenPopUpAndPoint = 2.dp,
+            labelAlignment = android.graphics.Paint.Align.LEFT,
+            backgroundColor = Color.Transparent
+
+            //labelColor = Color.Black,
+            //backgroundColor = Color.White
+            /*draw = { offset, point ->
+              drawText(
+                  // topLeft = Offset(selectedOffset.x, selectedOffset.y - paddingBetweenPopUpAndPoint.toPx())
+               )
+            }*/
+        )
     )
 }
 
@@ -517,7 +687,9 @@ fun rescalePoint(realValue: Double?, threshold: Double?): Double {
     if (threshold is Double && realValue is Double) {
         var rescaled = ((realValue) / threshold)
         if (rescaled > 2.0)
-            rescaled = 2.0
+            rescaled = 1.95 //so that extremes are still visible on the graph
+        if (rescaled <= 0.0)
+            rescaled = 0.05 //so that extremes are still visible on the graph
         return rescaled
     }
 
