@@ -77,6 +77,7 @@ data class WeatherDataLists(
             humidity = humidity.getOrElse(index) { 0.0 },
             dewPoint = dewPoint.getOrElse(index) { 0.0 },
             fog = fog.getOrElse(index) { 0.0 },
+            temperature = temperature.getOrElse(index){0.0},
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,

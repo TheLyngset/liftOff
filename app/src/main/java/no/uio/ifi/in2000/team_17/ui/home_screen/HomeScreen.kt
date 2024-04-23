@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team_17.ui.home_screen
 
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,14 +10,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -23,15 +31,25 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
@@ -43,7 +61,31 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeScreenUiState: HomeScreenUiState
 ) {
+
+        Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+            Column(modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+
+            ) {
+                Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.secondary )
+                Text(text = homeScreenUiState.weatherPointInTime.date, style = TextStyle(fontSize = 14.sp), color = MaterialTheme.colorScheme.secondary)
+
+            }
+
+
+        }
+
+
+
+
+
+
     Rocket()
+
+
+
+
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -55,6 +97,14 @@ fun HomeScreen(
 
 @Composable
 fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<Triple<String, Double, String>>
+
+    Box(modifier = Modifier.padding(16.dp, 5.dp)) {
+        Text(
+            text = (homeScreenUiState.weatherPointInTime.temperature.toString() + "°"),
+            style = TextStyle(fontSize = 35.sp),
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
     Card(
         Modifier
             .fillMaxWidth(1f),
@@ -140,7 +190,6 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
         }
     }
 }
-
 @Composable
 fun LaunchClearanceCard1(trafficLightColor: TrafficLightColor) {
     Card(
@@ -190,7 +239,7 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
             .size(120.dp),
         colors = CardColors(
             containerColor = Color.White,
-            contentColor = Color.Unspecified,
+            contentColor = MaterialTheme.colorScheme.secondary,
             disabledContainerColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified
         )
@@ -228,11 +277,51 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String) {
 
 
 //cloud coverage, lazy row, liste med alle objektene, sorteres etter
+
+//https://stackoverflow.com/questions/66341823/jetpack-compose-scrollbars
+@Composable
+fun Modifier.simpleHorizontalScrollbar(
+    state: LazyGridState,
+    height: Dp = 8.dp,
+    offsetY: Dp = -6.dp,
+    cornerRadius: Dp = 4.dp
+): Modifier {
+    val targetAlpha = if (state.isScrollInProgress) 1f else 0f
+    val duration = if (state.isScrollInProgress) 150 else 500
+
+    val alpha by animateFloatAsState(
+        targetValue = targetAlpha,
+        animationSpec = tween(durationMillis = duration)
+    )
+
+    return drawWithContent {
+        drawContent()
+
+        val firstVisibleElementIndex = state.layoutInfo.visibleItemsInfo.firstOrNull()?.index
+        val needDrawScrollbar = state.isScrollInProgress || alpha > 0.0f
+
+        if (needDrawScrollbar && firstVisibleElementIndex != null) {
+            val elementWidth = this.size.width / state.layoutInfo.totalItemsCount.toFloat()
+            val scrollbarOffsetX = firstVisibleElementIndex * elementWidth
+            val scrollbarWidth = state.layoutInfo.visibleItemsInfo.size * elementWidth
+
+            val bottomOffset = this.size.height - height.toPx() - offsetY.toPx()
+            drawRoundRect(
+                color = Color.LightGray,
+                topLeft = Offset(scrollbarOffsetX, bottomOffset),
+                size = Size(scrollbarWidth, height.toPx()),
+                alpha = alpha,
+                cornerRadius = CornerRadius(cornerRadius.toPx())
+            )
+        }
+    }
+}
 @Composable
 fun WeatherCardGrid(weatherInfoList: List<WeatherInfo>, available: Available) {
     LazyHorizontalGrid(
-        GridCells.Fixed(1),
+        rows = GridCells.Fixed(1),
         modifier = Modifier
+            .simpleHorizontalScrollbar(state = listState, height = 8.dp)
             .fillMaxWidth()
             .height(130.dp),
         horizontalArrangement = Arrangement.Center,

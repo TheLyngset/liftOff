@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.ui.data_screen.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
@@ -73,32 +75,44 @@ enum class Screen(val title: String, val logo: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
+    selectedDate: String,
+    selectedTime: String,
     windowSizeClass: WindowSizeClass,
     logoId: Int,
     onSearchClick: () -> Unit,
     onLogoClick: () -> Unit,
+
     //modifier: Modifier
 ) {
     if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+
         TopAppBar(
             title = {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.Transparent),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment =  Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(id = logoId),
                         contentDescription = "Logo",
                         modifier = Modifier.clickable { onLogoClick() }
                     )
-
+                    //center
+                    /*
                     Text(
                         text = "Oslo",
                         style = TextStyle(fontSize = 22.sp),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp)
+                        modifier = Modifier.padding()
+
                     )
+                */
+
+
+
+
                     Image(
                         painter = painterResource(id = R.drawable.search_24px),
                         contentDescription = "Search",
@@ -115,7 +129,7 @@ fun AppTopBar(
                 //containerColor = Color.White.copy(alpha = 0.65f)
                 //MaterialTheme.colorScheme.primaryContainer
             ),
-            modifier = Modifier.height(40.dp)
+            modifier = Modifier.height(50.dp)
         )
     }
 }
@@ -164,6 +178,8 @@ fun App(
         // .height(60.dp),
         topBar = {
             AppTopBar(
+                homeScreenUiState.weatherPointInTime.date,
+                homeScreenUiState.weatherPointInTime.time,
                 windowSizeClass,
                 logoId = Screen.Home.logo,
                 onSearchClick = { sheetState = true },
