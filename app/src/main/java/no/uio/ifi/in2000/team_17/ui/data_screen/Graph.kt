@@ -568,14 +568,21 @@ fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
     ) {
         Button(
             onClick = { registerPinDateTimeToHome(alreadyPinned) },
-        ) {
+
+            ) {
             Text("Pin $dateTime to homescreen")
         }
     }
     if (alreadyPinned) {
+        Dialog(onDismissRequest = { /*TODO*/ }) {
+            //cancel
+
+            //replace pin
+        }
 
     }
 }
+
 
 fun registerPinDateTimeToHome(alreadyPinned: Boolean): Boolean {
     return false
