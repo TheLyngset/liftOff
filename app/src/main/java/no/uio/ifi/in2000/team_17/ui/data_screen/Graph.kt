@@ -2,10 +2,13 @@ package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -190,8 +193,9 @@ private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: L
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
-    selectedTimeIndex: Int,
-    setTimeIndex: (Int) -> Unit
+    modifier: Modifier = Modifier
+        .fillMaxHeight(0.7f)
+    // .verticalScroll(rememberScrollState())
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds
@@ -455,15 +459,18 @@ fun ThresholdGraph(
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
     )
-    LastUpdated(lastUpdated)
+
+    PinDateTime(false, "//dateTime//")
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
             .height(height.dp)
-            .background(Color.Transparent),
+            .background(Color.Transparent)
+            .clickable(onClick = ({ getIndexToPin(0) })),
         lineChartData = data,
     )
-    ChartHistory()
+    LastUpdated(lastUpdated)
+    //ChartHistory()
 }
 
 @Composable
@@ -543,23 +550,39 @@ fun GraphInfoDialog(
     }
 }
 
-
 @Composable
 fun LastUpdated(lastUpdated: String) {
-    Row(horizontalArrangement = Arrangement.Center) {
-        Text("Last updated at $lastUpdated UTC+2")
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Text("Last updated at $lastUpdated UTC+2", textAlign = TextAlign.Right)
     }
 }
 
 @Composable
-fun PinDateTime(alreadyPinned: Boolean) {
-    Button(onClick = { PinDateTimeToHome(alreadyPinned) }) {
-        Text("Pin chart-selected Date/Time to homescreen")
+fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(
+            onClick = { registerPinDateTimeToHome(alreadyPinned) },
+        ) {
+            Text("Pin $dateTime to homescreen")
+        }
+    }
+    if (alreadyPinned) {
+
     }
 }
 
-fun PinDateTimeToHome(alreadyPinned: Boolean) {
+fun registerPinDateTimeToHome(alreadyPinned: Boolean): Boolean {
+    return false
+}
 
+fun getIndexToPin(index: Int): Int {
+    return index
 }
 
 @Composable
