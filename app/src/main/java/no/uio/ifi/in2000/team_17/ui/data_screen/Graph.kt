@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -461,16 +462,19 @@ fun ThresholdGraph(
     )
 
     PinDateTime(false, "//dateTime//")
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height.dp)
-            .background(Color.Transparent)
-            .clickable(onClick = ({ getIndexToPin(0) })),
-        lineChartData = data,
-    )
+    BoxWithConstraints {
+        val boxHeight = (maxHeight.value * 0.8)
+        LineChart(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(boxHeight.dp)
+                .background(Color.Transparent)
+                .clickable(onClick = ({ getIndexToPin(0) })),
+            lineChartData = data,
+        )
+    }
     LastUpdated(lastUpdated)
-    //ChartHistory()
+    ChartHistory()
 }
 
 @Composable
