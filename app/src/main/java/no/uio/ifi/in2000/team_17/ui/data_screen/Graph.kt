@@ -459,7 +459,7 @@ fun ThresholdGraph(
                 ),
             )
         ),
-        backgroundColor = Color.White,
+        backgroundColor = Color.Transparent,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
@@ -635,7 +635,6 @@ fun ChartHistory(show: Boolean) {
                 Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
-                Spacer(modifier = Modifier.width(2.dp))
             }
             Row {
                 Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
