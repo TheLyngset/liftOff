@@ -200,6 +200,7 @@ class RepositoryImplementation : Repository {
                        data.precipitation_amount_max
                    )
                 },
+                temperature = locationData.timeseries.map { it.data.instant.details.air_temperature},
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },

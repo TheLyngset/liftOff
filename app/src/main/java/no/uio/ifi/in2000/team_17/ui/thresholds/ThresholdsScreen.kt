@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
-import no.uio.ifi.in2000.team_17.ui.BackGroundImage
+import no.uio.ifi.in2000.team_17.ui.Background
 import no.uio.ifi.in2000.team_17.ui.InputTextField
 import no.uio.ifi.in2000.team_17.ui.Screen
 import java.lang.NumberFormatException
@@ -65,8 +65,7 @@ fun ThresholdsScreen(
     val state = rememberScrollState()
     val defaults = ThresholdsSerializer.defaultValue
     LaunchedEffect(Unit) { state.animateScrollTo(50) }
-
-    BackGroundImage(alpha = 0.75f)
+    Background()
     Column(
         modifier = modifier
             .fillMaxSize()
