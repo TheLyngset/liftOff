@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
@@ -197,7 +199,7 @@ fun ThresholdGraph(
     modifier: Modifier = Modifier
         .fillMaxHeight(0.7f),
     // .verticalScroll(rememberScrollState())
-    setTimeIndex:(Int) -> Unit
+    setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
     val thresholds = dataScreenUiState.thresholds
@@ -423,7 +425,7 @@ fun ThresholdGraph(
                     pointsCloudFraction,
                     Color.Cyan,
                     false,
-                    "Could Fraction"
+                    "Could Coverage"
                 ),
                 createLine(
                     pointsMedianRain,
@@ -464,7 +466,7 @@ fun ThresholdGraph(
 
     PinDateTime(false, "//dateTime//")
     BoxWithConstraints {
-        val boxHeight = (maxHeight.value * 0.8)
+        val boxHeight = (maxHeight.value * 0.75)
         LineChart(
             modifier = Modifier
                 .fillMaxWidth()
@@ -569,12 +571,20 @@ fun LastUpdated(lastUpdated: String) {
 fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 0.dp, 0.dp, 2.dp),
     ) {
         Button(
             onClick = { registerPinDateTimeToHome(alreadyPinned) },
-
-            ) {
+            colors = ButtonColors(
+                containerColor = Color(0xFF9DDDF9),
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Unspecified,
+                disabledContentColor = Color.Black,
+            ),
+            border = BorderStroke(1.dp, Color.Black)
+        ) {
             Text("Pin $dateTime to homescreen")
         }
     }
@@ -584,7 +594,6 @@ fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
 
             //replace pin
         }
-
     }
 }
 
