@@ -68,6 +68,7 @@ fun ThresholdsScreen(
     val state = rememberScrollState()
     val defaults = ThresholdsSerializer.defaultValue
     var showInfo by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) { state.animateScrollTo(50) }
     Background()
     Column(
@@ -78,9 +79,11 @@ fun ThresholdsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Spacer(modifier = Modifier.height(5.dp))
+
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            Modifier.padding(end = 34.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = Screen.Thresholds.title,
@@ -93,7 +96,8 @@ fun ThresholdsScreen(
         }
 
         //Ground wind speed
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
                 value = groundWindSpeedText,
@@ -118,7 +122,8 @@ fun ThresholdsScreen(
         }
 
         //Max wind speed
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = maxWindSpeedText,
@@ -144,7 +149,8 @@ fun ThresholdsScreen(
         }
 
         //max wind shear
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = maxWindShearText,
@@ -169,7 +175,8 @@ fun ThresholdsScreen(
         }
 
         //max cloud fraction
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = cloudFractionText,
@@ -192,7 +199,8 @@ fun ThresholdsScreen(
         }
 
         //max fog
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = fogText,
@@ -215,7 +223,8 @@ fun ThresholdsScreen(
         }
 
         //max rain
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = rainText,
@@ -238,7 +247,8 @@ fun ThresholdsScreen(
         }
 
         //max humidity
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = humidityText,
@@ -261,7 +271,8 @@ fun ThresholdsScreen(
         }
 
         //max dewPoint
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = dewPointText,
@@ -284,7 +295,8 @@ fun ThresholdsScreen(
         }
 
         //margin
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
                 value = marginText,

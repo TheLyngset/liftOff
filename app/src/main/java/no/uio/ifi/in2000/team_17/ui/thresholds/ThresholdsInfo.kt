@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.thresholds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -70,14 +71,19 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                         Text(text = "Close")
                     }
                 }
+                Box(
+                    contentAlignment = Alignment.BottomCenter
+                    ){
+
+                }
             }
         }
     }
 }
 
 @Composable
-fun InfoSection(title: String, description: String) {
-    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+fun InfoSection2(title: String, description: String) {
+    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         var showDescription by remember { mutableStateOf(false) }
         Row(Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -97,6 +103,22 @@ fun InfoSection(title: String, description: String) {
             )
         }
         if(showDescription) Text(text = description)
+    }
+}
+
+@Composable
+fun InfoSection(title: String, description: String) {
+    Column(
+        Modifier
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp
+        )
+        Text(text = description)
     }
 }
 @Preview

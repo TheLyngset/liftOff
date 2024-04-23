@@ -189,7 +189,7 @@ fun ConditionalText(text: String){
     var showReadMoreButtonState by remember { mutableStateOf(false) }
     val maxLines = if (expandedState) 200 else minimumLineLength
 
-    Column(modifier = Modifier.padding(start = 35.dp, end = 5.dp)) {
+    Column {
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall,
