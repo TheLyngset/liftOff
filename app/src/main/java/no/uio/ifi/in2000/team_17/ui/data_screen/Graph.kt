@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +48,6 @@ import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.LineChart
-import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.Line
 import co.yml.charts.ui.linechart.model.LineChartData
@@ -63,139 +63,6 @@ import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-
-
-data class DataPoint(
-    val y: Double = 0.0,
-    val x: Int = 0
-)
-
-data class TimePoint(
-    val y: String = "00:00",
-    val x: Int = 0
-)
-
-val data = listOf(
-    Point(0f, 40f),
-    Point(1f, 20f),
-    Point(2f, 50f),
-    Point(3f, 10f),
-    Point(4f, 20f),
-    Point(5f, 30f),
-    Point(6f, 40f),
-    Point(7f, 50f),
-    Point(8f, 60f),
-    Point(9f, 70f),
-    Point(10f, 80f),
-    //Point(3f, 10f),
-    Point(11f, 90f),
-    Point(12f, 80f),
-    Point(13f, 70f),
-    Point(14f, 60f),
-    Point(6f, 10f),
-    Point(7f, 60f),
-    Point(8f, 20f),
-    Point(9f, 30f),
-    Point(10f, 60f),
-    Point(11f, 80f),
-    Point(12f, 50f),
-    Point(13f, 30f),
-    Point(14f, 10f),
-    Point(15f, 90f)
-)
-
-val data1 = listOf(
-    Point(0f, 10f),
-    Point(1f, 20f),
-    Point(2f, 30f),
-    Point(3f, 40f),
-    Point(4f, 50f),
-    Point(5f, 20f),
-    Point(6f, 66f),
-    Point(7f, 30f),
-    Point(8f, 10f),
-    Point(9f, 79f),
-    Point(10f, 40f),
-    Point(11f, 20f),
-    Point(12f, 10f),
-    Point(13f, 20f),
-    Point(14f, 30f),
-    Point(15f, 40f),
-)
-
-
-@Composable
-private fun SingleLineChartWithGridLines(pointsData: List<Point>, pointsData1: List<Point>) {
-    val steps = 11
-    val xAxisData = AxisData.Builder()
-        .axisStepSize(30.dp)
-        .topPadding(105.dp)
-        .steps(pointsData.size - 1)
-        .labelData { i -> pointsData[i].x.toInt().toString() }
-        .labelAndAxisLinePadding(15.dp)
-        .build()
-
-    val yAxisData = AxisData.Builder()
-        .steps(steps)
-        .labelAndAxisLinePadding(20.dp)
-        .labelData { i ->
-            // Add yMin to get the negative axis values to the scale
-            val yMin = pointsData.minOf { it.y }
-            val yMax = pointsData.maxOf { it.y }
-            val yScale = (yMax - yMin) / steps
-            ((i * yScale) + yMin).formatToSinglePrecision()
-        }
-        .build()
-
-    val data = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = pointsData,
-                    LineStyle(),
-                    IntersectionPoint(),
-                    SelectionHighlightPoint(),
-                    ShadowUnderLine(),
-                    SelectionHighlightPopUp()
-                )
-            )
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        gridLines = GridLines()
-    )
-
-    val data1 = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = pointsData1,
-                    LineStyle(),
-                    IntersectionPoint(),
-                    SelectionHighlightPoint(),
-                    ShadowUnderLine(),
-                    SelectionHighlightPopUp()
-                )
-            )
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        gridLines = GridLines()
-    )
-
-    LineChart(
-        modifier = Modifier
-
-            .height(300.dp),
-        lineChartData = data
-    )
-
-    LineChart(
-        modifier = Modifier
-            .height(300.dp),
-        lineChartData = data1
-    )
-}
 
 @Composable
 fun ThresholdGraph(
@@ -622,34 +489,50 @@ fun getIndexToPin(index: Int): Int {
 }
 
 @Composable
-fun ChartHistory(show: Boolean) {
+fun ChartHistory(
+    show: Boolean, //onDone: () -> Unit
+) {
     if (show) {
-        Column(
-            Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        ElevatedCard(
+            Modifier.fillMaxWidth(),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                disabledContentColor = Color.Unspecified,
+                disabledContainerColor = Color.Unspecified
+            )
         ) {
-            Row(horizontalArrangement = Arrangement.Center) {
-                Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
-            }
-            Row {
-                Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
-            }
-            Row(horizontalArrangement = Arrangement.Center) {
-                Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
-                Spacer(modifier = Modifier.width(2.dp))
+            Column(
+                Modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
+                }
+                Row {
+                    Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
+                }
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
+                    Spacer(modifier = Modifier.width(2.dp))
+                }
+                /* Button(onClick = { onDone() }) {
+                     Text(text = "Close")
+                 }
+                 */
             }
         }
     }
