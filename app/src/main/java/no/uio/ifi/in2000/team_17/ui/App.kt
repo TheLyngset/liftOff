@@ -136,7 +136,6 @@ fun AppTopBar(
 
 @Composable
 fun App(
-    navController: NavHostController = rememberNavController(),
     windowSizeClass: WindowSizeClass
 ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
@@ -149,7 +148,7 @@ fun App(
             )
         }
     )
-
+    val navController: NavHostController = rememberNavController()
     val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -226,6 +225,7 @@ fun App(
             }
             composable(route = Screen.Data.name) {
                 DataScreen(
+                    windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     dataScreenUiState
                 ) { dataScreenViewModel.setTimeIndex(it) }
@@ -312,7 +312,7 @@ fun SegmentedNavigationButton(
                     activeBorderColor = Color.DarkGray,
                     activeContentColor = Color.Black,
                     inactiveBorderColor = Color.DarkGray,
-                    inactiveContainerColor = Color.Unspecified,
+                    inactiveContainerColor = MaterialTheme.colorScheme.background.copy(1.0f),
                     inactiveContentColor = Color.Black,
                     disabledActiveBorderColor = Color.DarkGray,
                     disabledActiveContainerColor = Color.Unspecified,
