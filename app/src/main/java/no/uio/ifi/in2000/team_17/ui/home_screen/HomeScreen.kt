@@ -150,12 +150,6 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState) { //weatherInfoList: List<T
                         painterResource(id = R.drawable.shearwind)
                     ),
                     WeatherInfo(
-                        "Temperature",
-                        homeScreenUiState.weatherPointInTime.temperature,
-                        "℃",
-                        painterResource(id = R.drawable.temperature)
-                    ),
-                    WeatherInfo(
                         "Cloudiness",
                         homeScreenUiState.weatherPointInTime.cloudFraction,
                         "%",
