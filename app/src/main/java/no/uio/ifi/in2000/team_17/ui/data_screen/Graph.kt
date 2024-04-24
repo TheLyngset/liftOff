@@ -21,8 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -220,7 +222,7 @@ fun ThresholdGraph(
         0.5f to Color.Yellow,
         1.0f to Color.Green
     )
-
+    var indexToPin by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -242,6 +244,7 @@ fun ThresholdGraph(
                         popUpLabel =
                         { x, _ ->
                             val index = x.toInt()
+                            indexToPin = index
                             val date =
                                 pointsDate[index].y
                             val time =
@@ -310,7 +313,7 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsFog,
-                    Color(0xFFFF8A00),
+                    Color.DarkGray,
                     false,
                     "Fog"
                 ),
@@ -339,30 +342,69 @@ fun ThresholdGraph(
         containerPaddingEnd = 2.dp,
     )
 
-    PinDateTime(false, "//dateTime//")
-    BoxWithConstraints {
-
-        val boxHeight = (maxHeight.value * 0.7)
-        LineChart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(boxHeight.dp)
-                .background(Color.Transparent)
-                .clickable(onClick = ({ getIndexToPin(0) })),
-            lineChartData = data,
-        )
-    }
-    var show = false
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier.fillMaxWidth(0.15f)) {
-            val info = InfoIcon()
-            show = info
+    //PinDateTime(false, "//dateTime//")
+    var showInfoBox by remember { mutableStateOf(false) }
+    BoxWithConstraints(contentAlignment = Alignment.BottomCenter) {
+        val graphHeight = (maxHeight.value*0.8)
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ){
+            Card(
+                modifier = Modifier.padding(8.dp),
+                colors = CardDefaults.cardColors().copy(
+                    containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
+                )
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    var date =
+                        dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
+                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                    val time =
+                        dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
+                    TextButton(onClick = {}) { Text("Selected: $date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
+                    if (dataScreenUiState.selectedTimeIndex != indexToPin) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors().copy(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            onClick = { setTimeIndex(indexToPin) }) {
+                            var date = dataScreenUiState.weatherDataLists.date[indexToPin]
+                            date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                            val time = dataScreenUiState.weatherDataLists.time[indexToPin]
+                            Text(text = "Select $date kl$time")
+                        }
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconSwitch(checked = showInfoBox, icon = Icons.Outlined.Info) {
+                    showInfoBox = !showInfoBox
+                }
+                LastUpdated(lastUpdated)
+            }
+            LineChart(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((graphHeight).dp)
+                    .background(Color.Transparent),
+                lineChartData = data,
+            )
         }
-        Column(modifier = Modifier.fillMaxWidth(1f)) {
-            LastUpdated(lastUpdated)
+        if(showInfoBox){
+            InfoBox()
         }
     }
-    ChartHistory(show)
 }
 
 @Composable
@@ -493,103 +535,99 @@ fun getIndexToPin(index: Int): Int {
 }
 
 @Composable
-fun ChartHistory(
-    show: Boolean, //onDone: () -> Unit
-) {
-    if (show) {
-        ElevatedCard(
-            Modifier
-                .fillMaxWidth(),
-            colors = CardColors(
-                containerColor = MaterialTheme.colorScheme.onPrimary,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                disabledContentColor = Color.Unspecified,
-                disabledContainerColor = Color.Unspecified
-            )
+fun InfoBox(modifier: Modifier = Modifier) {
+    ElevatedCard(
+        modifier
+            .fillMaxWidth(),
+        colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            disabledContentColor = Color.Unspecified,
+            disabledContainerColor = Color.Unspecified
+        )
+    ) {
+        Row(
+            Modifier.padding(16.dp)
         ) {
-            Row(
-                Modifier.padding(16.dp)
-            ) {
-                Column(Modifier.weight(1.4f)) {
-                    Row(Modifier.padding(top = 5.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp),  onDraw = {
-                            drawCircle(color = Color.Black)
-                        })
-                        Text(text = " Max Wind (ground) ", style = TextStyle(color = Color.Black))
-                    }
-                    Row(Modifier.padding(vertical = 10.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color(0XFF9E00FF))
-                        })
-                        Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
-                    }
-                    Row {
-                        Canvas(modifier = Modifier
-                            .size(15.dp)
-                            .padding(bottom = 2.dp), onDraw = {
-                            drawCircle(color = Color.DarkGray)
-                        })
-                        Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
-                    }
+            Column(Modifier.weight(1.4f)) {
+                Row(Modifier.padding(top = 5.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp),  onDraw = {
+                        drawCircle(color = Color.Black)
+                    })
+                    Text(text = " Max Wind (ground) ", style = TextStyle(color = Color.Black))
                 }
+                Row(Modifier.padding(vertical = 10.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Gray)
+                    })
+                    Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
+                }
+                Row {
+                    Canvas(modifier = Modifier
+                        .size(15.dp)
+                        .padding(bottom = 2.dp), onDraw = {
+                        drawCircle(color = Color.LightGray)
+                    })
+                    Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+                }
+            }
 
-                Column(Modifier.weight(1.2f)) {
-                    Row(Modifier.padding(top = 5.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Magenta)
-                        })
-                        Text(text = " Rain ", style = TextStyle(color = Color.Black))
-                    }
-                    Row(Modifier.padding(vertical = 10.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Cyan)
-                        })
-                        Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically){
-                        Box(modifier = Modifier
-                            .width(6.dp)
-                            .height(2.dp)
-                            .background(Color.Red))
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Box(modifier = Modifier
-                            .width(6.dp)
-                            .height(2.dp)
-                            .background(Color.Red))
-                        /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Red)
-                        })*/
-                        //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
-                        Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
-                    }
+            Column(Modifier.weight(1.2f)) {
+                Row(Modifier.padding(top = 5.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Magenta)
+                    })
+                    Text(text = " Rain ", style = TextStyle(color = Color.Black))
                 }
+                Row(Modifier.padding(vertical = 10.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Cyan)
+                    })
+                    Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Box(modifier = Modifier
+                        .width(6.dp)
+                        .height(2.dp)
+                        .background(Color.Red))
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Box(modifier = Modifier
+                        .width(6.dp)
+                        .height(2.dp)
+                        .background(Color.Red))
+                    /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Red)
+                    })*/
+                    //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
+                    Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
+                }
+            }
 
-                Column(Modifier.weight(0.8f)) {
-                    Row(Modifier.padding(top = 5.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Blue)
-                        })
-                        Text(text = " Humidity ", style = TextStyle(color = Color.Black))
-                    }
-                    Row(Modifier.padding(vertical = 10.dp)) {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Green)
-                        })
-                        Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
-                    }
-                    Row() {
-                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color(0xFFFF8A00))
-                        })
-                        Text(text = " Fog ", style = TextStyle(color = Color.Black))
-                    }
+            Column(Modifier.weight(0.8f)) {
+                Row(Modifier.padding(top = 5.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Blue)
+                    })
+                    Text(text = " Humidity ", style = TextStyle(color = Color.Black))
                 }
+                Row(Modifier.padding(vertical = 10.dp)) {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.Green)
+                    })
+                    Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+                }
+                Row() {
+                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                        drawCircle(color = Color.DarkGray)
+                    })
+                    Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+                }
+            }
 
                 /* Button(onClick = { onDone() }) {
                      Text(text = "Close")
                  }
                  */
-            }
         }
     }
 }
@@ -597,20 +635,13 @@ fun ChartHistory(
 @Composable
 fun InfoIcon(): Boolean {
     var showDescription by remember { mutableStateOf(false) }
-    Column(Modifier.padding(5.dp)) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = null,
-                Modifier.clickable {
-                    showDescription = !showDescription
-                }
-            )
-        }
-    }
+        Icon(
+            imageVector = Icons.Outlined.Info,
+            contentDescription = null,
+            Modifier.clickable {
+                showDescription = !showDescription
+            }
+        )
     return showDescription
 }
 

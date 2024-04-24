@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.widget.ToggleButton
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -46,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -85,22 +87,19 @@ fun DataScreen(
     val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
         when(toggleState){
             Toggle.TABLE -> 72.dp
-            Toggle.GRAPH -> 60.dp
+            Toggle.GRAPH -> 58.dp
         }
     }else{
         50.dp
     }
-
-    Column(
+    Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = bottomPadding, top = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(bottom = bottomPadding),
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
-                Box(Modifier.fillMaxSize()) {
+                Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally){
                     Table(
                         selectedTimeLocked = selectedTimeLocked,
                         scrollToItem = scrollToItem,
@@ -113,10 +112,10 @@ fun DataScreen(
                         boxWidth = 70,
                         dividerPadding = 4,
                     )
-                }
-                if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-                    IconSwitch(locked = selectedTimeLocked) {
-                        selectedTimeLocked = !selectedTimeLocked
+                    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+                        IconSwitch(checked = selectedTimeLocked) {
+                            selectedTimeLocked = !selectedTimeLocked
+                        }
                     }
                 }
             }
@@ -155,7 +154,7 @@ fun DataScreen(
         ){
             if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact && toggleState == Toggle.TABLE){
                 Box(Modifier.size(50.dp)) {
-                    IconSwitch(locked = selectedTimeLocked) {
+                    IconSwitch(checked = selectedTimeLocked) {
                         selectedTimeLocked = !selectedTimeLocked
                     }
                 }
@@ -225,20 +224,27 @@ fun ToggleButton(
 }
 
 @Composable
-fun IconSwitch(locked: Boolean, onFlip: () -> Unit) {
+fun IconSwitch(checked: Boolean, icon: ImageVector? = null, drawableON: Int = R.drawable.lock_locked, drawableOFF: Int = R.drawable.lock_locked, onFlip: () -> Unit) {
     Switch(
-        checked = locked,
+        checked = checked,
         thumbContent = {
-            if(locked){
+            if(icon != null){
+                Icon(
+                    contentDescription = "Info",
+                    imageVector = icon,
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+            else if(checked){
                 Icon(
                     contentDescription = null,
-                    painter = painterResource(id = R.drawable.lock_locked),
+                    painter = painterResource(id = drawableON),
                     modifier = Modifier.size(SwitchDefaults.IconSize)
                 )
             } else{
                 Icon(
                     contentDescription = null,
-                    painter = painterResource(id = R.drawable.lock_unlocked),
+                    painter = painterResource(id = drawableOFF),
                     modifier = Modifier.size(SwitchDefaults.IconSize)
                 )
             }

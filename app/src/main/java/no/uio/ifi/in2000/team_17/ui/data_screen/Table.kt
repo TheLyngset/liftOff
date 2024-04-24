@@ -4,13 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -31,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -239,7 +236,9 @@ fun GradientRows(
                 WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
                 WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.dewpoint)
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
-                else -> { InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(Color.Transparent, Color.Transparent)) }
+                else -> {
+                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(Color.Transparent, Color.Transparent))
+                }
             }
             HorizontalDivider(dividerModifier)
         }
@@ -348,7 +347,7 @@ fun GradientRows(
                             modifier = overlayModifier
                                 .clickable {
                                     setIndex(i - 1)
-                                           },
+                                },
                             colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
                         )
                     }else{
