@@ -286,13 +286,13 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsMaxAirWind,
-                    Color.Gray,
+                    Color(0XFF9E00FF),
                     false,
                     "Max Air Wind"
                 ),
                 createLine(
                     pointsMaxWindShear,
-                    Color.LightGray,
+                    Color.DarkGray,
                     false,
                     "Wind Shear"
                 ),
@@ -310,7 +310,7 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsFog,
-                    Color.DarkGray,
+                    Color(0xFFFF8A00),
                     false,
                     "Fog"
                 ),
@@ -519,7 +519,7 @@ fun ChartHistory(
                     }
                     Row(Modifier.padding(vertical = 10.dp)) {
                         Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.Gray)
+                            drawCircle(color = Color(0XFF9E00FF))
                         })
                         Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
                     }
@@ -527,7 +527,7 @@ fun ChartHistory(
                         Canvas(modifier = Modifier
                             .size(15.dp)
                             .padding(bottom = 2.dp), onDraw = {
-                            drawCircle(color = Color.LightGray)
+                            drawCircle(color = Color.DarkGray)
                         })
                         Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
                     }
@@ -579,9 +579,9 @@ fun ChartHistory(
                     }
                     Row() {
                         Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                            drawCircle(color = Color.DarkGray)
+                            drawCircle(color = Color(0xFFFF8A00))
                         })
-                        Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+                        Text(text = " Fog ", style = TextStyle(color = Color.Black))
                     }
                 }
 
