@@ -4,13 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -31,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -188,7 +185,7 @@ fun AutoHeightText(
                     )
                 }
                 resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize*0.95
+                    fontSize = resizedTextStyle.fontSize*0.9
                 )
             }
             else{
@@ -240,8 +237,7 @@ fun GradientRows(
                 WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.dewpoint)
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
                 else -> {
-                    val color = Color.White.copy(0.0f)
-                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(color, color))
+                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(Color.Transparent, Color.Transparent))
                 }
             }
             HorizontalDivider(dividerModifier)
@@ -351,7 +347,7 @@ fun GradientRows(
                             modifier = overlayModifier
                                 .clickable {
                                     setIndex(i - 1)
-                                           },
+                                },
                             colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
                         )
                     }else{
@@ -390,7 +386,10 @@ fun GradientRows(
 fun GradientRowPreview() {
     val testPoints = listOf(1.0, 3.0,14.0,24.0, 34.0)
     val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
-    val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
+    val testDates = listOf("2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21")
+    var selectedIndex by remember {
+        mutableStateOf(0)
+    }
     GradientRows(
         false,
         null,
@@ -408,8 +407,10 @@ fun GradientRowPreview() {
             GradientRow(testPoints.map { it.toString() }, WeatherParameter.CLOUDFRACTION)
         ),
         thresholds = ThresholdsSerializer.defaultValue,
-        selectedIndex = 0,
-        setIndex = {}
+        selectedIndex = selectedIndex,
+        setIndex = {
+            selectedIndex = it
+        }
         )
 }
 

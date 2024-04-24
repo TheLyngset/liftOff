@@ -114,7 +114,7 @@ fun AppTopBar(
 
 
                     Image(
-                        painter = painterResource(id = R.drawable.settings2),
+                        painter = painterResource(id = R.drawable.settings3),
                         contentDescription = "Search",
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 12.dp)
@@ -209,7 +209,7 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
+                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState, windowSizeClass)
             }
             composable(route = Screen.Thresholds.name) {
                 ThresholdsScreen(

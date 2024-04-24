@@ -15,6 +15,7 @@ import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
@@ -25,7 +26,8 @@ data class HomeScreenUiState(
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
     val canLaunch: TrafficLightColor = TrafficLightColor.WHITE,
-    val updated: String = "00"
+    val updated: String = "00",
+    val thresholds: Thresholds = ThresholdsSerializer.defaultValue
 )
 
 enum class TrafficLightColor(val color: Color, val description : String, val image : Int) {
@@ -51,9 +53,9 @@ class HomeScreenViewModel(
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
-            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, thresholds)
-            ,
-            updated = weatherDataList.updated
+            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, thresholds),
+            updated = weatherDataList.updated,
+            thresholds = thresholds
         )
     }.stateIn(
         viewModelScope,

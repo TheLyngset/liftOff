@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.widget.ToggleButton
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -65,9 +69,9 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ) {
-    var toggleState by remember { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
-    val showSwipe = remember { mutableStateOf(dataScreenUiState.showSwipe) }
+    var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
+    var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    val showSwipe = rememberSaveable { mutableStateOf(dataScreenUiState.showSwipe) }
     val showDialog = rememberUpdatedState(showSwipe.value)
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
@@ -80,31 +84,38 @@ fun DataScreen(
     val configuration = LocalConfiguration.current
 
     Background()
-
-    Column(
+    val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
+        when(toggleState){
+            Toggle.TABLE -> 72.dp
+            Toggle.GRAPH -> 58.dp
+        }
+    }else{
+        50.dp
+    }
+    Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = 80.dp, top = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+            .padding(bottom = bottomPadding),
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
-                Table(
-                    selectedTimeLocked = selectedTimeLocked,
-                    scrollToItem = scrollToItem,
-                    uiState = dataScreenUiState,
-                    selectedIndex = selectedTimeIndex,
-                    setIndex = {
-                        setTimeIndex(it)
-                        selectedTimeIndex = it
-                    },
-                    boxWidth = 70,
-                    dividerPadding = 4,
-                )
-                if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-                    IconSwitch(locked = selectedTimeLocked) {
-                        selectedTimeLocked = !selectedTimeLocked
+                Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally){
+                    Table(
+                        selectedTimeLocked = selectedTimeLocked,
+                        scrollToItem = scrollToItem,
+                        uiState = dataScreenUiState,
+                        selectedIndex = selectedTimeIndex,
+                        setIndex = {
+                            setTimeIndex(it)
+                            selectedTimeIndex = it
+                        },
+                        boxWidth = 70,
+                        dividerPadding = 4,
+                    )
+                    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+                        IconSwitch(checked = selectedTimeLocked) {
+                            selectedTimeLocked = !selectedTimeLocked
+                        }
                     }
                 }
             }
@@ -142,8 +153,8 @@ fun DataScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
             if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact && toggleState == Toggle.TABLE){
-                Box(Modifier.size(60.dp)) {
-                    IconSwitch(locked = selectedTimeLocked) {
+                Box(Modifier.size(50.dp)) {
+                    IconSwitch(checked = selectedTimeLocked) {
                         selectedTimeLocked = !selectedTimeLocked
                     }
                 }
@@ -164,7 +175,7 @@ fun DataScreen(
                     Text("Selected")
                 }
             }
-            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(60.dp)) {} }
+            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(50.dp)) {} }
         }
     }
 }
@@ -213,24 +224,34 @@ fun ToggleButton(
 }
 
 @Composable
-fun IconSwitch(locked: Boolean, onFlip: () -> Unit) {
+fun IconSwitch(checked: Boolean, icon: ImageVector? = null, drawableON: Int = R.drawable.lock_locked, drawableOFF: Int = R.drawable.lock_locked, onFlip: () -> Unit) {
     Switch(
-        checked = locked,
+        checked = checked,
         thumbContent = {
-            if(locked){
+            if(icon != null){
+                Icon(
+                    contentDescription = "Info",
+                    imageVector = icon,
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+            else if(checked){
                 Icon(
                     contentDescription = null,
-                    painter = painterResource(id = R.drawable.lock_locked),
+                    painter = painterResource(id = drawableON),
                     modifier = Modifier.size(SwitchDefaults.IconSize)
                 )
             } else{
                 Icon(
                     contentDescription = null,
-                    painter = painterResource(id = R.drawable.lock_unlocked),
+                    painter = painterResource(id = drawableOFF),
                     modifier = Modifier.size(SwitchDefaults.IconSize)
                 )
             }
         },
+        colors = SwitchDefaults.colors().copy(
+            checkedTrackColor = MaterialTheme.colorScheme.primary,
+        ),
         onCheckedChange = {
             onFlip()
         }
@@ -474,7 +495,7 @@ fun GradientBox(
                         InfoBox(modifier, info = it)
                     }
                 }
-            }
+            }'
 
         }
     }

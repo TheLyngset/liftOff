@@ -17,6 +17,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -171,7 +173,7 @@ fun InputSheetContent(
                             text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
                         )
                         Button(onClick = { toAdvancedSettings() }) {
-                            Text(text = "Thresholds")
+                            Text(text = "Change Thresholds")
                         }
                     }
                 }
@@ -181,16 +183,20 @@ fun InputSheetContent(
             Box(
                 modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                ElevatedCard() {
+                ElevatedCard(
+                    colors = CardDefaults.cardColors().copy(
+                        containerColor = MaterialTheme.colorScheme.background.copy(0.95f)
+                    )
+                ) {
                     InfoSection(
                         title = "Max height",
                         description = "Max height is the maximum possible height the rocket can reach. This wil be the maximum height we wil consider when calculating if the rocket can launch or not."
                     )
                     Box(
-                        Modifier.fillMaxWidth(),
+                        Modifier.fillMaxWidth().padding(bottom = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Button(onClick = { showInfoCard = !showInfoCard }) {
