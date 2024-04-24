@@ -3,8 +3,10 @@ package no.uio.ifi.in2000.team_17.ui.home_screen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +24,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -35,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -295,24 +300,21 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
 }
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
-    ElevatedCard(
-        modifier = Modifier.size(135.dp),
+    OutlinedCard(
+        modifier = Modifier.size(130.dp).shadow(3.dp, CardDefaults.outlinedShape),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
             contentColor = MaterialTheme.colorScheme.secondary,
             disabledContainerColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified
         ),
+        border = BorderStroke(2.5.dp, color)
+
 
     ) {
-        Box(Modifier.fillMaxSize(),
+        Box(Modifier.fillMaxSize()
+            ,
             contentAlignment = Alignment.BottomCenter) {
-            Box(
-                Modifier
-                    .background(color = color)
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
