@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -202,13 +200,13 @@ fun ThresholdGraph(
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .steps(10)
+        .steps(2)
         .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
             val yMax = 2f
-            val yScale = yMax / 10
+            val yScale = yMax / 2
             ((i * yScale)).formatToSinglePrecision()
         }
         .build()
