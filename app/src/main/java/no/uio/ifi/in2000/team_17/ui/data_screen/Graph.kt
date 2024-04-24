@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,7 +76,8 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 @Composable
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
-    height: Int,
+    windowSizeClass: WindowSizeClass,
+    height: Int = 0,
     modifier: Modifier = Modifier,
     // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
@@ -350,48 +354,18 @@ fun ThresholdGraph(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ){
-            Card(
-                modifier = Modifier.padding(8.dp),
-                colors = CardDefaults.cardColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
-                )
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    var date =
-                        dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
-                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                    val time =
-                        dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
-                    TextButton(onClick = {}) { Text("Selected: $date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
-                    if (dataScreenUiState.selectedTimeIndex != indexToPin) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors().copy(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            onClick = { setTimeIndex(indexToPin) }) {
-                            var date = dataScreenUiState.weatherDataLists.date[indexToPin]
-                            date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                            val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                            Text(text = "Select $date kl$time")
-                        }
-                    }
-                }
+            SelectTimeCard(
+                dataScreenUiState = dataScreenUiState,
+                indexToPin = indexToPin){
+                setTimeIndex(it)
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconSwitch(checked = showInfoBox, icon = Icons.Outlined.Info) {
+            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
+                InfoRow(
+                    showInfoBox = showInfoBox,
+                    lastUpdated = lastUpdated
+                ) {
                     showInfoBox = !showInfoBox
                 }
-                LastUpdated(lastUpdated)
             }
             LineChart(
                 modifier = Modifier
@@ -404,9 +378,79 @@ fun ThresholdGraph(
         if(showInfoBox){
             InfoBox()
         }
+        if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){
+            InfoRow(
+                modifier = Modifier.offset(y = 59.dp),
+                showInfoBox = showInfoBox,
+                lastUpdated = lastUpdated
+            ) {
+                showInfoBox = !showInfoBox
+            }
+        }
     }
 }
 
+@Composable
+fun InfoRow(modifier: Modifier = Modifier,showInfoBox:Boolean, lastUpdated: String, flipShowInfoBox:()->Unit) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconSwitch(checked = showInfoBox, icon = Icons.Outlined.Info) {
+            flipShowInfoBox()
+        }
+        LastUpdated(lastUpdated)
+    }
+}
+@Composable
+fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTimeIndex: (Int) -> Unit) {
+    Card(
+        modifier = Modifier.padding(8.dp),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
+        )
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Home: ", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            if (dataScreenUiState.selectedTimeIndex != indexToPin) {
+                Button(
+                    modifier = Modifier.width(250.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    onClick = { setTimeIndex(indexToPin) }) {
+                    var date = dataScreenUiState.weatherDataLists.date[indexToPin]
+                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                    val time = dataScreenUiState.weatherDataLists.time[indexToPin]
+                    Text(text = "Show for: $date kl$time ")
+                }
+            }
+            else{
+                var date =
+                    dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
+                date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                val time =
+                    dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
+                Button(
+                    modifier = Modifier.width(250.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
+                    onClick = {}) { Text("Showing for: $date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
+
+            }
+        }
+    }
+}
 @Composable
 fun GraphInfoDialog(
     onDismiss: () -> Unit,

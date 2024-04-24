@@ -120,11 +120,11 @@ fun DataScreen(
                 }
             }
 
-            Toggle.GRAPH -> {
+            Toggle.GRAPH -> {/*
                 var height = 200
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                    heigth = 500
-                ThresholdGraph(dataScreenUiState, heigth){
+                    height = 500*/
+                ThresholdGraph(dataScreenUiState = dataScreenUiState, windowSizeClass =  windowSizeClass){
                     setTimeIndex(it)
                     selectedTimeIndex = it
                 }
