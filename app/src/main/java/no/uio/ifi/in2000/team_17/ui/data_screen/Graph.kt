@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -71,8 +72,7 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
-    modifier: Modifier = Modifier
-        .fillMaxHeight(0.7f),
+    modifier: Modifier = Modifier,
     // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
 ) {
