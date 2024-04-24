@@ -67,15 +67,15 @@ fun DataScreen(
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     dataScreenUiState: DataScreenUiState,
-    setTimeIndex: (Int) -> Unit
+    dontShowAgain:()->Unit,
+    setTimeIndex: (Int) -> Unit,
 ) {
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
-    val showSwipe = rememberSaveable { mutableStateOf(dataScreenUiState.showSwipe) }
-    val showDialog = rememberUpdatedState(showSwipe.value)
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     var selectedTimeLocked by remember { mutableStateOf(true) }
+    var showSwipe by remember { mutableStateOf(!dataScreenUiState.hasDissmissed) }
 
     if (dataScreenUiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = dataScreenUiState.selectedTimeIndex
@@ -128,12 +128,12 @@ fun DataScreen(
                     setTimeIndex(it)
                     selectedTimeIndex = it
                 }
-                if (showSwipe.value) {
+                if (showSwipe) {
                     GraphInfoDialog(
-                        dontShowAgain = dataScreenUiState.dontShowAgain,
-                        onDismiss = { showSwipe.value = false },
+                        onDismiss = { showSwipe = false },
                         onDontShowAgain = {
-                            showSwipe.value = false
+                            showSwipe = false
+                            dontShowAgain()
                         },
                         painter = painterResource(id = R.drawable.swipe),
                         text = "Scroll left to see more weather data.\nPinch to zoom."

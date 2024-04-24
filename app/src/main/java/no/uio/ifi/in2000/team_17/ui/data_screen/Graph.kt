@@ -455,72 +455,69 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
 fun GraphInfoDialog(
     onDismiss: () -> Unit,
     onDontShowAgain: () -> Unit,
-    dontShowAgain: Boolean,
     painter: Painter,
     text: String
 ) {
-    if (!dontShowAgain) {
-        Dialog(
-            onDismissRequest = { onDismiss() },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
-                securePolicy = SecureFlagPolicy.SecureOn,
-                usePlatformDefaultWidth = true,
-                decorFitsSystemWindows = true
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            securePolicy = SecureFlagPolicy.SecureOn,
+            usePlatformDefaultWidth = true,
+            decorFitsSystemWindows = true
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+                .padding(16.dp),
+            //.background(Color.White.copy(alpha = 0.1f)),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardColors(
+                containerColor = Color.White.copy(0.8f),
+                contentColor = Color.Unspecified,
+                disabledContainerColor = Color.Unspecified,
+                disabledContentColor = Color.Unspecified
             )
         ) {
-            Card(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-                    .padding(16.dp),
-                //.background(Color.White.copy(alpha = 0.1f)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardColors(
-                    containerColor = Color.White.copy(0.8f),
-                    contentColor = Color.Unspecified,
-                    disabledContainerColor = Color.Unspecified,
-                    disabledContentColor = Color.Unspecified
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Transparent),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    .fillMaxSize()
+                    .background(Color.Transparent),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
 
+                ) {
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(15.dp),
+                    textAlign = TextAlign.Center
+                )
+                Image(
+                    painter = painter,
+                    contentDescription = text,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .height(70.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        modifier = Modifier.padding(8.dp),
                     ) {
-                    Text(
-                        text = text,
-                        modifier = Modifier.padding(15.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    Image(
-                        painter = painter,
-                        contentDescription = text,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .height(70.dp)
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = { onDontShowAgain() },
+                        modifier = Modifier.padding(8.dp),
                     ) {
-                        TextButton(
-                            onClick = { onDismiss() },
-                            modifier = Modifier.padding(8.dp),
-                        ) {
-                            Text("Dismiss")
-                        }
-                        TextButton(
-                            onClick = { onDontShowAgain() },
-                            modifier = Modifier.padding(8.dp),
-                        ) {
-                            Text("Don't show again")
-                        }
+                        Text("Don't show again")
                     }
                 }
             }

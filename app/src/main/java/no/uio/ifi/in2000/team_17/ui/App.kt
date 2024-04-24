@@ -227,7 +227,8 @@ fun App(
                 DataScreen(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
-                    dataScreenUiState
+                    dataScreenUiState,
+                    dontShowAgain = { dataScreenViewModel.dontShowAgain() }
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {

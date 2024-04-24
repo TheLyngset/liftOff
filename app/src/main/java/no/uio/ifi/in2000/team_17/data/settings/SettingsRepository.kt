@@ -19,4 +19,7 @@ class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     suspend fun setTime(time: String){
         settingsStore.updateData { it.toBuilder().setTime(time).build() }
     }
+    suspend fun setHasDissmissed(hasDissmissed: Boolean){
+        settingsStore.updateData { it.toBuilder().setHasDismissed(hasDissmissed).build() }
+    }
 }
