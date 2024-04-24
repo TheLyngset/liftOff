@@ -171,7 +171,7 @@ fun InputSheetContent(
                             text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
                         )
                         Button(onClick = { toAdvancedSettings() }) {
-                            Text(text = "Thresholds")
+                            Text(text = "Change Thresholds")
                         }
                     }
                 }

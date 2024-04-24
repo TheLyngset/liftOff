@@ -65,9 +65,9 @@ fun DataScreen(
     dataScreenUiState: DataScreenUiState,
     setTimeIndex: (Int) -> Unit
 ) {
-    var toggleState by remember { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
-    val showSwipe = remember { mutableStateOf(dataScreenUiState.showSwipe) }
+    var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
+    var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    val showSwipe = rememberSaveable { mutableStateOf(dataScreenUiState.showSwipe) }
     val showDialog = rememberUpdatedState(showSwipe.value)
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
