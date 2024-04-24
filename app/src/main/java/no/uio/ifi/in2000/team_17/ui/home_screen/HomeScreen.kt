@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -295,7 +296,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
     ElevatedCard(
-        modifier = Modifier.size(130.dp),
+        modifier = Modifier.size(135.dp),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
             contentColor = MaterialTheme.colorScheme.secondary,
@@ -304,31 +305,40 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         ),
 
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Text(
-                text = title,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
+        Box(Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter) {
+            Box(
+                Modifier
+                    .background(color = color)
+                    .fillMaxWidth()
+                    .padding(8.dp)
             )
-            Image(
-                painter = image,
-                contentDescription = null,
-                modifier = Modifier.size(35.dp)
-            )
-            Text(
-                text = "$value $unit",
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
+            Column(
                 modifier = Modifier
-                    .padding(5.dp)
-            )
-            Box(modifier = Modifier.fillMaxWidth().background(color))
+                    .fillMaxSize()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.size(35.dp)
+                )
+                Text(
+                    text = "$value $unit",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(5.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
         }
     }
 }

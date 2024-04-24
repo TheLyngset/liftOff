@@ -85,7 +85,7 @@ fun DataScreen(
     val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
         when(toggleState){
             Toggle.TABLE -> 72.dp
-            Toggle.GRAPH -> 50.dp
+            Toggle.GRAPH -> 60.dp
         }
     }else{
         50.dp
@@ -96,7 +96,7 @@ fun DataScreen(
             .fillMaxSize()
             .padding(bottom = bottomPadding, top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         when (toggleState) {
             Toggle.TABLE -> {

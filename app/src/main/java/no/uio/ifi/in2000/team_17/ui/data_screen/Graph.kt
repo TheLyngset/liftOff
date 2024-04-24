@@ -341,7 +341,8 @@ fun ThresholdGraph(
 
     PinDateTime(false, "//dateTime//")
     BoxWithConstraints {
-        val boxHeight = (maxHeight.value * 0.75)
+
+        val boxHeight = (maxHeight.value * 0.7)
         LineChart(
             modifier = Modifier
                 .fillMaxWidth()
@@ -498,8 +499,7 @@ fun ChartHistory(
     if (show) {
         ElevatedCard(
             Modifier
-                .fillMaxWidth()
-                .height(400.dp),
+                .fillMaxWidth(),
             colors = CardColors(
                 containerColor = MaterialTheme.colorScheme.onPrimary,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -508,7 +508,7 @@ fun ChartHistory(
             )
         ) {
             Row(
-                Modifier.padding(8.dp)
+                Modifier.padding(16.dp)
             ) {
                 Column(Modifier.weight(1.4f)) {
                     Row(Modifier.padding(top = 5.dp)) {
