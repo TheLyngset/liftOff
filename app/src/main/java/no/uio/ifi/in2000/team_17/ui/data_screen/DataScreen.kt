@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
@@ -81,7 +83,10 @@ fun DataScreen(
 
     Background()
     val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-        72.dp
+        when(toggleState){
+            Toggle.TABLE -> 72.dp
+            Toggle.GRAPH -> 50.dp
+        }
     }else{
         50.dp
     }
@@ -95,18 +100,20 @@ fun DataScreen(
     ) {
         when (toggleState) {
             Toggle.TABLE -> {
-                Table(
-                    selectedTimeLocked = selectedTimeLocked,
-                    scrollToItem = scrollToItem,
-                    uiState = dataScreenUiState,
-                    selectedIndex = selectedTimeIndex,
-                    setIndex = {
-                        setTimeIndex(it)
-                        selectedTimeIndex = it
-                    },
-                    boxWidth = 70,
-                    dividerPadding = 4,
-                )
+                Box(Modifier.fillMaxSize()) {
+                    Table(
+                        selectedTimeLocked = selectedTimeLocked,
+                        scrollToItem = scrollToItem,
+                        uiState = dataScreenUiState,
+                        selectedIndex = selectedTimeIndex,
+                        setIndex = {
+                            setTimeIndex(it)
+                            selectedTimeIndex = it
+                        },
+                        boxWidth = 70,
+                        dividerPadding = 4,
+                    )
+                }
                 if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
                     IconSwitch(locked = selectedTimeLocked) {
                         selectedTimeLocked = !selectedTimeLocked
