@@ -114,7 +114,7 @@ fun AppTopBar(
 
 
                     Image(
-                        painter = painterResource(id = R.drawable.settings2),
+                        painter = painterResource(id = R.drawable.settings3),
                         contentDescription = "Search",
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 12.dp)

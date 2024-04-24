@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -40,7 +43,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -494,41 +499,94 @@ fun ChartHistory(
 ) {
     if (show) {
         ElevatedCard(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .height(400.dp),
             colors = CardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
+                containerColor = MaterialTheme.colorScheme.onPrimary,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 disabledContentColor = Color.Unspecified,
                 disabledContainerColor = Color.Unspecified
             )
         ) {
-            Column(
-                Modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            Row(
+                Modifier.padding(8.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
+                Column(Modifier.weight(1.4f)) {
+                    Row(Modifier.padding(top = 5.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp),  onDraw = {
+                            drawCircle(color = Color.Black)
+                        })
+                        Text(text = " Max Wind (ground) ", style = TextStyle(color = Color.Black))
+                    }
+                    Row(Modifier.padding(vertical = 10.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Gray)
+                        })
+                        Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
+                    }
+                    Row {
+                        Canvas(modifier = Modifier
+                            .size(15.dp)
+                            .padding(bottom = 2.dp), onDraw = {
+                            drawCircle(color = Color.LightGray)
+                        })
+                        Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+                    }
                 }
-                Row {
-                    Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
+
+                Column(Modifier.weight(1.2f)) {
+                    Row(Modifier.padding(top = 5.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Magenta)
+                        })
+                        Text(text = " Rain ", style = TextStyle(color = Color.Black))
+                    }
+                    Row(Modifier.padding(vertical = 10.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Cyan)
+                        })
+                        Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Box(modifier = Modifier
+                            .width(6.dp)
+                            .height(2.dp)
+                            .background(Color.Red))
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Box(modifier = Modifier
+                            .width(6.dp)
+                            .height(2.dp)
+                            .background(Color.Red))
+                        /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Red)
+                        })*/
+                        //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
+                        Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
+                    }
                 }
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
-                    Spacer(modifier = Modifier.width(2.dp))
+
+                Column(Modifier.weight(0.8f)) {
+                    Row(Modifier.padding(top = 5.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Blue)
+                        })
+                        Text(text = " Humidity ", style = TextStyle(color = Color.Black))
+                    }
+                    Row(Modifier.padding(vertical = 10.dp)) {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.Green)
+                        })
+                        Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+                    }
+                    Row() {
+                        Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                            drawCircle(color = Color.DarkGray)
+                        })
+                        Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+                    }
                 }
+
                 /* Button(onClick = { onDone() }) {
                      Text(text = "Close")
                  }
