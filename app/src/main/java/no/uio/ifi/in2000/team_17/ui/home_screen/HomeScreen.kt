@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+Meimport androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -321,14 +322,21 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
                 contentDescription = null,
                 modifier = Modifier.size(35.dp)
             )
-            Text(
-                text = "$value $unit",
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .padding(5.dp)
-            )
-            Box(modifier = Modifier.fillMaxWidth().background(color))
+            Card(
+                colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.onPrimary)
+            ) {
+                Text(
+                    text = "$value $unit",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .background(color)
+                )
+            }
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .background(color))
         }
     }
 }
