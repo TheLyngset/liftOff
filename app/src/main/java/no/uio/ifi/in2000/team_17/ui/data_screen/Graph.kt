@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -68,9 +66,6 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
-    modifier: Modifier = Modifier
-        .fillMaxHeight(0.7f),
-    // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -493,47 +488,49 @@ fun ChartHistory(
     show: Boolean, //onDone: () -> Unit
 ) {
     if (show) {
-        ElevatedCard(
-            Modifier.fillMaxWidth(),
-            colors = CardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                disabledContentColor = Color.Unspecified,
-                disabledContainerColor = Color.Unspecified
-            )
+        /*   ElevatedCard(
+               Modifier.fillMaxWidth(),
+               colors = CardColors(
+                   containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.9f),
+                   contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                   disabledContentColor = Color.Unspecified,
+                   disabledContainerColor = Color.Unspecified
+               )
+           ) {
+
+         */
+        Column(
+            Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                Modifier.padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
-                }
-                Row {
-                    Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
-                }
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
-                    Spacer(modifier = Modifier.width(2.dp))
-                }
-                /* Button(onClick = { onDone() }) {
-                     Text(text = "Close")
-                 }
-                 */
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(text = " - Max Wind (ground) ", style = TextStyle(color = Color.Black))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Max Wind (altitude) ", style = TextStyle(color = Color.Gray))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Shear Max Wind ", style = TextStyle(color = Color.LightGray))
             }
+            Row {
+                Text(text = " - Cloud Coverage ", style = TextStyle(color = Color.Cyan))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Rain ", style = TextStyle(color = Color.Magenta))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Fog ", style = TextStyle(color = Color.DarkGray))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Humidity ", style = TextStyle(color = Color.Blue))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = " - Dew Point ", style = TextStyle(color = Color.Green))
+            }
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(text = " --- Threshold Line ", style = TextStyle(color = Color.Red))
+                Spacer(modifier = Modifier.width(2.dp))
+            }
+            /* Button(onClick = { onDone() }) {
+                 Text(text = "Close")
+             }
+             */
+            //  }
         }
     }
 }
