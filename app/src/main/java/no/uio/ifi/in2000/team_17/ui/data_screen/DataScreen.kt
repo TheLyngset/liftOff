@@ -231,6 +231,9 @@ fun IconSwitch(locked: Boolean, onFlip: () -> Unit) {
                 )
             }
         },
+        colors = SwitchDefaults.colors().copy(
+            checkedTrackColor = MaterialTheme.colorScheme.primary,
+        ),
         onCheckedChange = {
             onFlip()
         }
