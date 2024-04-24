@@ -192,13 +192,13 @@ fun ThresholdGraph(
         .build()
     val yAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
-        .steps(10)
+        .steps(2)
         .labelAndAxisLinePadding(20.dp)
         .axisLabelColor(MaterialTheme.colorScheme.tertiary)
         .axisLineColor(MaterialTheme.colorScheme.tertiary)
         .labelData { i ->
             val yMax = 2f
-            val yScale = yMax / 10
+            val yScale = yMax / 2
             ((i * yScale)).formatToSinglePrecision()
         }
         .build()
