@@ -188,7 +188,7 @@ fun AutoHeightText(
                     )
                 }
                 resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize*0.95
+                    fontSize = resizedTextStyle.fontSize*0.9
                 )
             }
             else{
@@ -239,10 +239,7 @@ fun GradientRows(
                 WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
                 WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.dewpoint)
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
-                else -> {
-                    val color = Color.White.copy(0.0f)
-                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(color, color))
-                }
+                else -> { InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(Color.Transparent, Color.Transparent)) }
             }
             HorizontalDivider(dividerModifier)
         }
@@ -390,7 +387,10 @@ fun GradientRows(
 fun GradientRowPreview() {
     val testPoints = listOf(1.0, 3.0,14.0,24.0, 34.0)
     val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
-    val testDates = listOf("21.04", "22.04", "22.04", "22.04", "22.04")
+    val testDates = listOf("2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21")
+    var selectedIndex by remember {
+        mutableStateOf(0)
+    }
     GradientRows(
         false,
         null,
@@ -408,8 +408,10 @@ fun GradientRowPreview() {
             GradientRow(testPoints.map { it.toString() }, WeatherParameter.CLOUDFRACTION)
         ),
         thresholds = ThresholdsSerializer.defaultValue,
-        selectedIndex = 0,
-        setIndex = {}
+        selectedIndex = selectedIndex,
+        setIndex = {
+            selectedIndex = it
+        }
         )
 }
 

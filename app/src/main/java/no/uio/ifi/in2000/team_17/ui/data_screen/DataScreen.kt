@@ -80,11 +80,16 @@ fun DataScreen(
     val configuration = LocalConfiguration.current
 
     Background()
+    val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
+        72.dp
+    }else{
+        50.dp
+    }
 
     Column(
         modifier
             .fillMaxSize()
-            .padding(bottom = 80.dp, top = 10.dp),
+            .padding(bottom = bottomPadding, top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -142,7 +147,7 @@ fun DataScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
             if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact && toggleState == Toggle.TABLE){
-                Box(Modifier.size(60.dp)) {
+                Box(Modifier.size(50.dp)) {
                     IconSwitch(locked = selectedTimeLocked) {
                         selectedTimeLocked = !selectedTimeLocked
                     }
@@ -164,7 +169,7 @@ fun DataScreen(
                     Text("Selected")
                 }
             }
-            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(60.dp)) {} }
+            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(50.dp)) {} }
         }
     }
 }
@@ -477,7 +482,7 @@ fun GradientBox(
                         InfoBox(modifier, info = it)
                     }
                 }
-            }
+            }'
 
         }
     }

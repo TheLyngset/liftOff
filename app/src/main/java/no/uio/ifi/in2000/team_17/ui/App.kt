@@ -209,7 +209,7 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState)
+                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState, windowSizeClass)
             }
             composable(route = Screen.Thresholds.name) {
                 ThresholdsScreen(
