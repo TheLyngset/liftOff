@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,9 +66,6 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     height: Int,
-    modifier: Modifier = Modifier
-        .fillMaxHeight(0.7f),
-    // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
