@@ -32,7 +32,7 @@ class WeatherUseCase {
                             weatherPointInTime.humidity.toDouble() < threshholds.humidity &&
                             weatherPointInTime.dewPoint.toDouble() < threshholds.dewPoint &&
                             weatherPointInTime.cloudFraction.toDouble() < threshholds.cloudFraction &&
-                            weatherPointInTime.rain.median.toDouble() < threshholds.rain &&
+                            weatherPointInTime.rain.probability.toDouble() < threshholds.rain &&
                             weatherPointInTime.fog.toDouble() < threshholds.fog &&
                             weatherPointInTime.maxWind.speed.toDouble() < threshholds.maxWindSpeed &&
                             weatherPointInTime.maxWindShear.speed.toDouble() < threshholds.maxWindShear
@@ -42,7 +42,7 @@ class WeatherUseCase {
                     weatherPointInTime.humidity.toDouble() < threshholds.humidity * threshholds.margin &&
                     weatherPointInTime.dewPoint.toDouble() < threshholds.dewPoint * threshholds.margin &&
                     weatherPointInTime.cloudFraction.toDouble() < threshholds.cloudFraction * threshholds.margin &&
-                    weatherPointInTime.rain.median.toDouble() < threshholds.rain * threshholds.margin &&
+                    weatherPointInTime.rain.probability.toDouble() < threshholds.rain * threshholds.margin &&
                     weatherPointInTime.fog.toDouble() < threshholds.fog * threshholds.margin &&
                     weatherPointInTime.maxWind.speed.toDouble() < threshholds.maxWindSpeed * threshholds.margin &&
                     weatherPointInTime.maxWindShear.speed.toDouble() < threshholds.maxWindShear * threshholds.margin

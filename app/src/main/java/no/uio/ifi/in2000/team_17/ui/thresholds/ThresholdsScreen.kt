@@ -229,7 +229,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = rainText,
                 onValueChange = { rainText = it },
-                label = "Max allowed rain in mm"
+                label = "Max rain probability"
             ) {
                 val newValue = try {
                     it.toDouble()

@@ -196,7 +196,7 @@ class RepositoryImplementation : Repository {
                     pressure = locationDetails.air_pressure_at_sea_level,
                     height = 10.0,
                     cloudFraction = locationDetails.cloud_area_fraction,
-                    rain = location.data.next_1_hours.details.precipitation_amount,
+                    rain = location.data.next_1_hours.details.probability_of_precipitation,
                     humidity = locationDetails.relative_humidity,
                     dewPoint = locationDetails.dew_point_temperature,
                     fog = locationDetails.fog_area_fraction

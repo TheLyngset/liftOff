@@ -175,17 +175,16 @@ data class Available(
     val fog: Boolean = false,
     val temperature: Boolean = false
 ) {
-    fun get(title: String): Boolean {
-        return when (title) {
-            "Ground Wind" -> groundWind
-            "Max Wind" -> maxWind
-            "Max Shear" -> maxWindShear
-            "Temperature" -> temperature
-            "Cloudiness" -> cloudFraction
-            "Rain" -> rain
-            "Humidity" -> humidity
-            "Fog" -> fog
-            "Dew Point" -> dewPoint
+    fun get(type: WeatherParameter): Boolean {
+        return when (type) {
+            WeatherParameter.GROUNDWIND -> groundWind
+            WeatherParameter.MAXWINDSHEAR -> maxWindShear
+            WeatherParameter.MAXWIND -> maxWind
+            WeatherParameter.CLOUDFRACTION -> cloudFraction
+            WeatherParameter.RAIN -> rain
+            WeatherParameter.HUMIDITY -> humidity
+            WeatherParameter.DEWPOINT -> dewPoint
+            WeatherParameter.FOG -> fog
             else -> false
         }
     }

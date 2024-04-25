@@ -130,9 +130,6 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LaunchClearanceCard(homeScreenUiState.canLaunch, windowSizeClass)
-            /**
-            //TODO: alle tre verdier på rain?
-            //WARNING: if you change a title you need to change it in [Available.get] as well */
             WeatherCardRow(
                 weatherInfoList = mutableListOf(
                     WeatherInfo(
@@ -165,9 +162,9 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
                     ),
                     WeatherInfo(
                         WeatherParameter.RAIN,
-                        "Rain",
-                        homeScreenUiState.weatherPointInTime.rain.median,
-                        "mm",
+                        "Rain Probability",
+                        homeScreenUiState.weatherPointInTime.rain.probability,
+                        "%",
                         painterResource(id = R.drawable.rain)
                     ),
                     WeatherInfo(
@@ -197,7 +194,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
                         WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(it.value))
                         WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(it.value))
                         WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it.value)
-                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(it.value))
+                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(probability =  it.value))
                         WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it.value)
                         WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it.value)
                         WeatherParameter.FOG -> WeatherPointInTime(fog = it.value)
@@ -397,7 +394,7 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
             .fillMaxWidth(),
     ) {
         items(weatherInfoList) { weatherInfo ->
-            if (available.get(weatherInfo.title)) {
+            if (available.get(weatherInfo.type)) {
                 Spacer(modifier = Modifier.size(8.dp))
                 CardItem(
                     title = weatherInfo.title,
@@ -410,7 +407,7 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
                             WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(weatherInfo.value))
                             WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(weatherInfo.value))
                             WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = weatherInfo.value)
-                            WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(weatherInfo.value))
+                            WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(probability = weatherInfo.value))
                             WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = weatherInfo.value)
                             WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = weatherInfo.value)
                             WeatherParameter.FOG -> WeatherPointInTime(fog = weatherInfo.value)
