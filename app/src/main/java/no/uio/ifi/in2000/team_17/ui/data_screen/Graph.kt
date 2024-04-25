@@ -592,7 +592,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                         }
                         Row(Modifier.padding(vertical = 10.dp)) {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Gray)
+                                drawCircle(color = Color(0XFFFFE500))
                             })
                             Text(
                                 text = " Max Wind (altitude) ",
@@ -603,9 +603,9 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                             Canvas(modifier = Modifier
                                 .size(15.dp)
                                 .padding(bottom = 2.dp), onDraw = {
-                                drawCircle(color = Color.LightGray)
+                                drawCircle(color = Color(0XFFFF7A00))
                             })
-                            Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+                            Text(text = " Max Shear Wind", style = TextStyle(color = Color.Black))
                         }
                     }
 
