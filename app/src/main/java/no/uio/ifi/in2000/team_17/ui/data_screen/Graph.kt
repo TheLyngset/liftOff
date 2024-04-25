@@ -293,15 +293,15 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsMaxAirWind,
-                    Color(0XFF9E00FF),
+                    Color(0XFFFFE500),
                     false,
                     "Max Air Wind"
                 ),
                 createLine(
                     pointsMaxWindShear,
-                    Color.DarkGray,
+                    Color(0XFFFF7A00),
                     false,
-                    "Wind Shear"
+                    "Shear Wind"
                 ),
                 createLine(
                     pointsCloudFraction,
@@ -317,7 +317,7 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsFog,
-                    Color.DarkGray,
+                    Color(0XFF9E00FF),
                     false,
                     "Fog"
                 ),
@@ -599,7 +599,7 @@ fun InfoBox(modifier: Modifier = Modifier) {
                 }
                 Row(Modifier.padding(vertical = 10.dp)) {
                     Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Gray)
+                        drawCircle(color = Color(0XFFFFE500))
                     })
                     Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
                 }
@@ -607,9 +607,9 @@ fun InfoBox(modifier: Modifier = Modifier) {
                     Canvas(modifier = Modifier
                         .size(15.dp)
                         .padding(bottom = 2.dp), onDraw = {
-                        drawCircle(color = Color.LightGray)
+                        drawCircle(color = Color(0xFFFF7A00))
                     })
-                    Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+                    Text(text = " Max Shear Wind", style = TextStyle(color = Color.Black))
                 }
             }
 
@@ -659,7 +659,7 @@ fun InfoBox(modifier: Modifier = Modifier) {
                 }
                 Row() {
                     Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.DarkGray)
+                        drawCircle(color = Color(0XFF9E00FF))
                     })
                     Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
                 }
