@@ -22,6 +22,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.ln
@@ -54,6 +55,8 @@ const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
 interface Repository {
     suspend fun load(latLng: LatLng, maxHeight: Int)
     val weatherDataList: StateFlow<WeatherDataLists>
+    val hasLocationForecastData: StateFlow<Boolean>
+    val hasIsoBaricData: StateFlow<Boolean>
 }
 
 class RepositoryImplementation : Repository {
@@ -74,19 +77,25 @@ class RepositoryImplementation : Repository {
     private val locationForecastData = _locationForecastData.asStateFlow()
 
     private val _weatherDataLists = MutableStateFlow(WeatherDataLists())
-
-
     override val weatherDataList = _weatherDataLists.asStateFlow()
 
+    private val _hasLocationForecastData = MutableStateFlow(false)
+    override val hasLocationForecastData = _hasLocationForecastData.asStateFlow()
+
+    private val _hasIsoBaricData = MutableStateFlow(false)
+    override val hasIsoBaricData = _hasIsoBaricData.asStateFlow()
     private suspend fun loadLocationForecast(latLng: LatLng) {
         _locationForecastData.update {
             try {
-                locationForecastDataSource.fetchLocationforecast(
+                val data = locationForecastDataSource.fetchLocationforecast(
                     round(latLng.latitude),
                     round(latLng.longitude)
                 ).properties
+                _hasLocationForecastData.update { true }
+                data
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
+                _hasLocationForecastData.update { false }
                 Properties()
             }
         }
@@ -99,8 +108,14 @@ class RepositoryImplementation : Repository {
         var isoBaricNow = IsoBaricModel.Ranges()
         var isoBaricIn3 = IsoBaricModel.Ranges()
         var isoBaricIn6 = IsoBaricModel.Ranges()
-        try { isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges }
-        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+        try {
+            isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges
+            _hasIsoBaricData.update { true }
+        }
+        catch (e: IOException) {
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            _hasIsoBaricData.update { false }
+        }
 
         try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
         catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
@@ -199,19 +214,22 @@ class RepositoryImplementation : Repository {
                         data.precipitation_amount,
                         data.precipitation_amount_max,
                         data.probability_of_precipitation
-                   )
+                    )
                 },
                 temperature = locationData.timeseries.map { it.data.instant.details.air_temperature},
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
-                updated = LocalDateTime.parse(
+                updated = try {LocalDateTime.parse(
                     locationData.meta.updated_at,
                     DateTimeFormatter.ISO_DATE_TIME
-                )
-                    .toLocalTime()
+                ).toLocalTime()
                     .plusHours(2)//TODO: now summertime only
                     .toString()
+                }catch (e: DateTimeParseException){
+                    e.printStackTrace()
+                    ""
+                }
             )
         }
     }
