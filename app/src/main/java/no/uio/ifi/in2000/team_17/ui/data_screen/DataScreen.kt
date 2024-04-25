@@ -71,7 +71,8 @@ fun DataScreen(
     setTimeIndex: (Int) -> Unit,
 ) {
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by rememberSaveable { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
+    var selectedTimeIndex by rememberSaveable { mutableIntStateOf(dataScreenUiState.selectedTimeIndex) }
+    var showingTimeIndex by rememberSaveable{ mutableIntStateOf(dataScreenUiState.selectedTimeIndex) }
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     var selectedTimeLocked by remember { mutableStateOf(true) }
@@ -85,59 +86,64 @@ fun DataScreen(
 
     Background()
     val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-        when(toggleState){
-            Toggle.TABLE -> 72.dp
-            Toggle.GRAPH -> 58.dp
-        }
+        30.dp
     }else{
-        50.dp
+        55.dp
     }
     Box(
         modifier
             .fillMaxSize()
             .padding(bottom = bottomPadding),
     ) {
-        when (toggleState) {
-            Toggle.TABLE -> {
-                Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally){
-                    Table(
-                        selectedTimeLocked = selectedTimeLocked,
-                        scrollToItem = scrollToItem,
-                        uiState = dataScreenUiState,
-                        selectedIndex = selectedTimeIndex,
-                        setIndex = {
-                            setTimeIndex(it)
-                            selectedTimeIndex = it
-                        },
-                        boxWidth = 70,
-                        dividerPadding = 4,
-                    )
-                    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-                        IconSwitch(checked = selectedTimeLocked) {
-                            selectedTimeLocked = !selectedTimeLocked
-                        }
+        Column{
+            SelectTimeCard(
+                dataScreenUiState = dataScreenUiState,
+                indexToPin = showingTimeIndex
+            ) {
+                selectedTimeIndex = it
+                setTimeIndex(it)
+            }
+            when (toggleState) {
+                Toggle.TABLE -> {
+                    Column(
+                        Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Table(
+                            scrollToItem = scrollToItem,
+                            uiState = dataScreenUiState,
+                            selectedIndex = showingTimeIndex,
+                            setIndex = {
+                                showingTimeIndex = it
+                            },
+                            boxWidth = 70,
+                            dividerPadding = 4,
+                        )
                     }
                 }
-            }
 
-            Toggle.GRAPH -> {/*
+                Toggle.GRAPH -> {/*
                 var height = 200
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                     height = 500*/
-                ThresholdGraph(dataScreenUiState = dataScreenUiState, windowSizeClass =  windowSizeClass){
-                    setTimeIndex(it)
-                    selectedTimeIndex = it
-                }
-                if (showSwipe) {
-                    GraphInfoDialog(
-                        onDismiss = { showSwipe = false },
-                        onDontShowAgain = {
-                            showSwipe = false
-                            dontShowAgain()
-                        },
-                        painter = painterResource(id = R.drawable.swipe),
-                        text = "Scroll left to see more weather data.\nPinch to zoom."
-                    )
+                    ThresholdGraph(
+                        dataScreenUiState = dataScreenUiState,
+                        selectedTimeIndex = showingTimeIndex,
+                        windowSizeClass = windowSizeClass
+                    ) {
+                        showingTimeIndex = it
+                    }
+                    if (showSwipe) {
+                        GraphInfoDialog(
+                            onDismiss = { showSwipe = false },
+                            onDontShowAgain = {
+                                showSwipe = false
+                                dontShowAgain()
+                            },
+                            painter = painterResource(id = R.drawable.swipe),
+                            text = "Scroll left to see more weather data.\nPinch to zoom."
+                        )
+                    }
                 }
             }
         }
@@ -152,13 +158,6 @@ fun DataScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
-            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact && toggleState == Toggle.TABLE){
-                Box(Modifier.size(50.dp)) {
-                    IconSwitch(checked = selectedTimeLocked) {
-                        selectedTimeLocked = !selectedTimeLocked
-                    }
-                }
-            }
             if (toggleState == Toggle.TABLE) {
                 TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
                     Text(text = "Now")

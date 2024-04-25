@@ -53,7 +53,6 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
 fun Table(
-    selectedTimeLocked: Boolean,
     scrollToItem: Int? = null,
     uiState: DataScreenUiState,
     selectedIndex: Int,
@@ -64,7 +63,6 @@ fun Table(
     BoxWithConstraints {
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))/8*0.9
         GradientRows(
-            selectedTimeLocked = selectedTimeLocked,
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
             dividerModifier = Modifier.padding(vertical = dividerPadding.dp),
@@ -211,7 +209,6 @@ fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds
 
 @Composable
 fun GradientRows(
-    selectedTimeLocked: Boolean,
     scrollToItem: Int? = null,
     boxWidth: Int,
     dividerModifier: Modifier,
@@ -342,22 +339,15 @@ fun GradientRows(
             }
             else{
                 item {
-                    if(!selectedTimeLocked){
-                        InfoBox(
-                            modifier = overlayModifier
-                                .clickable {
-                                    setIndex(i - 1)
-                                },
-                            colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                        )
-                    }else{
-                        InfoBox(
-                            modifier = overlayModifier,
-                            colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                        )
+                    InfoBox(
+                        modifier = overlayModifier
+                            .clickable {
+                                setIndex(i - 1)
+                            },
+                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                    )
                     }
                 }
-            }
         }
     }
     if(scrollToItem != null){
@@ -381,6 +371,7 @@ fun GradientRows(
 
 
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun GradientRowPreview() {
@@ -391,8 +382,6 @@ fun GradientRowPreview() {
         mutableStateOf(0)
     }
     GradientRows(
-        false,
-        null,
         70,
         Modifier.padding(vertical = 8.dp),
         Modifier.size(height = 35.dp, width = 70.dp),
@@ -414,3 +403,4 @@ fun GradientRowPreview() {
         )
 }
 
+*/

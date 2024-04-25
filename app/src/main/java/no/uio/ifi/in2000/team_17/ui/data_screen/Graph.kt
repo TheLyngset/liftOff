@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,6 +28,7 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,9 +48,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -76,10 +75,9 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 @Composable
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
+    selectedTimeIndex: Int,
     windowSizeClass: WindowSizeClass,
-    height: Int = 0,
     modifier: Modifier = Modifier,
-    // .verticalScroll(rememberScrollState())
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -226,7 +224,6 @@ fun ThresholdGraph(
         0.5f to Color.Yellow,
         1.0f to Color.Green
     )
-    var indexToPin by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -248,7 +245,7 @@ fun ThresholdGraph(
                         popUpLabel =
                         { x, _ ->
                             val index = x.toInt()
-                            indexToPin = index
+                            setTimeIndex(index)
                             val date =
                                 pointsDate[index].y
                             val time =
@@ -348,25 +345,11 @@ fun ThresholdGraph(
 
     //PinDateTime(false, "//dateTime//")
     var showInfoBox by remember { mutableStateOf(false) }
-    BoxWithConstraints(contentAlignment = Alignment.BottomCenter) {
-        val graphHeight = (maxHeight.value*0.8)
+    BoxWithConstraints(contentAlignment = Alignment.BottomStart) {
+        val graphHeight = (maxHeight.value*0.85)
         Column(
             Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ){
-            SelectTimeCard(
-                dataScreenUiState = dataScreenUiState,
-                indexToPin = indexToPin){
-                setTimeIndex(it)
-            }
-            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-                InfoRow(
-                    showInfoBox = showInfoBox,
-                    lastUpdated = lastUpdated
-                ) {
-                    showInfoBox = !showInfoBox
-                }
-            }
             LineChart(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -374,34 +357,35 @@ fun ThresholdGraph(
                     .background(Color.Transparent),
                 lineChartData = data,
             )
+            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
+                IconButton(onClick = {showInfoBox = !showInfoBox}) {
+                    Icon(Icons.Outlined.Info, "info")
+                }
+            }
         }
         if(showInfoBox){
-            InfoBox()
+            InfoBox(lastUpdated = lastUpdated) {
+                showInfoBox = false
+            }
         }
         if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){
-            InfoRow(
-                modifier = Modifier.offset(y = 59.dp),
-                showInfoBox = showInfoBox,
-                lastUpdated = lastUpdated
-            ) {
-                showInfoBox = !showInfoBox
+            IconButton(onClick = {showInfoBox = !showInfoBox}) {
+                Icon(Icons.Outlined.Info, "info")
             }
         }
     }
 }
 
 @Composable
-fun InfoRow(modifier: Modifier = Modifier,showInfoBox:Boolean, lastUpdated: String, flipShowInfoBox:()->Unit) {
+fun InfoRow(modifier: Modifier = Modifier, lastUpdated: String, flipShowInfoBox:()->Unit) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconSwitch(checked = showInfoBox, icon = Icons.Outlined.Info) {
-            flipShowInfoBox()
+        IconButton(onClick = { flipShowInfoBox() }) {
+            Icon(Icons.Outlined.Info, "Info")
         }
-        LastUpdated(lastUpdated)
     }
 }
 @Composable
@@ -419,7 +403,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Home: ", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(text = "On Home screen:", color = MaterialTheme.colorScheme.onPrimaryContainer)
             if (dataScreenUiState.selectedTimeIndex != indexToPin) {
                 Button(
                     modifier = Modifier.width(250.dp),
@@ -431,7 +415,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     var date = dataScreenUiState.weatherDataLists.date[indexToPin]
                     date = "${date.slice(8..9)}.${date.slice(5..6)}"
                     val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = "Show for: $date kl$time ")
+                    Text(text = "Change to: $date kl$time ")
                 }
             }
             else{
@@ -445,7 +429,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     colors = ButtonDefaults.buttonColors().copy(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
-                    onClick = {}) { Text("Showing for: $date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
+                    onClick = {}) { Text("$date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
 
             }
         }
@@ -529,7 +513,7 @@ fun GraphInfoDialog(
 fun LastUpdated(lastUpdated: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.Start
     ) {
         Text("Last updated at $lastUpdated UTC+2 ", textAlign = TextAlign.Right)
     }
@@ -576,10 +560,11 @@ fun getIndexToPin(index: Int): Int {
 }
 
 @Composable
-fun InfoBox(modifier: Modifier = Modifier) {
+fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () -> Unit) {
     ElevatedCard(
         modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(bottom = 30.dp),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -587,88 +572,105 @@ fun InfoBox(modifier: Modifier = Modifier) {
             disabledContainerColor = Color.Unspecified
         )
     ) {
-        Row(
-            Modifier.padding(16.dp)
-        ) {
-            Column(Modifier.weight(1.4f)) {
-                Row(Modifier.padding(top = 5.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp),  onDraw = {
-                        drawCircle(color = Color.Black)
-                    })
-                    Text(text = " Max Wind (ground) ", style = TextStyle(color = Color.Black))
-                }
-                Row(Modifier.padding(vertical = 10.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Gray)
-                    })
-                    Text(text = " Max Wind (altitude) ", style = TextStyle(color = Color.Black))
-                }
-                Row {
-                    Canvas(modifier = Modifier
-                        .size(15.dp)
-                        .padding(bottom = 2.dp), onDraw = {
-                        drawCircle(color = Color.LightGray)
-                    })
-                    Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+        Box (contentAlignment = Alignment.TopEnd) {
+            Column(Modifier.padding(16.dp)) {
+                LastUpdated(lastUpdated)
+                Row(
+                ) {
+                    Column(Modifier.weight(1.4f)) {
+                        Row(Modifier.padding(top = 5.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Black)
+                            })
+                            Text(
+                                text = " Max Wind (ground) ",
+                                style = TextStyle(color = Color.Black)
+                            )
+                        }
+                        Row(Modifier.padding(vertical = 10.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Gray)
+                            })
+                            Text(
+                                text = " Max Wind (altitude) ",
+                                style = TextStyle(color = Color.Black)
+                            )
+                        }
+                        Row {
+                            Canvas(modifier = Modifier
+                                .size(15.dp)
+                                .padding(bottom = 2.dp), onDraw = {
+                                drawCircle(color = Color.LightGray)
+                            })
+                            Text(text = " Max Wind Shear", style = TextStyle(color = Color.Black))
+                        }
+                    }
+
+                    Column(Modifier.weight(1.2f)) {
+                        Row(Modifier.padding(top = 5.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Magenta)
+                            })
+                            Text(text = " Rain ", style = TextStyle(color = Color.Black))
+                        }
+                        Row(Modifier.padding(vertical = 10.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Cyan)
+                            })
+                            Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .width(6.dp)
+                                    .height(2.dp)
+                                    .background(Color.Red)
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(6.dp)
+                                    .height(2.dp)
+                                    .background(Color.Red)
+                            )
+                            /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Red)
+                            })*/
+                            //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
+                            Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
+                        }
+                    }
+
+                    Column(Modifier.weight(0.8f)) {
+                        Row(Modifier.padding(top = 5.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Blue)
+                            })
+                            Text(text = " Humidity ", style = TextStyle(color = Color.Black))
+                        }
+                        Row(Modifier.padding(vertical = 10.dp)) {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.Green)
+                            })
+                            Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+                        }
+                        Row() {
+                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                                drawCircle(color = Color.DarkGray)
+                            })
+                            Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+                        }
+                    }
+
+                    /* Button(onClick = { onDone() }) {
+                         Text(text = "Close")
+                     }
+                     */
                 }
             }
-
-            Column(Modifier.weight(1.2f)) {
-                Row(Modifier.padding(top = 5.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Magenta)
-                    })
-                    Text(text = " Rain ", style = TextStyle(color = Color.Black))
-                }
-                Row(Modifier.padding(vertical = 10.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Cyan)
-                    })
-                    Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
-                }
-                Row(verticalAlignment = Alignment.CenterVertically){
-                    Box(modifier = Modifier
-                        .width(6.dp)
-                        .height(2.dp)
-                        .background(Color.Red))
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Box(modifier = Modifier
-                        .width(6.dp)
-                        .height(2.dp)
-                        .background(Color.Red))
-                    /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Red)
-                    })*/
-                    //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
-                    Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
-                }
+            IconButton(modifier = Modifier.offset(x = 10.dp, y = -10.dp),onClick = { onDismiss() }) {
+                Icon(Icons.Outlined.Close, "Close")
             }
-
-            Column(Modifier.weight(0.8f)) {
-                Row(Modifier.padding(top = 5.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Blue)
-                    })
-                    Text(text = " Humidity ", style = TextStyle(color = Color.Black))
-                }
-                Row(Modifier.padding(vertical = 10.dp)) {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.Green)
-                    })
-                    Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
-                }
-                Row() {
-                    Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                        drawCircle(color = Color.DarkGray)
-                    })
-                    Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
-                }
-            }
-
-                /* Button(onClick = { onDone() }) {
-                     Text(text = "Close")
-                 }
-                 */
         }
     }
 }
