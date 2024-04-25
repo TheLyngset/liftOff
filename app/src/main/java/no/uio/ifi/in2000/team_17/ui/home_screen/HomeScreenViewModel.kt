@@ -4,10 +4,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team17.Thresholds
@@ -22,6 +26,8 @@ import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
 
 data class HomeScreenUiState(
+    val isLoading: Boolean = true,
+    val hasData: Boolean = false,
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
     val latLng: LatLng = LatLng(59.96, 10.71),
     val maxHeight: Int = 3,
@@ -40,16 +46,24 @@ enum class TrafficLightColor(val color: Color, val description : String, val ima
 class HomeScreenViewModel(
     private val repository: Repository,
     private val settingsRepository: SettingsRepository,
-    private val thresholdsRepository: ThresholdsRepository) : ViewModel() {
+    private val thresholdsRepository: ThresholdsRepository
+) : ViewModel() {
+    private val _isLoading = MutableStateFlow(true)
+    private  val isLoading = _isLoading.asStateFlow()
 
     val homeScreenUiState: StateFlow<HomeScreenUiState> = combine(
         repository.weatherDataList,
         settingsRepository.settingsFlow,
         thresholdsRepository.thresholdsFlow,
-    ){weatherDataList: WeatherDataLists, settings: Settings, thresholds: Thresholds->
+        isLoading
+    ){ weatherDataList: WeatherDataLists,settings: Settings, thresholds: Thresholds, isLoading:Boolean ->
+
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
+
         val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time))
         HomeScreenUiState(
+            isLoading = isLoading,
+            hasData = weatherDataList.maxWindShear.isNotEmpty(),
             weatherPointInTime = weatherPointInTime,
             latLng = LatLng(settings.lat, settings.lng),
             maxHeight = settings.maxHeight,
@@ -75,6 +89,12 @@ class HomeScreenViewModel(
     fun setMaxHeight(height: Int){
         viewModelScope.launch{
             settingsRepository.setMaxHeight(height)
+        }
+    }
+    init {
+        viewModelScope.launch {
+            delay(5000)
+            _isLoading.update { false }
         }
     }
 }

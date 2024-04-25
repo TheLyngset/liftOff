@@ -136,18 +136,11 @@ fun AppTopBar(
 
 @Composable
 fun App(
-    windowSizeClass: WindowSizeClass
+    windowSizeClass: WindowSizeClass,
+    homeScreenViewModel: HomeScreenViewModel
 ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-    val homeScreenViewModel: HomeScreenViewModel = viewModel(
-        factory = viewModelFactory {
-            HomeScreenViewModel(
-                App.appModule.repository,
-                App.appModule.settingsRepository,
-                App.appModule.thresholdsRepository
-            )
-        }
-    )
+
     val navController: NavHostController = rememberNavController()
     val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
     val scrollStateVertical = rememberScrollState()
