@@ -79,10 +79,11 @@ fun HomeScreen(
             ) {
                 var date = homeScreenUiState.weatherPointInTime.date
                 if (date.length < 10) date = "0000-00-00"
-                Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.secondary )
-                Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 14.sp), color = MaterialTheme.colorScheme.secondary)
+                Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
+                Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
             }
         }
+
     if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
         Rocket()
     }
@@ -105,7 +106,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
         Text(
             text = (homeScreenUiState.weatherPointInTime.temperature.toString() + "°"),
             style = TextStyle(fontSize = 35.sp),
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.inverseSurface
         )
     }
     Card(
@@ -113,7 +114,7 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
             .fillMaxWidth(1f),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Unspecified,
+            contentColor = MaterialTheme.colorScheme.inverseSurface,
             disabledContainerColor = MaterialTheme.colorScheme.background,
             disabledContentColor = Color.Unspecified
         ),
@@ -304,7 +305,7 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         modifier = Modifier.size(130.dp).shadow(3.dp, CardDefaults.outlinedShape),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
-            contentColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.inverseSurface,
             disabledContainerColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified
         ),
