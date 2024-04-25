@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -208,10 +207,8 @@ fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds
     }.color
 }
 
-@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun GradientRows(
-    modifier: Modifier = Modifier,
     scrollToItem: Int? = null,
     boxWidth: Int,
     dividerModifier: Modifier,
@@ -224,7 +221,8 @@ fun GradientRows(
     setIndex:(Int) -> Unit
 ) {
     //Titles and icons Column
-    LazyColumn(modifier) {
+    LazyColumn(
+    ){
         items(rows) { row ->
             when(row.type){
                 WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
@@ -245,8 +243,8 @@ fun GradientRows(
 
     val state = rememberLazyListState()
     //Column of gradient rows
-    LazyColumn(modifier.offset(x = 70.dp)){
-        items(rows){row ->
+    LazyColumn(Modifier.offset(x = 70.dp)){
+        itemsIndexed(rows){i, row ->
             LazyRow(
                 state = state,
                 verticalAlignment = Alignment.CenterVertically,

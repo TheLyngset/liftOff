@@ -6,4 +6,6 @@ data class JudicialScreenUiState(
     val exampleString: String
 )
 //Todo: is this class necessary?
-class JudicialScreenViewModel : ViewModel()
+class JudicialScreenViewModel(): ViewModel() {
+
+}

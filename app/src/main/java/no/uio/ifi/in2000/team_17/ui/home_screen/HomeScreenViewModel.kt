@@ -30,7 +30,7 @@ data class HomeScreenUiState(
     val hasData: Boolean = false,
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
     val latLng: LatLng = LatLng(59.96, 10.71),
-    val maxHeight: Double = 3.0,
+    val maxHeight: Int = 3,
     val canLaunch: TrafficLightColor = TrafficLightColor.WHITE,
     val updated: String = "00",
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue
@@ -86,7 +86,7 @@ class HomeScreenViewModel(
             settingsRepository.setLng(lng)
         }
     }
-    fun setMaxHeight(height: Double){
+    fun setMaxHeight(height: Int){
         viewModelScope.launch{
             settingsRepository.setMaxHeight(height)
         }
