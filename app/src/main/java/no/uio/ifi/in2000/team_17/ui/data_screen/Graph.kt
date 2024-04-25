@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -48,7 +49,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -224,6 +227,7 @@ fun ThresholdGraph(
         0.5f to Color.Yellow,
         1.0f to Color.Green
     )
+    var indexToPin by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -245,7 +249,7 @@ fun ThresholdGraph(
                         popUpLabel =
                         { x, _ ->
                             val index = x.toInt()
-                            setTimeIndex(index)
+                            indexToPin = index
                             val date =
                                 pointsDate[index].y
                             val time =
@@ -290,15 +294,15 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsMaxAirWind,
-                    Color(0XFF9E00FF),
+                    Color(0XFFFFE500),
                     false,
                     "Max Air Wind"
                 ),
                 createLine(
                     pointsMaxWindShear,
-                    Color.DarkGray,
+                    Color(0XFFFF7A00),
                     false,
-                    "Wind Shear"
+                    "Shear Wind"
                 ),
                 createLine(
                     pointsCloudFraction,
@@ -314,7 +318,7 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsFog,
-                    Color.DarkGray,
+                    Color(0XFF9E00FF),
                     false,
                     "Fog"
                 ),
