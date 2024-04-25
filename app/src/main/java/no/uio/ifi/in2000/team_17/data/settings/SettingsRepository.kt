@@ -4,9 +4,6 @@ import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.team17.Settings
 
-/**
- * a repository for reading and saving Settings using proto Data Store
- */
 class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     val settingsFlow: Flow<Settings> = settingsStore.data
 

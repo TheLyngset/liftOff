@@ -6,10 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.team17.Thresholds
 
 private val LOG_NAME = "ADVANCED_SETTINGS_REPOSITORY"
-
-/**
- * a repository for reading and saving Thresholds using proto Data Store
- */
 class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds>) {
     val thresholdsFlow: Flow<Thresholds> = thresholdsDataStore.data
 
