@@ -55,13 +55,19 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.Background
 
-
 enum class Toggle {
     TABLE,
     GRAPH
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+/**
+ * The Data screen displays the weatherData using the composables
+ * [Table] and [ThresholdGraph] which present the data in different ways
+ * @param windowSizeClass is used to make the screen reactive
+ * @param dataScreenUiState contains the relevant data
+ * @param dontShowAgain is a lambda used to not show the tutorial again
+ * @param setTimeIndex is a lambda used to set a time for the [HomeScreen]
+ */
 @Composable
 fun DataScreen(
     windowSizeClass: WindowSizeClass,
