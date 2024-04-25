@@ -10,7 +10,7 @@ import no.uio.ifi.in2000.team17.Settings
 class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     val settingsFlow: Flow<Settings> = settingsStore.data
 
-    suspend fun setMaxHeight(height:Int){
+    suspend fun setMaxHeight(height:Double){
         settingsStore.updateData { it.toBuilder().setMaxHeight(height).build() }
     }
     suspend fun setLat(lat: Double){

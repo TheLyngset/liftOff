@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 object SettingsSerializer: Serializer<Settings>{
     override val defaultValue: Settings
         get() = Settings.getDefaultInstance().toBuilder()
-            .setMaxHeight(3)
+            .setMaxHeight(3.0)
             .setLat(59.96)
             .setLng(10.71)
             .setHasDismissed(false)

@@ -15,7 +15,7 @@ message Thresholds{
 }
 
 message Settings{
-    int32 maxHeight = 1;
+    double maxHeight = 1;
     double lat = 2;
     double lng = 3;
     string time = 4;

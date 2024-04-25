@@ -578,8 +578,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
         Box (contentAlignment = Alignment.TopEnd) {
             Column(Modifier.padding(16.dp)) {
                 LastUpdated(lastUpdated)
-                Row(
-                ) {
+                Row {
                     Column(Modifier.weight(1.4f)) {
                         Row(Modifier.padding(top = 5.dp)) {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
@@ -657,7 +656,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                             })
                             Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
                         }
-                        Row() {
+                        Row {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.DarkGray)
                             })

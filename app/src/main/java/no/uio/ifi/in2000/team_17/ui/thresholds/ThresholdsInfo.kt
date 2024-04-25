@@ -53,7 +53,7 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                 )
             )
             {
-                Box(){
+                Box {
                     Column(
                         Modifier
                             .padding(16.dp)
