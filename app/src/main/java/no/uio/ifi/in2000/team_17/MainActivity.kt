@@ -59,16 +59,6 @@ class MainActivity : ComponentActivity() {
             )
             val uiState by homeScreenViewModel.homeScreenUiState.collectAsState()
 
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            LaunchedEffect(true) {
-                delay(5000)
-                snackbarHostState.showSnackbar(
-                    "No internet access"
-                )
-
-            }
-
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
                     uiState.isLoading
@@ -90,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             ElevatedCard {
                                 Row(Modifier.padding(16.dp)) {
-                                    Text(text = "No internet connection, make sure you are connected to the internet and relaunch the app")
+                                    Text(text = "No internet connection, make sure you are connected to the internet and relaunch the app. If the problem persists there may be a problem at the server end")
                                 }
                             }
                         }

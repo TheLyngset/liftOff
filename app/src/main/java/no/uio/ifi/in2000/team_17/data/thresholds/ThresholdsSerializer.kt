@@ -6,6 +6,9 @@ import no.uio.ifi.in2000.team17.Thresholds
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * A serializer for the generated java class Thresholds from proto DataStore
+ */
 object ThresholdsSerializer : Serializer<Thresholds> {
     override val defaultValue: Thresholds
         get() = Thresholds.getDefaultInstance().toBuilder()
