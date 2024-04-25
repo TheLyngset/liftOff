@@ -227,7 +227,6 @@ fun ThresholdGraph(
         0.5f to Color.Yellow,
         1.0f to Color.Green
     )
-    var indexToPin by remember { mutableStateOf(dataScreenUiState.selectedTimeIndex) }
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -249,7 +248,7 @@ fun ThresholdGraph(
                         popUpLabel =
                         { x, _ ->
                             val index = x.toInt()
-                            indexToPin = index
+                            setTimeIndex(index)
                             val date =
                                 pointsDate[index].y
                             val time =
