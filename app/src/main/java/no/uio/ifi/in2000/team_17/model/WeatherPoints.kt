@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team_17.model
 
-// data class with relevant date for a weather point
+/**
+ * A data class used when parsing isobaric data and finding maxWind and maxShear
+ */
 data class WeatherPointLayer(
     val windSpeed: Double = -1.0,
     val windDirection: Double = -1.0,
@@ -15,6 +17,11 @@ data class WeatherPointLayer(
     val fog: Double = -1.0
 )
 
+/**
+ * a data class containing all the relevant data for a given point in time.
+ * variables are non nullable, but the datastructure contains an available object
+ * used to only show data when it is actually available
+ */
 data class WeatherPointInTime(
     val date: String = "00",
     val time: String = "00",
@@ -50,6 +57,14 @@ data class WeatherPointsResults(
 /*
 A data class containing lists for each parameter where indexes correspond to hours in the future
 */
+/**
+ * A data class containing lists for each parameter where indexes correspond to hours in the future
+ * The lists may have different lengths depending on what data is available
+ * availableIndexes contains information on how many data-points is available for each parameter
+ * [WeatherDataLists.get] returns a [WeatherPointInTime] at the corresponding index
+ * [WeatherDataLists.iterator] iterates over the parameters and returns a pair of
+ * [WeatherParameter] and the corresponding parameter
+ */
 data class WeatherDataLists(
     val date: List<String> = listOf("0000-00-00"),
     val time: List<String> = listOf(""),
@@ -111,21 +126,24 @@ data class WeatherDataLists(
     }
 
     operator fun iterator(): List<Pair<WeatherParameter, List<Any>>> {
-            return listOf(
-                WeatherParameter.DATE to date,
-                WeatherParameter.TIME to time,
-                WeatherParameter.MAXWIND to maxWind,
-                WeatherParameter.MAXWINDSHEAR to maxWindShear,
-                WeatherParameter.GROUNDWIND to groundWind,
-                WeatherParameter.RAIN to rain,
-                WeatherParameter.HUMIDITY to humidity,
-                WeatherParameter.CLOUDFRACTION to cloudFraction,
-                WeatherParameter.DEWPOINT to dewPoint,
-                WeatherParameter.FOG to fog
-            )
-        }
+        return listOf(
+            WeatherParameter.DATE to date,
+            WeatherParameter.TIME to time,
+            WeatherParameter.MAXWIND to maxWind,
+            WeatherParameter.MAXWINDSHEAR to maxWindShear,
+            WeatherParameter.GROUNDWIND to groundWind,
+            WeatherParameter.RAIN to rain,
+            WeatherParameter.HUMIDITY to humidity,
+            WeatherParameter.CLOUDFRACTION to cloudFraction,
+            WeatherParameter.DEWPOINT to dewPoint,
+            WeatherParameter.FOG to fog
+        )
+    }
 }
 
+/**
+ * a data class used to easily know how many indexes each parameter in WeatherDataLists has
+ */
 data class AvailableIndexes(
     val date: Int = 0,
     val time: Int = 0,
@@ -140,6 +158,10 @@ data class AvailableIndexes(
     val temperature: Int = 0
 )
 
+
+/**
+ * a data class used to easily know if a parameter in [WeatherPointInTime] is available
+ */
 data class Available(
     val date: Boolean = false,
     val time: Boolean = false,
@@ -169,6 +191,9 @@ data class Available(
     }
 }
 
+/**
+ * A data class holding relevant values for wind
+ */
 data class WindLayer(
     val speed: Double = 0.0,
     val height: Double = 0.0,
@@ -179,7 +204,9 @@ data class WindLayer(
         return speed.toString()
     }
 }
-
+/**
+ * A data class holding relevant values for WindShear
+ */
 data class WindShear(
     val speed: Double = 0.0,
     val height: Double = 0.0
@@ -189,7 +216,9 @@ data class WindShear(
         return speed.toString()
     }
 }
-
+/**
+ * a data class holding relevant values for rain
+ */
 data class Rain(
     val min: Double = 0.0,
     val median: Double = 0.0, // is this precipitation amount? There is no median in the API

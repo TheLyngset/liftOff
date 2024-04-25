@@ -71,18 +71,18 @@ fun HomeScreen(
     homeScreenUiState: HomeScreenUiState,
     windowSizeClass: WindowSizeClass
 ) {
-        Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
-            Column(modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+        Column(modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
 
-            ) {
-                var date = homeScreenUiState.weatherPointInTime.date
-                if (date.length < 10) date = "0000-00-00"
-                Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
-                Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
-            }
+        ) {
+            var date = homeScreenUiState.weatherPointInTime.date
+            if (date.length < 10) date = "0000-00-00"
+            Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
+            Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
         }
+    }
 
     if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
         Rocket()
@@ -405,17 +405,17 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
                     unit = weatherInfo.unit,
                     image = weatherInfo.image,
                     color = WeatherUseCase.canLaunch(
-                    when(weatherInfo.type){
-                        WeatherParameter.GROUNDWIND -> WeatherPointInTime(groundWind = WindLayer(weatherInfo.value))
-                        WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(weatherInfo.value))
-                        WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(weatherInfo.value))
-                        WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = weatherInfo.value)
-                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(weatherInfo.value))
-                        WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = weatherInfo.value)
-                        WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = weatherInfo.value)
-                        WeatherParameter.FOG -> WeatherPointInTime(fog = weatherInfo.value)
-                        else -> WeatherPointInTime()
-                    }, thresholds
+                        when(weatherInfo.type){
+                            WeatherParameter.GROUNDWIND -> WeatherPointInTime(groundWind = WindLayer(weatherInfo.value))
+                            WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(weatherInfo.value))
+                            WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(weatherInfo.value))
+                            WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = weatherInfo.value)
+                            WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(weatherInfo.value))
+                            WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = weatherInfo.value)
+                            WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = weatherInfo.value)
+                            WeatherParameter.FOG -> WeatherPointInTime(fog = weatherInfo.value)
+                            else -> WeatherPointInTime()
+                        }, thresholds
                     ).color
                 )
             }

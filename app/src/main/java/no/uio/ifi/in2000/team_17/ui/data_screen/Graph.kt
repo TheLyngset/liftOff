@@ -430,8 +430,8 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                 Button(
                     modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
                     onClick = {}) { Text("$date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
 
             }
@@ -578,8 +578,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
         Box (contentAlignment = Alignment.TopEnd) {
             Column(Modifier.padding(16.dp)) {
                 LastUpdated(lastUpdated)
-                Row(
-                ) {
+                Row {
                     Column(Modifier.weight(1.4f)) {
                         Row(Modifier.padding(top = 5.dp)) {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
@@ -657,7 +656,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                             })
                             Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
                         }
-                        Row() {
+                        Row {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.DarkGray)
                             })
@@ -681,13 +680,13 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
 @Composable
 fun InfoIcon(): Boolean {
     var showDescription by remember { mutableStateOf(false) }
-        Icon(
-            imageVector = Icons.Outlined.Info,
-            contentDescription = null,
-            Modifier.clickable {
-                showDescription = !showDescription
-            }
-        )
+    Icon(
+        imageVector = Icons.Outlined.Info,
+        contentDescription = null,
+        Modifier.clickable {
+            showDescription = !showDescription
+        }
+    )
     return showDescription
 }
 

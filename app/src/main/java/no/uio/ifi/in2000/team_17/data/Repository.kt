@@ -31,7 +31,7 @@ import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-
+//List of constant pressures used by the edrisobaric api
 private val PRESSURES: List<Double> = listOf(
     850.0,
     750.0,
@@ -49,9 +49,19 @@ private val PRESSURES: List<Double> = listOf(
     150.0,
     100.0
 )
+
+//Constants for calculating height
 const val GRAVITATIONAL_ACCELERATION: Double = 9.80665 // m/s^2
 const val MOLAR_GAS_CONSTANT: Double = 8.3144598 // J⋅kg−1⋅K−1
 const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
+
+/**
+ * This repository loads data from [IsobaricDataSource] and [LocationForecastDataSource]
+ * and exposes it through the datastructure [WeatherDataLists]
+ * [load] takes the parameters
+ * @param latLng, a dataclass holding the coordinates,
+ * @param maxHeight, a Double describing the maximum height the rocket can reach
+ */
 interface Repository {
     suspend fun load(latLng: LatLng, maxHeight: Int)
     val weatherDataList: StateFlow<WeatherDataLists>
@@ -84,6 +94,11 @@ class RepositoryImplementation : Repository {
 
     private val _hasIsoBaricData = MutableStateFlow(false)
     override val hasIsoBaricData = _hasIsoBaricData.asStateFlow()
+
+    /**
+     * loads data from [locationForecastDataSource] and updates the StateFlow [locationForecastData]
+     * @param latLng a data class containing the coordinates from which to load data
+     */
     private suspend fun loadLocationForecast(latLng: LatLng) {
         _locationForecastData.update {
             try {
@@ -101,7 +116,12 @@ class RepositoryImplementation : Repository {
         }
     }
 
-
+    /**
+     * loads data from [isobaricDataSource] and mimics [locationForecastData] by
+     * making a list of [IsoBarcModel.Ranges] with the index 0 corresponding to now,
+     * index 1 corresponding to in one hour and so on
+     * @param latLng a data class containing the coordinates from which to load data
+     */
     private suspend fun loadIsobaric(latLng: LatLng) {
         val startIndex = LocalDateTime.now(ZoneId.systemDefault()).hour % 3
         val newIsoBaricModel = mutableListOf<IsoBaricModel.Ranges>()
@@ -135,14 +155,20 @@ class RepositoryImplementation : Repository {
         _isoBaricData.update { newIsoBaricModel }
     }
 
-
+    /**
+     * Loads data from [locationForecastDataSource] and [isobaricDataSource] if nessecary
+     * and updates the exposed [weatherDataList]
+     * @param latLng a data class containing the coordinates to get data from
+     * @param maxHeight The maximum possible height the rocket can reach
+     */
     override suspend fun load(latLng: LatLng, maxHeight: Int) {
         if (latLng != lastLatLng) {
             loadLocationForecast(latLng)
             loadIsobaric(latLng)
             updateWeatherDataLists(maxHeight)
             lastLatLng = latLng
-        } else if (maxHeight != lastMaxHeight) {
+        }
+        else if (maxHeight != lastMaxHeight) {
             updateWeatherDataLists(maxHeight)
         }
     }
@@ -153,7 +179,8 @@ class RepositoryImplementation : Repository {
      * generates a weatherPointList for each hour available from
      * [isoBaricData] and uses this to generate [maxWindShear] and
      * [maxWindSpeed] values when available. The resulting data class
-     * has lists of varying length depending in the data available
+     * has lists of varying length depending on the data available
+     * @param maxHeight The maximum possible height the rocket can reach
      */
 
     private fun updateWeatherDataLists(maxHeight: Int) {
@@ -279,10 +306,16 @@ private fun generateWeatherPointLayerList(
                 height = calculateHeight(pressure, temperature, pressureAtSeaLevel)
             )
         }
-    return allLayers.filter { it.height <= maxHeight * 1000 + 1000 }
+    return allLayers.filter { it.height <= maxHeight * 1000 }
 }
 
-// TODO: create KDoc
+/**
+ * Calculates the Height at a given pressure using the Barometric formula
+ * @param pressure Pressure at unknown height
+ * @param temperature temperature at unknown height
+ * @param pressureAtSeaLevel Known pressure at Sea Level from LocationForecast
+ * @return height in moh
+ */
 internal fun calculateHeight(
     pressure: Double, temperature: Double, pressureAtSeaLevel: Double
 ): Double {

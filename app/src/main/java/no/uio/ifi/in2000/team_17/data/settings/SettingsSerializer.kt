@@ -7,7 +7,9 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
 
-
+/**
+ * A serializer for the generated java class Settings from proto DataStore
+ */
 object SettingsSerializer: Serializer<Settings>{
     override val defaultValue: Settings
         get() = Settings.getDefaultInstance().toBuilder()
