@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -33,21 +34,32 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun JudicialScreen(modifier: Modifier) {
     Background()
-    Column(
+    LazyColumn(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "Legal",
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 22.sp
-        )
-        LegalCard("IPPC", "Some airspace is restricted to ensure safety and security. Remember to check that your chosen launch site is in legal areas and ask the municipality, landowner, Avinor and the Norwegian Civil Aviation Authority for permission well in advance of launch. ","Read more: IPPC Avinor",
-            listOf("IPPC Avinor"), listOf("https://www.ippc.no/ippc/index.jsp")  )
-        LegalCard("Model Rocket Safety Code", "The National Association of Rocketry provides a safety code for the safe development and use of model rockets. Remember that the larger the rocket, the more important safety measures are. Make a good risk assessment!", "Read more: Safety Code NAR", listOf("Safety Code NAR"), listOf("https://nar.org/safety-information/model-rocket-safety-code/"))
-
-
+        item {
+            Text(
+                text = "Legal",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp
+            )
+            LegalCard(
+                "IPPC",
+                "Some airspace is restricted to ensure safety and security. Remember to check that your chosen launch site is in legal areas and ask the municipality, landowner, Avinor and the Norwegian Civil Aviation Authority for permission well in advance of launch. ",
+                "Read more: IPPC Avinor",
+                listOf("IPPC Avinor"),
+                listOf("https://www.ippc.no/ippc/index.jsp")
+            )
+            LegalCard(
+                "Model Rocket Safety Code",
+                "The National Association of Rocketry provides a safety code for the safe development and use of model rockets. Remember that the larger the rocket, the more important safety measures are. So make a good risk assessment!",
+                "Read more: Safety Code NAR",
+                listOf("Safety Code NAR"),
+                listOf("https://nar.org/safety-information/model-rocket-safety-code/")
+            )
+        }
     }
 }
 
