@@ -20,9 +20,9 @@ data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
     val selectedTimeIndex: Int = 0,
-    val hasDissmissed: Boolean = false,
+    val hasDissmissedDialouge: Boolean = false,
 
-)
+    )
 
 class DataScreenViewModel(
     private val repo: Repository,
@@ -49,7 +49,7 @@ class DataScreenViewModel(
     fun setTimeIndex(index: Int) {
         viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
-    fun dontShowAgain(){
+    fun dontShowDialogAgain(){
         viewModelScope.launch { settingsRepo.setHasDissmissed(true) }
     }
 }

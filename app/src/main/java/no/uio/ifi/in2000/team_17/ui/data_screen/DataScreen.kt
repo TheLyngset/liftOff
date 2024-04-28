@@ -64,7 +64,7 @@ fun DataScreen(
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var showSwipe by remember { mutableStateOf(!uiState.hasDissmissed) }
+    var showSwipe by remember { mutableStateOf(!uiState.hasDissmissedDialouge) }
 
     if (uiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = uiState.selectedTimeIndex

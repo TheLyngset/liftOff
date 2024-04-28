@@ -21,7 +21,7 @@ import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
 
 data class HomeScreenUiState(
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
-    val canLaunch: TrafficLightColor = TrafficLightColor.WHITE,
+    val trafficLightColor: TrafficLightColor = TrafficLightColor.WHITE,
     val updated: String = "00",
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue
 )
@@ -48,7 +48,7 @@ class HomeScreenViewModel(
         val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time))
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
-            canLaunch = WeatherUseCase.canLaunch(weatherPointInTime, thresholds),
+            trafficLightColor = WeatherUseCase.canLaunch(weatherPointInTime, thresholds),
             updated = weatherDataList.updated,
             thresholds = thresholds
         )
