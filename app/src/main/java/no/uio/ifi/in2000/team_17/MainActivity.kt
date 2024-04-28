@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        super.getWindow().requestFeature(Window.FEATURE_ACTION_BAR)
+        super.getActionBar()?.hide()
         setContent {
             val homeScreenViewModel: HomeScreenViewModel = viewModel(
                 factory = viewModelFactory {
