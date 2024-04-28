@@ -34,11 +34,34 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import no.uio.ifi.in2000.team_17.R
 
 
 @Composable
 fun Rocket() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.rakett))
+    var isPlaying by remember {
+        mutableStateOf(true)
+    }
+    val progress by animateLottieCompositionAsState(composition = composition, isPlaying)
+    LaunchedEffect(key1 = progress) {
+        if (progress ==0f){
+            isPlaying = true
+        }
+        if (progress ==1f){
+
+            isPlaying = false
+        }
+    }
+    LottieAnimation(composition = composition, progress = {progress})
+
+    if (isPlaying == false){
+        isPlaying = true
+    }
 
 }
 

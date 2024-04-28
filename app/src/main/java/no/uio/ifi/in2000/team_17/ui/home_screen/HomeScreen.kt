@@ -84,7 +84,10 @@ fun HomeScreen(
             }
         }
     if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Rocket()
+        Box(modifier){
+            Rocket()
+        }
+
     }
     Column(
         Modifier.fillMaxSize(),
