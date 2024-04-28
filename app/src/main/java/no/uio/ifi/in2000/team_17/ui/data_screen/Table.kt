@@ -50,6 +50,7 @@ import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
+import no.uio.ifi.in2000.team_17.ui.calculateColor
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 @Composable
@@ -193,20 +194,7 @@ fun AutoHeightText(
         }
     )
 }
-fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds): Color {
-    return when(type){
-        WeatherParameter.CLOUDFRACTION-> WeatherUseCase.canLaunch(WeatherPointInTime(cloudFraction = value.toDouble()), thresholds)
-        WeatherParameter.GROUNDWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(groundWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.MAXWINDSHEAR -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWindShear = WindShear(value.toDouble())), thresholds)
-        WeatherParameter.MAXWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.RAIN -> WeatherUseCase.canLaunch(WeatherPointInTime(rain = Rain(median = value.toDouble())), thresholds)
-        WeatherParameter.HUMIDITY -> WeatherUseCase.canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
-        WeatherParameter.DEWPOINT -> WeatherUseCase.canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
-        WeatherParameter.FOG -> WeatherUseCase.canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
-        WeatherParameter.DATE -> TrafficLightColor.WHITE
-        WeatherParameter.TIME -> TrafficLightColor.WHITE
-    }.color
-}
+
 
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
@@ -276,7 +264,7 @@ fun GradientRows(
                                 "",
                                 listOf(
                                     Color.White.copy(0.0f),
-                                    calculateColor(row.type, row.data.first(), thresholds)),
+                                    calculateColor(row.type, row.data.first(), thresholds).color),
                             )
                         }
                     }
@@ -301,11 +289,11 @@ fun GradientRows(
                                 InfoBox(dateTimeModifier, data, listOf(Color.Unspecified, Color.Unspecified))
                             }
                             else -> {
-                                val colorNow = calculateColor(row.type, data, thresholds)
+                                val colorNow = calculateColor(row.type, data, thresholds).color
                                 val colorsNow = listOf(colorNow, colorNow)
                                 val colorsAfter = if (i < row.data.size - 1) {
                                     val colorAfter =
-                                        calculateColor(row.type, row.data[i + 1], thresholds)
+                                        calculateColor(row.type, row.data[i + 1], thresholds).color
                                     listOf(colorAfter)
                                 } else {
                                     listOf(Color.White.copy(0.0f))

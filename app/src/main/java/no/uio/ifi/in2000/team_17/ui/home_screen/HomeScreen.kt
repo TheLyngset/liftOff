@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -57,13 +55,9 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Available
-import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
-import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
-import no.uio.ifi.in2000.team_17.model.WindLayer
-import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.Rocket
-import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
+import no.uio.ifi.in2000.team_17.ui.calculateColor
 
 @Composable
 fun HomeScreen(
@@ -97,14 +91,14 @@ fun HomeScreen(
 }
 
 @Composable
-fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { //weatherInfoList: List<Triple<String, Double, String>>
+fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { //weatherInfoList: List<Triple<String, Double, String>>
 
     Box(modifier = Modifier
         .padding(16.dp, 5.dp)
         .fillMaxWidth(),
         contentAlignment = Alignment.TopEnd) {
         Text(
-            text = (homeScreenUiState.weatherPointInTime.temperature.toString() + "°"),
+            text = (uiState.weatherPointInTime.temperature.toString() + "°"),
             style = TextStyle(fontSize = 35.sp),
             color = MaterialTheme.colorScheme.inverseSurface
         )
@@ -129,80 +123,68 @@ fun BottomCard(homeScreenUiState: HomeScreenUiState, windowSizeClass: WindowSize
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LaunchClearanceCard(homeScreenUiState.canLaunch, windowSizeClass)
+            LaunchClearanceCard(uiState.canLaunch, windowSizeClass)
             WeatherCardRow(
                 weatherInfoList = mutableListOf(
                     WeatherInfo(
                         WeatherParameter.GROUNDWIND,
                         "Ground Wind",
-                        homeScreenUiState.weatherPointInTime.groundWind.speed,
+                        uiState.weatherPointInTime.groundWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.groundwind2)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWIND,
                         "Max Wind",
-                        homeScreenUiState.weatherPointInTime.maxWind.speed,
+                        uiState.weatherPointInTime.maxWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.wind)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWINDSHEAR,
                         "Max Shear",
-                        homeScreenUiState.weatherPointInTime.maxWindShear.speed,
+                        uiState.weatherPointInTime.maxWindShear.speed,
                         "m/s",
                         painterResource(id = R.drawable.shearwind)
                     ),
                     WeatherInfo(
                         WeatherParameter.CLOUDFRACTION,
                         "Cloudiness",
-                        homeScreenUiState.weatherPointInTime.cloudFraction,
+                        uiState.weatherPointInTime.cloudFraction,
                         "%",
                         painterResource(id = R.drawable.cloud)
                     ),
                     WeatherInfo(
                         WeatherParameter.RAIN,
-                        "Rain Probability",
-                        homeScreenUiState.weatherPointInTime.rain.probability,
+                        "Rain",
+                        uiState.weatherPointInTime.rain.probability,
                         "%",
                         painterResource(id = R.drawable.rain)
                     ),
                     WeatherInfo(
                         WeatherParameter.HUMIDITY,
                         "Humidity",
-                        homeScreenUiState.weatherPointInTime.humidity,
+                        uiState.weatherPointInTime.humidity,
                         "%",
                         painterResource(id = R.drawable.humidity)
                     ),
                     WeatherInfo(
                         WeatherParameter.FOG,
                         "Fog",
-                        homeScreenUiState.weatherPointInTime.fog,
+                        uiState.weatherPointInTime.fog,
                         "%",
                         painterResource(id = R.drawable.fog)
                     ),
                     WeatherInfo(
                         WeatherParameter.DEWPOINT,
                         "Dew Point",
-                        homeScreenUiState.weatherPointInTime.dewPoint,
+                        uiState.weatherPointInTime.dewPoint,
                         "℃",
-                        painterResource(id = R.drawable.dewpoint)
+                        painterResource(id = R.drawable.dewpoint),
                     ),
-                ).sortedBy { WeatherUseCase.canLaunch(
-                    when(it.type){
-                        WeatherParameter.GROUNDWIND -> WeatherPointInTime(groundWind = WindLayer(it.value))
-                        WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(it.value))
-                        WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(it.value))
-                        WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = it.value)
-                        WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(probability =  it.value))
-                        WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = it.value)
-                        WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = it.value)
-                        WeatherParameter.FOG -> WeatherPointInTime(fog = it.value)
-                        else -> WeatherPointInTime()
-                    }, homeScreenUiState.thresholds
-                ).ordinal },
-                homeScreenUiState.weatherPointInTime.available,
-                homeScreenUiState.thresholds
+                ).sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal },
+                uiState.weatherPointInTime.available,
+                uiState.thresholds
             )
         }
     }
@@ -401,19 +383,7 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
                     value = weatherInfo.value,
                     unit = weatherInfo.unit,
                     image = weatherInfo.image,
-                    color = WeatherUseCase.canLaunch(
-                        when(weatherInfo.type){
-                            WeatherParameter.GROUNDWIND -> WeatherPointInTime(groundWind = WindLayer(weatherInfo.value))
-                            WeatherParameter.MAXWINDSHEAR -> WeatherPointInTime(maxWindShear = WindShear(weatherInfo.value))
-                            WeatherParameter.MAXWIND -> WeatherPointInTime(maxWind = WindLayer(weatherInfo.value))
-                            WeatherParameter.CLOUDFRACTION -> WeatherPointInTime(cloudFraction = weatherInfo.value)
-                            WeatherParameter.RAIN -> WeatherPointInTime(rain = Rain(probability = weatherInfo.value))
-                            WeatherParameter.HUMIDITY -> WeatherPointInTime(humidity = weatherInfo.value)
-                            WeatherParameter.DEWPOINT -> WeatherPointInTime(dewPoint = weatherInfo.value)
-                            WeatherParameter.FOG -> WeatherPointInTime(fog = weatherInfo.value)
-                            else -> WeatherPointInTime()
-                        }, thresholds
-                    ).color
+                    color = calculateColor(weatherInfo.type, weatherInfo.value.toString(), thresholds).color
                 )
             }
         }
