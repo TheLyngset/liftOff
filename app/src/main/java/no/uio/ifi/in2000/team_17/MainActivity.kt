@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,13 +25,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.compose.AppTheme
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
-import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
 
 val Context.thresholdsDataStore: DataStore<Thresholds> by dataStore(
     fileName = "advanced_settings",
@@ -51,26 +47,15 @@ class MainActivity : ComponentActivity() {
         super.getWindow().requestFeature(Window.FEATURE_ACTION_BAR)
         super.getActionBar()?.hide()
         setContent {
-            val homeScreenViewModel: HomeScreenViewModel = viewModel(
+            val splashScreenViewModel: SplashScreenViewModel = viewModel(
                 factory = viewModelFactory {
-                    HomeScreenViewModel(
+                    SplashScreenViewModel(
                         App.appModule.repository,
                         App.appModule.settingsRepository,
-                        App.appModule.thresholdsRepository
                     )
                 }
             )
-            val uiState by homeScreenViewModel.homeScreenUiState.collectAsState()
-
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            LaunchedEffect(true) {
-                delay(5000)
-                snackbarHostState.showSnackbar(
-                    "No internet access"
-                )
-
-            }
+            val uiState by splashScreenViewModel.uiState.collectAsState()
 
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
@@ -100,7 +85,6 @@ class MainActivity : ComponentActivity() {
                     } else {
                         App(
                             windowSizeClass = windowSizeClass,
-                            homeScreenViewModel = homeScreenViewModel
                         )
                     }
                 }

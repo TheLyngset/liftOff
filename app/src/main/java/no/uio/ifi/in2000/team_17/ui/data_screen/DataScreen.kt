@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -52,20 +53,21 @@ enum class Toggle {
 fun DataScreen(
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
-    dataScreenUiState: DataScreenUiState,
+    viewModel: DataScreenViewModel,
     dontShowAgain:()->Unit,
     setTimeIndex: (Int) -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
-    var selectedTimeIndex by rememberSaveable { mutableIntStateOf(dataScreenUiState.selectedTimeIndex) }
-    var showingTimeIndex by rememberSaveable{ mutableIntStateOf(dataScreenUiState.selectedTimeIndex) }
+    var selectedTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
+    var showingTimeIndex by rememberSaveable{ mutableIntStateOf(uiState.selectedTimeIndex) }
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var showSwipe by remember { mutableStateOf(!dataScreenUiState.hasDissmissed) }
+    var showSwipe by remember { mutableStateOf(!uiState.hasDissmissed) }
 
-    if (dataScreenUiState.weatherDataLists.date.size > 1) {
-        selectedTimeIndex = dataScreenUiState.selectedTimeIndex
+    if (uiState.weatherDataLists.date.size > 1) {
+        selectedTimeIndex = uiState.selectedTimeIndex
         //showSwipe = dataScreenUiState.showSwipe.value
     }
     //val configuration = LocalConfiguration.current
@@ -83,7 +85,7 @@ fun DataScreen(
     ) {
         Column{
             SelectTimeCard(
-                dataScreenUiState = dataScreenUiState,
+                dataScreenUiState = uiState,
                 indexToPin = showingTimeIndex
             ) {
                 selectedTimeIndex = it
@@ -97,7 +99,7 @@ fun DataScreen(
                     ) {
                         Table(
                             scrollToItem = scrollToItem,
-                            uiState = dataScreenUiState,
+                            uiState = uiState,
                             selectedIndex = showingTimeIndex,
                             setIndex = {
                                 showingTimeIndex = it
@@ -113,7 +115,7 @@ fun DataScreen(
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                     height = 500*/
                     ThresholdGraph(
-                        dataScreenUiState = dataScreenUiState,
+                        dataScreenUiState = uiState,
                         selectedTimeIndex = showingTimeIndex,
                         windowSizeClass = windowSizeClass
                     ) {

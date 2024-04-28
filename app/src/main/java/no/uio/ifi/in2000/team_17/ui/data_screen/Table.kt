@@ -39,20 +39,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
-import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
-import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
-import no.uio.ifi.in2000.team_17.model.WindLayer
-import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.calculateColor
-import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
-import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
+
 @Composable
 fun Table(
     scrollToItem: Int? = null,

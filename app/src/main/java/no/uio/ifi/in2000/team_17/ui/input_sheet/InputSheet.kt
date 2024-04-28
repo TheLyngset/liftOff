@@ -1,66 +1,51 @@
-package no.uio.ifi.in2000.team_17.ui
+package no.uio.ifi.in2000.team_17.ui.input_sheet
 
-import android.graphics.fonts.FontStyle
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.ai.client.generativeai.type.content
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.Files.append
-import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenUiState
+import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
-import org.w3c.dom.Comment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputSheet(
     modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
+    viewModel: InputSheetViewModel,
     toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
@@ -68,10 +53,11 @@ fun InputSheet(
     onDismiss: () -> Unit,
     sheetState : Boolean
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
             InputSheetContent(
-                homeScreenUiState = homeScreenUiState,
+                uiState = uiState,
                 toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
@@ -87,16 +73,16 @@ fun InputSheet(
 @Composable
 fun InputSheetContent(
     modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
+    uiState: InputSheetUiState,
     toAdvancedSettings:()->Unit,
     setMaxHeight:(String) -> Unit,
     setLat:(String) -> Unit,
     setLng:(String) -> Unit,
     onDismiss:() -> Unit
 ) {
-    var maxHeightText by remember { mutableStateOf(homeScreenUiState.maxHeight.toString()) }
-    var latString by remember { mutableStateOf(homeScreenUiState.latLng.latitude.toString()) }
-    var lngString by remember { mutableStateOf(homeScreenUiState.latLng.longitude.toString()) }
+    var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
+    var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
+    var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
     Box{
         Column(
@@ -196,7 +182,9 @@ fun InputSheetContent(
                         description = "Max height is the maximum possible height the rocket can reach. This wil be the maximum height we wil consider when calculating if the rocket can launch or not."
                     )
                     Box(
-                        Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Button(onClick = { showInfoCard = !showInfoCard }) {
@@ -235,48 +223,4 @@ fun InputTextField(
         ),
         modifier = modifier
     )
-}
-
-
-
-
-@Composable
-fun ConditionalText(modifier: Modifier = Modifier, text: String){
-
-    val minimumLineLength = 1   //Change this to your desired value
-
-    //Adding States
-    var expandedState by remember { mutableStateOf(false) }
-    var showReadMoreButtonState by remember { mutableStateOf(false) }
-    val maxLines = if (expandedState) 200 else minimumLineLength
-
-    Column(modifier) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodySmall,
-            overflow = TextOverflow.Ellipsis,                   //Make sure to add this line
-            maxLines = maxLines,
-            onTextLayout = { textLayoutResult: TextLayoutResult ->
-                if (textLayoutResult.lineCount > minimumLineLength-1) {           //Adding this check to avoid ArrayIndexOutOfBounds Exception
-                    if (textLayoutResult.isLineEllipsized(minimumLineLength-1)) showReadMoreButtonState = true
-                }
-            }
-        )
-        if (showReadMoreButtonState) {
-            Text(
-                text = if (expandedState) "Read Less" else "Read More",
-                color = MaterialTheme.colorScheme.secondary,
-
-                modifier = Modifier.clickable {
-                    expandedState = !expandedState
-                },
-
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.SemiBold
-                )
-
-            )
-        }
-
-    }
 }

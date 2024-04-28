@@ -4,14 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,7 +24,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -37,12 +33,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -51,11 +44,12 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.R
-import no.uio.ifi.in2000.team_17.ui.data_screen.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreen
 import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreen
 import no.uio.ifi.in2000.team_17.ui.home_screen.HomeScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.input_sheet.InputSheet
+import no.uio.ifi.in2000.team_17.ui.input_sheet.InputSheetViewModel
 import no.uio.ifi.in2000.team_17.ui.judicial_screen.JudicialScreen
 import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsScreen
 import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsViewModel
@@ -75,8 +69,6 @@ enum class Screen(val title: String, val logo: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    selectedDate: String,
-    selectedTime: String,
     windowSizeClass: WindowSizeClass,
     logoId: Int,
     onSearchClick: () -> Unit,
@@ -134,19 +126,34 @@ fun AppTopBar(
     }
 }
 
+/**
+ * This is the main composable responsible for navigating between the
+ * screens and creating the viewModels. It consists of a Scaffold composable
+ * with a top and bottom app bar and a InputSheet that can be reached from
+ * every screen in the app.
+ */
 @Composable
 fun App(
     windowSizeClass: WindowSizeClass,
-    homeScreenViewModel: HomeScreenViewModel
 ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
-
-    val navController: NavHostController = rememberNavController()
-    val homeScreenUiState by homeScreenViewModel.homeScreenUiState.collectAsState()
-    val scrollStateVertical = rememberScrollState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
+    val homeScreenViewModel = viewModel<HomeScreenViewModel>(
+        factory = viewModelFactory {
+            HomeScreenViewModel(
+                App.appModule.repository,
+                App.appModule.settingsRepository,
+                App.appModule.thresholdsRepository
+            )
+        }
+    )
+    val inputSheetViewModel = viewModel<InputSheetViewModel>(
+        factory = viewModelFactory {
+            InputSheetViewModel(
+                App.appModule.repository,
+                App.appModule.settingsRepository
+            )
+        }
+    )
     val thresholdsViewModel = viewModel<ThresholdsViewModel>(
         factory = viewModelFactory {
             ThresholdsViewModel(App.appModule.thresholdsRepository)
@@ -161,17 +168,18 @@ fun App(
             )
         }
     )
-    val dataScreenUiState by dataScreenViewModel.dataScreenUiState.collectAsState()
+
+    val navController: NavHostController = rememberNavController()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
     
     BackGroundImage()
+
     Scaffold(
-        // .height(60.dp),
         topBar = {
             AppTopBar(
-                homeScreenUiState.weatherPointInTime.date,
-                homeScreenUiState.weatherPointInTime.time,
                 windowSizeClass,
                 logoId = Screen.Home.logo,
                 onSearchClick = { sheetState = true },
@@ -194,7 +202,7 @@ fun App(
                 }
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         containerColor = Color.Transparent
     ) { innerPadding ->
         NavHost(
@@ -202,7 +210,7 @@ fun App(
             startDestination = Screen.Home.name
         ) {
             composable(route = Screen.Home.name) {
-                HomeScreen(Modifier.padding(innerPadding), homeScreenUiState, windowSizeClass)
+                HomeScreen(Modifier.padding(innerPadding), homeScreenViewModel, windowSizeClass)
             }
             composable(route = Screen.Thresholds.name) {
                 ThresholdsScreen(
@@ -210,7 +218,7 @@ fun App(
                     viewModel = thresholdsViewModel
                 ) {
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
+                        snackBarHostState.showSnackbar(
                             message = "Invalid input"
                         )
                     }
@@ -220,7 +228,7 @@ fun App(
                 DataScreen(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
-                    dataScreenUiState,
+                    viewModel = dataScreenViewModel,
                     dontShowAgain = { dataScreenViewModel.dontShowAgain() }
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
@@ -231,30 +239,30 @@ fun App(
     }
 
     InputSheet(
-        homeScreenUiState = homeScreenUiState,
+        viewModel = inputSheetViewModel,
         toThresholdsScreen = {
             navController.navigate(Screen.Thresholds.name)
             sheetState = false
         },
         setMaxHeight = {
             try {
-                homeScreenViewModel.setMaxHeight(it.toInt())
+                inputSheetViewModel.setMaxHeight(it.toInt())
             } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Max Height") }
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
             }
         },
         setLat = {
             try {
-                homeScreenViewModel.setLat(it.toDouble())
+                inputSheetViewModel.setLat(it.toDouble())
             } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Latitude") }
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
             }
         },
         setLng = {
             try {
-                homeScreenViewModel.setLng(it.toDouble())
+                inputSheetViewModel.setLng(it.toDouble())
             } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackbarHostState.showSnackbar("Invalid Longitude") }
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
             }
         },
         sheetState = sheetState,

@@ -29,7 +29,7 @@ class DataScreenViewModel(
     private val settingsRepo: SettingsRepository,
     private val thresholdsRepository: ThresholdsRepository
 ) : ViewModel() {
-    val dataScreenUiState: StateFlow<DataScreenUiState> = combine(
+    val uiState: StateFlow<DataScreenUiState> = combine(
         repo.weatherDataList,
         settingsRepo.settingsFlow,
         thresholdsRepository.thresholdsFlow

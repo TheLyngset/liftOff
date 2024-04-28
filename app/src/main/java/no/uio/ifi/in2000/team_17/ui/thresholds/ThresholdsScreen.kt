@@ -1,10 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.thresholds
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,18 +27,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.ui.Background
-import no.uio.ifi.in2000.team_17.ui.InputTextField
+import no.uio.ifi.in2000.team_17.ui.input_sheet.InputTextField
 import no.uio.ifi.in2000.team_17.ui.Screen
 import java.lang.NumberFormatException
 
@@ -53,7 +43,7 @@ fun ThresholdsScreen(
     viewModel: ThresholdsViewModel,
     wrongInputFormat:()->Unit
 ){
-    val uiState = viewModel.thresholdsUiState.collectAsState().value
+    val uiState by viewModel.thresholdsUiState.collectAsState()
     //strings for inputfields
     var groundWindSpeedText by remember { mutableStateOf(uiState.groundWindSpeed.toString())}
     var maxWindSpeedText by remember { mutableStateOf(uiState.maxWindSpeed.toString())}
@@ -81,7 +71,9 @@ fun ThresholdsScreen(
         Spacer(modifier = Modifier.height(5.dp))
 
         Row(
-            Modifier.padding(end = 34.dp).fillMaxWidth(),
+            Modifier
+                .padding(end = 34.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -96,7 +88,10 @@ fun ThresholdsScreen(
         }
 
         //Ground wind speed
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             InputTextField(
@@ -122,7 +117,10 @@ fun ThresholdsScreen(
         }
 
         //Max wind speed
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -149,7 +147,10 @@ fun ThresholdsScreen(
         }
 
         //max wind shear
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -175,7 +176,10 @@ fun ThresholdsScreen(
         }
 
         //max cloud fraction
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -199,7 +203,10 @@ fun ThresholdsScreen(
         }
 
         //max fog
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -223,7 +230,10 @@ fun ThresholdsScreen(
         }
 
         //max rain
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -247,7 +257,10 @@ fun ThresholdsScreen(
         }
 
         //max humidity
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -271,7 +284,10 @@ fun ThresholdsScreen(
         }
 
         //max dewPoint
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(
@@ -295,7 +311,10 @@ fun ThresholdsScreen(
         }
 
         //margin
-        Row(Modifier.padding(end = 21.dp).fillMaxWidth(),
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
             InputTextField(

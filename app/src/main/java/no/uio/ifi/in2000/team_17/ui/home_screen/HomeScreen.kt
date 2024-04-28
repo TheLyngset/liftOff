@@ -27,11 +27,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,9 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
@@ -62,18 +60,19 @@ import no.uio.ifi.in2000.team_17.ui.calculateColor
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeScreenUiState: HomeScreenUiState,
+    homeScreenViewModel: HomeScreenViewModel,
     windowSizeClass: WindowSizeClass
 ) {
+    val uiState by homeScreenViewModel.uiState.collectAsState()
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
 
         ) {
-            var date = homeScreenUiState.weatherPointInTime.date
+            var date = uiState.weatherPointInTime.date
             if (date.length < 10) date = "0000-00-00"
-            Text(text = homeScreenUiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
+            Text(text = uiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
             Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
         }
     }
@@ -86,7 +85,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Bottom
     ) {
 
-        BottomCard(homeScreenUiState, windowSizeClass)
+        BottomCard(uiState, windowSizeClass)
     }
 }
 
@@ -281,7 +280,9 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
 @Composable
 fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
     OutlinedCard(
-        modifier = Modifier.size(130.dp).shadow(3.dp, CardDefaults.outlinedShape),
+        modifier = Modifier
+            .size(130.dp)
+            .shadow(3.dp, CardDefaults.outlinedShape),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
             contentColor = MaterialTheme.colorScheme.inverseSurface,
@@ -397,13 +398,4 @@ data class WeatherInfo(
     val unit: String,
     val image: Painter
 )
-
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview
-@Composable
-fun Prehs() {
-    HomeScreen(homeScreenUiState = HomeScreenUiState(), windowSizeClass = WindowSizeClass.calculateFromSize(size = DpSize.Zero)
-    )
-}
 
