@@ -252,7 +252,7 @@ fun App(
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {
-                JudicialScreen(modifier = Modifier.padding(innerPadding))
+                JudicialScreen(modifier = Modifier.padding(innerPadding), windowSizeClass)
             }
         }
     }
@@ -267,6 +267,7 @@ fun App(
         setMaxHeight = {
             try {
                 inputSheetViewModel.setMaxHeight(it.toInt())
+                coroutineScope.launch { snackBarHostState.showSnackbar("Set max height to $it") }
             } catch (e: NumberFormatException) {
                 coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
             }
@@ -274,6 +275,7 @@ fun App(
         setLat = {
             try {
                 inputSheetViewModel.setLat(it.toDouble())
+                coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
             } catch (e: NumberFormatException) {
                 coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
             }
@@ -281,6 +283,7 @@ fun App(
         setLng = {
             try {
                 inputSheetViewModel.setLng(it.toDouble())
+                coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
             } catch (e: NumberFormatException) {
                 coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
             }
