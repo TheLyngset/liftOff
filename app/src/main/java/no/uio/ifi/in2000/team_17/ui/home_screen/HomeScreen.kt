@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -179,7 +180,7 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                     ),
                     WeatherInfo(
                         WeatherParameter.DEWPOINT,
-                        "Dew Point",
+                        stringResource(R.string.dewPoint_title),
                         uiState.weatherPointInTime.dewPoint,
                         "℃",
                         painterResource(id = R.drawable.dewpoint),
@@ -295,14 +296,18 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         border = BorderStroke(2.5.dp, color)
 
     ) {
-        Box(Modifier
-            .fillMaxSize()
-            .padding(2.5.dp),
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(2.5.dp),
             contentAlignment = Alignment.BottomCenter) {
 
             Box(modifier = Modifier
                 .fillMaxWidth()
-                .background(shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp), color = color)
+                .background(
+                    shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
+                    color = color
+                )
                 .height(12.dp))
 
             Column(
