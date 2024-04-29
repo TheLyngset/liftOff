@@ -24,12 +24,14 @@ import no.uio.ifi.in2000.team_17.ui.Background
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.team_17.R
 
 @Composable
 fun JudicialScreen(modifier: Modifier) {
@@ -41,21 +43,21 @@ fun JudicialScreen(modifier: Modifier) {
     ) {
         item {
             Text(
-                text = "Legal",
+                text = stringResource(R.string.legal),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 22.sp
             )
             LegalCard(
-                "IPPC",
-                "Some airspace is restricted to ensure safety and security. Remember to check that your chosen launch site is in legal areas and ask the municipality, landowner, Avinor and the Norwegian Civil Aviation Authority for permission well in advance of launch. ",
-                "Read more: IPPC Avinor",
+                stringResource(R.string.ippcTitle),
+                stringResource(R.string.ippc_description),
+                stringResource(R.string.ippc_readMore),
                 listOf("IPPC Avinor"),
                 listOf("https://www.ippc.no/ippc/index.jsp")
             )
             LegalCard(
-                "Model Rocket Safety Code",
-                "The National Association of Rocketry provides a safety code for the safe development and use of model rockets. Remember that the larger the rocket, the more important safety measures are. So make a good risk assessment!",
-                "Read more: Safety Code NAR",
+                stringResource(R.string.model_rocket_safety_code_title),
+                stringResource(R.string.model_rocket_safety_code_description),
+                stringResource(R.string.model_rocket_safety_code_readMore),
                 listOf("Safety Code NAR"),
                 listOf("https://nar.org/safety-information/model-rocket-safety-code/")
             )

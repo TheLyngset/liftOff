@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">team-17</string>
     <string name="dewPoint_title">Dew Point</string>
+    <string name="legal">Legal</string>
+    <string name="ippcTitle">IPPC</string>
+    <string name="ippc_description">"Some airspace is restricted to ensure safety and security. Remember to check that your chosen launch site is in legal areas and ask the municipality, landowner, Avinor and the Norwegian Civil Aviation Authority for permission well in advance of launch. "</string>
+    <string name="ippc_readMore">Read more: IPPC Avinor</string>
+    <string name="model_rocket_safety_code_title">Model Rocket Safety Code</string>
+    <string name="model_rocket_safety_code_description">The National Association of Rocketry provides a safety code for the safe development and use of model rockets. Remember that the larger the rocket, the more important safety measures are. So make a good risk assessment!</string>
+    <string name="model_rocket_safety_code_readMore">Read more: Safety Code NAR</string>
 </resources>
