@@ -68,6 +68,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3:1.2.1")
 
+    //Lottie animation
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
+
     //noinspection GradleCompatible
     implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
