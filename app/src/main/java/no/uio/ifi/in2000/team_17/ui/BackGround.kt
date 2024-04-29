@@ -1,44 +1,71 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import no.uio.ifi.in2000.team_17.R
 
 
 @Composable
 fun Rocket() {
-    Box(
-        Modifier.fillMaxSize(1f)
-            .padding(vertical = 20.dp)
-            .offset(y = (-40).dp),
-        contentAlignment = Alignment.TopCenter
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.rakett),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .graphicsLayer(
-                    scaleX = 0.27f,
-                    scaleY = 0.47f,
-                    translationY = -132f
-                )
-                .alpha(0.85f)
-        )
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.rakett))
+    var isPlaying by remember {
+        mutableStateOf(true)
     }
+    val progress by animateLottieCompositionAsState(composition = composition, isPlaying)
+    LaunchedEffect(key1 = progress) {
+        if (progress ==0f){
+            isPlaying = true
+        }
+        if (progress ==1f){
+
+            isPlaying = false
+        }
+    }
+    LottieAnimation(composition = composition, progress = {progress})
+
+    if (isPlaying == false){
+        isPlaying = true
+    }
+
 }
+
+
 @Composable
 fun BackGroundImage() {
     Box(modifier = Modifier.fillMaxSize() ){
