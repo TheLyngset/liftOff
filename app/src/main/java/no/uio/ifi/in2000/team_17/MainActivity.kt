@@ -89,14 +89,14 @@ class MainActivity : ComponentActivity() {
                             ElevatedCard {
                                 Box(){
                                     Column(Modifier.padding(16.dp)) {
-                                        Text(text = "No internet connection, make sure you are connected to the internet and relaunch the app")
+                                        Text(text = getString(R.string.no_Internet_Connection))
                                     }
                                     Box(
                                         modifier = Modifier.matchParentSize(),
                                         contentAlignment = Alignment.BottomEnd
                                     ) {
                                         TextButton(onClick = { context.restart() }) {
-                                            Text(text = "Retry")
+                                            Text(text = getString(R.string.retry))
                                         }
                                     }
                                 }

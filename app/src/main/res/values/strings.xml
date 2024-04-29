@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">team-17</string>
     <string name="dewPoint_title">Dew Point</string>
+    <string name="groundWind_title">Ground Wind</string>
+    <string name="maxWind_title">Max Wind</string>
+    <string name="maxShear_title">Max Shear</string>
+    <string name="cloudiness_title">Cloudiness</string>
+    <string name="rain_title">Rain</string>
+    <string name="humidity_title">Humidity</string>
+    <string name="fog_title">Fog</string>
+    <string name="maximum_height_in_km_label">Maximum height in km</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="thresholds_text">Thresholds</string>
+    <string name="conditionalText">When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:</string>
+    <string name="change_thresholds">Change Thresholds</string>
+    <string name="maxHeight_title">Max height</string>
+    <string name="maxHeight_description">Max height is the maximum possible height the rocket can reach. This wil be the maximum height we wil consider when calculating if the rocket can launch or not.</string>
+    <string name="close_Button">Close</string>
+    <string name="no_Internet_Connection">No internet connection, make sure you are connected to the internet and relaunch the app</string>
+    <string name="retry">Retry</string>
 </resources>
