@@ -206,6 +206,7 @@ fun GradientRows(
 ) {
     //Titles and icons Column
     LazyColumn(modifier) {
+
         items(rows) { row ->
             when(row.type){
                 WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
