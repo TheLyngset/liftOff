@@ -167,8 +167,10 @@ fun App(
                 App.appModule.thresholdsRepository
             )
         }
-    )
 
+
+    )
+    //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -229,7 +231,7 @@ fun App(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
-                    dontShowAgain = { dataScreenViewModel.dontShowAgain() }
+
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {

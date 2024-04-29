@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,9 +32,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.Background
 
@@ -54,7 +59,6 @@ fun DataScreen(
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     viewModel: DataScreenViewModel,
-    dontShowAgain:()->Unit,
     setTimeIndex: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,8 +68,15 @@ fun DataScreen(
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var showSwipe by remember { mutableStateOf(!uiState.hasDissmissed) }
+    var graphTutorialIsDismissed by remember{ mutableStateOf(false) }
+    var tableTutorialIsDismissed by remember { mutableStateOf(false) }
+    var waitingForSettings by remember { mutableStateOf(true)}
 
+    LaunchedEffect(Unit ) {
+        delay(500)
+        waitingForSettings = false
+
+    }
     if (uiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = uiState.selectedTimeIndex
         //showSwipe = dataScreenUiState.showSwipe.value
@@ -97,16 +108,30 @@ fun DataScreen(
                         Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Table(
-                            scrollToItem = scrollToItem,
-                            uiState = uiState,
-                            selectedIndex = showingTimeIndex,
-                            setIndex = {
-                                showingTimeIndex = it
-                            },
-                            boxWidth = 70,
-                            dividerPadding = 4,
-                        )
+
+                        Box {
+                            Table(
+                                scrollToItem = scrollToItem,
+                                uiState = uiState,
+                                selectedIndex = showingTimeIndex,
+                                setIndex = {
+                                    showingTimeIndex = it
+                                },
+                                boxWidth = 70,
+                                dividerPadding = 4,
+                            )
+                            if (!tableTutorialIsDismissed && uiState.showTableTutorial && !waitingForSettings) {
+                                GraphInfoDialog(
+                                    onDismiss = { tableTutorialIsDismissed = true },
+                                    onDontShowAgain = {
+                                        tableTutorialIsDismissed = true
+                                        viewModel.dontShowTableTurotialAgain()
+                                    },
+                                    painter = painterResource(id = R.drawable.swipe),
+                                    text = "Scroll left to see more weather data."
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -114,24 +139,39 @@ fun DataScreen(
                 var height = 200
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                     height = 500*/
-                    ThresholdGraph(
-                        dataScreenUiState = uiState,
-                        selectedTimeIndex = showingTimeIndex,
-                        windowSizeClass = windowSizeClass
-                    ) {
-                        showingTimeIndex = it
-                    }
-                    if (showSwipe) {
-                        GraphInfoDialog(
-                            onDismiss = { showSwipe = false },
-                            onDontShowAgain = {
-                                showSwipe = false
-                                dontShowAgain()
-                            },
-                            painter = painterResource(id = R.drawable.swipe),
-                            text = "Scroll left to see more weather data.\nPinch to zoom."
-                        )
-                    }
+                    Box(
+                        modifier
+                            .fillMaxSize()
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(Color.Black, Color.Transparent),
+                                    // Dynamically calculate center
+                                    radius = 400f, // Use the larger dimension to define the radius
+                                )
+
+
+                            )) {
+                        //Box(modifier.fillMaxSize().padding(10.dp, 10.dp)) {
+                            ThresholdGraph(
+                                dataScreenUiState = uiState,
+                                selectedTimeIndex = showingTimeIndex,
+                                windowSizeClass = windowSizeClass
+                            ) {
+                                showingTimeIndex = it
+                            }
+                            if (!graphTutorialIsDismissed && uiState.showGraphTutorial && !waitingForSettings) {
+                                GraphInfoDialog(
+                                    onDismiss = { graphTutorialIsDismissed = true },
+                                    onDontShowAgain = {
+                                        graphTutorialIsDismissed = true
+                                        viewModel.dontShowGraphTurotialAgain()
+                                    },
+                                    painter = painterResource(id = R.drawable.swipe),
+                                    text = "Scroll left to see more weather data.\nPinch to zoom."
+                                )
+                            }
+                        }
+
                 }
             }
         }

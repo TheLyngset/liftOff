@@ -19,5 +19,7 @@ message Settings{
     double lat = 2;
     double lng = 3;
     string time = 4;
-    bool hasDismissed = 5;
+    bool graphShowTutorial = 5;
+    bool tableShowTutorial = 6;
+
 }
