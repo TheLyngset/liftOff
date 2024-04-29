@@ -18,7 +18,7 @@ import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 
 data class SplashScreenUiState(
     val isLoading: Boolean = true,
-    val hasData: Boolean = false
+    val hasData: Boolean = false,
 )
 class SplashScreenViewModel(
     private val repository: Repository,

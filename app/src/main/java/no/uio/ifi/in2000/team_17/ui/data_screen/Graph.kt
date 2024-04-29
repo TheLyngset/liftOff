@@ -76,6 +76,7 @@ import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 
 @Composable
 fun ThresholdGraph(
@@ -225,9 +226,9 @@ fun ThresholdGraph(
     var colorStops: Array<Pair<Float, Color>> =
         arrayOf(0.0f to Color.White, 0.0f to Color.White)
     colorStops = arrayOf(
-        0.0f to Color.Red,
-        0.5f to Color.Yellow,
-        1.0f to Color.Green
+        0.2f to TrafficLightColor.RED.color.copy(1f),
+        0.7f to TrafficLightColor.YELLOW.color.copy(1f),
+        1.0f to TrafficLightColor.GREEN.color.copy(1f)
     )
     val data = LineChartData(
         linePlotData = LinePlotData(
@@ -241,7 +242,7 @@ fun ThresholdGraph(
                     IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
                     SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
                     ShadowUnderLine(
-                        alpha = 0.4f,
+                        alpha = 0.75f,
                         brush = Brush.verticalGradient(
                             colorStops = colorStops
                         )
@@ -338,7 +339,7 @@ fun ThresholdGraph(
                 ),
             )
         ),
-        backgroundColor = Color.Transparent,
+        backgroundColor = Color.White,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
@@ -358,8 +359,7 @@ fun ThresholdGraph(
             LineChart(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((graphHeight).dp)
-                    .background(Color.Transparent),
+                    .height((graphHeight).dp),
                 lineChartData = data,
             )
             if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){

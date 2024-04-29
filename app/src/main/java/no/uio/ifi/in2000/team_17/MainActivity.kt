@@ -36,6 +36,7 @@ import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
 import no.uio.ifi.in2000.team_17.ui.BackGroundImage
 import no.uio.ifi.in2000.team_17.ui.Background
+import no.uio.ifi.in2000.team_17.ui.NoDataScreen
 import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
 
 val Context.thresholdsDataStore: DataStore<Thresholds> by dataStore(
@@ -78,29 +79,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     if (!uiState.hasData) {
                         val context = LocalContext.current
-                        BackGroundImage()
-                        Background()
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            ElevatedCard {
-                                Box(){
-                                    Column(Modifier.padding(16.dp)) {
-                                        Text(text = "No internet connection, make sure you are connected to the internet and relaunch the app")
-                                    }
-                                    Box(
-                                        modifier = Modifier.matchParentSize(),
-                                        contentAlignment = Alignment.BottomEnd
-                                    ) {
-                                        TextButton(onClick = { context.restart() }) {
-                                            Text(text = "Retry")
-                                        }
-                                    }
-                                }
-                            }
+                        NoDataScreen(viewModel = splashScreenViewModel) {
+                            context.restart()
                         }
                     } else {
                         App(
