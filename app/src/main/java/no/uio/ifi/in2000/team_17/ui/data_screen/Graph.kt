@@ -418,7 +418,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     var date = dataScreenUiState.weatherDataLists.date[indexToPin]
                     date = "${date.slice(8..9)}.${date.slice(5..6)}"
                     val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = "Change to: $date kl$time ")
+                    Text(text = "Change to: $date kl. $time ")
                 }
             }
             else{
@@ -432,7 +432,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
-                    onClick = {}) { Text("$date kl$time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
+                    onClick = {}) { Text("$date kl. $time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
 
             }
         }
