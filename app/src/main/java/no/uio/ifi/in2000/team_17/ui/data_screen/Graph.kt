@@ -338,7 +338,7 @@ fun ThresholdGraph(
                 ),
             )
         ),
-        backgroundColor = Color.Transparent,
+        backgroundColor = MaterialTheme.colorScheme.background.copy(1f),
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
@@ -355,12 +355,38 @@ fun ThresholdGraph(
         Column(
             Modifier.fillMaxSize(),
         ){
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.background.copy(0f),
+                                MaterialTheme.colorScheme.background.copy(1f)
+                            )
+                        )
+                    )
+            )
             LineChart(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height((graphHeight).dp)
                     .background(Color.Transparent),
                 lineChartData = data,
+            )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.background.copy(1f),
+                                MaterialTheme.colorScheme.background.copy(0f),
+                            )
+                        )
+                    )
             )
             if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
                 IconButton(onClick = {showInfoBox = !showInfoBox}) {
