@@ -131,49 +131,49 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                 weatherInfoList = mutableListOf(
                     WeatherInfo(
                         WeatherParameter.GROUNDWIND,
-                        "Ground Wind",
+                        stringResource(R.string.groundWind_title),
                         uiState.weatherPointInTime.groundWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.groundwind2)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWIND,
-                        "Max Wind",
+                        stringResource(R.string.maxWind_title),
                         uiState.weatherPointInTime.maxWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.wind)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWINDSHEAR,
-                        "Max Shear",
+                        stringResource(R.string.maxShear_title),
                         uiState.weatherPointInTime.maxWindShear.speed,
                         "m/s",
                         painterResource(id = R.drawable.shearwind)
                     ),
                     WeatherInfo(
                         WeatherParameter.CLOUDFRACTION,
-                        "Cloudiness",
+                        stringResource(R.string.cloudiness_title),
                         uiState.weatherPointInTime.cloudFraction,
                         "%",
                         painterResource(id = R.drawable.cloud)
                     ),
                     WeatherInfo(
                         WeatherParameter.RAIN,
-                        "Rain",
+                        stringResource(R.string.rain_title),
                         uiState.weatherPointInTime.rain.probability,
                         "%",
                         painterResource(id = R.drawable.rain)
                     ),
                     WeatherInfo(
                         WeatherParameter.HUMIDITY,
-                        "Humidity",
+                        stringResource(R.string.humidity_title),
                         uiState.weatherPointInTime.humidity,
                         "%",
                         painterResource(id = R.drawable.humidity)
                     ),
                     WeatherInfo(
                         WeatherParameter.FOG,
-                        "Fog",
+                        stringResource(R.string.fog_title),
                         uiState.weatherPointInTime.fog,
                         "%",
                         painterResource(id = R.drawable.fog)
