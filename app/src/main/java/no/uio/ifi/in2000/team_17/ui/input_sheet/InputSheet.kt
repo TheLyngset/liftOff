@@ -22,8 +22,10 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 
@@ -51,7 +54,9 @@ fun InputSheet(
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
     onDismiss: () -> Unit,
-    sheetState : Boolean
+    sheetState: Boolean,
+    snackbarHostState: SnackbarHostState
+
 ) {
     val uiState by viewModel.uiState.collectAsState()
     if (sheetState) {
@@ -62,6 +67,7 @@ fun InputSheet(
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
+                snackbarHostState = snackbarHostState,
                 onDismiss = {
                     onDismiss()
                 },
@@ -78,12 +84,22 @@ fun InputSheetContent(
     setMaxHeight:(String) -> Unit,
     setLat:(String) -> Unit,
     setLng:(String) -> Unit,
+    snackbarHostState: SnackbarHostState,
     onDismiss:() -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
+    var changeValue by remember { mutableStateOf(false) }
+
+    if (changeValue) {
+        LaunchedEffect(key1 = changeValue) {
+            snackbarHostState.showSnackbar("Value updated")
+            changeValue = false
+        }
+    }
+
     Box{
         Column(
             modifier
@@ -100,8 +116,9 @@ fun InputSheetContent(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     value = maxHeightText,
                     onValueChange = { maxHeightText = it },
-                    label = "Maximum height in km"
-                ) { setMaxHeight(maxHeightText) }
+                    label = "Maximum height in km",
+
+                ) { setMaxHeight(maxHeightText); }
 
                 Box(
                     Modifier.fillMaxWidth(1f),
@@ -124,14 +141,22 @@ fun InputSheetContent(
                     value = latString,
                     onValueChange = { latString = it },
                     label = "Latitude",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+
                 ) { setLat(latString) }
                 InputTextField(
                     value = lngString,
                     onValueChange = { lngString = it },
                     label = "Longitude",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+
                 ) { setLng(lngString) }
+            }
+            if (changeValue) {
+                LaunchedEffect(key1 = changeValue) {
+                    snackbarHostState.showSnackbar("Value updated")
+                    changeValue = false
+                }
             }
             ListItem(
                 modifier = modifier.padding(top = 15.dp),
@@ -197,12 +222,15 @@ fun InputSheetContent(
     }
 }
 
+
+
 @Composable
 fun InputTextField(
     modifier: Modifier = Modifier,
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
+
     onDone: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -219,8 +247,10 @@ fun InputTextField(
             onDone = {
                 keyboardController?.hide()
                 onDone(value)
+
             }
         ),
         modifier = modifier
     )
 }
+

@@ -173,11 +173,47 @@ fun App(
     //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
+    val inputSnackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
-    
+
     BackGroundImage()
+
+
+    InputSheet(
+        viewModel = inputSheetViewModel,
+        toThresholdsScreen = {
+            navController.navigate(Screen.Thresholds.name)
+            sheetState = false
+        },
+        setMaxHeight = {
+            try {
+                inputSheetViewModel.setMaxHeight(it.toInt())
+                coroutineScope.launch { snackBarHostState.showSnackbar("Max Height set to $it")}
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
+            }
+        },
+        setLat = {
+            try {
+                inputSheetViewModel.setLat(it.toDouble())
+                coroutineScope.launch { snackBarHostState.showSnackbar("Latitude set to $it")}
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
+            }
+        },
+        setLng = {
+            try {
+                inputSheetViewModel.setLng(it.toDouble())
+            } catch (e: NumberFormatException) {
+                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
+            }
+        },
+        sheetState = sheetState,
+        onDismiss = { sheetState = false },
+        snackbarHostState = inputSnackbarHostState
+    )
 
     Scaffold(
         topBar = {
@@ -204,7 +240,7 @@ fun App(
                 }
             }
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+
         containerColor = Color.Transparent
     ) { innerPadding ->
         NavHost(
@@ -217,7 +253,16 @@ fun App(
             composable(route = Screen.Thresholds.name) {
                 ThresholdsScreen(
                     Modifier.padding(innerPadding),
-                    viewModel = thresholdsViewModel
+                    viewModel = thresholdsViewModel,
+                    onCorrectInputFormat = {
+                        coroutineScope.launch {
+                            if (snackBarHostState.currentSnackbarData == null) {
+                                snackBarHostState.showSnackbar(
+                                    message = it
+                                )
+                            }
+                        }
+                    },
                 ) {
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
@@ -239,37 +284,9 @@ fun App(
             }
         }
     }
+    SnackbarHost(snackBarHostState)
 
-    InputSheet(
-        viewModel = inputSheetViewModel,
-        toThresholdsScreen = {
-            navController.navigate(Screen.Thresholds.name)
-            sheetState = false
-        },
-        setMaxHeight = {
-            try {
-                inputSheetViewModel.setMaxHeight(it.toInt())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
-            }
-        },
-        setLat = {
-            try {
-                inputSheetViewModel.setLat(it.toDouble())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
-            }
-        },
-        setLng = {
-            try {
-                inputSheetViewModel.setLng(it.toDouble())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
-            }
-        },
-        sheetState = sheetState,
-        onDismiss = { sheetState = false }
-    )
+
 }
 
 @Composable

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +42,7 @@ import java.lang.NumberFormatException
 fun ThresholdsScreen(
     modifier: Modifier = Modifier,
     viewModel: ThresholdsViewModel,
+    onCorrectInputFormat: (String) -> Unit,
     wrongInputFormat:()->Unit
 ){
     val uiState by viewModel.thresholdsUiState.collectAsState()
@@ -54,6 +56,7 @@ fun ThresholdsScreen(
     var humidityText by remember { mutableStateOf(uiState.humidity.toString())}
     var dewPointText by remember { mutableStateOf(uiState.dewPoint.toString())}
     var marginText by remember { mutableStateOf(uiState.margin.toString())}
+
 
     val state = rememberScrollState()
     val defaults = ThresholdsSerializer.defaultValue
@@ -97,16 +100,19 @@ fun ThresholdsScreen(
             InputTextField(
                 value = groundWindSpeedText,
                 onValueChange = { groundWindSpeedText = it },
-                label = "Max ground wind speed"
+                label = "Max ground wind speed",
+
             ) {
                 val newValue = try {
                     it.toDouble()
+
                 } catch (e: NumberFormatException) {
                     wrongInputFormat()
                     uiState.groundWindSpeed
                 }
                 viewModel.setGroundWind(newValue)
                 groundWindSpeedText = newValue.toString()
+                onCorrectInputFormat("Max ground wind speed was set to $groundWindSpeedText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset("groundWind")
@@ -126,7 +132,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = maxWindSpeedText,
                 onValueChange = { maxWindSpeedText = it },
-                label = "Max air wind speed"
+                label = "Max air wind speed",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -136,6 +143,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setMaxWind(newValue)
                 maxWindSpeedText = newValue.toString()
+                onCorrectInputFormat("Max air wind speed was set to $maxWindSpeedText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset("maxWind")
@@ -156,7 +164,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = maxWindShearText,
                 onValueChange = { maxWindShearText = it },
-                label = "Max wind shear"
+                label = "Max wind shear",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -166,6 +175,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setMaxWindShear(newValue)
                 maxWindShearText = newValue.toString()
+                onCorrectInputFormat("Max wind shear was set to $maxWindShearText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset("maxShear")
@@ -185,7 +195,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = cloudFractionText,
                 onValueChange = { cloudFractionText = it },
-                label = "Max cloud fraction in percent"
+                label = "Max cloud fraction in percent",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -195,6 +206,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setCloudFraction(newValue)
                 cloudFractionText = newValue.toString()
+                onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText %")
             }
             IconButton(onClick = {viewModel.reset("cloud")
                 cloudFractionText = defaults.cloudFraction.toString()}) {
@@ -212,7 +224,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = fogText,
                 onValueChange = { fogText = it },
-                label = "Max fog"
+                label = "Max fog",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -222,6 +235,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setFog(newValue)
                 fogText = newValue.toString()
+                onCorrectInputFormat("Max fog was set to $fogText")
             }
             IconButton(onClick = {viewModel.reset("fog")
                 fogText = defaults.fog.toString()}) {
@@ -239,7 +253,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = rainText,
                 onValueChange = { rainText = it },
-                label = "Max rain probability"
+                label = "Max rain probability",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -249,6 +264,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setRain(newValue)
                 rainText = newValue.toString()
+                onCorrectInputFormat("Max rain probability was set to $rainText %")
             }
             IconButton(onClick = {viewModel.reset("rain")
                 rainText = defaults.rain.toString()}) {
@@ -266,7 +282,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = humidityText,
                 onValueChange = { humidityText = it },
-                label = "Max humidity"
+                label = "Max humidity",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -276,6 +293,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setHumiditiy(newValue)
                 humidityText = newValue.toString()
+                onCorrectInputFormat("Max humidity was set to $humidityText %")
             }
             IconButton(onClick = {viewModel.reset("humidity")
                 humidityText = defaults.humidity.toString()}) {
@@ -293,7 +311,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = dewPointText,
                 onValueChange = { dewPointText = it },
-                label = "Max Dew Point"
+                label = "Max Dew Point",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -303,6 +322,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setDewPoint(newValue)
                 dewPointText = newValue.toString()
+                onCorrectInputFormat("Max Dew Point was set to $dewPointText")
             }
             IconButton(onClick = {viewModel.reset("dewPoint")
                 dewPointText = defaults.dewPoint.toString()}) {
@@ -320,7 +340,8 @@ fun ThresholdsScreen(
             InputTextField(
                 value = marginText,
                 onValueChange = { marginText = it },
-                label = "Safety margin"
+                label = "Safety margin",
+
             ) {
                 val newValue = try {
                     it.toDouble()
@@ -330,6 +351,7 @@ fun ThresholdsScreen(
                 }
                 viewModel.setMargin(newValue)
                 marginText = newValue.toString()
+                onCorrectInputFormat("Safety margin was set to $marginText")
             }
             IconButton(onClick = {viewModel.reset("margin")
                 marginText = defaults.margin.toString()}) {
@@ -349,6 +371,7 @@ fun ThresholdsScreen(
                 humidityText = defaults.humidity.toString()
                 dewPointText = defaults.dewPoint.toString()
                 marginText = defaults.margin.toString()
+                onCorrectInputFormat("All thresholds were reset")
 
             }) {
                 Text(text = "Reset All")
