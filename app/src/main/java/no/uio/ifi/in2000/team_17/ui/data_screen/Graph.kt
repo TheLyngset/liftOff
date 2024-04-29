@@ -358,7 +358,7 @@ fun ThresholdGraph(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(20.dp)
+                    .height(30.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(
@@ -859,17 +859,7 @@ val dummyData: WeatherDataLists = WeatherDataLists(
 )
 val dummyThreasholds: Thresholds = Thresholds.getDefaultInstance()
 
-/*
-@Composable
-@Preview
-fun pre() {
-    SingleLineChartWithGridLines(data, data1)
-}
 
- */
 
-@Composable
-@Preview(showBackground = true)
-fun PreD() {
-    //ThresholdGraph(dummyData, dummyThreasholds)
-}
+
+

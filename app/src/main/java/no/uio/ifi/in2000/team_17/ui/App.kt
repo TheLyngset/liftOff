@@ -167,8 +167,6 @@ fun App(
                 App.appModule.thresholdsRepository
             )
         }
-
-
     )
     //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
     val navController: NavHostController = rememberNavController()
