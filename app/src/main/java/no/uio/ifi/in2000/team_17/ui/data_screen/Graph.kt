@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,6 +70,7 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.AvailableIndexes
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
@@ -289,50 +291,50 @@ fun ThresholdGraph(
                     pointsGroundWind,
                     Color.Black,
                     false,
-                    "Ground Wind"
+                    stringResource(R.string.ground_wind)
                 ),
                 createLine(
                     pointsMaxAirWind,
                     Color(0XFFFFE500),
                     false,
-                    "Max Air Wind"
+                    stringResource(R.string.max_air_wind)
                 ),
                 createLine(
                     pointsMaxWindShear,
                     Color(0XFFFF7A00),
                     false,
-                    "Shear Wind"
+                    stringResource(R.string.shear_wind)
                 ),
                 createLine(
                     pointsCloudFraction,
                     Color.Cyan,
                     false,
-                    "Could Coverage"
+                    stringResource(R.string.could_coverage)
                 ),
                 createLine(
                     pointsMedianRain,
                     Color.Magenta,
                     false,
-                    "Rain"
+                    stringResource(R.string.rain)
                 ),
                 createLine(
                     pointsFog,
                     Color(0XFF9E00FF),
                     false,
-                    "Fog"
+                    stringResource(R.string.fog)
                 ),
                 createLine(
                     pointsHumidity,
                     Color.Blue,
                     false,
-                    "Humidity"
+                    stringResource(R.string.humidity)
 
                 ),
                 createLine(
                     pointsDewPoint,
                     Color.Green,
                     false,
-                    "Dew Point"
+                    stringResource(R.string.dew_point)
                 ),
             )
         ),
@@ -406,7 +408,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "On Home screen:", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(text = stringResource(R.string.on_home_screen), color = MaterialTheme.colorScheme.onPrimaryContainer)
             if (dataScreenUiState.selectedTimeIndex != indexToPin) {
                 Button(
                     modifier = Modifier.width(250.dp),
@@ -418,7 +420,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     var date = dataScreenUiState.weatherDataLists.date[indexToPin]
                     date = "${date.slice(8..9)}.${date.slice(5..6)}"
                     val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = "Change to: $date kl. $time ")
+                    Text(text = stringResource(R.string.change_to_kl, date, time))
                 }
             }
             else{
@@ -432,7 +434,7 @@ fun SelectTimeCard(dataScreenUiState: DataScreenUiState, indexToPin: Int, setTim
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
-                    onClick = {}) { Text("$date kl. $time", color = MaterialTheme.colorScheme.onPrimaryContainer) }
+                    onClick = {}) { Text(stringResource(R.string.dateTime, date, time), color = MaterialTheme.colorScheme.onPrimaryContainer) }
 
             }
         }
@@ -504,7 +506,7 @@ fun GraphInfoDialog(
                         onClick = { onDontShowAgain() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Don't show again")
+                        Text(stringResource(R.string.dont_show_again))
                     }
                 }
             }
@@ -518,7 +520,7 @@ fun LastUpdated(lastUpdated: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
-        Text("Last updated at $lastUpdated UTC+2 ", textAlign = TextAlign.Right)
+        Text(stringResource(R.string.last_updated_at_utc_2, lastUpdated), textAlign = TextAlign.Right)
     }
 }
 
@@ -541,7 +543,7 @@ fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
               border = BorderStroke(1.dp, Color.Black)
              */
         ) {
-            Text("Pin $dateTime to homescreen")
+            Text(stringResource(R.string.pin_to_homescreen, dateTime))
         }
     }
     if (alreadyPinned) {
@@ -585,7 +587,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                                 drawCircle(color = Color.Black)
                             })
                             Text(
-                                text = " Max Wind (ground) ",
+                                text = stringResource(R.string.max_wind_ground),
                                 style = TextStyle(color = Color.Black)
                             )
                         }
@@ -594,7 +596,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                                 drawCircle(color = Color(0XFFFFE500))
                             })
                             Text(
-                                text = " Max Wind (altitude) ",
+                                text = stringResource(R.string.max_wind_altitude),
                                 style = TextStyle(color = Color.Black)
                             )
                         }
@@ -604,7 +606,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                                 .padding(bottom = 2.dp), onDraw = {
                                 drawCircle(color = Color(0XFFFF7A00))
                             })
-                            Text(text = " Max Shear Wind", style = TextStyle(color = Color.Black))
+                            Text(text = stringResource(R.string.max_shear_wind), style = TextStyle(color = Color.Black))
                         }
                     }
 
@@ -639,7 +641,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
                                 drawCircle(color = Color.Red)
                             })*/
                             //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
-                            Text(text = "  Threshold Line ", style = TextStyle(color = Color.Black))
+                            Text(text = stringResource(R.string.threshold_line), style = TextStyle(color = Color.Black))
                         }
                     }
 
