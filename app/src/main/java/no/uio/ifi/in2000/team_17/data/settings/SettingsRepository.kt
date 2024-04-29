@@ -21,7 +21,10 @@ class SettingsRepository(private val settingsStore: DataStore<Settings>) {
     suspend fun setTime(time: String){
         settingsStore.updateData { it.toBuilder().setTime(time).build() }
     }
-    suspend fun setHasDissmissed(hasDissmissed: Boolean){
-        settingsStore.updateData { it.toBuilder().setHasDismissed(hasDissmissed).build() }
+    suspend fun setGraphShowTutorial(show: Boolean){
+        settingsStore.updateData { it.toBuilder().setGraphShowTutorial(show).build() }
+    }
+    suspend fun setTableShowTutorial(show: Boolean){
+        settingsStore.updateData { it.toBuilder().setTableShowTutorial(show).build() }
     }
 }

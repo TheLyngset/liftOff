@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.App
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
@@ -20,7 +21,8 @@ data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
     val selectedTimeIndex: Int = 0,
-    val hasDissmissed: Boolean = false,
+    val showGraphTutorial: Boolean = true,
+    val showTableTutorial: Boolean = true,
 
 )
 
@@ -38,7 +40,7 @@ class DataScreenViewModel(
             weatherDataList,
             thresholds,
             SaveTimeUseCase.timeStringToIndex(settings.time),
-            settings.hasDismissed
+            settings.graphShowTutorial, settings.tableShowTutorial
         )
     }.stateIn(
         viewModelScope,
@@ -49,7 +51,16 @@ class DataScreenViewModel(
     fun setTimeIndex(index: Int) {
         viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
-    fun dontShowAgain(){
-        viewModelScope.launch { settingsRepo.setHasDissmissed(true) }
+    fun dontShowTableTurotialAgain(){
+        viewModelScope.launch { settingsRepo.setTableShowTutorial(false) }
+    }
+    fun dontShowGraphTurotialAgain(){
+        viewModelScope.launch { settingsRepo.setGraphShowTutorial(false) }
+    }
+    fun resetShowTutorial(){
+        viewModelScope.launch {
+            settingsRepo.setGraphShowTutorial(true)
+            settingsRepo.setTableShowTutorial(true)
+        }
     }
 }
