@@ -64,4 +64,9 @@
     <string name="max_dew_point_description">Max Dew Point is the maximum dew point temperature in ℃ for which it is safe to launch the rocket</string>
     <string name="safety_margin_title">Safety margin</string>
     <string name="safety_margin_description">"Safety margin is how much of the threshold is colored Green and Yellow for each Threshold. For example a Threshold of 10.0 with the Margin set to 0.6 wil be colored green until 6.o, yellow until 10.0 and red for anything above 10 "</string>
+    <string name="max_ground_wind_speed_label">Max ground wind speed</string>
+    <string name="max_air_wind_speed_label">Max air wind speed</string>
+    <string name="max_cloud_fraction_in_percent">Max cloud fraction in percent</string>
+    <string name="max_rain_probability">Max rain probability</string>
+    <string name="reset_all">Reset All</string>
 </resources>
