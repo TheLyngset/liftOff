@@ -281,7 +281,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
 fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
     OutlinedCard(
         modifier = Modifier
-            .size(130.dp)
+            .size(width = 130.dp, height = 130.dp)
             .shadow(3.dp, CardDefaults.outlinedShape),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
@@ -291,16 +291,22 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         ),
         border = BorderStroke(2.5.dp, color)
 
-
     ) {
-        Box(Modifier.fillMaxSize()
-            ,
+        Box(Modifier
+            .fillMaxSize()
+            .padding(2.5.dp),
             contentAlignment = Alignment.BottomCenter) {
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .background(shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp), color = color)
+                .height(12.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
