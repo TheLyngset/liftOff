@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.Background
@@ -129,7 +130,7 @@ fun DataScreen(
                                 dontShowAgain()
                             },
                             painter = painterResource(id = R.drawable.swipe),
-                            text = "Scroll left to see more weather data.\nPinch to zoom."
+                            text = stringResource(R.string.infoDialog)
                         )
                     }
                 }
@@ -148,7 +149,7 @@ fun DataScreen(
         ){
             if (toggleState == Toggle.TABLE) {
                 TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
-                    Text(text = "Now")
+                    Text(text = stringResource(R.string.now))
                 }
             }
             ToggleButton {
@@ -159,7 +160,7 @@ fun DataScreen(
             }
             if (toggleState == Toggle.TABLE) {
                 TextButton(modifier = Modifier.width(80.dp),onClick = {scrollToItem = selectedTimeIndex}) {
-                    Text("Selected")
+                    Text(stringResource(R.string.selected))
                 }
             }
             if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(50.dp)) {} }
