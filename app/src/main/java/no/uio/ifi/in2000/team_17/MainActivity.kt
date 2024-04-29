@@ -6,24 +6,15 @@ import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
@@ -34,9 +25,7 @@ import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
-import no.uio.ifi.in2000.team_17.ui.BackGroundImage
-import no.uio.ifi.in2000.team_17.ui.Background
-import no.uio.ifi.in2000.team_17.ui.NoDataScreen
+import no.uio.ifi.in2000.team_17.ui.splash_screen.NoDataScreen
 import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
 
 val Context.thresholdsDataStore: DataStore<Thresholds> by dataStore(

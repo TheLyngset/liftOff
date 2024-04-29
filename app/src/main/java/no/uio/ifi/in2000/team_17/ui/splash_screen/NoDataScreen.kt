@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.ui
+package no.uio.ifi.in2000.team_17.ui.splash_screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,9 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import no.uio.ifi.in2000.team_17.restart
-import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
+import no.uio.ifi.in2000.team_17.ui.BackGroundImage
+import no.uio.ifi.in2000.team_17.ui.Background
 
 @Composable
 fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
