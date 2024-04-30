@@ -54,10 +54,9 @@ class MainActivity : ComponentActivity() {
             )
             val uiState by splashScreenViewModel.uiState.collectAsState()
 
-            val inputSheetViewModel = viewModel<InputSheetViewModel>(
+/*            val inputSheetViewModel = viewModel<InputSheetViewModel>(
                 factory = viewModelFactory {
                     InputSheetViewModel(
-                        App.appModule.repository,
                         App.appModule.settingsRepository
                     )
                 }
@@ -66,6 +65,8 @@ class MainActivity : ComponentActivity() {
             //Tror dette fikser krashingen, Men er ikke sikker. kommenter ut etter den er kjørt
             inputSheetViewModel.setLat(59.0)
             inputSheetViewModel.setLng(11.0)
+            inputSheetViewModel.setLat(59.0)
+            inputSheetViewModel.setLng(11.0)*/
 
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
