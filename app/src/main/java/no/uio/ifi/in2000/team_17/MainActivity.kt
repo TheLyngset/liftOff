@@ -63,8 +63,9 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-           /* inputSheetViewModel.setLat(59.0)
-            inputSheetViewModel.setLng(11.0)*/
+            //Tror dette fikser krashingen, Men er ikke sikker. kommenter ut etter den er kjørt
+            inputSheetViewModel.setLat(59.0)
+            inputSheetViewModel.setLng(11.0)
 
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
