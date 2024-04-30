@@ -84,15 +84,9 @@ fun DataScreen(
     //val configuration = LocalConfiguration.current
 
     Background()
-    val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-        30.dp
-    }else{
-        55.dp
-    }
     Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = bottomPadding),
     ) {
         Column{
             SelectTimeCard(
@@ -109,7 +103,7 @@ fun DataScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        Box {
+                        Box(Modifier.padding(bottom = 30.dp)) {
                             Table(
                                 scrollToItem = scrollToItem,
                                 uiState = uiState,
@@ -140,7 +134,7 @@ fun DataScreen(
                 if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
                     height = 500*/
                     Box(
-                        modifier
+                        Modifier
                             .fillMaxSize()
                             .background(
                                 brush = Brush.radialGradient(
@@ -148,9 +142,8 @@ fun DataScreen(
                                     // Dynamically calculate center
                                     radius = 400f, // Use the larger dimension to define the radius
                                 )
-
-
-                            )) {
+                            )
+                            ) {
                         //Box(modifier.fillMaxSize().padding(10.dp, 10.dp)) {
                             ThresholdGraph(
                                 dataScreenUiState = uiState,

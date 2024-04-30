@@ -25,6 +25,7 @@ import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
+import no.uio.ifi.in2000.team_17.ui.input_sheet.InputSheetViewModel
 import no.uio.ifi.in2000.team_17.ui.splash_screen.NoDataScreen
 import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
 
@@ -53,6 +54,18 @@ class MainActivity : ComponentActivity() {
             )
             val uiState by splashScreenViewModel.uiState.collectAsState()
 
+            val inputSheetViewModel = viewModel<InputSheetViewModel>(
+                factory = viewModelFactory {
+                    InputSheetViewModel(
+                        App.appModule.repository,
+                        App.appModule.settingsRepository
+                    )
+                }
+            )
+
+           /* inputSheetViewModel.setLat(59.0)
+            inputSheetViewModel.setLng(11.0)*/
+
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
                     uiState.isLoading
@@ -66,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    if (!uiState.hasData) {
+                    if (false) {
                         val context = LocalContext.current
                         NoDataScreen(viewModel = splashScreenViewModel) {
                             context.restart()

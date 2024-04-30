@@ -170,10 +170,10 @@ fun App(
                 App.appModule.thresholdsRepository
             )
         }
-
-
     )
-    //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
+
+    //dataScreenViewModel.resetShowTutorial()
+
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -274,16 +274,28 @@ fun App(
         },
         setLat = {
             try {
-                inputSheetViewModel.setLat(it.toDouble())
-                coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
+                val lat = it.toDouble()
+                if(58 < lat && lat < 64.25){
+                    inputSheetViewModel.setLat(it.toDouble())
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
+                }
+                else{
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude, it must be between 58.0 and 64.24") }
+                }
             } catch (e: NumberFormatException) {
                 coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
             }
         },
         setLng = {
             try {
-                inputSheetViewModel.setLng(it.toDouble())
-                coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
+                val lng = it.toDouble()
+                if(4 < lng && lng < 12.5){
+                    inputSheetViewModel.setLng(lng)
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
+                }
+                else{
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid longitude, it must be between 4.0 and 12.5") }
+                }
             } catch (e: NumberFormatException) {
                 coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
             }

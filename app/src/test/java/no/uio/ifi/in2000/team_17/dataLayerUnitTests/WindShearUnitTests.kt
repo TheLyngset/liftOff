@@ -21,7 +21,7 @@ class WindShearUnitTests {
 
         val result = calculateWindShear(s_0, d_0, s_1, d_1)
 
-        assertEquals(0.0, result, 0.01)
+        assertEquals(0.0, result, 0.001)
     }
 
     // Test that the function returns the correct value for different speeds and directions

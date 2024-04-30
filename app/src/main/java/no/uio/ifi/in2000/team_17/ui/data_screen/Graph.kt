@@ -595,7 +595,7 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
     ElevatedCard(
         modifier
             .fillMaxWidth()
-            .padding(bottom = 30.dp),
+            .padding(bottom = 8.dp),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
