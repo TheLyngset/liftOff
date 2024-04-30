@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team_17.data
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +9,13 @@ import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
-import no.uio.ifi.in2000.team_17.model.IsoBaricModel
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-import no.uio.ifi.in2000.team_17.model.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Properties
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
