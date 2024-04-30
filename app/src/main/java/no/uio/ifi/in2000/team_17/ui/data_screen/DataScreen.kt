@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
@@ -72,6 +76,8 @@ fun DataScreen(
     var tableTutorialIsDismissed by remember { mutableStateOf(false) }
     var waitingForSettings by remember { mutableStateOf(true)}
 
+    var showInfoBox by remember { mutableStateOf(true) }
+
     LaunchedEffect(Unit ) {
         delay(500)
         waitingForSettings = false
@@ -104,74 +110,52 @@ fun DataScreen(
             }
             when (toggleState) {
                 Toggle.TABLE -> {
-                    Column(
-                        Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Box {
-                            Table(
-                                scrollToItem = scrollToItem,
-                                uiState = uiState,
-                                selectedIndex = showingTimeIndex,
-                                setIndex = {
-                                    showingTimeIndex = it
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Table(
+                            scrollToItem = scrollToItem,
+                            uiState = uiState,
+                            selectedIndex = showingTimeIndex,
+                            setIndex = {
+                                showingTimeIndex = it
+                            },
+                            boxWidth = 70,
+                            dividerPadding = 4,
+                        )
+                        if (!tableTutorialIsDismissed && uiState.showTableTutorial && !waitingForSettings) {
+                            GraphInfoDialog(
+                                onDismiss = { tableTutorialIsDismissed = true },
+                                onDontShowAgain = {
+                                    tableTutorialIsDismissed = true
+                                    viewModel.dontShowTableTurotialAgain()
                                 },
-                                boxWidth = 70,
-                                dividerPadding = 4,
+                                painter = painterResource(id = R.drawable.swipe),
+                                text = "Scroll left to see more weather data."
                             )
-                            if (!tableTutorialIsDismissed && uiState.showTableTutorial && !waitingForSettings) {
-                                GraphInfoDialog(
-                                    onDismiss = { tableTutorialIsDismissed = true },
-                                    onDontShowAgain = {
-                                        tableTutorialIsDismissed = true
-                                        viewModel.dontShowTableTurotialAgain()
-                                    },
-                                    painter = painterResource(id = R.drawable.swipe),
-                                    text = "Scroll left to see more weather data."
-                                )
-                            }
                         }
                     }
                 }
 
-                Toggle.GRAPH -> {/*
-                var height = 200
-                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                    height = 500*/
-                    Box(
-                        modifier
-                            .fillMaxSize()
-                            .background(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(Color.Black, Color.Transparent),
-                                    // Dynamically calculate center
-                                    radius = 400f, // Use the larger dimension to define the radius
-                                )
-
-
-                            )) {
-                        //Box(modifier.fillMaxSize().padding(10.dp, 10.dp)) {
-                            ThresholdGraph(
-                                dataScreenUiState = uiState,
-                                selectedTimeIndex = showingTimeIndex,
-                                windowSizeClass = windowSizeClass
-                            ) {
-                                showingTimeIndex = it
-                            }
-                            if (!graphTutorialIsDismissed && uiState.showGraphTutorial && !waitingForSettings) {
-                                GraphInfoDialog(
-                                    onDismiss = { graphTutorialIsDismissed = true },
-                                    onDontShowAgain = {
-                                        graphTutorialIsDismissed = true
-                                        viewModel.dontShowGraphTurotialAgain()
-                                    },
-                                    painter = painterResource(id = R.drawable.swipe),
-                                    text = "Scroll left to see more weather data.\nPinch to zoom."
-                                )
-                            }
-                        }
-
+                Toggle.GRAPH -> {
+                    ThresholdGraph(
+                        dataScreenUiState = uiState,
+                        selectedTimeIndex = showingTimeIndex,
+                        windowSizeClass = windowSizeClass,
+                        showInfoBox = showInfoBox,
+                        closeInfoBox = {showInfoBox = false}
+                    ) {
+                        showingTimeIndex = it
+                    }
+                    if (!graphTutorialIsDismissed && uiState.showGraphTutorial && !waitingForSettings) {
+                        GraphInfoDialog(
+                            onDismiss = { graphTutorialIsDismissed = true },
+                            onDontShowAgain = {
+                                graphTutorialIsDismissed = true
+                                viewModel.dontShowGraphTurotialAgain()
+                            },
+                            painter = painterResource(id = R.drawable.swipe),
+                            text = "Scroll left to see more weather data.\nPinch to zoom."
+                        )
+                    }
                 }
             }
         }
@@ -191,6 +175,11 @@ fun DataScreen(
                     Text(text = "Now")
                 }
             }
+            else{
+                IconButton(modifier = Modifier.width(50.dp),onClick = {showInfoBox = !showInfoBox}) {
+                    Icon(Icons.Outlined.Info, "info")
+                }
+            }
             ToggleButton {
                 when (it) {
                     0 -> toggleState = Toggle.TABLE
@@ -201,6 +190,8 @@ fun DataScreen(
                 TextButton(modifier = Modifier.width(80.dp),onClick = {scrollToItem = selectedTimeIndex}) {
                     Text("Selected")
                 }
+            }else{
+                Box(modifier = Modifier.width(50.dp))
             }
             if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(50.dp)) {} }
         }

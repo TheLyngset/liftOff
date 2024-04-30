@@ -3,7 +3,6 @@ package no.uio.ifi.in2000.team_17.ui.data_screen
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,11 +16,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,10 +33,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -49,10 +42,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
@@ -82,7 +73,9 @@ fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
     selectedTimeIndex: Int,
     windowSizeClass: WindowSizeClass,
+    showInfoBox: Boolean,
     modifier: Modifier = Modifier,
+    closeInfoBox:()-> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -348,74 +341,34 @@ fun ThresholdGraph(
         containerPaddingEnd = 2.dp,
     )
 
-    //PinDateTime(false, "//dateTime//")
-    var showInfoBox by remember { mutableStateOf(false) }
     BoxWithConstraints(contentAlignment = Alignment.BottomStart) {
-        val graphHeight = (maxHeight.value*0.85)
+        val graphHeight = (maxHeight.value - 60)
         Column(
             Modifier.fillMaxSize(),
         ){
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(30.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.background.copy(0f),
-                                MaterialTheme.colorScheme.background.copy(1f)
-                            )
-                        )
-                    )
-            )
+                Modifier.fillMaxWidth().height(30.dp)
+                    .background(brush = Brush.verticalGradient(
+                        listOf(MaterialTheme.colorScheme.background.copy(0f), MaterialTheme.colorScheme.background.copy(1f))
+                    )))
             LineChart(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((graphHeight).dp)
+                    .height(graphHeight.dp)
                     .background(Color.Transparent),
                 lineChartData = data,
             )
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(20.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.background.copy(1f),
-                                MaterialTheme.colorScheme.background.copy(0f),
-                            )
-                        )
-                    )
-            )
-            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-                IconButton(onClick = {showInfoBox = !showInfoBox}) {
-                    Icon(Icons.Outlined.Info, "info")
-                }
-            }
+                Modifier.fillMaxWidth().height(20.dp).background(
+                    brush = Brush.verticalGradient(
+                            listOf(MaterialTheme.colorScheme.background.copy(1f), MaterialTheme.colorScheme.background.copy(0f),)
+                        )))
         }
+        val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) 30.dp else 0.dp
         if(showInfoBox){
-            InfoBox(lastUpdated = lastUpdated) {
-                showInfoBox = false
+            InfoBox(lastUpdated = lastUpdated, bottomPadding = bottomPadding) {
+                closeInfoBox()
             }
-        }
-        if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){
-            IconButton(onClick = {showInfoBox = !showInfoBox}) {
-                Icon(Icons.Outlined.Info, "info")
-            }
-        }
-    }
-}
-
-@Composable
-fun InfoRow(modifier: Modifier = Modifier, lastUpdated: String, flipShowInfoBox:()->Unit) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = { flipShowInfoBox() }) {
-            Icon(Icons.Outlined.Info, "Info")
         }
     }
 }
@@ -550,52 +503,14 @@ fun LastUpdated(lastUpdated: String) {
     }
 }
 
-@Composable
-fun PinDateTime(alreadyPinned: Boolean, dateTime: String) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp, 0.dp, 0.dp, 2.dp),
-    ) {
-        Button(
-            onClick = { registerPinDateTimeToHome(alreadyPinned) },
-            /*  colors = ButtonColors(
-                  containerColor = Color(0xFF9DDDF9),
-                  contentColor = Color.Black,
-                  disabledContainerColor = Color.Unspecified,
-                  disabledContentColor = Color.Black,
-              ),
-              border = BorderStroke(1.dp, Color.Black)
-             */
-        ) {
-            Text(stringResource(R.string.pin_to_homescreen, dateTime))
-        }
-    }
-    if (alreadyPinned) {
-        Dialog(onDismissRequest = { /*TODO*/ }) {
-            //cancel
 
-            //replace pin
-        }
-    }
-}
-
-
-fun registerPinDateTimeToHome(alreadyPinned: Boolean): Boolean {
-    return false
-}
-
-fun getIndexToPin(index: Int): Int {
-    return index
-}
 
 @Composable
-fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () -> Unit) {
+fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String, bottomPadding: Dp, onDismiss: () -> Unit) {
     ElevatedCard(
         modifier
             .fillMaxWidth()
-            .padding(bottom = 30.dp),
+            .padding(bottom = bottomPadding),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -704,20 +619,6 @@ fun InfoBox(modifier: Modifier = Modifier, lastUpdated: String ,onDismiss: () ->
         }
     }
 }
-
-@Composable
-fun InfoIcon(): Boolean {
-    var showDescription by remember { mutableStateOf(false) }
-    Icon(
-        imageVector = Icons.Outlined.Info,
-        contentDescription = null,
-        Modifier.clickable {
-            showDescription = !showDescription
-        }
-    )
-    return showDescription
-}
-
 @Composable
 fun createLine(
     points: List<Point>,
