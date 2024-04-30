@@ -40,5 +40,13 @@ Vi opprettholder viktige objektorienterte prinsipper ved å bruke MVVM, UDF og l
 
   <img src="./architecture_pictures/AppArkitektur.png" width="700">
 
+#### Videre Drift:
+Vi har valgt å bruke API-nivå 26 da biblioteket vi bruker til plotting av grafer krever dette. For målgruppen vår er nok ikke dette et problem, men om vi ville nådd et enda bredere publikum kunne vi lagd en versjon uten grafen som fungerer på API-nivå 24. Her er en oversikt over teknologiene vi bruker:
+##### [proto DataStore](https://developer.android.com/topic/libraries/architecture/datastore):
+Vi valgte å implementere det nye lagrings biblioteket til Android Jetpack som lar oss lagre verdier type-safe. 
 
+##### [ktor](https://ktor.io) og [gson](https://github.com/google/gson):
+Til serialisering av data bruker vi ktor og gson. Hvert api har sin egen DataSource som blir opprettet i [Repository](app/src/main/java/no/uio/ifi/in2000/team_17/data/Repository.kt)
 
+##### Dependency injection:
+Vi gjør manuell dependency injection ved å opprette repositoryene våre i klassen [AppModule](app/src/main/java/no/uio/ifi/in2000/team_17/AppModule.kt). [ViewModelFactoryHelper](app/src/main/java/no/uio/ifi/in2000/team_17/ViewModelFactoryHelper.kt) er en hjelpeklasse som vi bruker til å opprette view-models for å alltid bare opprette en instans av hvert repository

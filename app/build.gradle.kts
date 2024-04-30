@@ -3,8 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.protobuf") version "0.9.4"
     kotlin("plugin.serialization") version "1.9.21"
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
 
 }
 
@@ -107,11 +105,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-
-    //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.45")
-    kapt("com.google.dagger:hilt-android-compiler:2.45")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
 
     //LocalDateTime
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
