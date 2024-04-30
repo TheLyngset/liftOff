@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    if (false) {
+                    if (!uiState.hasData) {
                         val context = LocalContext.current
                         NoDataScreen(viewModel = splashScreenViewModel) {
                             context.restart()
