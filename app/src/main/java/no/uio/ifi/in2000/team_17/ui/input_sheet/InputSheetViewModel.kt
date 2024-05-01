@@ -22,6 +22,7 @@ class InputSheetViewModel(
 ) : ViewModel() {
     private var lastLat = 59.0
     private var lastLng = 10.0
+    
     val failedToUpdate = repository.failedToUpdate.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),

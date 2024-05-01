@@ -245,6 +245,7 @@ fun App(
             viewModel = inputSheetViewModel,
             failedToUpdate = {
                 coroutineScope.launch { snackBarHostState.showSnackbar("failed to update, do you have internet connection?") }
+                inputSheetViewModel.rollback()
             },
             setMaxHeight = {
                 try {
