@@ -183,7 +183,7 @@ classDiagram
         +resetAll()
     }
     
-    class ThresholdsUiState{
+    class ThresholdsScreenUiState{
         +groundWind
         +maxWind
         +maxWindShear
