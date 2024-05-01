@@ -5,6 +5,8 @@ diagram,samt sekvensdiagram og tekstlig beskrivelse av de viktigste use-casene.<
 <h3>● (3) Andre diagrammer bør også være inkludert for å få frem andre perspektiver, for eksempel
 aktivitetsdiagram (flytdiagram) eller tilstandsdiagram.</h3>
 
+
+
 <h2> ● (1) De viktigste funksjonelle kravene til applikasjonen </h2>
 <h3>
     Tekstlig beskrivelse av de viktigste use-casene: </h3>
