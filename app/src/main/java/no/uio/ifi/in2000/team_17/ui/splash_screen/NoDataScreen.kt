@@ -39,7 +39,7 @@ fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
         ElevatedCard {
             Box() {
                 Column(Modifier.padding(16.dp)) {
-                    Text(text = "We ar not receiving data from the $missingDataFrom. Make sure you are connected to the internet and try again")
+                    Text(text = "We are not receiving data from our servers. Make sure you are connected to the internet and try again")
                 }
                 Box(
                     modifier = Modifier.matchParentSize(),
