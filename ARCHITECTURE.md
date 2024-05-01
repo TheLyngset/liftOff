@@ -38,7 +38,15 @@ Vi opprettholder viktige objektorienterte prinsipper ved å bruke MVVM, UDF og l
 #### Høy koheshon, lav kobling
   Vi kobler kun sammen de komponentene som faktisk trenger å kobles sammen. For eksempel skal [ThresholdsScreen](app/src/main/java/no/uio/ifi/in2000/team_17/ui/thresholds/ThresholdsScreen.kt) kun vise og endre satte Thresholds. Skjermen er koblet til sin tilsvarende view Model ved at den collekter en uiState fra en StateFlow og kaller på view-modelen sine metoder når den skal oppdatere et threshold. View-modelen på sin side har kunn tilgang til ThresholdsRepository da den ikke trenger å vise frem noen annen data. Når en Threshold oppdateres skrives det til en fil via [proto DataStore](https://developer.android.com/topic/libraries/architecture/datastore) og det eksponeres som en flow ut til alle de view-modelsene som trenger dataen. Da vil for eksempel [HomeScreenViewModel](app/src/main/java/no/uio/ifi/in2000/team_17/ui/home_screen/HomeScreenViewModel.kt) få beskjed om at det har vert en endring i Thresholds flowen og den vil oppdatere ui-staten til HomeScreen. Denne illustrasjonen viser godt hvordan ting er koblet sammen: 
 
-  <img src="./architecture_pictures/AppArkitektur.png" width="700">
+  <img src="./architecture_pictures/AppArkitektur.png" width="800">
 
+#### Videre Drift:
+Vi har valgt å bruke API-nivå 26 da biblioteket vi bruker til plotting av grafer krever dette. For målgruppen vår er nok ikke dette et problem, men om vi ville nådd et enda bredere publikum kunne vi lagd en versjon uten grafen som fungerer på API-nivå 24. Her er en oversikt over teknologiene vi bruker:
+##### [proto DataStore](https://developer.android.com/topic/libraries/architecture/datastore):
+Vi valgte å implementere det nye lagrings biblioteket til Android Jetpack som lar oss lagre verdier type-safe. 
 
+##### [ktor](https://ktor.io) og [gson](https://github.com/google/gson):
+Til serialisering av data bruker vi ktor og gson. Hvert api har sin egen DataSource som blir opprettet i [Repository](app/src/main/java/no/uio/ifi/in2000/team_17/data/Repository.kt)
 
+##### Dependency injection:
+Vi gjør manuell dependency injection ved å opprette repositoryene våre i klassen [AppModule](app/src/main/java/no/uio/ifi/in2000/team_17/AppModule.kt). [ViewModelFactoryHelper](app/src/main/java/no/uio/ifi/in2000/team_17/ViewModelFactoryHelper.kt) er en hjelpeklasse som vi bruker til å opprette view-models for å alltid bare opprette en instans av hvert repository
