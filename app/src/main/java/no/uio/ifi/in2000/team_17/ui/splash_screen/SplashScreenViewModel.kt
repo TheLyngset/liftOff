@@ -19,6 +19,8 @@ import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 data class SplashScreenUiState(
     val isLoading: Boolean = true,
     val hasData: Boolean = false,
+    val hasIsobaric: Boolean = false,
+    val hasLocationforecast: Boolean = false
 )
 class SplashScreenViewModel(
     private val repository: Repository,
@@ -29,14 +31,17 @@ class SplashScreenViewModel(
 
     val uiState: StateFlow<SplashScreenUiState> = combine(
         repository.hasLocationForecastData,
+        repository.hasIsoBaricData,
         settingsRepository.settingsFlow,
         isLoading
-    ){hasLocationForecast: Boolean, settings: Settings, isLoading: Boolean ->
+    ){hasLocationForecast: Boolean, hasIsobaric: Boolean, settings: Settings, isLoading: Boolean ->
 
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
 
         SplashScreenUiState(
             isLoading,
+            hasLocationForecast && hasIsobaric,
+            hasIsobaric,
             hasLocationForecast
         )
     }.stateIn(
@@ -46,7 +51,7 @@ class SplashScreenViewModel(
     )
     init {
         viewModelScope.launch {
-            delay(5000)
+            delay(4000)
             _isLoading.update { false }
         }
     }

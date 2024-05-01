@@ -152,6 +152,7 @@ fun App(
     val inputSheetViewModel = viewModel<InputSheetViewModel>(
         factory = viewModelFactory {
             InputSheetViewModel(
+                App.appModule.repository,
                 App.appModule.settingsRepository
             )
         }

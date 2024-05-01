@@ -65,6 +65,7 @@ interface Repository {
     val weatherDataList: StateFlow<WeatherDataLists>
     val hasLocationForecastData: StateFlow<Boolean>
     val hasIsoBaricData: StateFlow<Boolean>
+    val failedToUpdate: StateFlow<Boolean>
 }
 
 class RepositoryImplementation : Repository {
@@ -93,6 +94,9 @@ class RepositoryImplementation : Repository {
     private val _hasIsoBaricData = MutableStateFlow(false)
     override val hasIsoBaricData = _hasIsoBaricData.asStateFlow()
 
+    private val _failedToUpdate = MutableStateFlow(false)
+    override val failedToUpdate = _failedToUpdate.asStateFlow()
+
     /**
      * loads data from [locationForecastDataSource] and updates the StateFlow [locationForecastData]
      * @param latLng a data class containing the coordinates from which to load data
@@ -108,8 +112,7 @@ class RepositoryImplementation : Repository {
                 data
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
-                _hasLocationForecastData.update { false }
-                Properties()
+                it.copy()
             }
         }
     }
@@ -132,7 +135,9 @@ class RepositoryImplementation : Repository {
         }
         catch (e: IOException) {
             Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
-            _hasIsoBaricData.update { false }
+            if(hasIsoBaricData.value){
+                return
+            }
         }
 
         try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }

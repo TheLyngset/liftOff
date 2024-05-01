@@ -10,6 +10,7 @@ import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 
+private const val LOG_NAME = "LOCATIONFORECASTDATASOURCE"
 /**
  * This class is responsible for fetching location forecast data from the API.
  */
@@ -44,6 +45,7 @@ class LocationForecastDataSource {
 
         val path = "weatherapi//locationforecast/2.0/complete?lat=${lat}&lon=${lon}"
 
+        Log.e(LOG_NAME, "Attempting to fetch data from: https://gw-uio.intark.uh-it.no/in2000/$path")
         val response = client.get(path)
         Log.d("FetchLocationforecast", "${response.status}")
 

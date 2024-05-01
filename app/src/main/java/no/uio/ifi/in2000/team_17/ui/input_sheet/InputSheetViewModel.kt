@@ -17,9 +17,14 @@ data class InputSheetUiState(
     val latLng: LatLng = LatLng(59.0, 10.0)
 )
 class InputSheetViewModel(
+    private val repository: Repository,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
+    val updateListener = repository.failedToUpdate.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        false
+    )
     val uiState: StateFlow<InputSheetUiState> = settingsRepository.settingsFlow.map {
         InputSheetUiState(
             maxHeight = it.maxHeight,
