@@ -25,8 +25,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -82,7 +80,7 @@ fun AppTopBar(
 
     //modifier: Modifier
 ) {
-    if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
 
         TopAppBar(
             title = {
@@ -91,7 +89,7 @@ fun AppTopBar(
                         .fillMaxWidth()
                         .background(Color.Transparent),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment =  Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(id = logoId),
@@ -195,12 +193,12 @@ fun App(
                 onLogoClick = {
                     navController.navigate("Home")
                     currentScreen = Screen.Home
-                              },
+                },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
         bottomBar = {
-            if(!sheetState){
+            if (!sheetState) {
                 BottomBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -229,7 +227,7 @@ fun App(
             }
         },
         snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState){
+            SnackbarHost(hostState = snackBarHostState) {
                 Popup(
                     alignment = Alignment.TopCenter,
                     onDismissRequest = {
@@ -257,11 +255,10 @@ fun App(
             setLat = {
                 try {
                     val lat = it.toDouble()
-                    if(58 < lat && lat < 64.25){
+                    if (58 < lat && lat < 64.25) {
                         inputSheetViewModel.setLat(lat)
                         coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
-                    }
-                    else{
+                    } else {
                         coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude, it must be between 58.0 and 64.24") }
                     }
                 } catch (e: NumberFormatException) {
@@ -271,11 +268,10 @@ fun App(
             setLng = {
                 try {
                     val lng = it.toDouble()
-                    if(4 < lng && lng < 12.5){
+                    if (4 < lng && lng < 12.5) {
                         inputSheetViewModel.setLng(lng)
                         coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
-                    }
-                    else{
+                    } else {
                         coroutineScope.launch { snackBarHostState.showSnackbar("Invalid longitude, it must be between 4.0 and 12.5") }
                     }
                 } catch (e: NumberFormatException) {
@@ -322,7 +318,6 @@ fun App(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
-
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {

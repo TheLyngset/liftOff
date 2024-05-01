@@ -127,7 +127,7 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LaunchClearanceCard(uiState.canLaunch, windowSizeClass)
+            LaunchClearanceCard(uiState.trafficLightColor, windowSizeClass)
             WeatherCardRow(
                 weatherInfoList = mutableListOf(
                     WeatherInfo(

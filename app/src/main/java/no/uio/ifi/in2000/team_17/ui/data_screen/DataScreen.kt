@@ -72,7 +72,6 @@ fun DataScreen(
     var graphTutorialIsDismissed by remember { mutableStateOf(false) }
     var tableTutorialIsDismissed by remember { mutableStateOf(false) }
     var waitingForSettings by remember { mutableStateOf(true) }
-
     var showInfoBox by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {

@@ -22,8 +22,7 @@ data class DataScreenUiState(
     val selectedTimeIndex: Int = 0,
     val showGraphTutorial: Boolean = true,
     val showTableTutorial: Boolean = true,
-
-    )
+)
 
 class DataScreenViewModel(
     private val repo: Repository,
