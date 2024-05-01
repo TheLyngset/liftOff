@@ -194,4 +194,29 @@ classDiagram
         +dewPoint
         +margin
     } 
+
+    class WeatherDataList{
+        +time
+        +date
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+    }
+    class WeatherPointInTime{
+        +time
+        +date
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+    }
 ```
