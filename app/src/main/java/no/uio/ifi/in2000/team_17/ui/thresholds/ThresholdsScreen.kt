@@ -44,7 +44,7 @@ fun ThresholdsScreen(
     modifier: Modifier = Modifier,
     viewModel: ThresholdsViewModel,
     onCorrectInputFormat: (String) -> Unit,
-    wrongInputFormat:(WeatherParameter)->Unit
+    wrongInputFormat:(WeatherParameter)->Unit,
 ){
     val uiState by viewModel.thresholdsUiState.collectAsState()
     //strings for inputfields
@@ -104,16 +104,12 @@ fun ThresholdsScreen(
                 label = "Max ground wind speed",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
-
+                try {
+                    viewModel.setGroundWind(it.toDouble())
+                    onCorrectInputFormat("Max ground wind speed was set to $groundWindSpeedText m/s")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(GROUNDWIND)
-                    uiState.groundWindSpeed
                 }
-                viewModel.setGroundWind(newValue)
-                groundWindSpeedText = newValue.toString()
-                onCorrectInputFormat("Max ground wind speed was set to $groundWindSpeedText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset(GROUNDWIND)
@@ -136,15 +132,12 @@ fun ThresholdsScreen(
                 label = "Max air wind speed",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setMaxWind(it.toDouble())
+                    onCorrectInputFormat("Max air wind speed was set to $maxWindSpeedText m/s")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(MAXWIND)
-                    uiState.maxWindSpeed
                 }
-                viewModel.setMaxWind(newValue)
-                maxWindSpeedText = newValue.toString()
-                onCorrectInputFormat("Max air wind speed was set to $maxWindSpeedText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset(MAXWIND)
@@ -168,15 +161,12 @@ fun ThresholdsScreen(
                 label = "Max wind shear",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setMaxWindShear(it.toDouble())
+                    onCorrectInputFormat("Max wind shear was set to $maxWindShearText m/s")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(MAXWINDSHEAR)
-                    uiState.maxWindShear
                 }
-                viewModel.setMaxWindShear(newValue)
-                maxWindShearText = newValue.toString()
-                onCorrectInputFormat("Max wind shear was set to $maxWindShearText m/s")
             }
             IconButton(onClick = {
                 viewModel.reset(MAXWINDSHEAR)
@@ -199,15 +189,12 @@ fun ThresholdsScreen(
                 label = "Max cloud fraction in percent",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setCloudFraction(it.toDouble())
+                    onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText m/s")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(CLOUDFRACTION)
-                    uiState.cloudFraction
                 }
-                viewModel.setCloudFraction(newValue)
-                cloudFractionText = newValue.toString()
-                onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText %")
             }
             IconButton(onClick = {viewModel.reset(CLOUDFRACTION)
                 cloudFractionText = defaults.cloudFraction.toString()}) {
@@ -228,19 +215,16 @@ fun ThresholdsScreen(
                 label = "Max fog",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setFog(it.toDouble())
+                    onCorrectInputFormat("Max fog fraction was set to $fogText %")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(FOG)
-                    uiState.fog
                 }
-                viewModel.setFog(newValue)
-                fogText = newValue.toString()
-                onCorrectInputFormat("Max fog was set to $fogText")
             }
             IconButton(onClick = {viewModel.reset(FOG)
                 fogText = defaults.fog.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
+                Icon(Icons.Filled.Refresh, "Reset fog")
             }
         }
 
@@ -257,15 +241,12 @@ fun ThresholdsScreen(
                 label = "Max rain probability",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setRain(it.toDouble())
+                    onCorrectInputFormat("Max probability of rain was set to $rainText %")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(RAIN)
-                    uiState.rain
                 }
-                viewModel.setRain(newValue)
-                rainText = newValue.toString()
-                onCorrectInputFormat("Max rain probability was set to $rainText %")
             }
             IconButton(onClick = {viewModel.reset(RAIN)
                 rainText = defaults.rain.toString()}) {
@@ -286,15 +267,12 @@ fun ThresholdsScreen(
                 label = "Max humidity",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setHumiditiy(it.toDouble())
+                    onCorrectInputFormat("Max humidity was set to $humidityText %")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(HUMIDITY)
-                    uiState.humidity
                 }
-                viewModel.setHumiditiy(newValue)
-                humidityText = newValue.toString()
-                onCorrectInputFormat("Max humidity was set to $humidityText %")
             }
             IconButton(onClick = {viewModel.reset(HUMIDITY)
                 humidityText = defaults.humidity.toString()}) {
@@ -315,15 +293,12 @@ fun ThresholdsScreen(
                 label = "Max Dew Point",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setDewPoint(it.toDouble())
+                    onCorrectInputFormat("Max Dew Point was set to $dewPointText °")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(DEWPOINT)
-                    uiState.dewPoint
                 }
-                viewModel.setDewPoint(newValue)
-                dewPointText = newValue.toString()
-                onCorrectInputFormat("Max Dew Point was set to $dewPointText")
             }
             IconButton(onClick = {viewModel.reset(DEWPOINT)
                 dewPointText = defaults.dewPoint.toString()}) {
@@ -344,15 +319,12 @@ fun ThresholdsScreen(
                 label = "Safety margin",
 
             ) {
-                val newValue = try {
-                    it.toDouble()
+                try {
+                    viewModel.setMargin(it.toDouble())
+                    onCorrectInputFormat("Safety margin was set to $marginText")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(MARGIN)
-                    uiState.margin
                 }
-                viewModel.setMargin(newValue)
-                marginText = newValue.toString()
-                onCorrectInputFormat("Safety margin was set to $marginText")
             }
             IconButton(onClick = {viewModel.reset(MARGIN)
                 marginText = defaults.margin.toString()}) {
@@ -362,7 +334,7 @@ fun ThresholdsScreen(
 
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = {
-                viewModel.reset(null)
+                viewModel.resetAll()
                 groundWindSpeedText = defaults.groundWindSpeed.toString()
                 maxWindSpeedText = defaults.maxWindSpeed.toString()
                 maxWindShearText = defaults.maxWindShear.toString()

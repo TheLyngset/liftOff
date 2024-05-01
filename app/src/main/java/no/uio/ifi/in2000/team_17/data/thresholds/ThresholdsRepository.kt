@@ -61,7 +61,20 @@ class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds
             it.toBuilder().setMargin(margin).build()
         }
     }
-    suspend fun reset(threshold: WeatherParameter?){
+
+    suspend fun resetAll(){
+        val default = ThresholdsSerializer.defaultValue
+        setGroundWind(default.groundWindSpeed)
+        setMaxWindShear(default.maxWindShear)
+        setMaxWind(default.maxWindSpeed)
+        setCloudFraction(default.cloudFraction)
+        setRain(default.rain)
+        setHumidity(default.humidity)
+        setDewPoint(default.dewPoint)
+        setFog(default.fog)
+        setMargin(default.margin)
+    }
+    suspend fun reset(threshold: WeatherParameter){
         val default = ThresholdsSerializer.defaultValue
         when(threshold){
             WeatherParameter.GROUNDWIND -> setGroundWind(default.groundWindSpeed)

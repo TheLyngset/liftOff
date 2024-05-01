@@ -66,8 +66,11 @@ class ThresholdsViewModel(
     fun setMargin(margin:Double){
         viewModelScope.launch{ repo.setMargin(margin) }
     }
-    fun reset(threshold: WeatherParameter?){
+    fun reset(threshold: WeatherParameter){
         viewModelScope.launch { repo.reset(threshold) }
+    }
+    fun resetAll(){
+        viewModelScope.launch { repo.resetAll() }
     }
 }
 

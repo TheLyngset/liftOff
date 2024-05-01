@@ -304,11 +304,9 @@ fun App(
                     viewModel = thresholdsViewModel,
                     onCorrectInputFormat = {
                         coroutineScope.launch {
-                            if (snackBarHostState.currentSnackbarData == null) {
-                                snackBarHostState.showSnackbar(
-                                    message = it
-                                )
-                            }
+                            snackBarHostState.showSnackbar(
+                                message = it
+                            )
                         }
                     },
                 ) {
