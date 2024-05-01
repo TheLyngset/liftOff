@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team_17.model.weatherDTO
+package no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO
 
 data class DetailsXXX(
     val air_temperature_max: Double= 0.0,

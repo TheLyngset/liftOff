@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,12 +56,14 @@ import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsScreen
 import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
-
+/**
+ * WARNING, do not change the order as the [BottomBar] depends on it!!
+ */
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
-    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     Data(title = "Data Screen", logo = R.drawable.logor),
     Judicial(title = "Judicial Screen", logo = R.drawable.logor),
+    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
     Empty("", 0)
 
@@ -168,12 +171,15 @@ fun App(
             )
         }
     )
-    //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
+
+    //dataScreenViewModel.resetShowTutorial()
+
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
+    var currentScreen by rememberSaveable { mutableStateOf(Screen.Home) }
 
     BackGroundImage()
 
@@ -219,7 +225,10 @@ fun App(
                 windowSizeClass,
                 logoId = Screen.Home.logo,
                 onSearchClick = { sheetState = true },
-                onLogoClick = { navController.navigate("Home") },
+                onLogoClick = {
+                    navController.navigate("Home")
+                    currentScreen = Screen.Home
+                              },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
@@ -228,13 +237,23 @@ fun App(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
-                    .background(Color.Transparent)
-                ,windowSizeClass
+                    .background(Color.Transparent),
+                windowSizeClass,
+                currentScreen = currentScreen
             ) {
                 when (it) {
-                    0 -> navController.navigate(Screen.Home.name)
-                    1 -> navController.navigate(Screen.Data.name)
-                    2 -> navController.navigate(Screen.Judicial.name)
+                    0 -> {
+                        navController.navigate(Screen.Home.name)
+                        currentScreen = Screen.Home
+                    }
+                    1 -> {
+                        navController.navigate(Screen.Data.name)
+                        currentScreen = Screen.Data
+                    }
+                    2 -> {
+                        navController.navigate(Screen.Judicial.name)
+                        currentScreen = Screen.Judicial
+                    }
                 }
             }
         },
@@ -278,7 +297,7 @@ fun App(
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {
-                JudicialScreen(modifier = Modifier.padding(innerPadding))
+                JudicialScreen(modifier = Modifier.padding(innerPadding), windowSizeClass)
             }
         }
     }
@@ -291,6 +310,7 @@ fun App(
 fun BottomBar(
     modifier: Modifier,
     windowSizeClass: WindowSizeClass,
+    currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
     if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
@@ -299,7 +319,9 @@ fun BottomBar(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SegmentedNavigationButton() {
+            SegmentedNavigationButton(
+                currentScreen
+            ) {
                 onNavigate(it)
             }
         }
@@ -309,19 +331,18 @@ fun BottomBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SegmentedNavigationButton(
+    currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
     val options = remember { mutableStateListOf("Home", "Data", "Juridisk") }
-    var selectedIndex by remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = Modifier
                     .padding(bottom = 10.dp),
-                selected = selectedIndex == index,
+                selected = currentScreen.ordinal == index,
                 onClick = {
-                    selectedIndex = index
                     onNavigate(index)
                 },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),

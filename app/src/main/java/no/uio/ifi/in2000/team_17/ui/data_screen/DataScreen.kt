@@ -90,15 +90,9 @@ fun DataScreen(
     //val configuration = LocalConfiguration.current
 
     Background()
-    val bottomPadding = if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact){
-        30.dp
-    }else{
-        55.dp
-    }
     Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = bottomPadding),
     ) {
         Column{
             SelectTimeCard(
@@ -110,27 +104,33 @@ fun DataScreen(
             }
             when (toggleState) {
                 Toggle.TABLE -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Table(
-                            scrollToItem = scrollToItem,
-                            uiState = uiState,
-                            selectedIndex = showingTimeIndex,
-                            setIndex = {
-                                showingTimeIndex = it
-                            },
-                            boxWidth = 70,
-                            dividerPadding = 4,
-                        )
-                        if (!tableTutorialIsDismissed && uiState.showTableTutorial && !waitingForSettings) {
-                            GraphInfoDialog(
-                                onDismiss = { tableTutorialIsDismissed = true },
-                                onDontShowAgain = {
-                                    tableTutorialIsDismissed = true
-                                    viewModel.dontShowTableTurotialAgain()
+                    Column(
+                        Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Box(Modifier.padding(bottom = 30.dp)) {
+                            Table(
+                                scrollToItem = scrollToItem,
+                                uiState = uiState,
+                                selectedIndex = showingTimeIndex,
+                                setIndex = {
+                                    showingTimeIndex = it
                                 },
-                                painter = painterResource(id = R.drawable.swipe),
-                                text = "Scroll left to see more weather data."
+                                boxWidth = 70,
+                                dividerPadding = 4,
                             )
+                            if (!tableTutorialIsDismissed && uiState.showTableTutorial && !waitingForSettings) {
+                                GraphInfoDialog(
+                                    onDismiss = { tableTutorialIsDismissed = true },
+                                    onDontShowAgain = {
+                                        tableTutorialIsDismissed = true
+                                        viewModel.dontShowTableTurotialAgain()
+                                    },
+                                    painter = painterResource(id = R.drawable.swipe),
+                                    text = "Scroll left to see more weather data."
+                                )
+                            }
                         }
                     }
                 }
