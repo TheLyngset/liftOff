@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -78,7 +79,8 @@ fun HomeScreen(
     }
 
     if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier){
+        Box(modifier = Modifier.fillMaxWidth().offset(y= (100.dp)),
+            contentAlignment = Alignment.Center){
             Rocket()
         }
 
@@ -284,7 +286,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
 fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
     OutlinedCard(
         modifier = Modifier
-            .size(130.dp)
+            .size(width = 130.dp, height = 130.dp)
             .shadow(3.dp, CardDefaults.outlinedShape),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.background.copy(1f),
@@ -294,16 +296,22 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         ),
         border = BorderStroke(2.5.dp, color)
 
-
     ) {
-        Box(Modifier.fillMaxSize()
-            ,
+        Box(Modifier
+            .fillMaxSize()
+            .padding(2.5.dp),
             contentAlignment = Alignment.BottomCenter) {
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .background(shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp), color = color)
+                .height(12.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(

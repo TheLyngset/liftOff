@@ -1,9 +1,8 @@
 package no.uio.ifi.in2000.team_17.data
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,13 +10,13 @@ import kotlinx.coroutines.flow.update
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
-import no.uio.ifi.in2000.team_17.model.IsoBaricModel
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricModel
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-import no.uio.ifi.in2000.team_17.model.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Properties
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -67,6 +66,7 @@ interface Repository {
     val weatherDataList: StateFlow<WeatherDataLists>
     val hasLocationForecastData: StateFlow<Boolean>
     val hasIsoBaricData: StateFlow<Boolean>
+    val failedToUpdate: StateFlow<Boolean>
 }
 
 class RepositoryImplementation : Repository {
@@ -95,6 +95,9 @@ class RepositoryImplementation : Repository {
     private val _hasIsoBaricData = MutableStateFlow(false)
     override val hasIsoBaricData = _hasIsoBaricData.asStateFlow()
 
+    private val _failedToUpdate = MutableStateFlow(false)
+    override val failedToUpdate = _failedToUpdate.asStateFlow()
+
     /**
      * loads data from [locationForecastDataSource] and updates the StateFlow [locationForecastData]
      * @param latLng a data class containing the coordinates from which to load data
@@ -110,8 +113,10 @@ class RepositoryImplementation : Repository {
                 data
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
-                _hasLocationForecastData.update { false }
-                Properties()
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
+                it.copy()
             }
         }
     }
@@ -134,7 +139,12 @@ class RepositoryImplementation : Repository {
         }
         catch (e: IOException) {
             Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
-            _hasIsoBaricData.update { false }
+            if(hasIsoBaricData.value){
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
+                return
+            }
         }
 
         try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
@@ -338,7 +348,7 @@ internal fun calculateHeight(
  * @return Wind Shear between the two points
  */
 
-private fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
+internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
     //trenger vi egentlig polar koordinater her? Ja, vind kommer med retning og lengde - Samuel
     val d_0_rad = d_0 * PI / 180
     val d_1_rad = d_1 * PI / 180

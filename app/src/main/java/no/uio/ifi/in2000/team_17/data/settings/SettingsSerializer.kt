@@ -16,7 +16,8 @@ object SettingsSerializer: Serializer<Settings>{
             .setMaxHeight(3)
             .setLat(59.96)
             .setLng(10.71)
-            .setHasDismissed(false)
+            .setGraphShowTutorial(true)
+            .setTableShowTutorial(true)
             .setTime(LocalDateTime.now().toString())
             .build()
 

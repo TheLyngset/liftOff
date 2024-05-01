@@ -16,6 +16,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -25,17 +26,18 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -55,12 +57,14 @@ import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsScreen
 import no.uio.ifi.in2000.team_17.ui.thresholds.ThresholdsViewModel
 import no.uio.ifi.in2000.team_17.viewModelFactory
 
-
+/**
+ * WARNING, do not change the order as the [BottomBar] depends on it!!
+ */
 enum class Screen(val title: String, val logo: Int) {
     Home(title = "Home Screen", logo = R.drawable.logoicon),
-    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     Data(title = "Data Screen", logo = R.drawable.logor),
     Judicial(title = "Judicial Screen", logo = R.drawable.logor),
+    Thresholds(title = "Thresholds", logo = R.drawable.logor),
     TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
     Empty("", 0)
 
@@ -76,7 +80,7 @@ fun AppTopBar(
 
     //modifier: Modifier
 ) {
-    if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+    if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
 
         TopAppBar(
             title = {
@@ -85,7 +89,7 @@ fun AppTopBar(
                         .fillMaxWidth()
                         .background(Color.Transparent),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment =  Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(id = logoId),
@@ -169,12 +173,15 @@ fun App(
         }
     )
 
+    //dataScreenViewModel.resetShowTutorial()
+
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
-    
+    var currentScreen by rememberSaveable { mutableStateOf(Screen.Home) }
+
     BackGroundImage()
 
     Scaffold(
@@ -183,28 +190,103 @@ fun App(
                 windowSizeClass,
                 logoId = Screen.Home.logo,
                 onSearchClick = { sheetState = true },
-                onLogoClick = { navController.navigate("Home") },
+                onLogoClick = {
+                    navController.navigate("Home")
+                    currentScreen = Screen.Home
+                },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
         bottomBar = {
-            BottomBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .background(Color.Transparent)
-                ,windowSizeClass
-            ) {
-                when (it) {
-                    0 -> navController.navigate(Screen.Home.name)
-                    1 -> navController.navigate(Screen.Data.name)
-                    2 -> navController.navigate(Screen.Judicial.name)
+            if (!sheetState) {
+                BottomBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(Color.Transparent),
+                    windowSizeClass,
+                    currentScreen = currentScreen
+                ) {
+                    when (it) {
+                        0 -> {
+                            navController.navigate(Screen.Home.name)
+                            currentScreen = Screen.Home
+                        }
+
+                        1 -> {
+                            navController.navigate(Screen.Data.name)
+                            currentScreen = Screen.Data
+                        }
+
+                        2 -> {
+                            navController.navigate(Screen.Judicial.name)
+                            currentScreen = Screen.Judicial
+                        }
+                    }
                 }
             }
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-        containerColor = Color.Transparent
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState) {
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    onDismissRequest = {
+                        it.dismiss()
+                    }
+                ) {
+                    Snackbar(it)
+                }
+            }
+        }
     ) { innerPadding ->
+        InputSheet(
+            viewModel = inputSheetViewModel,
+            failedToUpdate = {
+                coroutineScope.launch { snackBarHostState.showSnackbar("failed to update, do you have internet connection?") }
+            },
+            setMaxHeight = {
+                try {
+                    inputSheetViewModel.setMaxHeight(it.toInt())
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Set max height to $it") }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
+                }
+            },
+            setLat = {
+                try {
+                    val lat = it.toDouble()
+                    if (58 < lat && lat < 64.25) {
+                        inputSheetViewModel.setLat(lat)
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
+                    } else {
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude, it must be between 58.0 and 64.24") }
+                    }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
+                }
+            },
+            setLng = {
+                try {
+                    val lng = it.toDouble()
+                    if (4 < lng && lng < 12.5) {
+                        inputSheetViewModel.setLng(lng)
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
+                    } else {
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid longitude, it must be between 4.0 and 12.5") }
+                    }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
+                }
+            },
+            toThresholdsScreen = {
+                navController.navigate(Screen.Thresholds.name)
+                currentScreen = Screen.Thresholds
+                sheetState = false
+            },
+            sheetState = sheetState,
+            onDismiss = { sheetState = false },
+        )
+
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name
@@ -215,7 +297,14 @@ fun App(
             composable(route = Screen.Thresholds.name) {
                 ThresholdsScreen(
                     Modifier.padding(innerPadding),
-                    viewModel = thresholdsViewModel
+                    viewModel = thresholdsViewModel,
+                    onCorrectInputFormat = {
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = it
+                            )
+                        }
+                    },
                 ) {
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
@@ -229,51 +318,21 @@ fun App(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
-                    dontShowAgain = { dataScreenViewModel.dontShowDialogAgain() }
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
             composable(route = Screen.Judicial.name) {
-                JudicialScreen(modifier = Modifier.padding(innerPadding))
+                JudicialScreen(modifier = Modifier.padding(innerPadding), windowSizeClass)
             }
         }
     }
 
-    InputSheet(
-        viewModel = inputSheetViewModel,
-        toThresholdsScreen = {
-            navController.navigate(Screen.Thresholds.name)
-            sheetState = false
-        },
-        setMaxHeight = {
-            try {
-                inputSheetViewModel.setMaxHeight(it.toInt())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
-            }
-        },
-        setLat = {
-            try {
-                inputSheetViewModel.setLat(it.toDouble())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
-            }
-        },
-        setLng = {
-            try {
-                inputSheetViewModel.setLng(it.toDouble())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
-            }
-        },
-        sheetState = sheetState,
-        onDismiss = { sheetState = false }
-    )
 }
 
 @Composable
 fun BottomBar(
     modifier: Modifier,
     windowSizeClass: WindowSizeClass,
+    currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
     if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
@@ -282,7 +341,9 @@ fun BottomBar(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SegmentedNavigationButton() {
+            SegmentedNavigationButton(
+                currentScreen
+            ) {
                 onNavigate(it)
             }
         }
@@ -292,19 +353,18 @@ fun BottomBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SegmentedNavigationButton(
+    currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
     val options = remember { mutableStateListOf("Home", "Data", "Juridisk") }
-    var selectedIndex by remember { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = Modifier
                     .padding(bottom = 10.dp),
-                selected = selectedIndex == index,
+                selected = currentScreen.ordinal == index,
                 onClick = {
-                    selectedIndex = index
                     onNavigate(index)
                 },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),

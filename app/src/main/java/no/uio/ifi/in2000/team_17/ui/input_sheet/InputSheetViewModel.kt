@@ -20,7 +20,13 @@ class InputSheetViewModel(
     private val repository: Repository,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-
+    private var lastLat = 59.0
+    private var lastLng = 10.0
+    val failedToUpdate = repository.failedToUpdate.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        false
+    )
     val uiState: StateFlow<InputSheetUiState> = settingsRepository.settingsFlow.map {
         InputSheetUiState(
             maxHeight = it.maxHeight,
@@ -32,11 +38,13 @@ class InputSheetViewModel(
         InputSheetUiState()
     )
     fun setLat(lat:Double){
+        lastLat = lat
         viewModelScope.launch {
             settingsRepository.setLat(lat)
         }
     }
     fun setLng(lng:Double){
+        lastLng = lng
         viewModelScope.launch {
             settingsRepository.setLng(lng)
         }
@@ -44,6 +52,12 @@ class InputSheetViewModel(
     fun setMaxHeight(height: Int){
         viewModelScope.launch{
             settingsRepository.setMaxHeight(height)
+        }
+    }
+    fun rollback(){
+        viewModelScope.launch {
+            settingsRepository.setLat(lastLat)
+            settingsRepository.setLng(lastLng)
         }
     }
 }

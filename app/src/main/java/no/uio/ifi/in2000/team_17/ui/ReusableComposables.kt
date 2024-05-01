@@ -74,8 +74,7 @@ fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds
         WeatherParameter.HUMIDITY -> WeatherUseCase.canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
         WeatherParameter.DEWPOINT -> WeatherUseCase.canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
         WeatherParameter.FOG -> WeatherUseCase.canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
-        WeatherParameter.DATE -> TrafficLightColor.WHITE
-        WeatherParameter.TIME -> TrafficLightColor.WHITE
+        else -> TrafficLightColor.WHITE
     }
 }
 

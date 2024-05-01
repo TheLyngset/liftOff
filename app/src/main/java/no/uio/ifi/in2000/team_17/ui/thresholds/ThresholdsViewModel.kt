@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
+import no.uio.ifi.in2000.team_17.model.WeatherParameter
 
 data class ThresholdsUiState(
     val groundWindSpeed: Double = 8.6,
@@ -65,8 +66,11 @@ class ThresholdsViewModel(
     fun setMargin(margin:Double){
         viewModelScope.launch{ repo.setMargin(margin) }
     }
-    fun reset(threshold: String = ""){
+    fun reset(threshold: WeatherParameter){
         viewModelScope.launch { repo.reset(threshold) }
+    }
+    fun resetAll(){
+        viewModelScope.launch { repo.resetAll() }
     }
 }
 

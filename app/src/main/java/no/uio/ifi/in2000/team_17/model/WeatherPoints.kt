@@ -239,5 +239,6 @@ enum class WeatherParameter(val title: String) {
     RAIN("Rain"),
     HUMIDITY("Humidity"),
     DEWPOINT("Dew point"),
-    FOG("Fog")
+    FOG("Fog"),
+    MARGIN("margin")
 }

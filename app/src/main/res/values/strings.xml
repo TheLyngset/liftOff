@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">team-17</string>
+    <string name="pin_to_homescreen">Pin %1$s to homescreen</string>
+    <string name="last_updated_at_utc_2">"Last updated at %1$s UTC+2 "</string>
+    <string name="dont_show_again">Don\'t show again</string>
+    <string name="dateTime">%1$s kl. %2$s</string>
+    <string name="change_to_kl">"Change to: %1$s kl. %2$s "</string>
+    <string name="on_home_screen">On Home screen:</string>
+    <string name="dew_point">Dew Point</string>
+    <string name="humidity">Humidity</string>
+    <string name="fog">Fog</string>
+    <string name="rain">Rain</string>
+    <string name="could_coverage">Could Coverage</string>
+    <string name="shear_wind">Shear Wind</string>
+    <string name="max_air_wind">Max Air Wind</string>
+    <string name="ground_wind">Ground Wind</string>
+    <string name="max_wind_ground">" Max Wind (ground) "</string>
+    <string name="max_wind_altitude">" Max Wind (altitude) "</string>
+    <string name="max_shear_wind">" Max Shear Wind"</string>
+    <string name="threshold_line">"  Threshold Line "</string>
 </resources>

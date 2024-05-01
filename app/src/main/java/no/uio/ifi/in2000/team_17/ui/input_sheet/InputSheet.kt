@@ -22,8 +22,10 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 
@@ -46,25 +50,29 @@ import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 fun InputSheet(
     modifier: Modifier = Modifier,
     viewModel: InputSheetViewModel,
-    toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
+    failedToUpdate:()->Unit,
+    toThresholdsScreen: () -> Unit,
     onDismiss: () -> Unit,
-    sheetState : Boolean
-) {
+    sheetState: Boolean,
+
+    ) {
     val uiState by viewModel.uiState.collectAsState()
+    val failedToUpdate by viewModel.failedToUpdate.collectAsState()
+    if(failedToUpdate){
+        failedToUpdate()
+    }
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
             InputSheetContent(
+                failedToUpdate = failedToUpdate,
                 uiState = uiState,
                 toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
-                onDismiss = {
-                    onDismiss()
-                },
             )
         }
     }
@@ -73,17 +81,23 @@ fun InputSheet(
 @Composable
 fun InputSheetContent(
     modifier: Modifier = Modifier,
+    failedToUpdate: Boolean,
     uiState: InputSheetUiState,
     toAdvancedSettings:()->Unit,
     setMaxHeight:(String) -> Unit,
     setLat:(String) -> Unit,
     setLng:(String) -> Unit,
-    onDismiss:() -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
+
+    if(failedToUpdate){
+        latString = uiState.latLng.latitude.toString()
+        lngString = uiState.latLng.longitude.toString()
+    }
+
     Box{
         Column(
             modifier
@@ -100,8 +114,9 @@ fun InputSheetContent(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     value = maxHeightText,
                     onValueChange = { maxHeightText = it },
-                    label = "Maximum height in km"
-                ) { setMaxHeight(maxHeightText) }
+                    label = "Maximum height in km",
+
+                ) { setMaxHeight(maxHeightText); }
 
                 Box(
                     Modifier.fillMaxWidth(1f),
@@ -124,13 +139,15 @@ fun InputSheetContent(
                     value = latString,
                     onValueChange = { latString = it },
                     label = "Latitude",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+
                 ) { setLat(latString) }
                 InputTextField(
                     value = lngString,
                     onValueChange = { lngString = it },
                     label = "Longitude",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+
                 ) { setLng(lngString) }
             }
             ListItem(
@@ -197,12 +214,15 @@ fun InputSheetContent(
     }
 }
 
+
+
 @Composable
 fun InputTextField(
     modifier: Modifier = Modifier,
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
+
     onDone: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -219,8 +239,10 @@ fun InputTextField(
             onDone = {
                 keyboardController?.hide()
                 onDone(value)
+
             }
         ),
         modifier = modifier
     )
 }
+

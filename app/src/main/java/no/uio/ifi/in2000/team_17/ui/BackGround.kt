@@ -40,7 +40,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import no.uio.ifi.in2000.team_17.R
 
-
+//Using lottie for animation. Uses json animation from raw folder
 @Composable
 fun Rocket() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.rakett))

@@ -20,9 +20,9 @@ data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
     val selectedTimeIndex: Int = 0,
-    val hasDissmissedDialouge: Boolean = false,
-
-    )
+    val showGraphTutorial: Boolean = true,
+    val showTableTutorial: Boolean = true,
+)
 
 class DataScreenViewModel(
     private val repo: Repository,
@@ -38,7 +38,7 @@ class DataScreenViewModel(
             weatherDataList,
             thresholds,
             SaveTimeUseCase.timeStringToIndex(settings.time),
-            settings.hasDismissed
+            settings.graphShowTutorial, settings.tableShowTutorial
         )
     }.stateIn(
         viewModelScope,
@@ -49,7 +49,19 @@ class DataScreenViewModel(
     fun setTimeIndex(index: Int) {
         viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
     }
-    fun dontShowDialogAgain(){
-        viewModelScope.launch { settingsRepo.setHasDissmissed(true) }
+
+    fun dontShowTableTurotialAgain() {
+        viewModelScope.launch { settingsRepo.setTableShowTutorial(false) }
+    }
+
+    fun dontShowGraphTurotialAgain() {
+        viewModelScope.launch { settingsRepo.setGraphShowTutorial(false) }
+    }
+
+    fun resetShowTutorial() {
+        viewModelScope.launch {
+            settingsRepo.setGraphShowTutorial(true)
+            settingsRepo.setTableShowTutorial(true)
+        }
     }
 }
