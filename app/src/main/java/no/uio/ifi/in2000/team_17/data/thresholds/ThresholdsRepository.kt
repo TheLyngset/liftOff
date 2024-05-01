@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.model.WeatherParameter
 
 private val LOG_NAME = "ADVANCED_SETTINGS_REPOSITORY"
 
@@ -60,18 +61,19 @@ class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds
             it.toBuilder().setMargin(margin).build()
         }
     }
-    suspend fun reset(threshold: String){
+    suspend fun reset(threshold: WeatherParameter?){
         val default = ThresholdsSerializer.defaultValue
         when(threshold){
-            "groundWind" -> setGroundWind(default.groundWindSpeed)
-            "maxWind" -> setMaxWind(default.maxWindSpeed)
-            "maxShear" -> setMaxWindShear(default.maxWindShear)
-            "cloud" -> setCloudFraction(default.cloudFraction)
-            "fog" -> setFog(default.fog)
-            "rain" -> setRain(default.rain)
-            "humidity" -> setHumidity(default.humidity)
-            "dewPoint" -> setDewPoint(default.dewPoint)
-            "margin" -> setMargin(default.margin)
+            WeatherParameter.GROUNDWIND -> setGroundWind(default.groundWindSpeed)
+            WeatherParameter.MAXWINDSHEAR -> setMaxWindShear(default.maxWindShear)
+            WeatherParameter.MAXWIND -> setMaxWind(default.maxWindSpeed)
+            WeatherParameter.CLOUDFRACTION -> setCloudFraction(default.cloudFraction)
+            WeatherParameter.RAIN -> setRain(default.rain)
+            WeatherParameter.HUMIDITY -> setHumidity(default.humidity)
+            WeatherParameter.DEWPOINT -> setDewPoint(default.dewPoint)
+            WeatherParameter.FOG -> setFog(default.fog)
+            WeatherParameter.MARGIN -> setMargin(default.margin)
+            else -> {}
         }
     }
 }
