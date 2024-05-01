@@ -4,10 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,8 +17,6 @@ import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarData
-import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -29,6 +25,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -245,13 +243,15 @@ fun App(
     ) { innerPadding ->
         InputSheet(
             viewModel = inputSheetViewModel,
+            failedToUpdate = {
+                coroutineScope.launch { snackBarHostState.showSnackbar("failed to update, do you have internet connection?") }
+            },
             setMaxHeight = {
                 try {
                     inputSheetViewModel.setMaxHeight(it.toInt())
                     coroutineScope.launch { snackBarHostState.showSnackbar("Set max height to $it") }
                 } catch (e: NumberFormatException) {
                     coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
-
                 }
             },
             setLat = {

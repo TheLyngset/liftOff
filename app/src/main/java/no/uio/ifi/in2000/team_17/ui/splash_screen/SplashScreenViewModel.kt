@@ -35,7 +35,6 @@ class SplashScreenViewModel(
         settingsRepository.settingsFlow,
         isLoading
     ){hasLocationForecast: Boolean, hasIsobaric: Boolean, settings: Settings, isLoading: Boolean ->
-
         repository.load(LatLng(settings.lat, settings.lng), settings.maxHeight)
 
         SplashScreenUiState(

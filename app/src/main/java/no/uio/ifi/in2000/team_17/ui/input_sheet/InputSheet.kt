@@ -53,23 +53,26 @@ fun InputSheet(
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
+    failedToUpdate:()->Unit,
     toThresholdsScreen: () -> Unit,
     onDismiss: () -> Unit,
     sheetState: Boolean,
 
     ) {
     val uiState by viewModel.uiState.collectAsState()
+    val failedToUpdate by viewModel.failedToUpdate.collectAsState()
+    if(failedToUpdate){
+        failedToUpdate()
+    }
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
             InputSheetContent(
+                failedToUpdate = failedToUpdate,
                 uiState = uiState,
                 toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
-                onDismiss = {
-                    onDismiss()
-                },
             )
         }
     }
@@ -78,19 +81,22 @@ fun InputSheet(
 @Composable
 fun InputSheetContent(
     modifier: Modifier = Modifier,
+    failedToUpdate: Boolean,
     uiState: InputSheetUiState,
     toAdvancedSettings:()->Unit,
     setMaxHeight:(String) -> Unit,
     setLat:(String) -> Unit,
     setLng:(String) -> Unit,
-    onDismiss:() -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
 
-
+    if(failedToUpdate){
+        latString = uiState.latLng.latitude.toString()
+        lngString = uiState.latLng.longitude.toString()
+    }
 
     Box{
         Column(

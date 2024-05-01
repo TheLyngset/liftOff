@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team_17.data
 
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -112,6 +113,9 @@ class RepositoryImplementation : Repository {
                 data
             } catch (e: IOException) {
                 Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
                 it.copy()
             }
         }
@@ -136,6 +140,9 @@ class RepositoryImplementation : Repository {
         catch (e: IOException) {
             Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
             if(hasIsoBaricData.value){
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
                 return
             }
         }
