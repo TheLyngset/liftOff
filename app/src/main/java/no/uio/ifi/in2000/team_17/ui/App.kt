@@ -171,7 +171,6 @@ fun App(
     //dataScreenViewModel.resetShowTutorial() // Resets showTutorial for testing purposes
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
-    val inputSnackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
@@ -181,6 +180,8 @@ fun App(
 
     InputSheet(
         viewModel = inputSheetViewModel,
+        coroutineScope = coroutineScope,
+        snackbarHostState = snackBarHostState,
         toThresholdsScreen = {
             navController.navigate(Screen.Thresholds.name)
             sheetState = false
@@ -210,7 +211,6 @@ fun App(
         },
         sheetState = sheetState,
         onDismiss = { sheetState = false },
-        snackbarHostState = inputSnackbarHostState
     )
 
     Scaffold(

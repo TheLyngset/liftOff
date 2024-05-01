@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
@@ -48,6 +49,8 @@ import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 @Composable
 fun InputSheet(
     modifier: Modifier = Modifier,
+    coroutineScope: CoroutineScope,
+    snackbarHostState: SnackbarHostState,
     viewModel: InputSheetViewModel,
     toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
@@ -55,7 +58,6 @@ fun InputSheet(
     setLng: (String) -> Unit,
     onDismiss: () -> Unit,
     sheetState: Boolean,
-    snackbarHostState: SnackbarHostState
 
 ) {
     val uiState by viewModel.uiState.collectAsState()
