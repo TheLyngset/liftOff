@@ -245,8 +245,6 @@ fun App(
     ) { innerPadding ->
         InputSheet(
             viewModel = inputSheetViewModel,
-            coroutineScope = coroutineScope,
-            snackBarHostState = snackBarHostState,
             setMaxHeight = {
                 try {
                     inputSheetViewModel.setMaxHeight(it.toInt())
