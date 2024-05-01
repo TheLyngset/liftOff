@@ -8,8 +8,8 @@ aktivitetsdiagram (flytdiagram) eller tilstandsdiagram.</h3>
 </p>
 
 <h2> ● (1) De viktigste funksjonelle kravene til applikasjonen </h2>
-<p>De viktigste funksjonelle kravene til appen vår er at brukeren kan se 
-på tre forskjellige måter om det går an eller ikke å skyte opp en rakett. <br>
+<p>De viktigste funksjonelle kravene til appen vår er følgende:<br>
+Brukeren kan se på tre forskjellige måter om det går an eller ikke å skyte opp en rakett. <br>
 Brukeren kan endre instillinger som lokasjon og thresholds for hvor data er hentet fra 
 og får vise informasjon for nye lokasjoner og beregninger for nye thresholds. <br>
 Brukeren kan velge å følge med på hjemmeskjermen en valg tidspunt og lokasjon hvis f.eks. 
