@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 
@@ -49,17 +49,15 @@ import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 @Composable
 fun InputSheet(
     modifier: Modifier = Modifier,
-    coroutineScope: CoroutineScope,
-    snackbarHostState: SnackbarHostState,
     viewModel: InputSheetViewModel,
-    toThresholdsScreen: () -> Unit,
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
+    toThresholdsScreen: () -> Unit,
     onDismiss: () -> Unit,
     sheetState: Boolean,
 
-) {
+    ) {
     val uiState by viewModel.uiState.collectAsState()
     if (sheetState) {
         ModalBottomSheet(onDismissRequest = { onDismiss() }) {
@@ -69,7 +67,6 @@ fun InputSheet(
                 setMaxHeight = { setMaxHeight(it) },
                 setLat = {setLat(it)},
                 setLng = {setLng(it)},
-                snackbarHostState = snackbarHostState,
                 onDismiss = {
                     onDismiss()
                 },
@@ -86,21 +83,14 @@ fun InputSheetContent(
     setMaxHeight:(String) -> Unit,
     setLat:(String) -> Unit,
     setLng:(String) -> Unit,
-    snackbarHostState: SnackbarHostState,
     onDismiss:() -> Unit
 ) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
-    var changeValue by remember { mutableStateOf(false) }
 
-    if (changeValue) {
-        LaunchedEffect(key1 = changeValue) {
-            snackbarHostState.showSnackbar("Value updated")
-            changeValue = false
-        }
-    }
+
 
     Box{
         Column(
@@ -153,12 +143,6 @@ fun InputSheetContent(
                     modifier = Modifier.weight(1f),
 
                 ) { setLng(lngString) }
-            }
-            if (changeValue) {
-                LaunchedEffect(key1 = changeValue) {
-                    snackbarHostState.showSnackbar("Value updated")
-                    changeValue = false
-                }
             }
             ListItem(
                 modifier = modifier.padding(top = 15.dp),

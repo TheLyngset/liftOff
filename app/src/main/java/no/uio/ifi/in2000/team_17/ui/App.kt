@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,9 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -25,7 +30,6 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -183,42 +188,6 @@ fun App(
 
     BackGroundImage()
 
-
-    InputSheet(
-        viewModel = inputSheetViewModel,
-        coroutineScope = coroutineScope,
-        snackbarHostState = snackBarHostState,
-        toThresholdsScreen = {
-            navController.navigate(Screen.Thresholds.name)
-            sheetState = false
-        },
-        setMaxHeight = {
-            try {
-                inputSheetViewModel.setMaxHeight(it.toInt())
-                coroutineScope.launch { snackBarHostState.showSnackbar("Max Height set to $it")}
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
-            }
-        },
-        setLat = {
-            try {
-                inputSheetViewModel.setLat(it.toDouble())
-                coroutineScope.launch { snackBarHostState.showSnackbar("Latitude set to $it")}
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
-            }
-        },
-        setLng = {
-            try {
-                inputSheetViewModel.setLng(it.toDouble())
-            } catch (e: NumberFormatException) {
-                coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
-            }
-        },
-        sheetState = sheetState,
-        onDismiss = { sheetState = false },
-    )
-
     Scaffold(
         topBar = {
             AppTopBar(
@@ -233,33 +202,97 @@ fun App(
             )
         },
         bottomBar = {
-            BottomBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .background(Color.Transparent),
-                windowSizeClass,
-                currentScreen = currentScreen
-            ) {
-                when (it) {
-                    0 -> {
-                        navController.navigate(Screen.Home.name)
-                        currentScreen = Screen.Home
-                    }
-                    1 -> {
-                        navController.navigate(Screen.Data.name)
-                        currentScreen = Screen.Data
-                    }
-                    2 -> {
-                        navController.navigate(Screen.Judicial.name)
-                        currentScreen = Screen.Judicial
+            if(!sheetState){
+                BottomBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(Color.Transparent),
+                    windowSizeClass,
+                    currentScreen = currentScreen
+                ) {
+                    when (it) {
+                        0 -> {
+                            navController.navigate(Screen.Home.name)
+                            currentScreen = Screen.Home
+                        }
+
+                        1 -> {
+                            navController.navigate(Screen.Data.name)
+                            currentScreen = Screen.Data
+                        }
+
+                        2 -> {
+                            navController.navigate(Screen.Judicial.name)
+                            currentScreen = Screen.Judicial
+                        }
                     }
                 }
             }
         },
-
-        containerColor = Color.Transparent
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState){
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    onDismissRequest = {
+                        it.dismiss()
+                    }
+                ) {
+                    Snackbar(it)
+                }
+            }
+        }
     ) { innerPadding ->
+        InputSheet(
+            viewModel = inputSheetViewModel,
+            coroutineScope = coroutineScope,
+            snackBarHostState = snackBarHostState,
+            setMaxHeight = {
+                try {
+                    inputSheetViewModel.setMaxHeight(it.toInt())
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Set max height to $it") }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
+
+                }
+            },
+            setLat = {
+                try {
+                    val lat = it.toDouble()
+                    if(58 < lat && lat < 64.25){
+                        inputSheetViewModel.setLat(lat)
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
+                    }
+                    else{
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude, it must be between 58.0 and 64.24") }
+                    }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
+                }
+            },
+            setLng = {
+                try {
+                    val lng = it.toDouble()
+                    if(4 < lng && lng < 12.5){
+                        inputSheetViewModel.setLng(lng)
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
+                    }
+                    else{
+                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid longitude, it must be between 4.0 and 12.5") }
+                    }
+                } catch (e: NumberFormatException) {
+                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
+                }
+            },
+            toThresholdsScreen = {
+                navController.navigate(Screen.Thresholds.name)
+                currentScreen = Screen.Thresholds
+                sheetState = false
+            },
+            sheetState = sheetState,
+            onDismiss = { sheetState = false },
+        )
+
         NavHost(
             navController = navController,
             startDestination = Screen.Home.name
@@ -301,8 +334,6 @@ fun App(
             }
         }
     }
-    SnackbarHost(snackBarHostState)
-
 
 }
 
