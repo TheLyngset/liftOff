@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -68,17 +65,17 @@ fun DataScreen(
     val uiState by viewModel.uiState.collectAsState()
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
-    var showingTimeIndex by rememberSaveable{ mutableIntStateOf(uiState.selectedTimeIndex) }
+    var showingTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var graphTutorialIsDismissed by remember{ mutableStateOf(false) }
+    var graphTutorialIsDismissed by remember { mutableStateOf(false) }
     var tableTutorialIsDismissed by remember { mutableStateOf(false) }
-    var waitingForSettings by remember { mutableStateOf(true)}
+    var waitingForSettings by remember { mutableStateOf(true) }
 
     var showInfoBox by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit ) {
+    LaunchedEffect(Unit) {
         delay(500)
         waitingForSettings = false
 
@@ -94,7 +91,7 @@ fun DataScreen(
         modifier
             .fillMaxSize()
     ) {
-        Column{
+        Column {
             SelectTimeCard(
                 dataScreenUiState = uiState,
                 indexToPin = showingTimeIndex
@@ -138,10 +135,9 @@ fun DataScreen(
                 Toggle.GRAPH -> {
                     ThresholdGraph(
                         dataScreenUiState = uiState,
-                        selectedTimeIndex = showingTimeIndex,
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
-                        closeInfoBox = {showInfoBox = false}
+                        closeInfoBox = { showInfoBox = false }
                     ) {
                         showingTimeIndex = it
                     }
@@ -164,19 +160,21 @@ fun DataScreen(
         modifier
             .fillMaxSize()
             .padding(bottom = 8.dp),
-        contentAlignment = Alignment.BottomCenter) {
+        contentAlignment = Alignment.BottomCenter
+    ) {
         Row(
             Modifier.height(45.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        ) {
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
+                TextButton(modifier = Modifier.width(80.dp), onClick = { scrollToItem = 0 }) {
                     Text(text = "Now")
                 }
-            }
-            else{
-                IconButton(modifier = Modifier.width(50.dp),onClick = {showInfoBox = !showInfoBox}) {
+            } else {
+                IconButton(
+                    modifier = Modifier.width(50.dp),
+                    onClick = { showInfoBox = !showInfoBox }) {
                     Icon(Icons.Outlined.Info, "info")
                 }
             }
@@ -187,13 +185,17 @@ fun DataScreen(
                 }
             }
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.width(80.dp),onClick = {scrollToItem = selectedTimeIndex}) {
+                TextButton(
+                    modifier = Modifier.width(80.dp),
+                    onClick = { scrollToItem = selectedTimeIndex }) {
                     Text("Selected")
                 }
-            }else{
+            } else {
                 Box(modifier = Modifier.width(50.dp))
             }
-            if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact){ Box(Modifier.size(50.dp)) {} }
+            if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) {
+                Box(Modifier.size(50.dp)) {}
+            }
         }
     }
 }
