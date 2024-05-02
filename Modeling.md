@@ -11,12 +11,38 @@ aktivitetsdiagram (flytdiagram) eller tilstandsdiagram.</h3>
 <p>De viktigste funksjonelle kravene til appen vår er følgende:<br>
 Brukeren kan se på tre forskjellige måter om det går an eller ikke å skyte opp en rakett. <br>
 Brukeren kan endre instillinger som lokasjon og thresholds for hvor data er hentet fra 
-og får vise informasjon for nye lokasjoner og beregninger for nye thresholds. <br>
+og får vist informasjon for nye lokasjoner og beregninger for nye thresholds. <br>
 Brukeren kan velge å følge med på hjemmeskjermen en valg tidspunt og lokasjon hvis f.eks. 
 det er ønskelig å følge med framtidig informasjon på en lett måte.
 </p>
-<h3>Tekstlig beskrivelse av de viktigste use-casene: </h3>![img.png](img.png)
-<p>Appen vår </p>
+<h3>Tekstlig beskrivelse av de viktigste use-casene: </h3>
+<p>Viktige usecase er å åpne appen og se data på hjemmeskjermen, endre lokasjon/thresholds 
+og pinne ønskelig lokasjon og tidspunkt til hjemmeskjermen. </p>
+<p>Use-case navn: Åpne appen og se data på hjemmeskjermen: <br>
+Aktør: PortalSpace user<br>
+Prebetingelser: ingen.<br>
+Potbestingelser: brukeren ser om det er mulig, ikke mulig eller innimelom å skyte opp 
+PortalSpace sin rakett.<br>
+Hovedflyt: <br>
+1. Brukeren åpner appen.<br>
+2. Brukeren har internett tilgang og ser skjermen med relevant data.<br>
+Alternativ flyt<br>
+1.1 Brukeren har ikke internett.<br>
+1.2 Brukeren ser splashscreen og trykker på "Retry".<br>
+1.3 Brukeren returnerer til steg 1 i hovedflytten.<br>
+</p>
+<p>Use-case navn: User navigates to table screen and changes location <br>
+Aktør: PortalSpace user<br>
+Prebetingelser: brukeren er på hjemmeskjermen i appen og har internet.<br>
+Potbestingelser: brukeren ser data frem i tid for om det er mulig, ikke mulig eller innimelom å skyte opp 
+PortalSpace sin rakett.<br>
+Hovedflyt: <br>
+1. Brukeren trykker på Data.<br>
+2. Brukeren ser tabellen med data og scroller til høyre for å se på data<br>
+3. Brukeren trykker på settings.<br>
+4. Brukeren endrer lokasjon.<br>
+5. Brukeren går tilbake til data-skjermen og ser på data for ny lokasjon.<br>
+</p>
 
 <h3> Use-case Diagram:</h3>
 <img src = "./Modelling_pictures/UseCaseDiagram.png">
