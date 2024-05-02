@@ -18,12 +18,12 @@ det er ønskelig å følge med framtidig informasjon på en lett måte.
 <h3>Tekstlig beskrivelse av de viktigste use-casene: </h3>![img.png](img.png)
 <p>Appen vår </p>
 
-<h3> Use-case Diagrams:</h3>
-
+<h3> Use-case Diagram:</h3>
+<img src = "./Modelling_pictures/UseCaseDiagram.png">
 <h3> Sequence Diagrams: </h3>
-<img src="./Modelling_pictures/SequenceDiagram_UserOpensApp.png">
-<img src="./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png">
-<img src="./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png">
+<img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp.png">
+<img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png">
+<img src = "./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png">
 
 <h2> ● (2) Klassediagram </h2>
 
