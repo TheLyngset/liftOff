@@ -27,15 +27,6 @@ fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
         contentAlignment = Alignment.Center
     ) {
         val uiState by viewModel.uiState.collectAsState()
-        val missingDataFrom = if(!uiState.hasLocationforecast && !uiState.hasIsobaric) {
-            "Location forecast and Isobaric api's"
-        }
-        else if(!uiState.hasLocationforecast){
-            "Location forecast api"
-        }
-        else{
-            "Isobaric api"
-        }
         ElevatedCard {
             Box() {
                 Column(Modifier.padding(16.dp)) {

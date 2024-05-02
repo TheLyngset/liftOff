@@ -144,6 +144,8 @@ class RepositoryImplementation : Repository {
                 delay(500)
                 _failedToUpdate.update { false }
                 return
+            }else{
+                _hasIsoBaricData.update { false }
             }
         }
 
