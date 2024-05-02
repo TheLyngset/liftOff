@@ -72,7 +72,7 @@ fun DataScreen(
     var graphTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var waitingForSettings by rememberSaveable { mutableStateOf(true) }
-    var showInfoBox by rememberSaveable { mutableStateOf(true) }
+    var showInfoBox by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         delay(500)
