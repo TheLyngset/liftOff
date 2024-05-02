@@ -11,13 +11,13 @@ This Modern App Architecture encourages using the following techniques, among ot
 Vi har implementert tre distinkte lag som komuniserer med hverandre:
 
 #### UI Layer:
-Her inngår alt under app/src/main/java/no/uio/ifi/in2000/team_17/ui. Det er inndelt i de forskjellige skjermene våre, der skjermer som trenger det har en viewModel som utfører logic for å kunn eksponere den dataen som trengs til skjermen gjennom ui-states. 
+Her inngår alt under [ui](app/src/main/java/no/uio/ifi/in2000/team_17/ui). Det er inndelt i de forskjellige skjermene våre, der skjermer som trenger det har en viewModel som utfører logic for å kunn eksponere den dataen som trengs til skjermen gjennom ui-states. 
 
 #### Data Layer: 
 Her inngår alt i packagen [data](app/src/main/java/no/uio/ifi/in2000/team_17/data). Vi har forskjellige repositories der tanken bak inndelingen er at hvert repository har ansvar for en "type" data slik at hver view-model får så lite unødvendig data som mulig. Hoved repositoryet [Repository.kt](app/src/main/java/no/uio/ifi/in2000/team_17/data/Repository.kt) henter data fra de to data sourcene våre og eksponerer dataen ut til view-modelsene. den har også en funksjon load som laster data fra en gitt posisjon. 
 
 #### Domain Layer: 
-Vi har også et lite domain layer som består av [useCases](app/src/main/java/no/uio/ifi/in2000/team_17/usecases). Her ar vi classer med metoder som utfører mer avansert logikk for å få et ekstra abstraksjonsnivå.
+Vi har også et lite domain layer som består av [useCases](app/src/main/java/no/uio/ifi/in2000/team_17/usecases). Her har vi classer med metoder som utfører mer avansert logikk for å få et ekstra abstraksjonsnivå.
 
 
 # Viktige objektorienterte prinsipper
