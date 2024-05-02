@@ -58,6 +58,7 @@ class DataScreenViewModel(
         viewModelScope.launch { settingsRepo.setGraphShowTutorial(false) }
     }
 
+    //This function is useful when user-testing if we want to show the tutorial again
     fun resetShowTutorial() {
         viewModelScope.launch {
             settingsRepo.setGraphShowTutorial(true)
