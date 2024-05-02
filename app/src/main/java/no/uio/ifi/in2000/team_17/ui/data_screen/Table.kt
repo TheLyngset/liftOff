@@ -23,24 +23,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.isUnspecified
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
@@ -55,9 +48,9 @@ fun Table(
     setIndex: (Int) -> Unit,
     boxWidth: Int,
     dividerPadding: Int,
-){
+) {
     BoxWithConstraints {
-        val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2))/8*0.9
+        val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2)) / 8 * 0.9
         GradientRows(
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
@@ -78,21 +71,33 @@ fun Table(
         )
     }
 }
+
 data class GradientRow(
     val data: List<String>,
     val type: WeatherParameter
 )
+
 @Composable
-fun IconBox(modifier: Modifier, image: Int){
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+fun IconBox(modifier: Modifier, image: Int) {
+    Column(
+        modifier, horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         BoxWithConstraints {
-            val width = if (maxWidth.value < 20){maxWidth}
-            else if(maxWidth.value < 100){ maxWidth.times(0.5f) }
-            else{100.dp}
-            val height = if (maxHeight.value < 20){ maxHeight }
-            else if(maxHeight.value < 100){ maxHeight.times(0.5f) }
-            else{100.dp}
+            val width = if (maxWidth.value < 20) {
+                maxWidth
+            } else if (maxWidth.value < 100) {
+                maxWidth.times(0.5f)
+            } else {
+                100.dp
+            }
+            val height = if (maxHeight.value < 20) {
+                maxHeight
+            } else if (maxHeight.value < 100) {
+                maxHeight.times(0.5f)
+            } else {
+                100.dp
+            }
             Image(
                 modifier = Modifier.size(width, height),
                 painter = painterResource(id = image),
@@ -101,10 +106,18 @@ fun IconBox(modifier: Modifier, image: Int){
         }
     }
 }
+
 @Composable
-fun SelectedBox(modifier: Modifier, state: LazyListState, index: Int, dates: List<String>, times: List<String>, boxWidth: Int) {
+fun SelectedBox(
+    modifier: Modifier,
+    state: LazyListState,
+    index: Int,
+    dates: List<String>,
+    times: List<String>,
+    boxWidth: Int
+) {
     LazyRow(state = state, userScrollEnabled = false) {
-        items(index + 1){
+        items(index + 1) {
             Spacer(modifier = modifier)
         }
         item {
@@ -115,11 +128,11 @@ fun SelectedBox(modifier: Modifier, state: LazyListState, index: Int, dates: Lis
                     .offset(x = (boxWidth.times(0.19)).dp),
 
 
-                ){
-                val date = dates.getOrElse(index){"            "}
-                val time = times.getOrElse(index){"00:00"}
+                ) {
+                val date = dates.getOrElse(index) { "            " }
+                val time = times.getOrElse(index) { "00:00" }
 
-                if(time != "00:00"){
+                if (time != "00:00") {
                     Text(
                         "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}",
                         fontWeight = FontWeight.SemiBold,
@@ -128,77 +141,113 @@ fun SelectedBox(modifier: Modifier, state: LazyListState, index: Int, dates: Lis
                 }
             }
         }
-        items(maxOf((dates.size - index - 1), 0)){
+        items(maxOf((dates.size - index - 1), 0)) {
             Spacer(modifier = modifier)
         }
     }
 }
 
 @Composable
-fun InfoBox(modifier: Modifier = Modifier, info: String? = null, colors: List<Color>, bold:Boolean = true) {
+fun InfoBox(
+    modifier: Modifier = Modifier,
+    info: String? = null,
+    colors: List<Color>,
+    bold: Boolean = true
+) {
     Box(
         modifier = modifier
             .background(brush = Brush.horizontalGradient(colors)),
         contentAlignment = Alignment.CenterStart
     ) {
         if (info != null) {
-            val newInfo = when(info.length){
+            val newInfo = when (info.length) {
                 3 -> "  $info"
                 4 -> " $info"
                 5 -> info
                 else -> info
             }
-            if (bold){ AutoHeightText(text = newInfo, style = TextStyle(fontWeight = FontWeight.SemiBold)) }
-            else{AutoHeightText(text = newInfo, style = TextStyle())}
+            if (bold) {
+                AutoHeightText(text = newInfo, style = TextStyle(fontWeight = FontWeight.SemiBold))
+            } else {
+                AutoHeightText(text = newInfo, style = TextStyle())
+            }
         }
     }
 }
 
-@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
-fun GradientRows(
-    modifier: Modifier = Modifier,
-    scrollToItem: Int? = null,
-    boxWidth: Int,
-    dividerModifier: Modifier,
+fun TitleAndIconColumn(
+    modifier: Modifier,
     rowModifier: Modifier,
     dateTimeModifier: Modifier,
-    overlayModifier: Modifier,
-    rows: List<GradientRow>,
-    thresholds: Thresholds,
-    selectedIndex: Int,
-    setIndex:(Int) -> Unit
+    dividerModifier: Modifier,
+    rows: List<GradientRow>
 ) {
     //Titles and icons Column
     LazyColumn(modifier) {
 
         items(rows) { row ->
-            when(row.type){
-                WeatherParameter.GROUNDWIND -> IconBox(modifier = rowModifier, image = R.drawable.groundwind2)
-                WeatherParameter.MAXWINDSHEAR -> IconBox(modifier = rowModifier, image = R.drawable.shearwind)
+            when (row.type) {
+                WeatherParameter.GROUNDWIND -> IconBox(
+                    modifier = rowModifier,
+                    image = R.drawable.groundwind2
+                )
+
+                WeatherParameter.MAXWINDSHEAR -> IconBox(
+                    modifier = rowModifier,
+                    image = R.drawable.shearwind
+                )
+
                 WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(modifier = rowModifier, image = R.drawable.cloud)
+                WeatherParameter.CLOUDFRACTION -> IconBox(
+                    modifier = rowModifier,
+                    image = R.drawable.cloud
+                )
+
                 WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
-                WeatherParameter.HUMIDITY -> IconBox(modifier = rowModifier, image = R.drawable.humidity)
-                WeatherParameter.DEWPOINT -> IconBox(modifier = rowModifier, image = R.drawable.dewpoint)
+                WeatherParameter.HUMIDITY -> IconBox(
+                    modifier = rowModifier,
+                    image = R.drawable.humidity
+                )
+
+                WeatherParameter.DEWPOINT -> IconBox(
+                    modifier = rowModifier,
+                    image = R.drawable.dewpoint
+                )
+
                 WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
                 else -> {
-                    InfoBox(dateTimeModifier,"    ${row.type.title}",listOf(Color.Transparent, Color.Transparent))
+                    InfoBox(
+                        dateTimeModifier,
+                        "    ${row.type.title}",
+                        listOf(Color.Transparent, Color.Transparent)
+                    )
                 }
             }
             HorizontalDivider(dividerModifier)
         }
     }
+}
 
-    val state = rememberLazyListState()
+@Composable
+fun GradientRowsColumn(
+    modifier: Modifier,
+    rowModifier: Modifier,
+    dateTimeModifier: Modifier,
+    dividerModifier: Modifier,
+    state: LazyListState,
+    rows: List<GradientRow>,
+    thresholds: Thresholds
+) {
     //Column of gradient rows
-    LazyColumn(modifier.offset(x = 70.dp)){
-        items(rows){row ->
+    LazyColumn(modifier.offset(x = 70.dp)) {
+        items(rows) { row ->
             LazyRow(
                 state = state,
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                userScrollEnabled = false) {
+                userScrollEnabled = false
+            ) {
                 item {
                     when (row.type) {
                         WeatherParameter.TIME -> {
@@ -223,13 +272,14 @@ fun GradientRows(
                                 "",
                                 listOf(
                                     Color.White.copy(0.0f),
-                                    calculateColor(row.type, row.data.first(), thresholds).color),
+                                    calculateColor(row.type, row.data.first(), thresholds).color
+                                ),
                             )
                         }
                     }
                 }
                 itemsIndexed(rows[0].data) { i, _ ->
-                    if(i < row.data.size){
+                    if (i < row.data.size) {
                         val data = row.data[i]
                         when (row.type) {
                             WeatherParameter.DATE -> {
@@ -244,9 +294,15 @@ fun GradientRows(
                                     colors = listOf(Color.Unspecified, Color.Unspecified)
                                 )
                             }
+
                             WeatherParameter.TIME -> {
-                                InfoBox(dateTimeModifier, data, listOf(Color.Unspecified, Color.Unspecified))
+                                InfoBox(
+                                    dateTimeModifier,
+                                    data,
+                                    listOf(Color.Unspecified, Color.Unspecified)
+                                )
                             }
+
                             else -> {
                                 val colorNow = calculateColor(row.type, data, thresholds).color
                                 val colorsNow = listOf(colorNow, colorNow)
@@ -260,33 +316,76 @@ fun GradientRows(
                                 InfoBox(rowModifier, data, colorsNow + colorsAfter, bold = false)
                             }
                         }
-                    }
-                    else{
-                        InfoBox(modifier = rowModifier, colors = listOf(Color.Unspecified, Color.Unspecified))
+                    } else {
+                        InfoBox(
+                            modifier = rowModifier,
+                            colors = listOf(Color.Unspecified, Color.Unspecified)
+                        )
                     }
                 }
             }
             HorizontalDivider(dividerModifier)
         }
     }
+}
+
+@SuppressLint("FrequentlyChangedStateReadInComposition")
+@Composable
+fun GradientRows(
+    modifier: Modifier = Modifier,
+    scrollToItem: Int? = null,
+    boxWidth: Int,
+    dividerModifier: Modifier,
+    rowModifier: Modifier,
+    dateTimeModifier: Modifier,
+    overlayModifier: Modifier,
+    rows: List<GradientRow>,
+    thresholds: Thresholds,
+    selectedIndex: Int,
+    setIndex: (Int) -> Unit
+) {
+    TitleAndIconColumn(
+        modifier = modifier,
+        rowModifier = rowModifier,
+        dateTimeModifier = dateTimeModifier,
+        dividerModifier = dividerModifier,
+        rows = rows
+    )
+    val state = rememberLazyListState()
+
+    GradientRowsColumn(
+        modifier = modifier,
+        rowModifier = rowModifier,
+        dateTimeModifier = dateTimeModifier,
+        dividerModifier = dividerModifier,
+        state = state,
+        rows = rows,
+        thresholds = thresholds
+    )
+
     //SelectedTimeIndex box
     Column(
-        Modifier
+        modifier
             .offset(x = 70.dp)
-            .fillMaxSize()) {
-        SelectedBox(overlayModifier, state, selectedIndex, rows[0].data,rows[1].data, boxWidth)
+            .fillMaxSize()
+    ) {
+        SelectedBox(overlayModifier, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
     }
-    //Making all rows scroll together by adding a big box on top
+    //Making all rows scroll together by adding big boxes on top
     val mainState = rememberLazyListState()
-    LazyRow(state = mainState, modifier = Modifier
-        .offset(x = 70.dp)){
+    LazyRow(
+        state = mainState, modifier = Modifier
+            .offset(x = 70.dp)
+    ) {
         rows[1].data.forEachIndexed { i, _ ->
-            if(i == 0){
-                item{
-                    InfoBox(overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
+            if (i == 0) {
+                item {
+                    InfoBox(
+                        overlayModifier,
+                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                    )
                 }
-            }
-            else{
+            } else {
                 item {
                     InfoBox(
                         modifier = overlayModifier
@@ -299,17 +398,18 @@ fun GradientRows(
             }
         }
     }
-    if(scrollToItem != null){
-        LaunchedEffect(scrollToItem){
+    //scrolls to now or selected
+    if (scrollToItem != null) {
+        LaunchedEffect(scrollToItem) {
             mainState.animateScrollToItem(scrollToItem)
         }
-    }
-    else{
-        LaunchedEffect(Unit){
+    } else {
+        LaunchedEffect(Unit) {
             mainState.scrollToItem(selectedIndex)
             mainState.scrollBy(-60f)
         }
     }
+    //scrolls all rows when overlaying row is scrolled
     LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
         state.scrollToItem(
             mainState.firstVisibleItemIndex,
@@ -317,7 +417,6 @@ fun GradientRows(
         )
     }
 }
-
 
 
 /*
