@@ -69,10 +69,10 @@ fun DataScreen(
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var graphTutorialIsDismissed by remember { mutableStateOf(false) }
-    var tableTutorialIsDismissed by remember { mutableStateOf(false) }
-    var waitingForSettings by remember { mutableStateOf(true) }
-    var showInfoBox by remember { mutableStateOf(true) }
+    var graphTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
+    var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
+    var waitingForSettings by rememberSaveable { mutableStateOf(true) }
+    var showInfoBox by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         delay(500)
