@@ -34,12 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.team_17.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
@@ -114,9 +116,8 @@ fun InputSheetContent(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     value = maxHeightText,
                     onValueChange = { maxHeightText = it },
-                    label = "Maximum height in km",
-
-                ) { setMaxHeight(maxHeightText); }
+                    label = stringResource(R.string.maximum_height_in_km_label)
+                ) { setMaxHeight(maxHeightText) }
 
                 Box(
                     Modifier.fillMaxWidth(1f),
@@ -138,16 +139,14 @@ fun InputSheetContent(
                 InputTextField(
                     value = latString,
                     onValueChange = { latString = it },
-                    label = "Latitude",
-                    modifier = Modifier.weight(1f),
-
+                    label = stringResource(R.string.latitude_label),
+                    modifier = Modifier.weight(1f)
                 ) { setLat(latString) }
                 InputTextField(
                     value = lngString,
                     onValueChange = { lngString = it },
-                    label = "Longitude",
-                    modifier = Modifier.weight(1f),
-
+                    label = stringResource(R.string.longitude_label),
+                    modifier = Modifier.weight(1f)
                 ) { setLng(lngString) }
             }
             ListItem(
@@ -158,7 +157,7 @@ fun InputSheetContent(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 7.dp),
                         fontWeight = FontWeight.SemiBold,
-                        text = "Thresholds",
+                        text = stringResource(R.string.thresholds_text),
                         style = TextStyle(
                             fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -173,10 +172,10 @@ fun InputSheetContent(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                                 .padding(top = 7.dp),
-                            text = "When you can launch is determined by appropriate thresholds set specifically for the needs of the Kon-tiki project by Portal Space. If your rocket can launch in different conditions you can alter them by pressing the button under:"
+                            text = stringResource(R.string.conditionalText)
                         )
                         Button(onClick = { toAdvancedSettings() }) {
-                            Text(text = "Change Thresholds")
+                            Text(text = stringResource(R.string.change_thresholds))
                         }
                     }
                 }
@@ -195,8 +194,8 @@ fun InputSheetContent(
                     )
                 ) {
                     InfoSection(
-                        title = "Max height",
-                        description = "Max height is the maximum possible height the rocket can reach. This wil be the maximum height we wil consider when calculating if the rocket can launch or not."
+                        title = stringResource(R.string.maxHeight_title),
+                        description = stringResource(R.string.maxHeight_description)
                     )
                     Box(
                         Modifier
@@ -205,7 +204,7 @@ fun InputSheetContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Button(onClick = { showInfoCard = !showInfoCard }) {
-                            Text(text = "Close")
+                            Text(text = stringResource(R.string.close_Button))
                         }
                     }
                 }
@@ -222,7 +221,6 @@ fun InputTextField(
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
-
     onDone: (String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -239,10 +237,8 @@ fun InputTextField(
             onDone = {
                 keyboardController?.hide()
                 onDone(value)
-
             }
         ),
         modifier = modifier
     )
 }
-

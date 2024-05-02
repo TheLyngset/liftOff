@@ -508,7 +508,7 @@ fun GraphInfoDialog(
                         onClick = { onDismiss() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.dismiss))
                     }
                     TextButton(
                         onClick = { onDontShowAgain() },
@@ -595,13 +595,13 @@ fun InfoBox(
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.Magenta)
                             })
-                            Text(text = " Rain ", style = TextStyle(color = Color.Black))
+                            Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
                         }
                         Row(Modifier.padding(vertical = 10.dp)) {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.Cyan)
                             })
-                            Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
+                            Text(text = stringResource(R.string.cloud_coverage), style = TextStyle(color = Color.Black))
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(

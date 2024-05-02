@@ -27,10 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
@@ -57,7 +59,6 @@ fun ThresholdsScreen(
     var humidityText by remember { mutableStateOf(uiState.humidity.toString())}
     var dewPointText by remember { mutableStateOf(uiState.dewPoint.toString())}
     var marginText by remember { mutableStateOf(uiState.margin.toString())}
-
 
     val state = rememberScrollState()
     val defaults = ThresholdsSerializer.defaultValue
@@ -101,8 +102,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = groundWindSpeedText,
                 onValueChange = { groundWindSpeedText = it },
-                label = "Max ground wind speed",
-
+                label = stringResource(R.string.max_ground_wind_speed_label)
             ) {
                 try {
                     viewModel.setGroundWind(it.toDouble())
@@ -129,8 +129,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = maxWindSpeedText,
                 onValueChange = { maxWindSpeedText = it },
-                label = "Max air wind speed",
-
+                label = stringResource(R.string.max_air_wind_speed_label)
             ) {
                 try {
                     viewModel.setMaxWind(it.toDouble())
@@ -158,8 +157,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = maxWindShearText,
                 onValueChange = { maxWindShearText = it },
-                label = "Max wind shear",
-
+                label = stringResource(id = R.string.max_shear_wind)
             ) {
                 try {
                     viewModel.setMaxWindShear(it.toDouble())
@@ -186,8 +184,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = cloudFractionText,
                 onValueChange = { cloudFractionText = it },
-                label = "Max cloud fraction in percent",
-
+                label = stringResource(R.string.max_cloud_fraction_in_percent)
             ) {
                 try {
                     viewModel.setCloudFraction(it.toDouble())
@@ -212,8 +209,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = fogText,
                 onValueChange = { fogText = it },
-                label = "Max fog",
-
+                label = stringResource(id = R.string.max_fog_title)
             ) {
                 try {
                     viewModel.setFog(it.toDouble())
@@ -238,8 +234,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = rainText,
                 onValueChange = { rainText = it },
-                label = "Max rain probability",
-
+                label = stringResource(R.string.max_rain_probability)
             ) {
                 try {
                     viewModel.setRain(it.toDouble())
@@ -264,8 +259,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = humidityText,
                 onValueChange = { humidityText = it },
-                label = "Max humidity",
-
+                label = stringResource(id = R.string.max_humidity_title)
             ) {
                 try {
                     viewModel.setHumiditiy(it.toDouble())
@@ -290,8 +284,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = dewPointText,
                 onValueChange = { dewPointText = it },
-                label = "Max Dew Point",
-
+                label = stringResource(id = R.string.max_dew_point_title)
             ) {
                 try {
                     viewModel.setDewPoint(it.toDouble())
@@ -316,8 +309,7 @@ fun ThresholdsScreen(
             InputTextField(
                 value = marginText,
                 onValueChange = { marginText = it },
-                label = "Safety margin",
-
+                label = stringResource(id = R.string.safety_margin_title)
             ) {
                 try {
                     viewModel.setMargin(it.toDouble())
@@ -347,7 +339,7 @@ fun ThresholdsScreen(
                 onCorrectInputFormat("All thresholds were reset")
 
             }) {
-                Text(text = "Reset All")
+                Text(text = stringResource(R.string.reset_all))
                 Icon(Icons.Filled.Refresh, null)
             }
         }
