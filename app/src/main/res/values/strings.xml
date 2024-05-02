@@ -72,4 +72,6 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="change_to_kl">"Change to: %1$s kl. %2$s "</string>
     <string name="on_home_screen">On Home screen:</string>
+    <string name="table_tutorial">Scroll left to see more weather data.</string>
+    <string name="info">info</string>
 </resources>

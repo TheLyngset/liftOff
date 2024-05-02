@@ -69,7 +69,6 @@ fun DataScreen(
     var showingTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
 
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
-    //var selectedTimeLocked by remember { mutableStateOf(true) }
     var graphTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var waitingForSettings by rememberSaveable { mutableStateOf(true) }
@@ -82,9 +81,7 @@ fun DataScreen(
     }
     if (uiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = uiState.selectedTimeIndex
-        //showSwipe = dataScreenUiState.showSwipe.value
     }
-    //val configuration = LocalConfiguration.current
 
     Background()
     Box(
@@ -125,7 +122,7 @@ fun DataScreen(
                                         viewModel.dontShowTableTurotialAgain()
                                     },
                                     painter = painterResource(id = R.drawable.swipe),
-                                    text = "Scroll left to see more weather data."
+                                    text = stringResource(R.string.table_tutorial)
                                 )
                             }
                         }
@@ -175,7 +172,7 @@ fun DataScreen(
                 IconButton(
                     modifier = Modifier.width(50.dp),
                     onClick = { showInfoBox = !showInfoBox }) {
-                    Icon(Icons.Outlined.Info, "info")
+                    Icon(Icons.Outlined.Info, stringResource(R.string.info))
                 }
             }
             ToggleButton {

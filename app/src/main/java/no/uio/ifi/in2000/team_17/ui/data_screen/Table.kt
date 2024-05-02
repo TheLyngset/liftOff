@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.isUnspecified
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
+import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 
 @Composable
@@ -67,7 +68,7 @@ fun Table(
                 .size(
                     width = boxWidth.dp,
                     height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight + 3).dp
-                ) //(dividerPadding*8 + 8 + dateTimeBoxHeight * 2 - 4 + 8* boxHeight)
+                )
                 .offset(x = -(boxWidth.times(0.25)).dp),
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
@@ -152,42 +153,6 @@ fun InfoBox(modifier: Modifier = Modifier, info: String? = null, colors: List<Co
         }
     }
 }
-
-@Composable
-fun AutoHeightText(
-    text: String,
-    style: TextStyle,
-    modifier: Modifier = Modifier,
-    color: Color = style.color
-){
-    var shouldDraw by remember { mutableStateOf(false)}
-    var resizedTextStyle by remember{ mutableStateOf(style)}
-    val defaultFontSize = MaterialTheme.typography.bodySmall.fontSize
-
-    Text(text = text,
-        style = resizedTextStyle,
-        color = color,
-        softWrap = false,
-        modifier = modifier.drawWithContent { if(shouldDraw){ drawContent() } }
-        ,
-        onTextLayout = {result ->
-            if(result.hasVisualOverflow){
-                if(style.fontSize.isUnspecified){
-                    resizedTextStyle = resizedTextStyle.copy(
-                        fontSize = defaultFontSize
-                    )
-                }
-                resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize*0.9
-                )
-            }
-            else{
-                shouldDraw = true
-            }
-        }
-    )
-}
-
 
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable

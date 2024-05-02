@@ -470,7 +470,6 @@ fun GraphInfoDialog(
                 .fillMaxWidth()
                 .height(350.dp)
                 .padding(16.dp),
-            //.background(Color.White.copy(alpha = 0.1f)),
             shape = RoundedCornerShape(16.dp),
             colors = CardColors(
                 containerColor = Color.White.copy(0.8f),
@@ -617,10 +616,6 @@ fun InfoBox(
                                     .height(2.dp)
                                     .background(Color.Red)
                             )
-                            /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Red)
-                            })*/
-                            //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
                             Text(
                                 text = stringResource(R.string.threshold_line),
                                 style = TextStyle(color = Color.Black)
@@ -795,7 +790,6 @@ val dummyData: WeatherDataLists = WeatherDataLists(
     updated = "08:38",
     availableIndexes = AvailableIndexes()
 )
-val dummyThreasholds: Thresholds = Thresholds.getDefaultInstance()
 
 
 
