@@ -7,16 +7,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,13 +58,17 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                 )
             )
             {
-                Box(){
+                Box(contentAlignment = Alignment.TopEnd){
                     Column(
                         Modifier
                             .padding(16.dp)
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        InfoSection(
+                            title = stringResource(R.string.safety_margin_title),
+                            description = stringResource(R.string.safety_margin_description)
+                        )
                         InfoSection(
                             title = stringResource(R.string.max_ground_wind_title),
                             description = stringResource(R.string.max_ground_wind_description)
@@ -94,19 +101,11 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                             title = stringResource(R.string.max_dew_point_title),
                             description = stringResource(R.string.max_dew_point_description)
                         )
-                        InfoSection(
-                            title = stringResource(R.string.safety_margin_title),
-                            description = stringResource(R.string.safety_margin_description)
-                        )
 
                     }
-                    Box(
-                        Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
-                        Button(onClick = { onDone() }) {
-                            Text(text = stringResource(id = R.string.close_Button))
-                        }
+                    IconButton(
+                        onClick = { onDone() }) {
+                        Icon(Icons.Outlined.Close, "Close")
                     }
                 }
             }

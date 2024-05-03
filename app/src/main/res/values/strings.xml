@@ -32,7 +32,7 @@
     <string name="threshold_line">"  Threshold Line "</string>
     <string name="cloud_coverage">" Cloud Coverage "</string>
     <string name="rain">" Rain "</string>
-    <string name="max_shear_wind">" Max Shear Wind"</string>
+    <string name="max_shear_wind">"Max Shear Wind"</string>
     <string name="max_wind_altitude">" Max Wind (altitude) "</string>
     <string name="max_wind_ground">" Max Wind (ground) "</string>
     <string name="pin_to_homescreen">Pin %1$s to homescreen</string>

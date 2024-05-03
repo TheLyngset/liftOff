@@ -87,9 +87,54 @@ fun ThresholdsScreen(
                 fontWeight = FontWeight.Bold,
                 style = TextStyle(fontSize = 30.sp),
             )
+            Button(onClick = {
+                viewModel.resetAll()
+                groundWindSpeedText = defaults.groundWindSpeed.toString()
+                maxWindSpeedText = defaults.maxWindSpeed.toString()
+                maxWindShearText = defaults.maxWindShear.toString()
+                cloudFractionText = defaults.cloudFraction.toString()
+                fogText = defaults.fog.toString()
+                rainText = defaults.rain.toString()
+                humidityText = defaults.humidity.toString()
+                dewPointText = defaults.dewPoint.toString()
+                marginText = defaults.margin.toString()
+                onCorrectInputFormat("All thresholds were reset")
+
+            }) {
+                Text(text = stringResource(R.string.reset_all))
+                Icon(Icons.Filled.Refresh, null)
+            }
+
             Icon(imageVector = Icons.Outlined.Info, contentDescription = null,modifier = Modifier.clickable {
                 showInfo = true
             })
+        }
+
+        //margin
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+            InputTextField(
+                value = marginText,
+                onValueChange = { marginText = it },
+                label = stringResource(id = R.string.safety_margin_title)
+            ) {
+                try {
+                    viewModel.setMargin(it.toDouble())
+                    onCorrectInputFormat("Safety margin was set to $marginText")
+                } catch (e: NumberFormatException) {
+                    wrongInputFormat(MARGIN)
+                }
+            }
+            IconButton(onClick = {
+                viewModel.reset(MARGIN)
+                marginText = defaults.margin.toString()
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
         }
 
         //Ground wind speed
@@ -298,53 +343,9 @@ fun ThresholdsScreen(
                 Icon(Icons.Filled.Refresh, null)
             }
         }
-
-        //margin
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = marginText,
-                onValueChange = { marginText = it },
-                label = stringResource(id = R.string.safety_margin_title)
-            ) {
-                try {
-                    viewModel.setMargin(it.toDouble())
-                    onCorrectInputFormat("Safety margin was set to $marginText")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(MARGIN)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(MARGIN)
-                marginText = defaults.margin.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = {
-                viewModel.resetAll()
-                groundWindSpeedText = defaults.groundWindSpeed.toString()
-                maxWindSpeedText = defaults.maxWindSpeed.toString()
-                maxWindShearText = defaults.maxWindShear.toString()
-                cloudFractionText = defaults.cloudFraction.toString()
-                fogText = defaults.fog.toString()
-                rainText = defaults.rain.toString()
-                humidityText = defaults.humidity.toString()
-                dewPointText = defaults.dewPoint.toString()
-                marginText = defaults.margin.toString()
-                onCorrectInputFormat("All thresholds were reset")
-
-            }) {
-                Text(text = stringResource(R.string.reset_all))
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
     }
     ThresholdsInfo(modifier,showInfo) {
         showInfo = false
     }
 }
+
