@@ -60,7 +60,7 @@ fun InputSheet(
 
     ) {
     val uiState by viewModel.uiState.collectAsState()
-    val failedToUpdate by viewModel.failedToUpdate.collectAsState()
+    val failedToUpdate = uiState.failedToUpdate
     if(failedToUpdate){
         failedToUpdate()
     }

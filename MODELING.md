@@ -1,49 +1,62 @@
 
 ```mermaid
 classDiagram 
-    LocationForecastDataSource <|--|> Repository
-    IsobaricDataSource <|--|> Repository
 
-    SettingsDataStore <|--|> SettingsRepository
+    SplashScreen ..> SplashScreenViewModel: user input
+    InputSheet ..> InputSheetViewModel: user input
+    HomeScreen ..> HomeScreenViewModel: user input
+    DataScreen ..> DataScreenViewModel: user input
+    ThresholdsScreen ..> ThresholdsScreenViewModel: user input
 
-    ThresholdsDataStore <|--|> ThresholdsRepository
+    SplashScreen <.. SplashScreenViewModel: uiState
+    InputSheet <.. InputSheetViewModel: uiState
+    HomeScreen <.. HomeScreenViewModel: uiState
+    DataScreen <.. DataScreenViewModel: uiState
+    ThresholdsScreen <.. ThresholdsScreenViewModel: uiState
 
-    Repository <|--|> InputSheetViewModel
-    SettingsRepository <|--|> InputSheetViewModel 
+    SplashScreen --* SplashScreenViewModel
+    InputSheet --* InputSheetViewModel
+    HomeScreen --* HomeScreenViewModel
+    DataScreen --* DataScreenViewModel
+    ThresholdsScreen --* ThresholdsScreenViewModel
 
-    Repository <|--|> HomeScreenViewModel
-    SettingsRepository <|--|> HomeScreenViewModel
-    ThresholdsRepository <|--|> HomeScreenViewModel
+    SplashScreenViewModel <.. SettingsRepository: settingsFlow
+    InputSheetViewModel <.. SettingsRepository: settingsFlow
+    HomeScreenViewModel <.. SettingsRepository: settingsFlow
+    DataScreenViewModel <.. SettingsRepository: settingsFlow
 
-    Repository <|--|> SplashScreenViewModel
-    SettingsRepository <|--|> SplashScreenViewModel 
+    SplashScreenViewModel --o SettingsRepository
+    InputSheetViewModel --o SettingsRepository
+    HomeScreenViewModel --o SettingsRepository
+    DataScreenViewModel --o SettingsRepository
 
-    Repository <|--|> DataScreenViewModel 
-    ThresholdsRepository <|--|> DataScreenViewModel
-    SettingsRepository <|--|> DataScreenViewModel
+    SplashScreenViewModel <.. Repository: hasData
+    InputSheetViewModel <.. Repository: failedToUpdate
+    HomeScreenViewModel <.. Repository: weatherDataList
+    DataScreenViewModel <.. Repository: weatherDataList
 
-    Repository <|--|> ThresholdsScreenViewModel
-    ThresholdsRepository <|--|> ThresholdsScreenViewModel 
+    SplashScreenViewModel --o Repository
+    InputSheetViewModel --o Repository
+    HomeScreenViewModel --o Repository
+    DataScreenViewModel --o Repository
 
-    DataScreenViewModel --|> DataScreenUiState
-    DataScreenUiState --|> DataScreen
-    DataScreen --|> DataScreenViewModel
+    HomeScreenViewModel <.. ThresholdsRepository: thresholdsFlow
+    DataScreenViewModel <.. ThresholdsRepository: thresholdsFlow
+    ThresholdsScreenViewModel <.. ThresholdsRepository: thresholdsFlow
 
-    InputSheetViewModel --|> InputSheetUiState
-    InputSheetUiState --|> InputSheet
-    InputSheet --|> InputSheetViewModel
+    HomeScreenViewModel --o ThresholdsRepository
+    DataScreenViewModel --o ThresholdsRepository
+    ThresholdsScreenViewModel --o ThresholdsRepository
 
-    HomeScreenViewModel --|> HomeScreenUiState
-    HomeScreenUiState --|> HomeScreen
-    HomeScreen --|> HomeScreenViewModel
+    SettingsRepository <.. SettingsDataStore: settingsFlow
+    SettingsRepository --o SettingsDataStore
 
-    SplashScreenViewModel --|> SplashScreenUiState
-    SplashScreenUiState --|> SplashScreen
-    SplashScreen --|> SplashScreenViewModel
+    Repository --o IsobaricDataSource
+    Repository --o LocationForecastDataSource
 
-    ThresholdsScreenViewModel --|> ThresholdsScreenUiState
-    ThresholdsScreenUiState --|> ThresholdsScreen
-    ThresholdsScreen --|> ThresholdsScreenViewModel
+    ThresholdsRepository --o ThresholdsDataStore
+
+    
 
 
     class Repository{
@@ -117,23 +130,11 @@ classDiagram
         +setLng()
         +rollback()
     }
-
-    class InputSheetUiState{
-        +maxHeight
-        +latLng
-    }
-
     class HomeScreenViewModel{
         +repository
         +settingsRepository
         +thresholdsRepository
         +homeScreenUiState
-    }
-    class HomeScreenUiState{
-        +weatherPointInTime
-        +canLaunch
-        +updated
-        +thresholds
     }
 
     class DataScreenViewModel{
@@ -146,25 +147,12 @@ classDiagram
         +dontShowGraphTutorialAgain()
     }
 
-    class DataScreenUiState{
-        +weatherDataLists
-        +thresholds
-        +selectedTimeIndex
-        +showGraphTutorial
-        +showTableTutorial
-    }
+    
 
     class SplashScreenViewModel{
         +repository
         +settingsRepository
         +splashScreenUiState
-    }
-
-    class SplashScreenUiState{
-        +isLoading
-        +hasData
-        +hasIsobaricData
-        +hasLocationForecastData
     }
 
     class ThresholdsScreenViewModel{
@@ -183,7 +171,38 @@ classDiagram
         +resetAll()
     }
     
-    class ThresholdsScreenUiState{
+
+```
+
+```mermaid
+classDiagram
+    class InputSheetUiState{
+        +maxHeight
+        +latLng
+    }
+        class HomeScreenUiState{
+        +weatherPointInTime
+        +canLaunch
+        +updated
+        +thresholds
+    }
+
+    class DataScreenUiState{
+        +weatherDataLists
+        +thresholds
+        +selectedTimeIndex
+        +showGraphTutorial
+        +showTableTutorial
+    }
+
+    class SplashScreenUiState{
+        +isLoading
+        +hasData
+        +hasIsobaricData
+        +hasLocationForecastData
+    }
+
+        class ThresholdsScreenUiState{
         +groundWind
         +maxWind
         +maxWindShear
@@ -194,8 +213,11 @@ classDiagram
         +dewPoint
         +margin
     } 
+```
 
-    class WeatherDataList{
+```mermaid
+classDiagram
+        class WeatherDataList{
         +time
         +date
         +groundWind
