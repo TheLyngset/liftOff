@@ -233,7 +233,7 @@ fun ThresholdsScreen(
             ) {
                 try {
                     viewModel.setCloudFraction(it.toDouble())
-                    onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText m/s")
+                    onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText %")
                 } catch (e: NumberFormatException) {
                     wrongInputFormat(CLOUDFRACTION)
                 }

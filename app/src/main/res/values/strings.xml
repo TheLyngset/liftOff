@@ -57,7 +57,7 @@
     <string name="max_fog_description">Max Fog is the maximum fog fraction in % for which it is safe to launch the rocket</string>
     <string name="max_fog_title">Max Fog</string>
     <string name="max_allowed_rain_title">Max allowed rain</string>
-    <string name="max_allowed_rain_description">Max allowed rain is the maximum amount of rain in mm/h for which it is safe to launch the rocket</string>
+    <string name="max_allowed_rain_description">Max allowed rain is the maximum chance of rain in % allowed</string>
     <string name="max_humidity_title">Max humidity</string>
     <string name="max_humidity_description">Max humidity is the maximum relative humidity in % for which it is safe to launch the rocket</string>
     <string name="max_dew_point_title">Max Dew Point</string>
