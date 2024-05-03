@@ -198,32 +198,31 @@ fun App(
             )
         },
         bottomBar = {
-            if (!sheetState) {
-                BottomBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(Color.Transparent),
-                    windowSizeClass,
-                    currentScreen = currentScreen
-                ) {
-                    when (it) {
-                        0 -> {
-                            navController.navigate(Screen.Home.name)
-                            currentScreen = Screen.Home
-                        }
+            BottomBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.Transparent),
+                windowSizeClass,
+                currentScreen = currentScreen
+            ) {
+                when (it) {
+                    0 -> {
+                        navController.navigate(Screen.Home.name)
+                        currentScreen = Screen.Home
+                    }
 
-                        1 -> {
-                            navController.navigate(Screen.Data.name)
-                            currentScreen = Screen.Data
-                        }
+                    1 -> {
+                        navController.navigate(Screen.Data.name)
+                        currentScreen = Screen.Data
+                    }
 
-                        2 -> {
-                            navController.navigate(Screen.Judicial.name)
-                            currentScreen = Screen.Judicial
-                        }
+                    2 -> {
+                        navController.navigate(Screen.Judicial.name)
+                        currentScreen = Screen.Judicial
                     }
                 }
+
             }
         },
         snackbarHost = {
