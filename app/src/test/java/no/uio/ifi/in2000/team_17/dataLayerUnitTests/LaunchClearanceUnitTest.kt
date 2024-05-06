@@ -49,7 +49,6 @@ class LaunchClearanceUnitTest {
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
@@ -60,19 +59,16 @@ class LaunchClearanceUnitTest {
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
     fun LaunchClearance_FalseDewPoint() {
-
         //Arrange - mock groundWeatherPoint object
         val dummy = dummyWeatherPoint.copy(dewPoint = 100.0)
         //Act
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
@@ -83,7 +79,6 @@ class LaunchClearanceUnitTest {
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
@@ -94,7 +89,6 @@ class LaunchClearanceUnitTest {
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
@@ -105,7 +99,6 @@ class LaunchClearanceUnitTest {
         val result = canLaunch(dummy, dummyThreshods)
         //Assert
         assert(result == TrafficLightColor.RED)
-
     }
 
     @Test
