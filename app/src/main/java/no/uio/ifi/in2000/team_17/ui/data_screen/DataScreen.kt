@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -270,9 +271,10 @@ fun SelectTimeCard(
                 text = stringResource(R.string.on_home_screen),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
+            Spacer(modifier = Modifier.width(15.dp))
             if (dataScreenUiState.selectedTimeIndex != indexToPin) {
                 Button(
-                    modifier = Modifier.width(250.dp),
+                    modifier = Modifier.width(214.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -290,7 +292,7 @@ fun SelectTimeCard(
                 val time =
                     dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
                 Button(
-                    modifier = Modifier.width(250.dp),
+                    modifier = Modifier.width(214.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
