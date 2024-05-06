@@ -39,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,6 +75,7 @@ fun Table(
                     height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight + 3).dp
                 )
                 .offset(x = -(boxWidth.times(0.25)).dp),
+            uiState = uiState,
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
             thresholds = uiState.thresholds,
@@ -142,6 +145,7 @@ fun IconBox(modifier: Modifier, image: Image) {
 @Composable
 fun SelectedBox(
     modifier: Modifier,
+    uiState: DataScreenUiState,
     state: LazyListState,
     index: Int,
     dates: List<String>,
@@ -157,9 +161,10 @@ fun SelectedBox(
                 modifier
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
-                    .offset(x = (boxWidth.times(0.19)).dp),
-
-
+                    .offset(x = (boxWidth.times(0.19)).dp)
+                    .semantics {
+                        contentDescription = "${uiState.weatherDataLists.get(0).iterator()}"
+                               },
                 ) {
                 val date = dates.getOrElse(index) { "            " }
                 val time = times.getOrElse(index) { "00:00" }
@@ -381,6 +386,7 @@ fun GradientRows(
     rowModifier: Modifier,
     dateTimeModifier: Modifier,
     overlayModifier: Modifier,
+    uiState: DataScreenUiState,
     rows: List<GradientRow>,
     thresholds: Thresholds,
     selectedIndex: Int,
@@ -411,7 +417,7 @@ fun GradientRows(
             .offset(x = 70.dp)
             .fillMaxSize()
     ) {
-        SelectedBox(overlayModifier, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
+        SelectedBox(overlayModifier, uiState, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
     }
     //Making all rows scroll together by adding big boxes on top
     val mainState = rememberLazyListState()
