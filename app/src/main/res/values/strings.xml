@@ -28,7 +28,7 @@
     <string name="model_rocket_safety_code_readMore">Read more: Safety Code NAR</string>
     <string name="infoDialog">Scroll left to see more weather data.\nPinch to zoom.</string>
     <string name="now">Now</string>
-    <string name="selected">Selected</string>
+    <string name="next_window">Next</string>
     <string name="threshold_line">"  Threshold Line "</string>
     <string name="cloud_coverage">" Cloud Coverage "</string>
     <string name="rain">" Rain "</string>

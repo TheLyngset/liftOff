@@ -38,6 +38,22 @@ data class WeatherPointInTime(
     val fog: Double = -1.0,
     val available: Available = Available()
 )
+{
+    operator fun iterator(): List<Pair<WeatherParameter, Any>> {
+        return listOf(
+            WeatherParameter.DATE to date,
+            WeatherParameter.TIME to time,
+            WeatherParameter.MAXWIND to maxWind,
+            WeatherParameter.MAXWINDSHEAR to maxWindShear,
+            WeatherParameter.GROUNDWIND to groundWind,
+            WeatherParameter.RAIN to rain,
+            WeatherParameter.HUMIDITY to humidity,
+            WeatherParameter.CLOUDFRACTION to cloudFraction,
+            WeatherParameter.DEWPOINT to dewPoint,
+            WeatherParameter.FOG to fog
+        )
+    }
+}
 
 /*//object holding lists of values for each variable that needs to be displyed and used in the resultsUI
 data class WeatherPointsResults(

@@ -72,8 +72,9 @@ fun DataScreen(
     val uiState by viewModel.uiState.collectAsState()
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
-    var showingTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
+    var showingTimeIndex by rememberSaveable { mutableStateOf<Int?>(uiState.selectedTimeIndex) }
 
+    var nextIndex by remember { mutableIntStateOf(0) }
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
     var graphTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
@@ -99,7 +100,7 @@ fun DataScreen(
             if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
                 SelectTimeCard(
                     dataScreenUiState = uiState,
-                    indexToPin = showingTimeIndex
+                    indexToPin = showingTimeIndex?:0
                 ) {
                     selectedTimeIndex = it
                     setTimeIndex(it)
@@ -169,16 +170,16 @@ fun DataScreen(
     Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 5.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
-            Modifier.height(45.dp),
+            Modifier.height(45.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.Center
         ) {
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.width(80.dp), onClick = { scrollToItem = 0 }) {
+                TextButton(modifier = Modifier.size(60.dp), onClick = {scrollToItem = 0}) {
                     Text(text = stringResource(R.string.now))
                 }
             } else {
@@ -196,9 +197,16 @@ fun DataScreen(
             }
             if (toggleState == Toggle.TABLE) {
                 TextButton(
-                    modifier = Modifier.width(80.dp),
-                    onClick = { scrollToItem = selectedTimeIndex }) {
-                    Text(stringResource(R.string.selected))
+                    modifier = Modifier.size(60.dp),
+                    onClick = {
+                        scrollToItem = uiState.launchWindows.getOrElse(nextIndex){
+                            nextIndex = 0
+                            uiState.launchWindows.getOrNull(nextIndex)
+                        }
+                        showingTimeIndex = scrollToItem
+                        nextIndex ++
+                    }) {
+                    Text(stringResource(R.string.next_window))
                 }
             } else {
                 Box(modifier = Modifier.width(50.dp))
