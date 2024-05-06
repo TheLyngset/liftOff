@@ -340,7 +340,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 15.dp,
+        paddingTop = 2.dp,
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
@@ -379,7 +379,7 @@ fun ThresholdGraph(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     var text = stringResource(R.string.NoGraphBackground)
-                    if(backgroundSwitch) text = stringResource(R.string.GraphBackground)
+                    if (backgroundSwitch) text = stringResource(R.string.GraphBackground)
                     Text(text, Modifier.scale(0.75f, 0.75f))
                     Spacer(modifier = Modifier.width(5.dp))
                     BackgroundSwitch(backgroundSwitch, onFlip)
