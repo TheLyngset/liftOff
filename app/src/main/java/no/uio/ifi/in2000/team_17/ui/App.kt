@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
@@ -182,7 +183,8 @@ fun App(
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
-    var currentScreen by rememberSaveable { mutableStateOf(Screen.Home) }
+    val currentScreen = Screen.valueOf(navController.currentBackStackEntryAsState().value?.destination?.route ?: Screen.Home.name)
+
 
     BackGroundImage()
 
@@ -194,7 +196,6 @@ fun App(
                 onSearchClick = { sheetState = true },
                 onLogoClick = {
                     navController.navigate("Home")
-                    currentScreen = Screen.Home
                 },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
@@ -209,20 +210,11 @@ fun App(
                 currentScreen = currentScreen
             ) {
                 when (it) {
-                    0 -> {
-                        navController.navigate(Screen.Home.name)
-                        currentScreen = Screen.Home
-                    }
+                    0 -> navController.navigate(Screen.Home.name)
 
-                    1 -> {
-                        navController.navigate(Screen.Data.name)
-                        currentScreen = Screen.Data
-                    }
+                    1 -> navController.navigate(Screen.Data.name)
 
-                    2 -> {
-                        navController.navigate(Screen.Judicial.name)
-                        currentScreen = Screen.Judicial
-                    }
+                    2 -> navController.navigate(Screen.Judicial.name)
                 }
 
             }
@@ -284,7 +276,6 @@ fun App(
             },
             toThresholdsScreen = {
                 navController.navigate(Screen.Thresholds.name)
-                currentScreen = Screen.Thresholds
                 sheetState = false
             },
             sheetState = sheetState,
