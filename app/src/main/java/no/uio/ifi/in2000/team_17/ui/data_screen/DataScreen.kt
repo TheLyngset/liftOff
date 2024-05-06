@@ -79,6 +79,7 @@ fun DataScreen(
     var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var waitingForSettings by rememberSaveable { mutableStateOf(true) }
     var showInfoBox by rememberSaveable { mutableStateOf(false) }
+    var backgroundSwitch by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         delay(500)
@@ -95,7 +96,7 @@ fun DataScreen(
             .fillMaxSize()
     ) {
         Column {
-            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+            if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
                 SelectTimeCard(
                     dataScreenUiState = uiState,
                     indexToPin = showingTimeIndex
@@ -104,7 +105,8 @@ fun DataScreen(
                     setTimeIndex(it)
                 }
             }
-            val bottomPadding = if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
+            val bottomPadding =
+                if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
             when (toggleState) {
                 Toggle.TABLE -> {
                     Column(
@@ -142,7 +144,10 @@ fun DataScreen(
                         dataScreenUiState = uiState,
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
-                        closeInfoBox = { showInfoBox = false }
+                        closeInfoBox = { showInfoBox = false },
+                        backgroundSwitch = backgroundSwitch,
+                        onFlip = { backgroundSwitch = !backgroundSwitch }
+
                     ) {
                         showingTimeIndex = it
                     }
@@ -173,7 +178,7 @@ fun DataScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.width(80.dp), onClick = {scrollToItem = 0}) {
+                TextButton(modifier = Modifier.width(80.dp), onClick = { scrollToItem = 0 }) {
                     Text(text = stringResource(R.string.now))
                 }
             } else {

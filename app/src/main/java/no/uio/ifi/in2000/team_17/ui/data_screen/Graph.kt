@@ -25,6 +25,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -71,6 +73,8 @@ fun ThresholdGraph(
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
+    backgroundSwitch: Boolean,
+    onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -210,11 +214,15 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
-    val colorStops = arrayOf(
-        0.2f to TrafficLightColor.RED.color.copy(1f),
-        0.7f to TrafficLightColor.YELLOW.color.copy(1f),
-        1.0f to TrafficLightColor.GREEN.color.copy(1f)
-    )
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.Gray, 0.0f to Color.Gray)
+    if (backgroundSwitch) {
+        colorStops = arrayOf(
+            0.2f to TrafficLightColor.RED.color.copy(1f),
+            0.7f to TrafficLightColor.YELLOW.color.copy(1f),
+            1.0f to TrafficLightColor.GREEN.color.copy(1f)
+        )
+    }
     //builds the list of lines displayed on the chart
     val data = LineChartData(
         linePlotData = LinePlotData(
@@ -340,25 +348,36 @@ fun ThresholdGraph(
         contentAlignment = Alignment.BottomStart
     ) {
         val horizontal = windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
-        val graphHeight = if(!horizontal) (maxHeight.value - 60) else (maxHeight.value - 30)
+        val graphHeight = if (!horizontal) (maxHeight.value - 60) else (maxHeight.value - 30)
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.End
         ) {
-            if (!horizontal) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(30.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                listOf(
-                                    MaterialTheme.colorScheme.background.copy(0f),
-                                    MaterialTheme.colorScheme.background.copy(1f)
-                                )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(25.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.background.copy(0f),
+                                MaterialTheme.colorScheme.background.copy(1f)
                             )
                         )
-                )
+                    )
+            ) {
+                Row(
+                    Modifier
+                        .height(18.dp)
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Text("Change Graph Background: ")
+                    Spacer(modifier = Modifier.width(5.dp))
+                    BackgroundSwitch(backgroundSwitch, onFlip)
+                }
             }
             LineChart(
                 modifier = Modifier
@@ -384,7 +403,7 @@ fun ThresholdGraph(
         val bottomPadding = if (!horizontal) 55.dp else 45.dp
         val alignment = if (horizontal) Alignment.CenterEnd else Alignment.BottomCenter
         if (showInfoBox) {
-            Box(Modifier.fillMaxSize(),contentAlignment = alignment) {
+            Box(Modifier.fillMaxSize(), contentAlignment = alignment) {
                 InfoBox(
                     lastUpdated = lastUpdated,
                     bottomPadding = bottomPadding,
@@ -397,6 +416,19 @@ fun ThresholdGraph(
     }
 }
 
+@Composable
+fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
+    Switch(
+        checked = checked,
+        colors = SwitchDefaults.colors().copy(
+            checkedTrackColor = MaterialTheme.colorScheme.primary,
+        ),
+        onCheckedChange = {
+            onFlip()
+        },
+        modifier = Modifier.height(15.dp)
+    )
+}
 
 
 @Composable
@@ -420,8 +452,7 @@ fun GraphInfoDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(350.dp)
-                .padding(16.dp)
-            ,
+                .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardColors(
                 containerColor = Color.White.copy(0.8f),
@@ -507,12 +538,12 @@ fun InfoBox(
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             Column(Modifier.padding(16.dp)) {
-                if (!horizontal){
+                if (!horizontal) {
                     LastUpdated(lastUpdated)
                     Row {
                         InfoBoxContent()
                     }
-                }else {
+                } else {
                     InfoBoxContent()
                 }
             }
@@ -570,7 +601,10 @@ fun InfoBoxContent() {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                 drawCircle(color = Color.Cyan)
             })
-            Text(text = stringResource(R.string.cloud_coverage), style = TextStyle(color = Color.Black))
+            Text(
+                text = stringResource(R.string.cloud_coverage),
+                style = TextStyle(color = Color.Black)
+            )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -752,8 +786,3 @@ val dummyData: WeatherDataLists = WeatherDataLists(
     updated = "08:38",
     availableIndexes = AvailableIndexes()
 )
-
-
-
-
-
