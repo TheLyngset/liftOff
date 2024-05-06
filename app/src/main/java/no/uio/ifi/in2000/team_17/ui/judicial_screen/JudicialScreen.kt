@@ -3,11 +3,13 @@ package no.uio.ifi.in2000.team_17.ui.judicial_screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
+import kotlin.math.min
 
 @Composable
 fun JudicialScreen(modifier: Modifier, windowSizeClass: WindowSizeClass?) {
@@ -106,23 +109,33 @@ fun JudicialScreen(modifier: Modifier, windowSizeClass: WindowSizeClass?) {
 
 @Composable
 fun LegalCard(infoTitle: String, infoDesc: String, linkFullText: String, listLinkText: List<String>, hyperlinks: List<String>) {
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+    BoxWithConstraints {
+        val width = min(600f, maxWidth.value)
+        Card(
+            modifier = Modifier
 
-        colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = Color.Unspecified,
-            disabledContainerColor =  MaterialTheme.colorScheme.background,
-            disabledContentColor = Color.Unspecified)){
+                .padding(16.dp)
+                .width(width = width.dp),
+
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = Color.Unspecified,
+                disabledContainerColor = MaterialTheme.colorScheme.background,
+                disabledContentColor = Color.Unspecified
+            )
+        ) {
 
 
-        InfoSection(title = infoTitle, description =infoDesc )
-        HyperlinkText(
-            Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp), fullText = linkFullText, linkText = listLinkText, hyperlinks = hyperlinks)
+            InfoSection(title = infoTitle, description = infoDesc)
+            HyperlinkText(
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp),
+                fullText = linkFullText,
+                linkText = listLinkText,
+                hyperlinks = hyperlinks
+            )
+        }
     }
 }
 

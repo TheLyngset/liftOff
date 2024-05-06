@@ -22,21 +22,32 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
+import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 
@@ -44,13 +55,14 @@ import no.uio.ifi.in2000.team_17.ui.calculateColor
 fun Table(
     scrollToItem: Int? = null,
     uiState: DataScreenUiState,
-    selectedIndex: Int,
+    selectedIndex: Int?,
     setIndex: (Int) -> Unit,
     boxWidth: Int,
     dividerPadding: Int,
 ) {
     BoxWithConstraints {
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2)) / 8 * 0.9
+        val index = selectedIndex?: 0
         GradientRows(
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
@@ -63,12 +75,12 @@ fun Table(
                     height = ((dividerPadding * 19 + 9) + (25 * 2) + 8 * boxHeight + 3).dp
                 )
                 .offset(x = -(boxWidth.times(0.25)).dp),
+            uiState = uiState,
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
             thresholds = uiState.thresholds,
-            selectedIndex = selectedIndex,
-            setIndex = { setIndex(it) }
-        )
+            selectedIndex = index
+        ) { setIndex(it) }
     }
 }
 
@@ -77,8 +89,13 @@ data class GradientRow(
     val type: WeatherParameter
 )
 
+data class Image(
+    val type: WeatherParameter,
+    val id: Int
+)
 @Composable
-fun IconBox(modifier: Modifier, image: Int) {
+fun IconBox(modifier: Modifier, image: Image) {
+    var showDescrption by remember { mutableStateOf( false ) }
     Column(
         modifier, horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -99,10 +116,27 @@ fun IconBox(modifier: Modifier, image: Int) {
                 100.dp
             }
             Image(
-                modifier = Modifier.size(width, height),
-                painter = painterResource(id = image),
-                contentDescription = null
+                modifier = Modifier
+                    .size(width, height)
+                    .clickable { showDescrption = true },
+                painter = painterResource(id = image.id),
+                contentDescription = image.type.title
             )
+            if(showDescrption){
+                Card(
+                    modifier.clickable { showDescrption = false },
+                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ){
+                    Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
+                        Text(
+                            modifier = Modifier.padding(5.dp),
+                            text = image.type.title,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -110,6 +144,7 @@ fun IconBox(modifier: Modifier, image: Int) {
 @Composable
 fun SelectedBox(
     modifier: Modifier,
+    uiState: DataScreenUiState,
     state: LazyListState,
     index: Int,
     dates: List<String>,
@@ -125,9 +160,10 @@ fun SelectedBox(
                 modifier
                     .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
                     .background(Color.White.copy(0.3f))
-                    .offset(x = (boxWidth.times(0.19)).dp),
-
-
+                    .offset(x = (boxWidth.times(0.19)).dp)
+                    .semantics {
+                        contentDescription = "${uiState.weatherDataLists.get(0).iterator()}"
+                               },
                 ) {
                 val date = dates.getOrElse(index) { "            " }
                 val time = times.getOrElse(index) { "00:00" }
@@ -188,34 +224,44 @@ fun TitleAndIconColumn(
 
         items(rows) { row ->
             when (row.type) {
-                WeatherParameter.GROUNDWIND -> IconBox(
+                GROUNDWIND -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.groundwind2
+                    image = Image(GROUNDWIND,R.drawable.groundwind2)
                 )
 
-                WeatherParameter.MAXWINDSHEAR -> IconBox(
+                MAXWINDSHEAR -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.shearwind
+                    image = Image(MAXWINDSHEAR, R.drawable.shearwind)
                 )
 
-                WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(
+                MAXWIND -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.cloud
+                    image = Image(MAXWIND, R.drawable.wind)
+                )
+                CLOUDFRACTION -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(CLOUDFRACTION,R.drawable.cloud)
                 )
 
-                WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
-                WeatherParameter.HUMIDITY -> IconBox(
+                RAIN -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.humidity
+                    image = Image(RAIN,R.drawable.rain)
                 )
 
-                WeatherParameter.DEWPOINT -> IconBox(
+                HUMIDITY -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.dewpoint
+                    image = Image(HUMIDITY,R.drawable.humidity)
                 )
 
-                WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
+                DEWPOINT -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(DEWPOINT,R.drawable.dewpoint)
+                )
+
+                FOG -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(FOG,R.drawable.fog)
+                )
                 else -> {
                     InfoBox(
                         dateTimeModifier,
@@ -339,6 +385,7 @@ fun GradientRows(
     rowModifier: Modifier,
     dateTimeModifier: Modifier,
     overlayModifier: Modifier,
+    uiState: DataScreenUiState,
     rows: List<GradientRow>,
     thresholds: Thresholds,
     selectedIndex: Int,
@@ -369,7 +416,7 @@ fun GradientRows(
             .offset(x = 70.dp)
             .fillMaxSize()
     ) {
-        SelectedBox(overlayModifier, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
+        SelectedBox(overlayModifier, uiState, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
     }
     //Making all rows scroll together by adding big boxes on top
     val mainState = rememberLazyListState()

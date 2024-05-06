@@ -14,7 +14,9 @@ import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
@@ -22,6 +24,7 @@ data class DataScreenUiState(
     val selectedTimeIndex: Int = 0,
     val showGraphTutorial: Boolean = true,
     val showTableTutorial: Boolean = true,
+    val launchWindows: List<Int> = listOf()
 )
 
 class DataScreenViewModel(
@@ -34,11 +37,16 @@ class DataScreenViewModel(
         settingsRepo.settingsFlow,
         thresholdsRepository.thresholdsFlow
     ) { weatherDataList: WeatherDataLists, settings: Settings, thresholds: Thresholds ->
+        val size = weatherDataList.time.size
+        val launchWindows = (0..<size).filter {
+            WeatherUseCase.canLaunch(weatherDataList.get(it), thresholds) != TrafficLightColor.RED
+        }
         DataScreenUiState(
             weatherDataList,
             thresholds,
             SaveTimeUseCase.timeStringToIndex(settings.time),
-            settings.graphShowTutorial, settings.tableShowTutorial
+            settings.graphShowTutorial, settings.tableShowTutorial,
+            launchWindows
         )
     }.stateIn(
         viewModelScope,

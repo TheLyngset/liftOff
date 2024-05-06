@@ -126,7 +126,7 @@ fun ConditionalText(modifier: Modifier = Modifier, text: String){
 @Composable
 fun AutoHeightText(
     text: String,
-    style: TextStyle,
+    style: TextStyle = TextStyle(),
     modifier: Modifier = Modifier,
     color: Color = style.color
 ){
