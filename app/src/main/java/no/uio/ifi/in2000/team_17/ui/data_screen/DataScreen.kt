@@ -4,13 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -90,21 +96,23 @@ fun DataScreen(
             .fillMaxSize()
     ) {
         Column {
-            SelectTimeCard(
-                dataScreenUiState = uiState,
-                indexToPin = showingTimeIndex
-            ) {
-                selectedTimeIndex = it
-                setTimeIndex(it)
+            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+                SelectTimeCard(
+                    dataScreenUiState = uiState,
+                    indexToPin = showingTimeIndex
+                ) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
+                }
             }
+            val bottomPadding = if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
             when (toggleState) {
                 Toggle.TABLE -> {
                     Column(
                         Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-                        Box(Modifier.padding(bottom = 30.dp)) {
+                        Box(Modifier.padding(bottom = bottomPadding.dp)) {
                             Table(
                                 scrollToItem = scrollToItem,
                                 uiState = uiState,
@@ -238,6 +246,67 @@ fun ToggleButton(
             )
             {
                 Text(text = option)
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectTimeCard(
+    dataScreenUiState: DataScreenUiState,
+    indexToPin: Int,
+    setTimeIndex: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.padding(8.dp),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
+        )
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.on_home_screen),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.width(15.dp))
+            if (dataScreenUiState.selectedTimeIndex != indexToPin) {
+                Button(
+                    modifier = Modifier.width(214.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    onClick = { setTimeIndex(indexToPin) }) {
+                    var date = dataScreenUiState.weatherDataLists.date[indexToPin]
+                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                    val time = dataScreenUiState.weatherDataLists.time[indexToPin]
+                    Text(text = stringResource(R.string.change_to_kl, date, time))
+                }
+            } else {
+                var date =
+                    dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
+                date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                val time =
+                    dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
+                Button(
+                    modifier = Modifier.width(214.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    onClick = {}) {
+                    Text(
+                        stringResource(R.string.dateTime, date, time),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+
             }
         }
     }

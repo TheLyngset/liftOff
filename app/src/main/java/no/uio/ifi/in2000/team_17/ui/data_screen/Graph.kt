@@ -19,11 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -347,11 +344,17 @@ fun ThresholdGraph(
         containerPaddingEnd = 2.dp,
     )
 
-    BoxWithConstraints(contentAlignment = Alignment.BottomStart) {
-        val graphHeight = (maxHeight.value - 60)
+    BoxWithConstraints(
+        Modifier.padding(bottom = 10.dp),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        val horizontal = windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
+        val graphHeight = if(!horizontal) (maxHeight.value - 60) else (maxHeight.value - 30)
         Column(
             Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.End
         ) {
+            if (!horizontal) {
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -397,13 +400,20 @@ fun ThresholdGraph(
                     )
             )
         }
-        val bottomPadding =
-            if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) 30.dp else 0.dp
+        val bottomPadding = if (!horizontal) 55.dp else 45.dp
+        val alignment = if (horizontal) Alignment.CenterEnd else Alignment.BottomCenter
         if (showInfoBox) {
-            InfoBox(lastUpdated = lastUpdated, bottomPadding = bottomPadding) {
-                closeInfoBox()
+            Box(Modifier.fillMaxSize(),contentAlignment = alignment) {
+                InfoBox(
+                    lastUpdated = lastUpdated,
+                    bottomPadding = bottomPadding,
+                    horizontal = horizontal
+                ) {
+                    closeInfoBox()
+                }
             }
         }
+    }
     }
 }
 
@@ -476,11 +486,6 @@ fun SelectTimeCard(
                     )
                 }
 
-            }
-        }
-    }
-}
-
 @Composable
 fun GraphInfoDialog(
     onDismiss: () -> Unit,
@@ -502,7 +507,8 @@ fun GraphInfoDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(350.dp)
-                .padding(16.dp),
+                .padding(16.dp)
+            ,
             shape = RoundedCornerShape(16.dp),
             colors = CardColors(
                 containerColor = Color.White.copy(0.8f),
@@ -557,7 +563,7 @@ fun GraphInfoDialog(
 @Composable
 fun LastUpdated(lastUpdated: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
         Text(
@@ -573,11 +579,11 @@ fun InfoBox(
     modifier: Modifier = Modifier,
     lastUpdated: String,
     bottomPadding: Dp,
+    horizontal: Boolean,
     onDismiss: () -> Unit
 ) {
     ElevatedCard(
         modifier
-            .fillMaxWidth()
             .padding(bottom = bottomPadding),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -681,7 +687,13 @@ fun InfoBox(
                             })
                             Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
                         }
+                if (!horizontal){
+                    LastUpdated(lastUpdated)
+                    Row {
+                        InfoBoxContent()
                     }
+                }else {
+                    InfoBoxContent()
                 }
             }
             IconButton(
@@ -691,6 +703,97 @@ fun InfoBox(
             }
         }
     }
+}
+
+@Composable
+fun InfoBoxContent() {
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Black)
+            })
+            Text(
+                text = stringResource(R.string.max_wind_ground),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color(0XFFFFE500))
+            })
+            Text(
+                text = stringResource(R.string.max_wind_altitude),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+        Row {
+            Canvas(modifier = Modifier
+                .size(15.dp)
+                .padding(bottom = 2.dp), onDraw = {
+                drawCircle(color = Color(0XFFFF7A00))
+            })
+            Text(
+                text = stringResource(R.string.max_shear_wind),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+    }
+
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Green)
+            })
+            Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Cyan)
+            })
+            Text(text = stringResource(R.string.cloud_coverage), style = TextStyle(color = Color.Black))
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .width(6.dp)
+                    .height(2.dp)
+                    .background(Color.Red)
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Box(
+                modifier = Modifier
+                    .width(6.dp)
+                    .height(2.dp)
+                    .background(Color.Red)
+            )
+            Text(
+                text = stringResource(R.string.threshold_line),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+    }
+
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Blue)
+            })
+            Text(text = " Humidity ", style = TextStyle(color = Color.Black))
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Magenta)
+            })
+            Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
+        }
+        Row {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.DarkGray)
+            })
+            Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+        }
+    }
+
 }
 
 //generates all variable lines in the chart
