@@ -366,13 +366,14 @@ fun ThresholdGraph(
                     )
             ) {
                 Row(
-                    Modifier.height(18.dp),
-                    verticalAlignment = Alignment.Center,
+                    Modifier.height(18.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End,
                 ) {
                     Text("Change Graph Background: ")
                     Spacer(modifier = Modifier.width(5.dp))
-                    BackgroundSwitch(backgroundSwitch, null, onFlip)
+                    BackgroundSwitch(backgroundSwitch, onFlip)
                 }
             }
             LineChart(
@@ -407,25 +408,16 @@ fun ThresholdGraph(
 }
 
 @Composable
-fun BackgroundSwitch(checked: Boolean, icon: ImageVector? = null, onFlip: () -> Unit) {
+fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
     Switch(
         checked = checked,
-        thumbContent = {
-            if (icon != null) {
-                Icon(
-                    contentDescription = "Show Graph Background ",
-                    imageVector = icon,
-                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                )
-            }
-        },
         colors = SwitchDefaults.colors().copy(
             checkedTrackColor = MaterialTheme.colorScheme.primary,
         ),
         onCheckedChange = {
             onFlip()
         },
-        modifier = Modifier.height(1.dp)
+        modifier = Modifier.height(15.dp)
     )
 }
 
@@ -452,10 +444,9 @@ fun SelectTimeCard(
                 text = stringResource(R.string.on_home_screen),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-            Spacer(modifier = Modifier.width(15.dp))
             if (dataScreenUiState.selectedTimeIndex != indexToPin) {
                 Button(
-                    modifier = Modifier.width(214.dp),
+                    modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
