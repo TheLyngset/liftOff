@@ -96,7 +96,7 @@ fun DataScreen(
             .fillMaxSize()
     ) {
         Column {
-            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+            if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
                 SelectTimeCard(
                     dataScreenUiState = uiState,
                     indexToPin = showingTimeIndex
@@ -105,7 +105,8 @@ fun DataScreen(
                     setTimeIndex(it)
                 }
             }
-            val bottomPadding = if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
+            val bottomPadding =
+                if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
             when (toggleState) {
                 Toggle.TABLE -> {
                     Column(
@@ -146,6 +147,7 @@ fun DataScreen(
                         closeInfoBox = { showInfoBox = false },
                         backgroundSwitch = backgroundSwitch,
                         onFlip = { backgroundSwitch = !backgroundSwitch }
+
                     ) {
                         showingTimeIndex = it
                     }
