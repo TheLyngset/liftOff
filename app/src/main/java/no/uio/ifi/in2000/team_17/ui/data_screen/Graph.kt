@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
-import androidx.compose.ui.zIndex
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
@@ -191,8 +190,8 @@ fun ThresholdGraph(
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .axisStepSize(30.dp)
-        .topPadding(5.dp)
-        .bottomPadding(5.dp)
+        .topPadding(2.dp)
+        .bottomPadding(2.dp)
         .steps(size - 1)
         //.labelData { i -> i.toString() }
         .labelAndAxisLinePadding(15.dp)
@@ -339,7 +338,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 2.dp,
+        paddingTop = 5.dp,
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
@@ -367,7 +366,6 @@ fun ThresholdGraph(
                             )
                         )
                     )
-                    .zIndex(2f)
             ) {
                 Row(
                     Modifier
@@ -388,8 +386,7 @@ fun ThresholdGraph(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(graphHeight.dp)
-                    .background(Color.Transparent)
-                    .zIndex(1f),
+                    .background(Color.Transparent),
                 lineChartData = data,
             )
             Box(
