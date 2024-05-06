@@ -74,4 +74,7 @@
     <string name="on_home_screen">On Home screen: </string>
     <string name="table_tutorial">Scroll left to see more weather data.</string>
     <string name="info">info</string>
+    <string name="NoGraphBackground">Show graph background</string>
+    <string name="GraphBackground">Don\'t show graph background</string>
+
 </resources>

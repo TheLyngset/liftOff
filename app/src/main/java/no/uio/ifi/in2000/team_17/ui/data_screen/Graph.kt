@@ -34,6 +34,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.compose.ui.zIndex
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
@@ -365,16 +367,19 @@ fun ThresholdGraph(
                             )
                         )
                     )
+                    .zIndex(2f)
             ) {
                 Row(
                     Modifier
-                        .height(18.dp)
+                        .height(25.dp)
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    Text("Change Graph Background: ")
+                    var text = stringResource(R.string.NoGraphBackground)
+                    if(backgroundSwitch) text = stringResource(R.string.GraphBackground)
+                    Text(text, Modifier.scale(0.75f, 0.75f))
                     Spacer(modifier = Modifier.width(5.dp))
                     BackgroundSwitch(backgroundSwitch, onFlip)
                 }
@@ -383,7 +388,8 @@ fun ThresholdGraph(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(graphHeight.dp)
-                    .background(Color.Transparent),
+                    .background(Color.Transparent)
+                    .zIndex(1f),
                 lineChartData = data,
             )
             Box(
@@ -426,10 +432,9 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
         onCheckedChange = {
             onFlip()
         },
-        modifier = Modifier.height(15.dp)
+        modifier = Modifier.scale(0.5f)
     )
 }
-
 
 @Composable
 fun GraphInfoDialog(
