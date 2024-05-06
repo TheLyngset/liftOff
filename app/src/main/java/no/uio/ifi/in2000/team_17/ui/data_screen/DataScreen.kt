@@ -94,21 +94,23 @@ fun DataScreen(
             .fillMaxSize()
     ) {
         Column {
-            SelectTimeCard(
-                dataScreenUiState = uiState,
-                indexToPin = showingTimeIndex
-            ) {
-                selectedTimeIndex = it
-                setTimeIndex(it)
+            if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+                SelectTimeCard(
+                    dataScreenUiState = uiState,
+                    indexToPin = showingTimeIndex
+                ) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
+                }
             }
+            val bottomPadding = if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
             when (toggleState) {
                 Toggle.TABLE -> {
                     Column(
                         Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-                        Box(Modifier.padding(bottom = 30.dp)) {
+                        Box(Modifier.padding(bottom = bottomPadding.dp)) {
                             Table(
                                 scrollToItem = scrollToItem,
                                 uiState = uiState,
