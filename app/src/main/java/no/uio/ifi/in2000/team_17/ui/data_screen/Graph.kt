@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -68,6 +69,7 @@ import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun ThresholdGraph(
     dataScreenUiState: DataScreenUiState,
@@ -216,7 +218,10 @@ fun ThresholdGraph(
     //Builds colors for background
     //@Author Hedda
     var colorStops: Array<Pair<Float, Color>> =
-        arrayOf(0.0f to Color.Gray, 0.0f to Color.Gray)
+        arrayOf(
+            0.0f to Color.White,
+            0.0f to Color.White
+        )
     if (backgroundSwitch) {
         colorStops = arrayOf(
             0.2f to TrafficLightColor.RED.color.copy(1f),
