@@ -142,7 +142,7 @@ fun DataScreen(
 
                 Toggle.GRAPH -> {
                     ThresholdGraph(
-                        dataScreenUiState = uiState,
+                        uiState = uiState,
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
                         closeInfoBox = { showInfoBox = false },
