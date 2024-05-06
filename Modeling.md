@@ -296,3 +296,5 @@ classDiagram
         +dewPoint
     }
 ```
+
+<h2> ● (3) Andre diagrammer </h2>
