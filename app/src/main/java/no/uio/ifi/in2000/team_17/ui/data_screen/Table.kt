@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -162,8 +163,12 @@ fun SelectedBox(
                     .background(Color.White.copy(0.3f))
                     .offset(x = (boxWidth.times(0.19)).dp)
                     .semantics {
-                        contentDescription = "${uiState.weatherDataLists.get(0).iterator()}"
-                               },
+                        contentDescription = "${
+                            uiState.weatherDataLists
+                                .get(0)
+                                .iterator()
+                        }"
+                    },
                 ) {
                 val date = dates.getOrElse(index) { "            " }
                 val time = times.getOrElse(index) { "00:00" }
@@ -187,7 +192,7 @@ fun SelectedBox(
 fun InfoBox(
     modifier: Modifier = Modifier,
     info: String? = null,
-    colors: List<Color>,
+    colors: List<Color> = listOf(Color.Transparent, Color.Transparent),
     bold: Boolean = true
 ) {
     Box(
@@ -399,6 +404,11 @@ fun GradientRows(
         rows = rows
     )
     val state = rememberLazyListState()
+    var currentDateIndex by remember { mutableIntStateOf(0) }
+    val currentDate = uiState.weatherDataLists.date.getOrElse(currentDateIndex){""}
+    val info = if(currentDate.isNotEmpty()) "${currentDate.subSequence(8, 10)}.${currentDate.subSequence(5, 7)}" else ""
+
+    InfoBox(modifier = dateTimeModifier.offset(x = 70.dp), info = info, bold = true)
 
     GradientRowsColumn(
         modifier = modifier,
@@ -458,6 +468,7 @@ fun GradientRows(
     }
     //scrolls all rows when overlaying row is scrolled
     LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
+        currentDateIndex = mainState.firstVisibleItemIndex - 1
         state.scrollToItem(
             mainState.firstVisibleItemIndex,
             mainState.firstVisibleItemScrollOffset
