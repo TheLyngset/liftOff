@@ -66,10 +66,11 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
+import kotlin.math.round
 
 @Composable
 fun ThresholdGraph(
-    dataScreenUiState: DataScreenUiState,
+    uiState: DataScreenUiState,
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
@@ -77,10 +78,10 @@ fun ThresholdGraph(
     onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
-    val weatherDataLists = dataScreenUiState.weatherDataLists
-    val thresholds = dataScreenUiState.thresholds
+    val weatherDataLists = uiState.weatherDataLists
+    val thresholds = uiState.thresholds
     val size = weatherDataLists.time.size
-    val lastUpdated: String = dataScreenUiState.weatherDataLists.updated
+    val lastUpdated: String = uiState.weatherDataLists.updated
 
     val pointsGroundWind: List<Point> = List(weatherDataLists.groundWind.size) { index ->
         Point(
@@ -214,14 +215,14 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
-    var colorStops: Array<Pair<Float, Color>> =
-        arrayOf(0.0f to Color.Gray, 0.0f to Color.Gray)
+    var colors: List<Color> =
+        listOf(Color.Gray, Color.Gray)
     if (backgroundSwitch) {
-        colorStops = arrayOf(
-            0.2f to TrafficLightColor.RED.color.copy(1f),
-            0.7f to TrafficLightColor.YELLOW.color.copy(1f),
-            1.0f to TrafficLightColor.GREEN.color.copy(1f)
-        )
+        val nGreen = round(uiState.thresholds.margin*9).toInt()
+        colors =
+            (1..9).map{ TrafficLightColor.RED.color.copy(1f) } +
+            (1..(9 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+            (1 ..nGreen).map{ TrafficLightColor.GREEN.color.copy(1f) }
     }
     //builds the list of lines displayed on the chart
     val data = LineChartData(
@@ -238,7 +239,7 @@ fun ThresholdGraph(
                     ShadowUnderLine(
                         alpha = 0.75f,
                         brush = Brush.verticalGradient(
-                            colorStops = colorStops
+                            colors = colors
                         )
                     ),
                     SelectionHighlightPopUp(

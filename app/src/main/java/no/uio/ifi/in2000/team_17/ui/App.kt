@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -87,7 +88,8 @@ fun AppTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Transparent).padding(0.dp, 3.dp),
+                        .background(Color.Transparent)
+                        .padding(0.dp, 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -227,13 +229,15 @@ fun App(
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState) {
-                Popup(
-                    alignment = Alignment.TopCenter,
-                    onDismissRequest = {
-                        it.dismiss()
+                Box(modifier = Modifier.padding(bottom = 50.dp),) {
+                    Popup(
+                        alignment = Alignment.TopCenter,
+                        onDismissRequest = {
+                            it.dismiss()
+                        }
+                    ) {
+                        Snackbar(it)
                     }
-                ) {
-                    Snackbar(it)
                 }
             }
         }
@@ -356,7 +360,7 @@ fun SegmentedNavigationButton(
     currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
-    val options = remember { mutableStateListOf("Home", "Data", "Juridisk") }
+    val options = remember { mutableStateListOf("Home", "Data", "Legal") }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
