@@ -123,10 +123,12 @@ fun IconBox(modifier: Modifier, image: Image) {
                 painter = painterResource(id = image.id),
                 contentDescription = image.type.title
             )
+
+
             if(showDescrption){
                 Card(
                     modifier.clickable { showDescrption = false },
-                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.background.copy(1f))
                 ){
                     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
                         Text(
