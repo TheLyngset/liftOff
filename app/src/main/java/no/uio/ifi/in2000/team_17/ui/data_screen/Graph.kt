@@ -28,6 +28,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -60,7 +63,6 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.AvailableIndexes
 import no.uio.ifi.in2000.team_17.model.Rain
@@ -75,6 +77,8 @@ fun ThresholdGraph(
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
+    backgroundSwitch: Boolean,
+    onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
     val weatherDataLists = dataScreenUiState.weatherDataLists
@@ -214,11 +218,15 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
-    val colorStops = arrayOf(
-        0.2f to TrafficLightColor.RED.color.copy(1f),
-        0.7f to TrafficLightColor.YELLOW.color.copy(1f),
-        1.0f to TrafficLightColor.GREEN.color.copy(1f)
-    )
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    if (backgroundSwitch) {
+        colorStops = arrayOf(
+            0.2f to TrafficLightColor.RED.color.copy(1f),
+            0.7f to TrafficLightColor.YELLOW.color.copy(1f),
+            1.0f to TrafficLightColor.GREEN.color.copy(1f)
+        )
+    }
     //builds the list of lines displayed on the chart
     val data = LineChartData(
         linePlotData = LinePlotData(
@@ -347,7 +355,7 @@ fun ThresholdGraph(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(30.dp)
+                    .height(20.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(
@@ -356,7 +364,17 @@ fun ThresholdGraph(
                             )
                         )
                     )
-            )
+            ) {
+                Row(
+                    Modifier.height(18.dp),
+                    verticalAlignment = Alignment.Center,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Text("Change Graph Background: ")
+                    Spacer(modifier = Modifier.width(5.dp))
+                    BackgroundSwitch(backgroundSwitch, null, onFlip)
+                }
+            }
             LineChart(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -386,6 +404,29 @@ fun ThresholdGraph(
             }
         }
     }
+}
+
+@Composable
+fun BackgroundSwitch(checked: Boolean, icon: ImageVector? = null, onFlip: () -> Unit) {
+    Switch(
+        checked = checked,
+        thumbContent = {
+            if (icon != null) {
+                Icon(
+                    contentDescription = "Show Graph Background ",
+                    imageVector = icon,
+                    modifier = Modifier.size(SwitchDefaults.IconSize)
+                )
+            }
+        },
+        colors = SwitchDefaults.colors().copy(
+            checkedTrackColor = MaterialTheme.colorScheme.primary,
+        ),
+        onCheckedChange = {
+            onFlip()
+        },
+        modifier = Modifier.height(1.dp)
+    )
 }
 
 @Composable
@@ -595,13 +636,19 @@ fun InfoBox(
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.Magenta)
                             })
-                            Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
+                            Text(
+                                text = stringResource(R.string.rain),
+                                style = TextStyle(color = Color.Black)
+                            )
                         }
                         Row(Modifier.padding(vertical = 10.dp)) {
                             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                                 drawCircle(color = Color.Cyan)
                             })
-                            Text(text = stringResource(R.string.cloud_coverage), style = TextStyle(color = Color.Black))
+                            Text(
+                                text = stringResource(R.string.cloud_coverage),
+                                style = TextStyle(color = Color.Black)
+                            )
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
