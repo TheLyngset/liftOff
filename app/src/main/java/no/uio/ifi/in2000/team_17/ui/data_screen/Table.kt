@@ -22,10 +22,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,9 +42,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
+import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 
@@ -77,8 +87,13 @@ data class GradientRow(
     val type: WeatherParameter
 )
 
+data class Image(
+    val type: WeatherParameter,
+    val id: Int
+)
 @Composable
-fun IconBox(modifier: Modifier, image: Int) {
+fun IconBox(modifier: Modifier, image: Image) {
+    var showDescrption by remember { mutableStateOf( false ) }
     Column(
         modifier, horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -99,10 +114,27 @@ fun IconBox(modifier: Modifier, image: Int) {
                 100.dp
             }
             Image(
-                modifier = Modifier.size(width, height),
-                painter = painterResource(id = image),
-                contentDescription = null
+                modifier = Modifier
+                    .size(width, height)
+                    .clickable { showDescrption = true },
+                painter = painterResource(id = image.id),
+                contentDescription = image.type.title
             )
+            if(showDescrption){
+                Card(
+                    modifier.clickable { showDescrption = false },
+                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ){
+                    Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
+                        Text(
+                            modifier = Modifier.padding(5.dp),
+                            text = image.type.title,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -188,34 +220,44 @@ fun TitleAndIconColumn(
 
         items(rows) { row ->
             when (row.type) {
-                WeatherParameter.GROUNDWIND -> IconBox(
+                GROUNDWIND -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.groundwind2
+                    image = Image(GROUNDWIND,R.drawable.groundwind2)
                 )
 
-                WeatherParameter.MAXWINDSHEAR -> IconBox(
+                MAXWINDSHEAR -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.shearwind
+                    image = Image(MAXWINDSHEAR, R.drawable.shearwind)
                 )
 
-                WeatherParameter.MAXWIND -> IconBox(modifier = rowModifier, image = R.drawable.wind)
-                WeatherParameter.CLOUDFRACTION -> IconBox(
+                MAXWIND -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.cloud
+                    image = Image(MAXWIND, R.drawable.wind)
+                )
+                CLOUDFRACTION -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(CLOUDFRACTION,R.drawable.cloud)
                 )
 
-                WeatherParameter.RAIN -> IconBox(modifier = rowModifier, image = R.drawable.rain)
-                WeatherParameter.HUMIDITY -> IconBox(
+                RAIN -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.humidity
+                    image = Image(RAIN,R.drawable.rain)
                 )
 
-                WeatherParameter.DEWPOINT -> IconBox(
+                HUMIDITY -> IconBox(
                     modifier = rowModifier,
-                    image = R.drawable.dewpoint
+                    image = Image(HUMIDITY,R.drawable.humidity)
                 )
 
-                WeatherParameter.FOG -> IconBox(modifier = rowModifier, image = R.drawable.fog)
+                DEWPOINT -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(DEWPOINT,R.drawable.dewpoint)
+                )
+
+                FOG -> IconBox(
+                    modifier = rowModifier,
+                    image = Image(FOG,R.drawable.fog)
+                )
                 else -> {
                     InfoBox(
                         dateTimeModifier,
