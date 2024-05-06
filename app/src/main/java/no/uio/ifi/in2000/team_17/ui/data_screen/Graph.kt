@@ -261,7 +261,7 @@ fun ThresholdGraph(
                             val dateAndTime = "Date: $date \nTime: ${time}0"
                             "$dateAndTime"
                         },
-                        paddingBetweenPopUpAndPoint = 2.dp,
+                        paddingBetweenPopUpAndPoint = 1.dp,
                         labelAlignment = android.graphics.Paint.Align.LEFT,
                         labelColor = Color.Black,
                         backgroundColor = Color.Transparent
@@ -345,7 +345,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 5.dp,
+        paddingTop = 11.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
