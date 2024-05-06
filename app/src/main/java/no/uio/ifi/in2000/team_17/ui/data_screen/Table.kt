@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -56,13 +55,14 @@ import no.uio.ifi.in2000.team_17.ui.calculateColor
 fun Table(
     scrollToItem: Int? = null,
     uiState: DataScreenUiState,
-    selectedIndex: Int,
+    selectedIndex: Int?,
     setIndex: (Int) -> Unit,
     boxWidth: Int,
     dividerPadding: Int,
 ) {
     BoxWithConstraints {
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2)) / 8 * 0.9
+        val index = selectedIndex?: 0
         GradientRows(
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
@@ -79,9 +79,8 @@ fun Table(
             rows = uiState.weatherDataLists.iterator()
                 .map { GradientRow(it.second.map { it.toString() }, it.first) },
             thresholds = uiState.thresholds,
-            selectedIndex = selectedIndex,
-            setIndex = { setIndex(it) }
-        )
+            selectedIndex = index
+        ) { setIndex(it) }
     }
 }
 
