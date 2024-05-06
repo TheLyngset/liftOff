@@ -1,5 +1,12 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -286,10 +293,42 @@ fun App(
             navController = navController,
             startDestination = Screen.Home.name
         ) {
-            composable(route = Screen.Home.name) {
+            composable(
+                enterTransition = {
+                    when(initialState.destination.route){
+                        Screen.Thresholds.name -> fadeIn(animationSpec = tween(300))
+                        else -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+                },
+                exitTransition = {
+                    when(targetState.destination.route){
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                    }
+                },
+                route = Screen.Home.name
+            ) {
                 HomeScreen(Modifier.padding(innerPadding), homeScreenViewModel, windowSizeClass)
             }
-            composable(route = Screen.Thresholds.name) {
+            composable(
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(300)
+                    )
+                                 },
+                route = Screen.Thresholds.name
+            ) {
                 ThresholdsScreen(
                     Modifier.padding(innerPadding),
                     viewModel = thresholdsViewModel,
@@ -308,14 +347,61 @@ fun App(
                     }
                 }
             }
-            composable(route = Screen.Data.name) {
+            composable(
+                enterTransition = {
+                    when(initialState.destination.route){
+                        Screen.Home.name -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                        Screen.Thresholds.name -> fadeIn(animationSpec = tween(300))
+                        else -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+
+                },
+                exitTransition = {
+                    when(targetState.destination.route){
+                        Screen.Home.name -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                    }
+                },
+                route = Screen.Data.name
+            ) {
                 DataScreen(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
-            composable(route = Screen.Judicial.name) {
+            composable(
+                enterTransition = {
+                    slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left
+                    )
+                },
+                exitTransition = {
+                    when(initialState.destination.route){
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+
+                },
+                route = Screen.Judicial.name
+            ) {
                 JudicialScreen(modifier = Modifier.padding(innerPadding), windowSizeClass)
             }
         }

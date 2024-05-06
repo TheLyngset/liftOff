@@ -1,0 +1,64 @@
+[versions]
+agp = "8.2.2"
+activityCompose = "1.9.0"
+coreKtx = "1.13.0"
+coreSplashscreen = "1.0.1"
+datastore = "1.1.0"
+desugar_jdk_libs = "2.0.4"
+espressoCore = "3.5.1"
+generativeai = "0.4.0"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+ktorSerializationGson = "2.3.8"
+lifecycleRuntimeKtx = "2.7.0"
+lottieCompose = "6.0.0"
+material3Android = "1.2.1"
+navigationRuntimeKtx = "2.7.7"
+composeAnimation = "1.7.0-alpha08"
+protobufJavalite = "3.21.7"
+slf4jSimple = "1.7.30"
+ycharts = "2.1.0"
+compose-bom = "2024.04.01"
+kotlin = "1.9.0"
+protobuf = "0.9.4"
+
+[libraries]
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-material3-android = { module = "androidx.compose.material3:material3-android", version.ref = "material3Android" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationRuntimeKtx" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+androidx-navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
+junit = { module = "junit:junit", version.ref = "junit" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorSerializationGson" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorSerializationGson" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorSerializationGson" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorSerializationGson" }
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktorSerializationGson" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
+ycharts = { module = "co.yml:ycharts", version.ref = "ycharts" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3-window-sizeclass-android = { group = "androidx.compose.material3", name = "material3-window-size-class-android" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+
+[plugins]
+androidAplication = {id = "com.android.application", version.ref = "agp"}
+jetbrainsKotlin = {id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
+googleProtobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
