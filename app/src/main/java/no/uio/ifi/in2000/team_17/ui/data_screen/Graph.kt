@@ -411,9 +411,10 @@ fun SelectTimeCard(
                 text = stringResource(R.string.on_home_screen),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
+            Spacer(modifier = Modifier.width(15.dp))
             if (dataScreenUiState.selectedTimeIndex != indexToPin) {
                 Button(
-                    modifier = Modifier.width(250.dp),
+                    modifier = Modifier.width(214.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
