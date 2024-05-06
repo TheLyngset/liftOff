@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -73,7 +74,10 @@ fun InputSheet(
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
             dragHandle = { IconButton(onClick = { onDismiss() }) {
-                Icon(Icons.Outlined.ArrowDropDown, contentDescription = null)
+                Icon(modifier = Modifier.size(60.dp).padding(5.dp),
+                    painter = painterResource(id = R.drawable.drag_handle),
+                    contentDescription = "drag handle"
+                )
             }}
         ) {
             InputSheetContent(
