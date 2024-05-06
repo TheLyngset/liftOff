@@ -225,11 +225,11 @@ fun ThresholdGraph(
             Color.White
         )
     if (backgroundSwitch) {
-        val nGreen = round(uiState.thresholds.margin*9).toInt()
+        val nGreen = round(uiState.thresholds.margin * 9).toInt()
         colors =
-            (1..9).map{ TrafficLightColor.RED.color.copy(1f) } +
-            (1..(9 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
-            (1 ..nGreen).map{ TrafficLightColor.GREEN.color.copy(1f) }
+            (1..9).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..(9 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
     //builds the list of lines displayed on the chart
     val data = LineChartData(
