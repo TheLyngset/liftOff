@@ -388,65 +388,7 @@ fun ThresholdGraph(
     }
 }
 
-@Composable
-fun SelectTimeCard(
-    dataScreenUiState: DataScreenUiState,
-    indexToPin: Int,
-    setTimeIndex: (Int) -> Unit
-) {
-    Card(
-        modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
-        )
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.on_home_screen),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            if (dataScreenUiState.selectedTimeIndex != indexToPin) {
-                Button(
-                    modifier = Modifier.width(250.dp),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    onClick = { setTimeIndex(indexToPin) }) {
-                    var date = dataScreenUiState.weatherDataLists.date[indexToPin]
-                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                    val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = stringResource(R.string.change_to_kl, date, time))
-                }
-            } else {
-                var date =
-                    dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
-                date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                val time =
-                    dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
-                Button(
-                    modifier = Modifier.width(250.dp),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    onClick = {}) {
-                    Text(
-                        stringResource(R.string.dateTime, date, time),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
 
-            }
-        }
-    }
-}
 
 @Composable
 fun GraphInfoDialog(
