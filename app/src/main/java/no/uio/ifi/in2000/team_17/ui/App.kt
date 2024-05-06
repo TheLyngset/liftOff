@@ -228,7 +228,7 @@ fun App(
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState) {
-                Box(modifier = Modifier.padding(bottom = 50.dp),) {
+                Box(modifier = Modifier.padding(bottom = 80.dp),) {
                     Popup(
                         alignment = Alignment.TopCenter,
                         onDismissRequest = {
