@@ -24,6 +24,7 @@ data class DataScreenUiState(
     val selectedTimeIndex: Int = 0,
     val showGraphTutorial: Boolean = true,
     val showTableTutorial: Boolean = true,
+    val graphBackgroundSwitch: Boolean = true,
     val launchWindows: List<Int> = listOf()
 )
 
@@ -46,6 +47,7 @@ class DataScreenViewModel(
             thresholds,
             SaveTimeUseCase.timeStringToIndex(settings.time),
             settings.graphShowTutorial, settings.tableShowTutorial,
+            settings.graphBackgroundSwitch,
             launchWindows
         )
     }.stateIn(
@@ -64,6 +66,10 @@ class DataScreenViewModel(
 
     fun dontShowGraphTurotialAgain() {
         viewModelScope.launch { settingsRepo.setGraphShowTutorial(false) }
+    }
+
+    fun graphBackgroundSwitch(switch: Boolean) {
+        viewModelScope.launch { settingsRepo.setGraphBackgroundSwitch(switch) }
     }
 
     //This function is useful when user-testing if we want to show the tutorial again

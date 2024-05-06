@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,6 +70,7 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import kotlin.math.round
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun ThresholdGraph(
     uiState: DataScreenUiState,
@@ -216,8 +218,12 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
+
     var colors: List<Color> =
-        listOf(Color.Gray, Color.Gray)
+        listOf(
+            Color.White,
+            Color.White
+        )
     if (backgroundSwitch) {
         val nGreen = round(uiState.thresholds.margin*9).toInt()
         colors =

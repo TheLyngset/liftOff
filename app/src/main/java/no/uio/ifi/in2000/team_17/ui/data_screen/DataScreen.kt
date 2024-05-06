@@ -80,12 +80,11 @@ fun DataScreen(
     var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
     var waitingForSettings by rememberSaveable { mutableStateOf(true) }
     var showInfoBox by rememberSaveable { mutableStateOf(false) }
-    var backgroundSwitch by rememberSaveable { mutableStateOf(true) }
+    var graphBackgroundSwitch by rememberSaveable { mutableStateOf(uiState.graphBackgroundSwitch) }
 
     LaunchedEffect(Unit) {
         delay(500)
         waitingForSettings = false
-
     }
     if (uiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = uiState.selectedTimeIndex
@@ -100,7 +99,7 @@ fun DataScreen(
             if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
                 SelectTimeCard(
                     dataScreenUiState = uiState,
-                    indexToPin = showingTimeIndex?:0
+                    indexToPin = showingTimeIndex ?: 0
                 ) {
                     selectedTimeIndex = it
                     setTimeIndex(it)
@@ -146,8 +145,11 @@ fun DataScreen(
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
                         closeInfoBox = { showInfoBox = false },
-                        backgroundSwitch = backgroundSwitch,
-                        onFlip = { backgroundSwitch = !backgroundSwitch }
+                        backgroundSwitch = graphBackgroundSwitch,
+                        onFlip = {
+                            graphBackgroundSwitch = !graphBackgroundSwitch
+                            viewModel.graphBackgroundSwitch(graphBackgroundSwitch)
+                        }
 
                     ) {
                         showingTimeIndex = it
@@ -174,12 +176,14 @@ fun DataScreen(
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
-            Modifier.height(45.dp).fillMaxWidth(),
+            Modifier
+                .height(45.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.size(60.dp), onClick = {scrollToItem = 0}) {
+                TextButton(modifier = Modifier.size(60.dp), onClick = { scrollToItem = 0 }) {
                     Text(text = stringResource(R.string.now))
                 }
             } else {
@@ -199,12 +203,12 @@ fun DataScreen(
                 TextButton(
                     modifier = Modifier.size(60.dp),
                     onClick = {
-                        scrollToItem = uiState.launchWindows.getOrElse(nextIndex){
+                        scrollToItem = uiState.launchWindows.getOrElse(nextIndex) {
                             nextIndex = 0
                             uiState.launchWindows.getOrNull(nextIndex)
                         }
                         showingTimeIndex = scrollToItem
-                        nextIndex ++
+                        nextIndex++
                     }) {
                     Text(stringResource(R.string.next_window))
                 }
