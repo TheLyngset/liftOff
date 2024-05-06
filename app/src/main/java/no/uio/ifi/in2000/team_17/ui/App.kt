@@ -61,11 +61,11 @@ import no.uio.ifi.in2000.team_17.viewModelFactory
  * WARNING, do not change the order as the [BottomBar] depends on it!!
  */
 enum class Screen(val title: String, val logo: Int) {
-    Home(title = "Home Screen", logo = R.drawable.logoicon),
-    Data(title = "Data Screen", logo = R.drawable.logor),
-    Judicial(title = "Judicial Screen", logo = R.drawable.logor),
-    Thresholds(title = "Thresholds", logo = R.drawable.logor),
-    TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logor),
+    Home(title = "Home Screen", logo = R.drawable.logo_endelig),
+    Data(title = "Data Screen", logo = R.drawable.logo_endelig),
+    Judicial(title = "Judicial Screen", logo = R.drawable.logo_endelig),
+    Thresholds(title = "Thresholds", logo = R.drawable.logo_endelig),
+    TechnicalDetailsScreen(title = "Technical Details", logo = R.drawable.logo_endelig),
     Empty("", 0)
 
 }
@@ -87,7 +87,7 @@ fun AppTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Transparent),
+                        .background(Color.Transparent).padding(0.dp, 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
