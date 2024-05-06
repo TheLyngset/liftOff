@@ -123,8 +123,8 @@ fun ThresholdGraph(
         Point(
             x = index.toFloat(),
             y = (rescalePoint(
-                weatherDataLists.rain[index].max,
-                thresholds.rain
+                weatherDataLists.rain[index].probability / 100,
+                thresholds.rain / 100
             )).toFloat()
         )
     }

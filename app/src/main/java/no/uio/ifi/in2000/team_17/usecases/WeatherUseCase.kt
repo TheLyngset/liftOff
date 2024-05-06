@@ -22,33 +22,33 @@ class WeatherUseCase {
 
     companion object {
         @JvmStatic
-        fun canLaunch(
+        internal fun canLaunch(
             weatherPointInTime: WeatherPointInTime,
             threshholds: Thresholds
         ): TrafficLightColor {
             //tåke --- (connected to clouds, dew point and precipitation)
-            if(
-                    weatherPointInTime.groundWind.speed.toDouble() < threshholds.maxWindSpeed &&
-                            weatherPointInTime.humidity.toDouble() < threshholds.humidity &&
-                            weatherPointInTime.dewPoint.toDouble() < threshholds.dewPoint &&
-                            weatherPointInTime.cloudFraction.toDouble() < threshholds.cloudFraction &&
-                            weatherPointInTime.rain.probability.toDouble() < threshholds.rain &&
-                            weatherPointInTime.fog.toDouble() < threshholds.fog &&
-                            weatherPointInTime.maxWind.speed.toDouble() < threshholds.maxWindSpeed &&
-                            weatherPointInTime.maxWindShear.speed.toDouble() < threshholds.maxWindShear
-                    ){
-                return if(
-                    weatherPointInTime.groundWind.speed.toDouble() < threshholds.maxWindSpeed * threshholds.margin &&
-                    weatherPointInTime.humidity.toDouble() < threshholds.humidity * threshholds.margin &&
-                    weatherPointInTime.dewPoint.toDouble() < threshholds.dewPoint * threshholds.margin &&
-                    weatherPointInTime.cloudFraction.toDouble() < threshholds.cloudFraction * threshholds.margin &&
-                    weatherPointInTime.rain.probability.toDouble() < threshholds.rain * threshholds.margin &&
-                    weatherPointInTime.fog.toDouble() < threshholds.fog * threshholds.margin &&
-                    weatherPointInTime.maxWind.speed.toDouble() < threshholds.maxWindSpeed * threshholds.margin &&
-                    weatherPointInTime.maxWindShear.speed.toDouble() < threshholds.maxWindShear * threshholds.margin
-                ){
+            if (
+                weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed &&
+                weatherPointInTime.humidity < threshholds.humidity &&
+                weatherPointInTime.dewPoint < threshholds.dewPoint &&
+                weatherPointInTime.cloudFraction < threshholds.cloudFraction &&
+                weatherPointInTime.rain.probability < threshholds.rain &&
+                weatherPointInTime.fog < threshholds.fog &&
+                weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed &&
+                weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear
+            ) {
+                return if (
+                    weatherPointInTime.groundWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
+                    weatherPointInTime.humidity < threshholds.humidity * threshholds.margin &&
+                    weatherPointInTime.dewPoint < threshholds.dewPoint * threshholds.margin &&
+                    weatherPointInTime.cloudFraction < threshholds.cloudFraction * threshholds.margin &&
+                    weatherPointInTime.rain.probability < threshholds.rain * threshholds.margin &&
+                    weatherPointInTime.fog < threshholds.fog * threshholds.margin &&
+                    weatherPointInTime.maxWind.speed < threshholds.maxWindSpeed * threshholds.margin &&
+                    weatherPointInTime.maxWindShear.speed < threshholds.maxWindShear * threshholds.margin
+                ) {
                     TrafficLightColor.GREEN
-                } else{
+                } else {
                     TrafficLightColor.YELLOW
                 }
             }
