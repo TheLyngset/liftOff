@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -79,13 +81,28 @@ fun HomeScreen(
         }
     }
 
-    if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier.fillMaxWidth().offset(y= (100.dp)),
-            contentAlignment = Alignment.Center){
-            Rocket()
+    //portriat pad
+    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
         }
-
     }
+    //landscape pad
+    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (-300.dp)),
+            contentAlignment = Alignment.BottomCenter){
+            Rocket(Modifier)
+        }
+    }
+    //phone portriat - does not render on phone landscape
+    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Box(modifier = Modifier.fillMaxWidth().offset(y= (-100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
+        }
+    }
+    //if ()
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom

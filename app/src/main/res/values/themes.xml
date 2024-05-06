@@ -3,7 +3,7 @@
     <style name="Theme.Team17" parent="android:Theme.Material.Light.NoActionBar" />
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/primaryContainer</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logor</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ikon_tekst_endelig</item>
         <item name="postSplashScreenTheme">@style/Theme.Team17</item>
     </style>
 </resources>

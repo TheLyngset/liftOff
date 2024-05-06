@@ -40,9 +40,9 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import no.uio.ifi.in2000.team_17.R
 
-//Using lottie for animation. Uses json animation from raw folder
+//Using lottie for animation. Uses json animation from raw folder. uses progress variable to track animation progress for the loop
 @Composable
-fun Rocket() {
+fun Rocket(modifier: Modifier) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.rakett))
     var isPlaying by remember {
         mutableStateOf(true)
@@ -71,7 +71,7 @@ fun BackGroundImage() {
     Box(modifier = Modifier.fillMaxSize() ){
         Image(
             painter = painterResource(id = R.drawable.sky),
-            contentDescription = null, contentScale = ContentScale.FillBounds,
+            contentDescription = "Static sky with clouds background image", contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .matchParentSize()
                 .graphicsLayer(
