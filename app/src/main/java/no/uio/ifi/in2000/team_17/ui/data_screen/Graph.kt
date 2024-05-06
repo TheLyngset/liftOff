@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,6 +70,7 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import kotlin.math.round
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun ThresholdGraph(
     uiState: DataScreenUiState,
@@ -216,14 +218,18 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
+
     var colors: List<Color> =
-        listOf(Color.Gray, Color.Gray)
+        listOf(
+            Color.White,
+            Color.White
+        )
     if (backgroundSwitch) {
-        val nGreen = round(uiState.thresholds.margin*9).toInt()
+        val nGreen = round(uiState.thresholds.margin * 9).toInt()
         colors =
-            (1..9).map{ TrafficLightColor.RED.color.copy(1f) } +
-            (1..(9 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
-            (1 ..nGreen).map{ TrafficLightColor.GREEN.color.copy(1f) }
+            (1..9).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..(9 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
     //builds the list of lines displayed on the chart
     val data = LineChartData(
@@ -255,7 +261,7 @@ fun ThresholdGraph(
                             val dateAndTime = "Date: $date \nTime: ${time}0"
                             "$dateAndTime"
                         },
-                        paddingBetweenPopUpAndPoint = 2.dp,
+                        paddingBetweenPopUpAndPoint = 1.dp,
                         labelAlignment = android.graphics.Paint.Align.LEFT,
                         labelColor = Color.Black,
                         backgroundColor = Color.Transparent
@@ -339,7 +345,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 5.dp,
+        paddingTop = 11.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,

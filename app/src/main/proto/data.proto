@@ -21,5 +21,5 @@ message Settings{
     string time = 4;
     bool graphShowTutorial = 5;
     bool tableShowTutorial = 6;
-
+    bool graphBackgroundSwitch = 7;
 }
