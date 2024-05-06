@@ -74,7 +74,7 @@ import kotlin.math.round
 @Composable
         /**
          * The TresholdsGraph fun creates the ui of the graph in data screen
-         * @param UiState is used to load relevant data
+         * @param uiState is used to load relevant data
          * @param  windowSizeClass is used find the heightSizeClass and set the height of the graph
          * @param showInfoBox is boolean determining whether the info box with names and colours of variables is going to be displayed
          * @param closeInfoBox is a lambda used close the infobox
