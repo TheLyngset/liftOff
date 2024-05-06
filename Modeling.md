@@ -54,70 +54,245 @@ Hovedflyt: <br>
 <h2> ● (2) Klassediagram </h2>
 
 ```mermaid
-classDiagram
-    Repository --|> HomeScreenViewModel
-    Repository --|> DataScreenViewModel
+classDiagram 
 
-    SettingsRepository --|> Settings
+    SplashScreen ..> SplashScreenViewModel: user input
+    InputSheet ..> InputSheetViewModel: user input
+    HomeScreen ..> HomeScreenViewModel: user input
+    DataScreen ..> DataScreenViewModel: user input
+    ThresholdsScreen ..> ThresholdsScreenViewModel: user input
 
-    HomeScreenViewModel --|> HomeScreenUiState
+    SplashScreen <.. SplashScreenViewModel: uiState
+    InputSheet <.. InputSheetViewModel: uiState
+    HomeScreen <.. HomeScreenViewModel: uiState
+    DataScreen <.. DataScreenViewModel: uiState
+    ThresholdsScreen <.. ThresholdsScreenViewModel: uiState
 
-    DataScreenViewModel --|> DataScreenUiState
+    SplashScreen --* SplashScreenViewModel
+    InputSheet --* InputSheetViewModel
+    HomeScreen --* HomeScreenViewModel
+    DataScreen --* DataScreenViewModel
+    ThresholdsScreen --* ThresholdsScreenViewModel
 
+    SplashScreenViewModel <.. SettingsRepository: settingsFlow
+    InputSheetViewModel <.. SettingsRepository: settingsFlow
+    HomeScreenViewModel <.. SettingsRepository: settingsFlow
+    DataScreenViewModel <.. SettingsRepository: settingsFlow
 
+    SplashScreenViewModel --o SettingsRepository
+    InputSheetViewModel --o SettingsRepository
+    HomeScreenViewModel --o SettingsRepository
+    DataScreenViewModel --o SettingsRepository
+
+    SplashScreenViewModel <.. Repository: hasData
+    InputSheetViewModel <.. Repository: failedToUpdate
+    HomeScreenViewModel <.. Repository: weatherDataList
+    DataScreenViewModel <.. Repository: weatherDataList
+
+    SplashScreenViewModel --o Repository
+    InputSheetViewModel --o Repository
+    HomeScreenViewModel --o Repository
+    DataScreenViewModel --o Repository
+
+    HomeScreenViewModel <.. ThresholdsRepository: thresholdsFlow
+    DataScreenViewModel <.. ThresholdsRepository: thresholdsFlow
+    ThresholdsScreenViewModel <.. ThresholdsRepository: thresholdsFlow
+
+    HomeScreenViewModel --o ThresholdsRepository
+    DataScreenViewModel --o ThresholdsRepository
+    ThresholdsScreenViewModel --o ThresholdsRepository
+
+    SettingsRepository <.. SettingsDataStore: settingsFlow
+    SettingsRepository --o SettingsDataStore
+
+    Repository --o IsobaricDataSource
+    Repository --o LocationForecastDataSource
+
+    ThresholdsRepository --o ThresholdsDataStore
+
+    
 
 
     class Repository{
-        +WeatherDataLists weatherDataLists
-        +Boolean hasLocationForecastData
-        +Boolean hasIsobaricData
+        +weatherDataList
+        +hasLocationForecastData
+        +hasIsoBaricData
+        +failedToUpdate
         +load()
     }
     class SettingsRepository{
-        +Settings settings
+        +settingsFlow
+        +setMaxHeight()
+        +setLat()
+        +setLng()
+        +setTime()
+        +setGraphShowTutorial()
+        +setTableShowTutorial()
     }
-    class Settings{
-        +Int maxHeight
-        +Double lat
-        +Double lng
-        +String time
+    class ThresholdsRepository{
+        +ThresholdsFlow
+        +setGroundWind()
+        +setMaxWind()
+        +setMaxWindShear()
+        +setCloudFraction()
+        +setFog()
+        +setRain()
+        +setHumidity()
+        +setDewPoint()
+        +setMargin()
+        +reset()
+        +resetAll()
     }
 
+    class SettingsDataStore{
+        +settingsFlow
+        +maxHeight
+        +lat
+        +lng
+        +time
+        +graphShowTutorial
+        +tableShowTutorial
+    }
 
+    class ThresholdsDataStore{
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+        +margin
+    }
+
+    class LocationForecastDataSource{
+        +fetchLocationforecast()
+    }
+
+    class IsobaricDataSource{
+        +getData()
+    }
+
+    class InputSheetViewModel{
+        +repository
+        +settingsRepository
+        +failedToUpdate
+        +inputSheetUiState
+        +setMaxHeight()
+        +setLat()
+        +setLng()
+        +rollback()
+    }
     class HomeScreenViewModel{
-        +HomeScreenUiState uiState
-    }
-    class HomeScreenUiState{
-        +WeatherPointInTime weatherPointinTime
-        +TrafficLightColor trafficLightColor
-        +String updated
-        +Thresholds thresholds
+        +repository
+        +settingsRepository
+        +thresholdsRepository
+        +homeScreenUiState
     }
 
     class DataScreenViewModel{
-        +uiState
+        +repository
+        +settingsRepository
+        +thresholdsRepository
+        +dataScreenUiState
         +setTimeIndex()
-        +dontShowDialogAgain()
+        +dontShowTableTutorialAgain()
+        +dontShowGraphTutorialAgain()
     }
-    class DataScreenUiState{
-        +WeatherDataLists weatherDataLists
-        +Thresholds thresholds
-        +Int selectedTimeIndex
-        +Boolean hasDissmissedDialouge
+
+    
+
+    class SplashScreenViewModel{
+        +repository
+        +settingsRepository
+        +splashScreenUiState
+    }
+
+    class ThresholdsScreenViewModel{
+        +thresholdsRepository
+        +thresholdsUiState
+        +setGroundWind()
+        +setMaxWind()
+        +setMaxWindShear()
+        +setCloudFraction()
+        +setFog()
+        +setRain()
+        +setHumidity()
+        +setDewPoint()
+        +setMargin()
+        +reset()
+        +resetAll()
     }
     
-    class InputSheetViewModel{
-        +uiState
-        +setLat()
-        +setLng()
-        +setMaxHeight()
-    }
-    class SplashScreenViewModel{
-        +uiState
-    }
-    class ThresholdsScreenViewModel{
-        +uiState
-    }
+
 ```
 
-<h2> ● (3) Andre diagrammer </h2>
+```mermaid
+classDiagram
+    class InputSheetUiState{
+        +maxHeight
+        +latLng
+    }
+        class HomeScreenUiState{
+        +weatherPointInTime
+        +canLaunch
+        +updated
+        +thresholds
+    }
+
+    class DataScreenUiState{
+        +weatherDataLists
+        +thresholds
+        +selectedTimeIndex
+        +showGraphTutorial
+        +showTableTutorial
+    }
+
+    class SplashScreenUiState{
+        +isLoading
+        +hasData
+        +hasIsobaricData
+        +hasLocationForecastData
+    }
+
+        class ThresholdsScreenUiState{
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+        +margin
+    } 
+```
+
+```mermaid
+classDiagram
+        class WeatherDataList{
+        +time
+        +date
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+    }
+    class WeatherPointInTime{
+        +time
+        +date
+        +groundWind
+        +maxWind
+        +maxWindShear
+        +cloudFraction
+        +fog
+        +rain
+        +humidity
+        +dewPoint
+    }
+```
