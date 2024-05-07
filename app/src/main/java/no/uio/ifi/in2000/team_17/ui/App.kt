@@ -331,6 +331,7 @@ fun App(
             ) {
                 ThresholdsScreen(
                     Modifier.padding(innerPadding),
+                    windowHeightSizeClass = windowSizeClass.heightSizeClass,
                     viewModel = thresholdsViewModel,
                     onCorrectInputFormat = {
                         coroutineScope.launch {
@@ -342,7 +343,7 @@ fun App(
                 ) {
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
-                            message = "Invalid input"
+                            message = "Invalid input for ${it.title}"
                         )
                     }
                 }
