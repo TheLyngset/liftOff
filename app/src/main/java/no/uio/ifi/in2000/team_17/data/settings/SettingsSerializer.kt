@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 /**
  * A serializer for the generated java class Settings from proto DataStore
  */
-object SettingsSerializer: Serializer<Settings>{
+object SettingsSerializer : Serializer<Settings> {
     override val defaultValue: Settings
         get() = Settings.getDefaultInstance().toBuilder()
             .setMaxHeight(3)
@@ -18,13 +18,14 @@ object SettingsSerializer: Serializer<Settings>{
             .setLng(10.71)
             .setGraphShowTutorial(true)
             .setTableShowTutorial(true)
+            .setGraphBackgroundSwitch(true)
             .setTime(LocalDateTime.now().toString())
             .build()
 
     override suspend fun readFrom(input: InputStream): Settings {
         return try {
             Settings.parseFrom(input)
-        }catch (e: InvalidProtocolBufferException){
+        } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()
             defaultValue
         }

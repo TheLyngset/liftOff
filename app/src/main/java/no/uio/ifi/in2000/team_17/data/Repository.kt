@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team_17.data
 
 import android.util.Log
-import com.google.android.gms.maps.model.LatLng
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
@@ -15,6 +14,7 @@ import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.model.LatLng
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer

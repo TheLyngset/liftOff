@@ -1,9 +1,17 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.App
@@ -87,7 +96,8 @@ fun AppTopBar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Transparent).padding(0.dp, 3.dp),
+                        .background(Color.Transparent)
+                        .padding(0.dp, 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -180,7 +190,8 @@ fun App(
     val coroutineScope = rememberCoroutineScope()
 
     var sheetState by remember { mutableStateOf(false) }
-    var currentScreen by rememberSaveable { mutableStateOf(Screen.Home) }
+    val currentScreen = Screen.valueOf(navController.currentBackStackEntryAsState().value?.destination?.route ?: Screen.Home.name)
+
 
     BackGroundImage()
 
@@ -192,7 +203,6 @@ fun App(
                 onSearchClick = { sheetState = true },
                 onLogoClick = {
                     navController.navigate("Home")
-                    currentScreen = Screen.Home
                 },
                 //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
@@ -207,33 +217,26 @@ fun App(
                 currentScreen = currentScreen
             ) {
                 when (it) {
-                    0 -> {
-                        navController.navigate(Screen.Home.name)
-                        currentScreen = Screen.Home
-                    }
+                    0 -> navController.navigate(Screen.Home.name)
 
-                    1 -> {
-                        navController.navigate(Screen.Data.name)
-                        currentScreen = Screen.Data
-                    }
+                    1 -> navController.navigate(Screen.Data.name)
 
-                    2 -> {
-                        navController.navigate(Screen.Judicial.name)
-                        currentScreen = Screen.Judicial
-                    }
+                    2 -> navController.navigate(Screen.Judicial.name)
                 }
 
             }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState) {
-                Popup(
-                    alignment = Alignment.TopCenter,
-                    onDismissRequest = {
-                        it.dismiss()
+                Box(modifier = Modifier.padding(bottom = 80.dp),) {
+                    Popup(
+                        alignment = Alignment.TopCenter,
+                        onDismissRequest = {
+                            it.dismiss()
+                        }
+                    ) {
+                        Snackbar(it)
                     }
-                ) {
-                    Snackbar(it)
                 }
             }
         }
@@ -280,7 +283,6 @@ fun App(
             },
             toThresholdsScreen = {
                 navController.navigate(Screen.Thresholds.name)
-                currentScreen = Screen.Thresholds
                 sheetState = false
             },
             sheetState = sheetState,
@@ -291,12 +293,45 @@ fun App(
             navController = navController,
             startDestination = Screen.Home.name
         ) {
-            composable(route = Screen.Home.name) {
+            composable(
+                enterTransition = {
+                    when(initialState.destination.route){
+                        Screen.Thresholds.name -> fadeIn(animationSpec = tween(300))
+                        else -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+                },
+                exitTransition = {
+                    when(targetState.destination.route){
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                    }
+                },
+                route = Screen.Home.name
+            ) {
                 HomeScreen(Modifier.padding(innerPadding), homeScreenViewModel, windowSizeClass)
             }
-            composable(route = Screen.Thresholds.name) {
+            composable(
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(300)
+                    )
+                                 },
+                route = Screen.Thresholds.name
+            ) {
                 ThresholdsScreen(
                     Modifier.padding(innerPadding),
+                    windowHeightSizeClass = windowSizeClass.heightSizeClass,
                     viewModel = thresholdsViewModel,
                     onCorrectInputFormat = {
                         coroutineScope.launch {
@@ -308,19 +343,66 @@ fun App(
                 ) {
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
-                            message = "Invalid input"
+                            message = "Invalid input for ${it.title}"
                         )
                     }
                 }
             }
-            composable(route = Screen.Data.name) {
+            composable(
+                enterTransition = {
+                    when(initialState.destination.route){
+                        Screen.Home.name -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                        Screen.Thresholds.name -> fadeIn(animationSpec = tween(300))
+                        else -> slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+
+                },
+                exitTransition = {
+                    when(targetState.destination.route){
+                        Screen.Home.name -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left
+                        )
+                    }
+                },
+                route = Screen.Data.name
+            ) {
                 DataScreen(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
                 ) { dataScreenViewModel.setTimeIndex(it) }
             }
-            composable(route = Screen.Judicial.name) {
+            composable(
+                enterTransition = {
+                    slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left
+                    )
+                },
+                exitTransition = {
+                    when(initialState.destination.route){
+                        Screen.Thresholds.name -> fadeOut(animationSpec = tween(300))
+                        else -> slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right
+                        )
+                    }
+
+                },
+                route = Screen.Judicial.name
+            ) {
                 JudicialScreen(modifier = Modifier.padding(innerPadding), windowSizeClass)
             }
         }
@@ -356,7 +438,7 @@ fun SegmentedNavigationButton(
     currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
-    val options = remember { mutableStateListOf("Home", "Data", "Juridisk") }
+    val options = remember { mutableStateListOf("Home", "Data", "Legal") }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->

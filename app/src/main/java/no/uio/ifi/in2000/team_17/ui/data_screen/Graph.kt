@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
-import androidx.compose.ui.zIndex
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
@@ -68,10 +68,22 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
+import kotlin.math.round
 
+@SuppressLint("ResourceAsColor")
 @Composable
+        /**
+         * The TresholdsGraph fun creates the ui of the graph in data screen
+         * @param uiState is used to load relevant data
+         * @param  windowSizeClass is used find the heightSizeClass and set the height of the graph
+         * @param showInfoBox is boolean determining whether the info box with names and colours of variables is going to be displayed
+         * @param closeInfoBox is a lambda used close the infobox
+         * @param backgroundSwitch is boolean used determined the background pallets of the graph
+         * @param onFlip is a lambda used swap graph background between coloured vs. colourblind friendly background
+         * @param setTimeIndex is a lambda used pin the chosen date/time/location to homescreen
+         */
 fun ThresholdGraph(
-    dataScreenUiState: DataScreenUiState,
+    uiState: DataScreenUiState,
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
@@ -79,11 +91,15 @@ fun ThresholdGraph(
     onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
-    val weatherDataLists = dataScreenUiState.weatherDataLists
-    val thresholds = dataScreenUiState.thresholds
+    //creating necessary values for the graph
+    val weatherDataLists = uiState.weatherDataLists
+    val thresholds = uiState.thresholds
     val size = weatherDataLists.time.size
-    val lastUpdated: String = dataScreenUiState.weatherDataLists.updated
+    val lastUpdated: String = uiState.weatherDataLists.updated
 
+    // retrieving data for the graph lines
+    // parsing the data in a way that can be displayed by the graph
+    //all values are calculated by rescale() as percentage of their respective threshold
     val pointsGroundWind: List<Point> = List(weatherDataLists.groundWind.size) { index ->
         Point(
             x = index.toFloat(),
@@ -188,11 +204,12 @@ fun ThresholdGraph(
         )
     }
 
+    //generating the x and y-axis of the graph
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .axisStepSize(30.dp)
-        .topPadding(5.dp)
-        .bottomPadding(5.dp)
+        .topPadding(2.dp)
+        .bottomPadding(2.dp)
         .steps(size - 1)
         //.labelData { i -> i.toString() }
         .labelAndAxisLinePadding(15.dp)
@@ -216,16 +233,20 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
-    var colorStops: Array<Pair<Float, Color>> =
-        arrayOf(0.0f to Color.Gray, 0.0f to Color.Gray)
-    if (backgroundSwitch) {
-        colorStops = arrayOf(
-            0.2f to TrafficLightColor.RED.color.copy(1f),
-            0.7f to TrafficLightColor.YELLOW.color.copy(1f),
-            1.0f to TrafficLightColor.GREEN.color.copy(1f)
+    var colors: List<Color> =
+        listOf(
+            Color.White,
+            Color.White
         )
+    if (backgroundSwitch) {
+        val nGreen = round(uiState.thresholds.margin * 6).toInt()
+        colors =
+            (1..6).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..(6 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
-    //builds the list of lines displayed on the chart
+
+    //builds the list of lines that is going to be sent to the graph to be displayed on the chart
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -240,7 +261,7 @@ fun ThresholdGraph(
                     ShadowUnderLine(
                         alpha = 0.75f,
                         brush = Brush.verticalGradient(
-                            colorStops = colorStops
+                            colors = colors
                         )
                     ),
                     SelectionHighlightPopUp(
@@ -255,7 +276,7 @@ fun ThresholdGraph(
                             val dateAndTime = "Date: $date \nTime: ${time}0"
                             "$dateAndTime"
                         },
-                        paddingBetweenPopUpAndPoint = 2.dp,
+                        paddingBetweenPopUpAndPoint = 1.dp,
                         labelAlignment = android.graphics.Paint.Align.LEFT,
                         labelColor = Color.Black,
                         backgroundColor = Color.Transparent
@@ -335,16 +356,18 @@ fun ThresholdGraph(
                 ),
             )
         ),
+        //defining constraints for the graph
         backgroundColor = MaterialTheme.colorScheme.background.copy(1f),
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 15.dp,
+        paddingTop = 11.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
     )
-
+    // setting the graph, toggle and infobox in a constraints box
+    // the BoxWithConstraints insures that the graph is scaled based on the screen orientation and display heigth/width
     BoxWithConstraints(
         Modifier.padding(bottom = 10.dp),
         contentAlignment = Alignment.BottomStart
@@ -367,7 +390,6 @@ fun ThresholdGraph(
                             )
                         )
                     )
-                    .zIndex(2f)
             ) {
                 Row(
                     Modifier
@@ -378,7 +400,7 @@ fun ThresholdGraph(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     var text = stringResource(R.string.NoGraphBackground)
-                    if(backgroundSwitch) text = stringResource(R.string.GraphBackground)
+                    if (backgroundSwitch) text = stringResource(R.string.GraphBackground)
                     Text(text, Modifier.scale(0.75f, 0.75f))
                     Spacer(modifier = Modifier.width(5.dp))
                     BackgroundSwitch(backgroundSwitch, onFlip)
@@ -388,8 +410,7 @@ fun ThresholdGraph(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(graphHeight.dp)
-                    .background(Color.Transparent)
-                    .zIndex(1f),
+                    .background(Color.Transparent),
                 lineChartData = data,
             )
             Box(
@@ -422,6 +443,37 @@ fun ThresholdGraph(
     }
 }
 
+/*
+* rescales the dew point so that if the list contains a negative value,
+* the entire scale is moved up in order to avoid dealing with negative values
+ */
+fun absMinDew(weatherDataLists: WeatherDataLists): Double {
+    val min = weatherDataLists.dewPoint.minOrNull()
+    if (min is Double)
+        return kotlin.math.abs(min)
+    return 0.0
+}
+
+/*
+*calculates each point on the line as percentage of its own threshold
+* purpose: create a common threshold line for all points
+* to show visually if the values are below or above their respective threshold.
+ */
+fun rescalePoint(realValue: Double?, threshold: Double?): Double {
+    if (threshold is Double && realValue is Double) {
+        var rescaled = ((realValue) / (threshold + 0.000001))
+        if (rescaled > 1.95)
+            rescaled = 1.95 //so that extremes are still visible on the graph
+        if (rescaled <= 0.05)
+            rescaled = 0.05 //so that extremes are still visible on the graph
+        return rescaled
+    }
+    return 0.0
+}
+
+/*
+ * the function called when toggling the switch graph background switch
+ */
 @Composable
 fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
     Switch(
@@ -436,6 +488,29 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
     )
 }
 
+/*
+* retrives the date and time when the data was last updated
+* follows the lastUpdated that comes from the Locationforcast API
+ */
+
+@Composable
+fun LastUpdated(lastUpdated: String) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Text(
+            stringResource(R.string.last_updated_at_utc_2, lastUpdated),
+            textAlign = TextAlign.Right
+        )
+    }
+}
+
+
+/*
+* Shows a tutorial informing the user that the graph is scrollable horisontally
+* infroms the user that it is possible to zoom in/out on the graph
+ */
 @Composable
 fun GraphInfoDialog(
     onDismiss: () -> Unit,
@@ -509,20 +584,9 @@ fun GraphInfoDialog(
     }
 }
 
-@Composable
-fun LastUpdated(lastUpdated: String) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Text(
-            stringResource(R.string.last_updated_at_utc_2, lastUpdated),
-            textAlign = TextAlign.Right
-        )
-    }
-}
-
-
+/*
+* defines the UI and constraints used to show the infobox with graph lines name and colours
+ */
 @Composable
 fun InfoBox(
     modifier: Modifier = Modifier,
@@ -561,6 +625,9 @@ fun InfoBox(
     }
 }
 
+/*
+* sets the content of the infobox with graph lines name and colours
+ */
 @Composable
 fun InfoBoxContent() {
     Column() {
@@ -696,30 +763,6 @@ fun createLine(
             backgroundColor = Color.Transparent
         )
     )
-}
-
-// rescales the dew point so that if the list contains a negative value,
-// the entire scale is moved up in order to avoid dealing with negative values
-fun absMinDew(weatherDataLists: WeatherDataLists): Double {
-    val min = weatherDataLists.dewPoint.minOrNull()
-    if (min is Double)
-        return kotlin.math.abs(min)
-    return 0.0
-}
-
-//calculates each point on the line as percentage of its own threshold
-//purpose: create a common threshold line for all points
-// to show visually if the values are below or above their respective threshold.
-fun rescalePoint(realValue: Double?, threshold: Double?): Double {
-    if (threshold is Double && realValue is Double) {
-        var rescaled = ((realValue) / (threshold + 0.000001))
-        if (rescaled > 1.95)
-            rescaled = 1.95 //so that extremes are still visible on the graph
-        if (rescaled <= 0.05)
-            rescaled = 0.05 //so that extremes are still visible on the graph
-        return rescaled
-    }
-    return 0.0
 }
 
 val dummyData: WeatherDataLists = WeatherDataLists(

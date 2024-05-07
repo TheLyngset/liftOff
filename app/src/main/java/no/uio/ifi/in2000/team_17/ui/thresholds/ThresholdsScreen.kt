@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.thresholds
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,9 +44,272 @@ import no.uio.ifi.in2000.team_17.ui.input_sheet.InputTextField
 import no.uio.ifi.in2000.team_17.ui.Screen
 import java.lang.NumberFormatException
 
+
+@Composable
+fun TitleRow(
+    showInfo:()-> Unit,
+    resetAll:()-> Unit
+) {
+    Row(
+        Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = Screen.Thresholds.title,
+            fontWeight = FontWeight.Bold,
+            style = TextStyle(fontSize = 30.sp),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Button(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                resetAll()
+            }) {
+            Text(text = stringResource(R.string.reset_all))
+            Icon(Icons.Filled.Refresh, null)
+        }
+
+        Icon(imageVector = Icons.Outlined.Info, contentDescription = null,modifier = Modifier
+            .weight(0.4f)
+            .clickable {
+                showInfo()
+            }
+        )
+    }
+}
+
+@Composable
+fun InputFieldColumn1(
+    fraction: Float,
+    marginText: String,
+    groundWindSpeedText: String,
+    maxWindSpeedText:String,
+    maxWindShearText:String,
+    cloudFractionText:String,
+    update:(WeatherParameter, String) -> Unit,
+    set:(WeatherParameter, String)->Unit,
+    reset:(WeatherParameter)->Unit
+) {
+    //margin
+    Column(
+        modifier = Modifier.fillMaxWidth(fraction) ,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = marginText,
+                onValueChange = { update(MARGIN, it) },
+                label = stringResource(id = R.string.safety_margin_title)
+            ) { set(MARGIN, it) }
+            IconButton(onClick = {
+                reset(MARGIN)
+            }) {
+                Icon(Icons.Filled.Refresh, "reset margin")
+            }
+        }
+
+        //Ground wind speed
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = groundWindSpeedText,
+                onValueChange = { update(GROUNDWIND, it) },
+                label = stringResource(R.string.max_ground_wind_speed_label)
+            ) {
+                set(GROUNDWIND, it)
+            }
+            IconButton(onClick = {
+                reset(GROUNDWIND)
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
+        }
+
+        //Max wind speed
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = maxWindSpeedText,
+                onValueChange = { update(MAXWIND, it) },
+                label = stringResource(R.string.max_air_wind_speed_label)
+            ) {
+                set(MAXWIND, it)
+            }
+            IconButton(onClick = { reset(MAXWIND) })
+            {
+                Icon(Icons.Filled.Refresh, null)
+            }
+        }
+
+        //max wind shear
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = maxWindShearText,
+                onValueChange = { update(MAXWINDSHEAR, it) },
+                label = stringResource(id = R.string.max_shear_wind)
+            ) {
+                set(MAXWINDSHEAR, it)
+            }
+            IconButton(onClick = {
+                reset(MAXWINDSHEAR)
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
+        }
+
+        //max cloud fraction
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = cloudFractionText,
+                onValueChange = { update(CLOUDFRACTION, it) },
+                label = stringResource(R.string.max_cloud_fraction_in_percent)
+            ) {
+                set(CLOUDFRACTION, it)
+            }
+            IconButton(onClick = { reset(CLOUDFRACTION) })
+            {
+                Icon(Icons.Filled.Refresh, null)
+            }
+        }
+    }
+}
+
+
+@Composable
+fun InputFieldColumn2(
+    fraction: Float,
+    fogText: String,
+    rainText: String,
+    humidityText:String,
+    dewPointText:String,
+    update:(WeatherParameter, String) -> Unit,
+    set:(WeatherParameter, String)->Unit,
+    reset:(WeatherParameter)->Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(fraction),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        //margin
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = fogText,
+                onValueChange = { update(FOG, it) },
+                label = stringResource(id = R.string.max_fog_title)
+            ) { set(FOG, it) }
+            IconButton(onClick = {
+                reset(FOG)
+            }) {
+                Icon(Icons.Filled.Refresh, "reset fog")
+            }
+        }
+
+        //Ground wind speed
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = rainText,
+                onValueChange = { update(RAIN, it) },
+                label = stringResource(R.string.max_allowed_rain_title)
+            ) {
+                set(RAIN, it)
+            }
+            IconButton(onClick = {
+                reset(RAIN)
+            }) {
+                Icon(Icons.Filled.Refresh, "reset rain")
+            }
+        }
+
+        //Max wind speed
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = humidityText,
+                onValueChange = { update(HUMIDITY, it) },
+                label = stringResource(R.string.max_humidity_title)
+            ) {
+                set(HUMIDITY, it)
+            }
+            IconButton(onClick = { reset(HUMIDITY) })
+            {
+                Icon(Icons.Filled.Refresh, "reset humidity")
+            }
+        }
+
+        //max wind shear
+        Row(
+            Modifier
+                .padding(end = 21.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            InputTextField(
+                value = dewPointText,
+                onValueChange = { update(DEWPOINT, it) },
+                label = stringResource(id = R.string.max_shear_wind)
+            ) {
+                set(DEWPOINT, it)
+            }
+            IconButton(onClick = {
+                reset(DEWPOINT)
+            }) {
+                Icon(Icons.Filled.Refresh, "reset dew point")
+            }
+        }
+    }
+}
 @Composable
 fun ThresholdsScreen(
     modifier: Modifier = Modifier,
+    windowHeightSizeClass: WindowHeightSizeClass,
     viewModel: ThresholdsViewModel,
     onCorrectInputFormat: (String) -> Unit,
     wrongInputFormat:(WeatherParameter)->Unit,
@@ -64,31 +330,90 @@ fun ThresholdsScreen(
     val defaults = ThresholdsSerializer.defaultValue
     var showInfo by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) { state.animateScrollTo(50) }
-    Background()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(state)
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Spacer(modifier = Modifier.height(5.dp))
+    fun update(type: WeatherParameter, text: String, set: Boolean = false){
+        when(type){
+            GROUNDWIND -> groundWindSpeedText = text
+            MAXWINDSHEAR -> maxWindShearText = text
+            MAXWIND -> maxWindSpeedText = text
+            CLOUDFRACTION -> cloudFractionText = text
+            RAIN -> rainText = text
+            HUMIDITY -> humidityText = text
+            DEWPOINT -> dewPointText = text
+            FOG -> fogText = text
+            MARGIN -> marginText = text
+            else -> {}
+        }
+        if(set){
+            try {
+                when (type) {
+                    GROUNDWIND -> {
+                        viewModel.setGroundWind(text.toDouble())
+                        onCorrectInputFormat("Max ground wind was set to $groundWindSpeedText m/s")
+                    }
+                    MAXWINDSHEAR -> {
+                        viewModel.setMaxWindShear(text.toDouble())
+                        onCorrectInputFormat("Max wind shear was set to $maxWindShearText m/s")
+                    }
+                    MAXWIND -> {
+                        viewModel.setMaxWind(text.toDouble())
+                        onCorrectInputFormat("Max air wind was set to $maxWindSpeedText m/s")
+                    }
+                    CLOUDFRACTION -> {
+                        viewModel.setCloudFraction(text.toDouble())
+                        onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText %")
+                    }
+                    RAIN -> {
+                        viewModel.setRain(text.toDouble())
+                        onCorrectInputFormat("Max probability of rain was set to $rainText %")
+                    }
+                    HUMIDITY -> {
+                        viewModel.setHumiditiy(text.toDouble())
+                        onCorrectInputFormat("Max humidity was set to $humidityText %")
+                    }
+                    DEWPOINT -> {
+                        viewModel.setDewPoint(text.toDouble())
+                        onCorrectInputFormat("Max dew point was set to $dewPointText °")
+                    }
+                    FOG -> {
+                        viewModel.setFog(text.toDouble())
+                        onCorrectInputFormat("Max fog fraction was set to $fogText %")
+                    }
+                    MARGIN -> {
+                        viewModel.setMargin(text.toDouble())
+                        onCorrectInputFormat("Margin was set to $marginText")
+                    }
+                    else -> {}
+                }
 
-        Row(
-            Modifier
-                .padding(end = 34.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = Screen.Thresholds.title,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(fontSize = 30.sp),
-            )
-            Button(onClick = {
-                viewModel.resetAll()
+            } catch (e: NumberFormatException) {
+                when (type) {
+                    GROUNDWIND -> wrongInputFormat(GROUNDWIND)
+                    MAXWINDSHEAR -> wrongInputFormat(MAXWINDSHEAR)
+                    MAXWIND -> wrongInputFormat(MAXWIND)
+                    CLOUDFRACTION -> wrongInputFormat(CLOUDFRACTION)
+                    RAIN -> wrongInputFormat(RAIN)
+                    HUMIDITY -> wrongInputFormat(HUMIDITY)
+                    DEWPOINT -> wrongInputFormat(DEWPOINT)
+                    FOG -> wrongInputFormat(FOG)
+                    MARGIN -> wrongInputFormat(MARGIN)
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    Background()
+    if(windowHeightSizeClass != WindowHeightSizeClass.Compact){
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp)
+                .verticalScroll(state),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            TitleRow(
+                showInfo = { showInfo = true }
+            ) {
                 groundWindSpeedText = defaults.groundWindSpeed.toString()
                 maxWindSpeedText = defaults.maxWindSpeed.toString()
                 maxWindShearText = defaults.maxWindShear.toString()
@@ -99,251 +424,85 @@ fun ThresholdsScreen(
                 dewPointText = defaults.dewPoint.toString()
                 marginText = defaults.margin.toString()
                 onCorrectInputFormat("All thresholds were reset")
-
-            }) {
-                Text(text = stringResource(R.string.reset_all))
-                Icon(Icons.Filled.Refresh, null)
             }
 
-            Icon(imageVector = Icons.Outlined.Info, contentDescription = null,modifier = Modifier.clickable {
-                showInfo = true
-            })
-        }
-
-        //margin
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-            InputTextField(
-                value = marginText,
-                onValueChange = { marginText = it },
-                label = stringResource(id = R.string.safety_margin_title)
-            ) {
-                try {
-                    viewModel.setMargin(it.toDouble())
-                    onCorrectInputFormat("Safety margin was set to $marginText")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(MARGIN)
-                }
-            }
-            IconButton(onClick = {
-                viewModel.reset(MARGIN)
-                marginText = defaults.margin.toString()
-            }) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //Ground wind speed
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-            InputTextField(
-                value = groundWindSpeedText,
-                onValueChange = { groundWindSpeedText = it },
-                label = stringResource(R.string.max_ground_wind_speed_label)
-            ) {
-                try {
-                    viewModel.setGroundWind(it.toDouble())
-                    onCorrectInputFormat("Max ground wind speed was set to $groundWindSpeedText m/s")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(GROUNDWIND)
-                }
-            }
-            IconButton(onClick = {
-                viewModel.reset(GROUNDWIND)
-                groundWindSpeedText = defaults.groundWindSpeed.toString()
-            }) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //Max wind speed
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = maxWindSpeedText,
-                onValueChange = { maxWindSpeedText = it },
-                label = stringResource(R.string.max_air_wind_speed_label)
-            ) {
-                try {
-                    viewModel.setMaxWind(it.toDouble())
-                    onCorrectInputFormat("Max air wind speed was set to $maxWindSpeedText m/s")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(MAXWIND)
-                }
-            }
-            IconButton(onClick = {
-                viewModel.reset(MAXWIND)
-                maxWindSpeedText = defaults.maxWindSpeed.toString()
-            }
-            ) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //max wind shear
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = maxWindShearText,
-                onValueChange = { maxWindShearText = it },
-                label = stringResource(id = R.string.max_shear_wind)
-            ) {
-                try {
-                    viewModel.setMaxWindShear(it.toDouble())
-                    onCorrectInputFormat("Max wind shear was set to $maxWindShearText m/s")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(MAXWINDSHEAR)
-                }
-            }
-            IconButton(onClick = {
-                viewModel.reset(MAXWINDSHEAR)
-                maxWindShearText = defaults.maxWindShear.toString()
-            }) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //max cloud fraction
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = cloudFractionText,
-                onValueChange = { cloudFractionText = it },
-                label = stringResource(R.string.max_cloud_fraction_in_percent)
-            ) {
-                try {
-                    viewModel.setCloudFraction(it.toDouble())
-                    onCorrectInputFormat("Max cloud fraction was set to $cloudFractionText %")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(CLOUDFRACTION)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(CLOUDFRACTION)
-                cloudFractionText = defaults.cloudFraction.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //max fog
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = fogText,
-                onValueChange = { fogText = it },
-                label = stringResource(id = R.string.max_fog_title)
-            ) {
-                try {
-                    viewModel.setFog(it.toDouble())
-                    onCorrectInputFormat("Max fog fraction was set to $fogText %")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(FOG)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(FOG)
-                fogText = defaults.fog.toString()}) {
-                Icon(Icons.Filled.Refresh, "Reset fog")
-            }
-        }
-
-        //max rain
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = rainText,
-                onValueChange = { rainText = it },
-                label = stringResource(R.string.max_rain_probability)
-            ) {
-                try {
-                    viewModel.setRain(it.toDouble())
-                    onCorrectInputFormat("Max probability of rain was set to $rainText %")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(RAIN)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(RAIN)
-                rainText = defaults.rain.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //max humidity
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = humidityText,
-                onValueChange = { humidityText = it },
-                label = stringResource(id = R.string.max_humidity_title)
-            ) {
-                try {
-                    viewModel.setHumiditiy(it.toDouble())
-                    onCorrectInputFormat("Max humidity was set to $humidityText %")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(HUMIDITY)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(HUMIDITY)
-                humidityText = defaults.humidity.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
-            }
-        }
-
-        //max dewPoint
-        Row(
-            Modifier
-                .padding(end = 21.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
-            InputTextField(
-                value = dewPointText,
-                onValueChange = { dewPointText = it },
-                label = stringResource(id = R.string.max_dew_point_title)
-            ) {
-                try {
-                    viewModel.setDewPoint(it.toDouble())
-                    onCorrectInputFormat("Max Dew Point was set to $dewPointText °")
-                } catch (e: NumberFormatException) {
-                    wrongInputFormat(DEWPOINT)
-                }
-            }
-            IconButton(onClick = {viewModel.reset(DEWPOINT)
-                dewPointText = defaults.dewPoint.toString()}) {
-                Icon(Icons.Filled.Refresh, null)
-            }
+            InputFieldColumn1(
+                fraction = 1f,
+                marginText = marginText,
+                groundWindSpeedText = groundWindSpeedText,
+                maxWindSpeedText = maxWindSpeedText,
+                maxWindShearText = maxWindShearText,
+                cloudFractionText = cloudFractionText,
+                update = { type, text -> update(type, text) },
+                set = { type, text -> update(type, text, set = true) },
+                reset = { viewModel.reset(it) }
+            )
+            InputFieldColumn2(
+                fraction = 1f,
+                fogText = fogText,
+                rainText = rainText,
+                humidityText = humidityText,
+                dewPointText = dewPointText,
+                update = {type, text ->  update(type, text) },
+                set = { type, text ->  update(type, text, set = true) },
+                reset = { viewModel.reset(it) }
+            )
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
+    else{
+        Column(modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 10.dp)
+            .verticalScroll(state),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            TitleRow(
+                showInfo = { showInfo = true }
+            ) {
+                groundWindSpeedText = defaults.groundWindSpeed.toString()
+                maxWindSpeedText = defaults.maxWindSpeed.toString()
+                maxWindShearText = defaults.maxWindShear.toString()
+                cloudFractionText = defaults.cloudFraction.toString()
+                fogText = defaults.fog.toString()
+                rainText = defaults.rain.toString()
+                humidityText = defaults.humidity.toString()
+                dewPointText = defaults.dewPoint.toString()
+                marginText = defaults.margin.toString()
+                onCorrectInputFormat("All thresholds were reset")
+            }
+            Row(
+                Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                InputFieldColumn1(
+                    fraction = 0.5f,
+                    marginText = marginText,
+                    groundWindSpeedText = groundWindSpeedText,
+                    maxWindSpeedText = maxWindSpeedText,
+                    maxWindShearText = maxWindShearText,
+                    cloudFractionText = cloudFractionText,
+                    update = { type, text -> update(type, text) },
+                    set = { type, text -> update(type, text, set = true) },
+                    reset = { viewModel.reset(it) }
+                )
+                InputFieldColumn2(
+                    fraction = 1f,
+                    fogText = fogText,
+                    rainText = rainText,
+                    humidityText = humidityText,
+                    dewPointText = dewPointText,
+                    update = { type, text -> update(type, text) },
+                    set = { type, text -> update(type, text, set = true) },
+                    reset = { viewModel.reset(it) }
+                )
+            }
+            Spacer(modifier = Modifier.height(50.dp))
+        }
+    }
+
     ThresholdsInfo(modifier,showInfo) {
         showInfo = false
     }

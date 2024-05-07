@@ -28,7 +28,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -85,6 +87,7 @@ fun Table(
     }
 }
 
+@Immutable
 data class GradientRow(
     val data: List<String>,
     val type: WeatherParameter
@@ -123,10 +126,12 @@ fun IconBox(modifier: Modifier, image: Image) {
                 painter = painterResource(id = image.id),
                 contentDescription = image.type.title
             )
+
+
             if(showDescrption){
                 Card(
                     modifier.clickable { showDescrption = false },
-                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.background.copy(1f))
                 ){
                     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
                         Text(
@@ -290,6 +295,7 @@ fun GradientRowsColumn(
     rows: List<GradientRow>,
     thresholds: Thresholds
 ) {
+    val size = rows[0].data.size
     //Column of gradient rows
     LazyColumn(modifier.offset(x = 70.dp)) {
         items(rows) { row ->
@@ -297,7 +303,7 @@ fun GradientRowsColumn(
                 state = state,
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                userScrollEnabled = false
+                userScrollEnabled = false,
             ) {
                 item {
                     when (row.type) {
@@ -329,11 +335,11 @@ fun GradientRowsColumn(
                         }
                     }
                 }
-                itemsIndexed(rows[0].data) { i, _ ->
+                items((0..<size).toList()){i->
                     if (i < row.data.size) {
                         val data = row.data[i]
                         when (row.type) {
-                            WeatherParameter.DATE -> {
+                            DATE -> {
                                 val info = if (rows[1].data[i] == "00:00") {
                                     "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
                                 } else {
@@ -346,7 +352,7 @@ fun GradientRowsColumn(
                                 )
                             }
 
-                            WeatherParameter.TIME -> {
+                            TIME -> {
                                 InfoBox(
                                     dateTimeModifier,
                                     data,
@@ -434,24 +440,17 @@ fun GradientRows(
         state = mainState, modifier = Modifier
             .offset(x = 70.dp)
     ) {
-        rows[1].data.forEachIndexed { i, _ ->
-            if (i == 0) {
-                item {
-                    InfoBox(
-                        overlayModifier,
-                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                    )
-                }
+        itemsIndexed(rows[1].data){i, time ->
+            if(i == 0) {
+                InfoBox( overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
             } else {
-                item {
-                    InfoBox(
-                        modifier = overlayModifier
-                            .clickable {
-                                setIndex(i - 1)
-                            },
-                        colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                    )
-                }
+                InfoBox(
+                    modifier = overlayModifier
+                        .clickable {
+                            setIndex(i - 1)
+                        },
+                    colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                )
             }
         }
     }
