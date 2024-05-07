@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -30,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -102,7 +100,7 @@ data class Image(
 )
 @Composable
 fun IconBox(modifier: Modifier, image: Image) {
-    var showDescrption by remember { mutableStateOf( false ) }
+    var showDescription by remember { mutableStateOf( false ) }
     Column(
         modifier, horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -125,15 +123,15 @@ fun IconBox(modifier: Modifier, image: Image) {
             Image(
                 modifier = Modifier
                     .size(width, height)
-                    .clickable { showDescrption = true },
+                    .clickable { showDescription = true },
                 painter = painterResource(id = image.id),
                 contentDescription = image.type.title
             )
 
 
-            if(showDescrption){
+            if(showDescription){
                 Card(
-                    modifier.clickable { showDescrption = false },
+                    modifier.clickable { showDescription = false },
                     colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.background.copy(1f))
                 ){
                     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
@@ -423,6 +421,7 @@ fun GradientRowsColumn(
         }
     }
 }
+
 
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
