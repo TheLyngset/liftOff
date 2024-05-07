@@ -20,8 +20,8 @@ det er ønskelig å følge med framtidig informasjon på en lett måte.
 og pinne ønskelig lokasjon og tidspunkt til hjemmeskjermen. </p>
 <p>Use-case navn: Åpne appen og se data på hjemmeskjermen: <br>
 Aktør: PortalSpace user<br>
-Prebetingelser: ingen.<br>
-Potbestingelser: brukeren ser om det er mulig, ikke mulig eller innimelom å skyte opp 
+Prebetingelser: Ingen.<br>
+Potbestingelser: Brukeren ser om det er mulig, ikke mulig eller innimelom å skyte opp 
 PortalSpace sin rakett.<br>
 Hovedflyt: <br>
 1. Brukeren åpner appen.<br>
@@ -31,10 +31,12 @@ Alternativ flyt<br>
 1.2 Brukeren ser splashscreen og trykker på "Retry".<br>
 1.3 Brukeren returnerer til steg 1 i hovedflytten.<br>
 </p>
+<h3> Use-cases Diagram:</h3>
+<img src = "./Modelling_pictures/UseCaseDiagram.png">
 <p>Use-case navn: User navigates to table screen and changes location <br>
 Aktør: PortalSpace user<br>
-Prebetingelser: brukeren er på hjemmeskjermen i appen og har internet.<br>
-Potbestingelser: brukeren ser data frem i tid for om det er mulig, ikke mulig eller innimelom å skyte opp 
+Prebetingelser: Brukeren er på hjemmeskjermen i appen og har internet.<br>
+Potbestingelser: Brukeren ser data frem i tid for om det er mulig, ikke mulig eller innimelom å skyte opp 
 PortalSpace sin rakett.<br>
 Hovedflyt: <br>
 1. Brukeren trykker på Data.<br>
@@ -43,9 +45,17 @@ Hovedflyt: <br>
 4. Brukeren endrer lokasjon.<br>
 5. Brukeren går tilbake til data-skjermen og ser på data for ny lokasjon.<br>
 </p>
+<p>Use-case navn: Brukeren pins tidspunkt og lokasjon til hjemmeskjerm <br>
+Aktør: PortalSpace user<br>
+Prebetingelser: Brukeren er på dataskjermen og ser på graf.<br>
+Potbestingelser: Brukeren har pinned tidspunkt og lokasjon til hjemmeskjerm.<br>
+Hovedflyt: <br>
+1. Brukeren ser på graf og scroller til høyre fram til den finner tidspunt man kan skyte opp raketten.<br>
+2. Brukeren trykker på grafen og ser hvilen dato og tid den er. <br>
+3. Brukeren er spurt om det er ønskelig å pinne tidspunkt til hjemmeskjermen.<br>
+4. Brukeren trykker på knappen for å pinne tidspunkt.<br>
+</p>
 
-<h3> Use-case Diagram:</h3>
-<img src = "./Modelling_pictures/UseCaseDiagram.png">
 <h3> Sequence Diagrams: </h3>
 <img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp.png">
 <img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png">
