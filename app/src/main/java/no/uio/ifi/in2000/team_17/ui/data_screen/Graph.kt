@@ -41,9 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -145,8 +142,8 @@ fun ThresholdGraph(
         Point(
             x = index.toFloat(),
             y = (rescalePoint(
-                weatherDataLists.rain[index].max,
-                thresholds.rain
+                weatherDataLists.rain[index].probability / 100,
+                thresholds.rain / 100
             )).toFloat()
         )
     }
@@ -246,7 +243,7 @@ fun ThresholdGraph(
         val nGreen = round(uiState.thresholds.margin * 5).toInt()
         colors =
             (1..nGreen).map { TrafficLightColor.RED.color.copy(1f) } +
-                    (1..((5 - nGreen)*2)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..((5 - nGreen) * 2)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
                     (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
 
@@ -410,7 +407,7 @@ fun ThresholdGraph(
                     BackgroundSwitch(backgroundSwitch, onFlip)
                 }
             }
-            if(!screenReaderOn){
+            if (!screenReaderOn) {
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
