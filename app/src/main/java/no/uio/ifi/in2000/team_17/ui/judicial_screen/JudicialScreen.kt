@@ -73,31 +73,33 @@ fun JudicialScreen(modifier: Modifier, windowSizeClass: WindowSizeClass?) {
         }
     }
     else{
-        LazyRow(
-            modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            item {
-                Text(
-                    text = stringResource(R.string.legal),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 22.sp
-                )
-                LegalCard(
-                    stringResource(R.string.ippcTitle),
-                    stringResource(R.string.ippc_description),
-                    stringResource(R.string.ippc_readMore),
-                    listOf("IPPC Avinor"),
-                    listOf("https://www.ippc.no/ippc/index.jsp")
-                )
-                LegalCard(
-                    stringResource(R.string.model_rocket_safety_code_title),
-                    stringResource(R.string.model_rocket_safety_code_description),
-                    stringResource(R.string.model_rocket_safety_code_readMore),
-                    listOf("Safety Code NAR"),
-                    listOf("https://nar.org/safety-information/model-rocket-safety-code/")
-                )
+        Column(modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.legal),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp
+            )
+            LazyRow(
+                modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                item {
+                    LegalCard(
+                        stringResource(R.string.ippcTitle),
+                        stringResource(R.string.ippc_description),
+                        stringResource(R.string.ippc_readMore),
+                        listOf("IPPC Avinor"),
+                        listOf("https://www.ippc.no/ippc/index.jsp")
+                    )
+                    LegalCard(
+                        stringResource(R.string.model_rocket_safety_code_title),
+                        stringResource(R.string.model_rocket_safety_code_description),
+                        stringResource(R.string.model_rocket_safety_code_readMore),
+                        listOf("Safety Code NAR"),
+                        listOf("https://nar.org/safety-information/model-rocket-safety-code/")
+                    )
+                }
             }
         }
     }
