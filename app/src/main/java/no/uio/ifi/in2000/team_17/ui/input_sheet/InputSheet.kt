@@ -39,6 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -73,7 +76,10 @@ fun InputSheet(
     if (sheetState) {
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
-            dragHandle = { IconButton(onClick = { onDismiss() }) {
+            dragHandle = { IconButton(
+                modifier = Modifier.clearAndSetSemantics { contentDescription = "double click to exit" },
+                onClick = { onDismiss() }
+            ) {
                 Icon(modifier = Modifier.size(60.dp).padding(5.dp),
                     painter = painterResource(id = R.drawable.drag_handle),
                     contentDescription = "drag handle"
@@ -126,7 +132,7 @@ fun InputSheetContent(
             )
             {
                 InputTextField(
-                    modifier = Modifier.fillMaxWidth(0.8f),
+                    modifier = Modifier.fillMaxWidth(0.7f),
                     value = maxHeightText,
                     onValueChange = { maxHeightText = it },
                     label = stringResource(R.string.maximum_height_in_km_label)
@@ -138,8 +144,9 @@ fun InputSheetContent(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,
-                        contentDescription = "Info",
-                        modifier = Modifier.clickable {
+                        contentDescription = "Show info about max height",
+                        modifier = Modifier
+                            .clickable {
                             showInfoCard = !showInfoCard
                         })
                 }
