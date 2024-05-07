@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -53,6 +54,8 @@ import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
+import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
 @Composable
 fun Table(
@@ -155,40 +158,75 @@ fun SelectedBox(
     index: Int,
     dates: List<String>,
     times: List<String>,
-    boxWidth: Int
+    boxWidth: Int,
+    setIndex:(Int) -> Unit
 ) {
-    LazyRow(state = state, userScrollEnabled = false) {
-        items(index + 1) {
-            Spacer(modifier = modifier)
-        }
-        item {
-            Box(
-                modifier
-                    .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                    .background(Color.White.copy(0.3f))
-                    .offset(x = (boxWidth.times(0.19)).dp)
-                    .semantics {
-                        contentDescription = "${
-                            uiState.weatherDataLists
-                                .get(0)
-                                .iterator()
-                        }"
-                    },
-                ) {
-                val date = dates.getOrElse(index) { "            " }
-                val time = times.getOrElse(index) { "00:00" }
+    LazyRow(state = state) {
+        items((0..dates.size).toList()) {i ->
+            if (i - 1 != index) {
+                val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
+                val onClickLabel =  " select "  +
+                        "${
+                            weatherPointInTime
+                                .iterator().map { (type, value) ->
+                                    if(weatherPointInTime.available.get(type)){
+                                        type.title + " "+
+                                                value.toString() + " "+
+                                                when(calculateColor(type, value.toString(), uiState.thresholds)){
+                                                    TrafficLightColor.RED -> ". Over Threshold"
+                                                    TrafficLightColor.YELLOW -> ". Close to Threshold"
+                                                    TrafficLightColor.GREEN -> ". Under Threshold"
+                                                    TrafficLightColor.WHITE -> ""
+                                                }
+                                    }
+                                    else{
+                                        when(type){
+                                            DATE -> value.toString()
+                                            TIME -> {
+                                                value.toString() + 
+                                                        when(WeatherUseCase.canLaunch(weatherPointInTime, uiState.thresholds)){
+                                                    TrafficLightColor.RED -> "which is Over Threshold."
+                                                    TrafficLightColor.YELLOW -> "which is Close to Threshold."
+                                                    TrafficLightColor.GREEN -> "which is Under Threshold."
+                                                    TrafficLightColor.WHITE -> ""
+                                                }
+                                            }
+                                            else -> type.title + ". no data"
+                                        }
 
-                if (time != "00:00") {
-                    Text(
-                        "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}",
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Black.copy(0.57f),
-                    )
+                                    }
+                                }}"
+
+                Spacer(modifier = modifier
+                    .clickable(
+                        onClickLabel = onClickLabel) {
+                    if (i != 0) setIndex(i - 1)
+                    }
+                    .semantics {
+                        contentDescription = onClickLabel
+                    }
+
+                )
+            }else{
+                Box(
+                    modifier
+                        .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
+                        .background(Color.White.copy(0.3f))
+                        .offset(x = (boxWidth.times(0.19)).dp)
+                        .semantics { contentDescription = "to select this time on the home screen, click the change to button" }
+                ) {
+                    val date = dates.getOrElse(index) { "            " }
+                    val time = times.getOrElse(index) { "00:00" }
+
+                    if (time != "00:00") {
+                        Text(
+                            "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black.copy(0.57f),
+                        )
+                    }
                 }
             }
-        }
-        items(maxOf((dates.size - index - 1), 0)) {
-            Spacer(modifier = modifier)
         }
     }
 }
@@ -230,7 +268,7 @@ fun TitleAndIconColumn(
     rows: List<GradientRow>
 ) {
     //Titles and icons Column
-    LazyColumn(modifier) {
+    LazyColumn(modifier.clearAndSetSemantics { }) {
 
         items(rows) { row ->
             when (row.type) {
@@ -427,31 +465,15 @@ fun GradientRows(
     )
 
     //SelectedTimeIndex box
+    //Making all rows scroll together by adding big boxes on top
+    val mainState = rememberLazyListState()
     Column(
         modifier
             .offset(x = 70.dp)
             .fillMaxSize()
     ) {
-        SelectedBox(overlayModifier, uiState, state, selectedIndex, rows[0].data, rows[1].data, boxWidth)
-    }
-    //Making all rows scroll together by adding big boxes on top
-    val mainState = rememberLazyListState()
-    LazyRow(
-        state = mainState, modifier = Modifier
-            .offset(x = 70.dp)
-    ) {
-        itemsIndexed(rows[1].data){i, time ->
-            if(i == 0) {
-                InfoBox( overlayModifier, colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f)))
-            } else {
-                InfoBox(
-                    modifier = overlayModifier
-                        .clickable {
-                            setIndex(i - 1)
-                        },
-                    colors = listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                )
-            }
+        SelectedBox(overlayModifier, uiState, mainState, selectedIndex, rows[0].data, rows[1].data, boxWidth){
+            setIndex(it)
         }
     }
     //scrolls to now or selected

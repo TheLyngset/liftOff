@@ -41,6 +41,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -84,6 +87,7 @@ import kotlin.math.round
          */
 fun ThresholdGraph(
     uiState: DataScreenUiState,
+    screenReaderOn: Boolean,
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
@@ -361,7 +365,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 11.dp,//just enough space to display the date and time when clicking on the graph
+        paddingTop = 13.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
@@ -406,13 +410,15 @@ fun ThresholdGraph(
                     BackgroundSwitch(backgroundSwitch, onFlip)
                 }
             }
-            LineChart(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(graphHeight.dp)
-                    .background(Color.Transparent),
-                lineChartData = data,
-            )
+            if(!screenReaderOn){
+                LineChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(graphHeight.dp)
+                        .background(Color.Transparent),
+                    lineChartData = data,
+                )
+            }
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -484,7 +490,7 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
         onCheckedChange = {
             onFlip()
         },
-        modifier = Modifier.scale(0.5f)
+        modifier = Modifier.scale(0.8f)
     )
 }
 
@@ -556,7 +562,7 @@ fun GraphInfoDialog(
                 )
                 Image(
                     painter = painter,
-                    contentDescription = text,
+                    contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .height(70.dp)

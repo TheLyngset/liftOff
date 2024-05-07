@@ -71,7 +71,7 @@ fun TitleRow(
             Icon(Icons.Filled.Refresh, null)
         }
 
-        Icon(imageVector = Icons.Outlined.Info, contentDescription = null,modifier = Modifier
+        Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info about thresholds",modifier = Modifier
             .weight(0.4f)
             .clickable {
                 showInfo()
