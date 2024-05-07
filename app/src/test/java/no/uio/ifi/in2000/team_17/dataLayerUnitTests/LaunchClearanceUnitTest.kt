@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team_17.dataLayerUnitTests
 
-import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.Available
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
@@ -12,7 +12,7 @@ import org.junit.Test
 
 class LaunchClearanceUnitTest {
 
-    val dummyWeatherPoint: WeatherPointInTime = WeatherPointInTime(
+    private val dummyWeatherPoint: WeatherPointInTime = WeatherPointInTime(
         date = "00",
         groundWind = WindLayer(4.5, 10.0, 111.0),
         maxWindShear = WindShear(10.3, 200.0),
@@ -26,88 +26,120 @@ class LaunchClearanceUnitTest {
         humidity = 30.0,
         dewPoint = 2.0,
         fog = 0.0,
-        available = Available(true, true, true, true, true, true, true, true, true, true, true)
+        available = Available(
+            date = true,
+            time = true,
+            groundWind = true,
+            maxWindShear = true,
+            maxWind = true,
+            cloudFraction = true,
+            rain = true,
+            humidity = true,
+            dewPoint = true,
+            fog = true,
+            temperature = true
+        )
     )
 
-    val dummyThreshods = Thresholds.getDefaultInstance()
+    private val dummyThresholds = ThresholdsSerializer.defaultValue
 
     @Test
-    fun LaunchClearance_FalseRain() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(rain = Rain(0.0, 0.0, 0.0, 100.0))
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseClouds() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(cloudFraction = 100.0)
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseHumidity() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(humidity = 100.0)
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseDewPoint() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(dewPoint = 100.0)
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseWindShear() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(maxWindShear = WindShear(50.0, 100.0))
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseWindSpeed() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(groundWind = WindLayer(100.0, 10.0, 123.4))
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_FalseFog() {
-        //Arrange - mock groundWeatherPoint object
-        val dummy = dummyWeatherPoint.copy(fog = 100.0)
-        //Act
-        val result = canLaunch(dummy, dummyThreshods)
-        //Assert
-        assert(result == TrafficLightColor.RED)
-    }
-
-    @Test
-    fun LaunchClearance_True() {
+    fun launchClearance_TrueGreen() {
         //Arrange - mock groundWeatherPoint object
         val dummy = dummyWeatherPoint.copy()
         //Act
-        val result = canLaunch(dummyWeatherPoint, dummyThreshods)
+        val result = canLaunch(dummy, dummyThresholds)
         //Assert
-        //assert(result == TrafficLightColor.YELLOW)
+        assert(result == TrafficLightColor.GREEN)
+    }
+
+    @Test
+    fun launchClearance_BelowThresholdYellow() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(cloudFraction = 14.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.YELLOW)
+    }
+
+    @Test
+    fun launchClearance_AboveThresholdYellow() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(cloudFraction = 16.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.YELLOW)
+    }
+
+    @Test
+    fun launchClearance_FalseRain() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(rain = Rain(0.0, 0.0, 0.0, 100.0))
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseClouds() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(cloudFraction = 100.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseHumidity() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(humidity = 100.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseDewPoint() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(dewPoint = 100.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseWindShear() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(maxWindShear = WindShear(50.0, 100.0))
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseWindSpeed() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(groundWind = WindLayer(100.0, 10.0, 123.4))
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
+    }
+
+    @Test
+    fun launchClearance_FalseFog() {
+        //Arrange - mock groundWeatherPoint object
+        val dummy = dummyWeatherPoint.copy(fog = 100.0)
+        //Act
+        val result = canLaunch(dummy, dummyThresholds)
+        //Assert
+        assert(result == TrafficLightColor.RED)
     }
 }
