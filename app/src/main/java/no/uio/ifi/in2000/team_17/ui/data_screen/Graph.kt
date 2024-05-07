@@ -68,6 +68,7 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
+import kotlin.math.max
 import kotlin.math.round
 
 @SuppressLint("ResourceAsColor")
@@ -239,10 +240,12 @@ fun ThresholdGraph(
             Color.White
         )
     if (backgroundSwitch) {
-        val nGreen = round(uiState.thresholds.margin * 6).toInt()
+        val nGreen = round(uiState.thresholds.margin * 100).toInt()
+        val redCount = nGreen
+        val yellowCount = max(0, 200 - nGreen - redCount)
         colors =
-            (1..6).map { TrafficLightColor.RED.color.copy(1f) } +
-                    (1..(6 - nGreen)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+            (1..redCount).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..yellowCount).map { TrafficLightColor.YELLOW.color.copy(1f) } +
                     (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
 
