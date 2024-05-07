@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,15 +20,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -35,6 +35,7 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -60,7 +61,6 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.AvailableIndexes
 import no.uio.ifi.in2000.team_17.model.Rain
@@ -68,20 +68,39 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
+import kotlin.math.round
 
+@SuppressLint("ResourceAsColor")
 @Composable
+        /**
+         * The TresholdsGraph fun creates the ui of the graph in data screen
+         * @param uiState is used to load relevant data
+         * @param  windowSizeClass is used find the heightSizeClass and set the height of the graph
+         * @param showInfoBox is boolean determining whether the info box with names and colours of variables is going to be displayed
+         * @param closeInfoBox is a lambda used close the infobox
+         * @param backgroundSwitch is boolean used determined the background pallets of the graph
+         * @param onFlip is a lambda used swap graph background between coloured vs. colourblind friendly background
+         * @param setTimeIndex is a lambda used pin the chosen date/time/location to homescreen
+         */
 fun ThresholdGraph(
-    dataScreenUiState: DataScreenUiState,
+    uiState: DataScreenUiState,
+    screenReaderOn: Boolean,
     windowSizeClass: WindowSizeClass,
     showInfoBox: Boolean,
     closeInfoBox: () -> Unit,
+    backgroundSwitch: Boolean,
+    onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
-    val weatherDataLists = dataScreenUiState.weatherDataLists
-    val thresholds = dataScreenUiState.thresholds
+    //creating necessary values for the graph
+    val weatherDataLists = uiState.weatherDataLists
+    val thresholds = uiState.thresholds
     val size = weatherDataLists.time.size
-    val lastUpdated: String = dataScreenUiState.weatherDataLists.updated
+    val lastUpdated: String = uiState.weatherDataLists.updated
 
+    // retrieving data for the graph lines
+    // parsing the data in a way that can be displayed by the graph
+    //all values are calculated by rescale() as percentage of their respective threshold
     val pointsGroundWind: List<Point> = List(weatherDataLists.groundWind.size) { index ->
         Point(
             x = index.toFloat(),
@@ -186,11 +205,12 @@ fun ThresholdGraph(
         )
     }
 
+    //generating the x and y-axis of the graph
     val xAxisData = AxisData.Builder()
         .backgroundColor(color = Color.Transparent)
         .axisStepSize(30.dp)
-        .topPadding(5.dp)
-        .bottomPadding(5.dp)
+        .topPadding(2.dp)
+        .bottomPadding(2.dp)
         .steps(size - 1)
         //.labelData { i -> i.toString() }
         .labelAndAxisLinePadding(15.dp)
@@ -214,12 +234,20 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
-    val colorStops = arrayOf(
-        0.2f to TrafficLightColor.RED.color.copy(1f),
-        0.7f to TrafficLightColor.YELLOW.color.copy(1f),
-        1.0f to TrafficLightColor.GREEN.color.copy(1f)
-    )
-    //builds the list of lines displayed on the chart
+    var colors: List<Color> =
+        listOf(
+            Color.White,
+            Color.White
+        )
+    if (backgroundSwitch) {
+        val nGreen = round(uiState.thresholds.margin * 5).toInt()
+        colors =
+            (1..nGreen).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..((5 - nGreen) * 2)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
+    }
+
+    //builds the list of lines that is going to be sent to the graph to be displayed on the chart
     val data = LineChartData(
         linePlotData = LinePlotData(
             lines = listOf(
@@ -234,7 +262,7 @@ fun ThresholdGraph(
                     ShadowUnderLine(
                         alpha = 0.75f,
                         brush = Brush.verticalGradient(
-                            colorStops = colorStops
+                            colors = colors
                         )
                     ),
                     SelectionHighlightPopUp(
@@ -249,7 +277,7 @@ fun ThresholdGraph(
                             val dateAndTime = "Date: $date \nTime: ${time}0"
                             "$dateAndTime"
                         },
-                        paddingBetweenPopUpAndPoint = 2.dp,
+                        paddingBetweenPopUpAndPoint = 1.dp,
                         labelAlignment = android.graphics.Paint.Align.LEFT,
                         labelColor = Color.Black,
                         backgroundColor = Color.Transparent
@@ -329,25 +357,32 @@ fun ThresholdGraph(
                 ),
             )
         ),
+        //defining constraints for the graph
         backgroundColor = MaterialTheme.colorScheme.background.copy(1f),
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 15.dp,
+        paddingTop = 13.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
     )
-
-    BoxWithConstraints(contentAlignment = Alignment.BottomStart) {
-        val graphHeight = (maxHeight.value - 60)
+    // setting the graph, toggle and infobox in a constraints box
+    // the BoxWithConstraints insures that the graph is scaled based on the screen orientation and display heigth/width
+    BoxWithConstraints(
+        Modifier.padding(bottom = 10.dp),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        val horizontal = windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
+        val graphHeight = if (!horizontal) (maxHeight.value - 60) else (maxHeight.value - 30)
         Column(
             Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.End
         ) {
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(30.dp)
+                    .height(25.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(
@@ -356,14 +391,31 @@ fun ThresholdGraph(
                             )
                         )
                     )
-            )
-            LineChart(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(graphHeight.dp)
-                    .background(Color.Transparent),
-                lineChartData = data,
-            )
+            ) {
+                Row(
+                    Modifier
+                        .height(25.dp)
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    var text = stringResource(R.string.NoGraphBackground)
+                    if (backgroundSwitch) text = stringResource(R.string.GraphBackground)
+                    Text(text, Modifier.scale(0.75f, 0.75f))
+                    Spacer(modifier = Modifier.width(5.dp))
+                    BackgroundSwitch(backgroundSwitch, onFlip)
+                }
+            }
+            if (!screenReaderOn) {
+                LineChart(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(graphHeight.dp)
+                        .background(Color.Transparent),
+                    lineChartData = data,
+                )
+            }
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -378,76 +430,90 @@ fun ThresholdGraph(
                     )
             )
         }
-        val bottomPadding =
-            if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) 30.dp else 0.dp
+        val bottomPadding = if (!horizontal) 55.dp else 45.dp
+        val alignment = if (horizontal) Alignment.CenterEnd else Alignment.BottomCenter
         if (showInfoBox) {
-            InfoBox(lastUpdated = lastUpdated, bottomPadding = bottomPadding) {
-                closeInfoBox()
+            Box(Modifier.fillMaxSize(), contentAlignment = alignment) {
+                InfoBox(
+                    lastUpdated = lastUpdated,
+                    bottomPadding = bottomPadding,
+                    horizontal = horizontal
+                ) {
+                    closeInfoBox()
+                }
             }
         }
     }
 }
+
+/*
+* rescales the dew point so that if the list contains a negative value,
+* the entire scale is moved up in order to avoid dealing with negative values
+ */
+fun absMinDew(weatherDataLists: WeatherDataLists): Double {
+    val min = weatherDataLists.dewPoint.minOrNull()
+    if (min is Double)
+        return kotlin.math.abs(min)
+    return 0.0
+}
+
+/*
+*calculates each point on the line as percentage of its own threshold
+* purpose: create a common threshold line for all points
+* to show visually if the values are below or above their respective threshold.
+ */
+fun rescalePoint(realValue: Double?, threshold: Double?): Double {
+    if (threshold is Double && realValue is Double) {
+        var rescaled = ((realValue) / (threshold + 0.000001))
+        if (rescaled > 1.95)
+            rescaled = 1.95 //so that extremes are still visible on the graph
+        if (rescaled <= 0.05)
+            rescaled = 0.05 //so that extremes are still visible on the graph
+        return rescaled
+    }
+    return 0.0
+}
+
+/*
+ * the function called when toggling the switch graph background switch
+ */
+@Composable
+fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
+    Switch(
+        checked = checked,
+        colors = SwitchDefaults.colors().copy(
+            checkedTrackColor = MaterialTheme.colorScheme.primary,
+        ),
+        onCheckedChange = {
+            onFlip()
+        },
+        modifier = Modifier.scale(0.8f)
+    )
+}
+
+/*
+* retrives the date and time when the data was last updated
+* follows the lastUpdated that comes from the Locationforcast API
+ */
 
 @Composable
-fun SelectTimeCard(
-    dataScreenUiState: DataScreenUiState,
-    indexToPin: Int,
-    setTimeIndex: (Int) -> Unit
-) {
-    Card(
-        modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
-        )
+fun LastUpdated(lastUpdated: String) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.on_home_screen),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            if (dataScreenUiState.selectedTimeIndex != indexToPin) {
-                Button(
-                    modifier = Modifier.width(250.dp),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    onClick = { setTimeIndex(indexToPin) }) {
-                    var date = dataScreenUiState.weatherDataLists.date[indexToPin]
-                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                    val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = stringResource(R.string.change_to_kl, date, time))
-                }
-            } else {
-                var date =
-                    dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
-                date = "${date.slice(8..9)}.${date.slice(5..6)}"
-                val time =
-                    dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
-                Button(
-                    modifier = Modifier.width(250.dp),
-                    colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    onClick = {}) {
-                    Text(
-                        stringResource(R.string.dateTime, date, time),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-
-            }
-        }
+        Text(
+            stringResource(R.string.last_updated_at_utc_2, lastUpdated),
+            textAlign = TextAlign.Right
+        )
     }
 }
 
+
+/*
+* Shows a tutorial informing the user that the graph is scrollable horisontally
+* infroms the user that it is possible to zoom in/out on the graph
+ */
 @Composable
 fun GraphInfoDialog(
     onDismiss: () -> Unit,
@@ -470,7 +536,6 @@ fun GraphInfoDialog(
                 .fillMaxWidth()
                 .height(350.dp)
                 .padding(16.dp),
-            //.background(Color.White.copy(alpha = 0.1f)),
             shape = RoundedCornerShape(16.dp),
             colors = CardColors(
                 containerColor = Color.White.copy(0.8f),
@@ -494,7 +559,7 @@ fun GraphInfoDialog(
                 )
                 Image(
                     painter = painter,
-                    contentDescription = text,
+                    contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .height(70.dp)
@@ -508,7 +573,7 @@ fun GraphInfoDialog(
                         onClick = { onDismiss() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.dismiss))
                     }
                     TextButton(
                         onClick = { onDontShowAgain() },
@@ -522,30 +587,19 @@ fun GraphInfoDialog(
     }
 }
 
-@Composable
-fun LastUpdated(lastUpdated: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        Text(
-            stringResource(R.string.last_updated_at_utc_2, lastUpdated),
-            textAlign = TextAlign.Right
-        )
-    }
-}
-
-
+/*
+* defines the UI and constraints used to show the infobox with graph lines name and colours
+ */
 @Composable
 fun InfoBox(
     modifier: Modifier = Modifier,
     lastUpdated: String,
     bottomPadding: Dp,
+    horizontal: Boolean,
     onDismiss: () -> Unit
 ) {
     ElevatedCard(
         modifier
-            .fillMaxWidth()
             .padding(bottom = bottomPadding),
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -556,98 +610,13 @@ fun InfoBox(
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             Column(Modifier.padding(16.dp)) {
-                LastUpdated(lastUpdated)
-                Row {
-                    Column(Modifier.weight(1.4f)) {
-                        Row(Modifier.padding(top = 5.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Black)
-                            })
-                            Text(
-                                text = stringResource(R.string.max_wind_ground),
-                                style = TextStyle(color = Color.Black)
-                            )
-                        }
-                        Row(Modifier.padding(vertical = 10.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color(0XFFFFE500))
-                            })
-                            Text(
-                                text = stringResource(R.string.max_wind_altitude),
-                                style = TextStyle(color = Color.Black)
-                            )
-                        }
-                        Row {
-                            Canvas(modifier = Modifier
-                                .size(15.dp)
-                                .padding(bottom = 2.dp), onDraw = {
-                                drawCircle(color = Color(0XFFFF7A00))
-                            })
-                            Text(
-                                text = stringResource(R.string.max_shear_wind),
-                                style = TextStyle(color = Color.Black)
-                            )
-                        }
+                if (!horizontal) {
+                    LastUpdated(lastUpdated)
+                    Row {
+                        InfoBoxContent()
                     }
-
-                    Column(Modifier.weight(1.2f)) {
-                        Row(Modifier.padding(top = 5.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Magenta)
-                            })
-                            Text(text = " Rain ", style = TextStyle(color = Color.Black))
-                        }
-                        Row(Modifier.padding(vertical = 10.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Cyan)
-                            })
-                            Text(text = " Cloud Coverage ", style = TextStyle(color = Color.Black))
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .width(6.dp)
-                                    .height(2.dp)
-                                    .background(Color.Red)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(6.dp)
-                                    .height(2.dp)
-                                    .background(Color.Red)
-                            )
-                            /*Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Red)
-                            })*/
-                            //Text(text = "--", style = TextStyle(Color.Red), fontSize = 28.sp)
-                            Text(
-                                text = stringResource(R.string.threshold_line),
-                                style = TextStyle(color = Color.Black)
-                            )
-                        }
-                    }
-
-                    Column(Modifier.weight(0.8f)) {
-                        Row(Modifier.padding(top = 5.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Blue)
-                            })
-                            Text(text = " Humidity ", style = TextStyle(color = Color.Black))
-                        }
-                        Row(Modifier.padding(vertical = 10.dp)) {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.Green)
-                            })
-                            Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
-                        }
-                        Row {
-                            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                                drawCircle(color = Color.DarkGray)
-                            })
-                            Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
-                        }
-                    }
+                } else {
+                    InfoBoxContent()
                 }
             }
             IconButton(
@@ -657,6 +626,103 @@ fun InfoBox(
             }
         }
     }
+}
+
+/*
+* sets the content of the infobox with graph lines name and colours
+ */
+@Composable
+fun InfoBoxContent() {
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Black)
+            })
+            Text(
+                text = stringResource(R.string.max_wind_ground),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color(0XFFFFE500))
+            })
+            Text(
+                text = stringResource(R.string.max_wind_altitude),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+        Row {
+            Canvas(modifier = Modifier
+                .size(15.dp)
+                .padding(bottom = 2.dp), onDraw = {
+                drawCircle(color = Color(0XFFFF7A00))
+            })
+            Text(
+                text = stringResource(R.string.max_shear_wind),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+    }
+
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Green)
+            })
+            Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Cyan)
+            })
+            Text(
+                text = stringResource(R.string.cloud_coverage),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .width(6.dp)
+                    .height(2.dp)
+                    .background(Color.Red)
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Box(
+                modifier = Modifier
+                    .width(6.dp)
+                    .height(2.dp)
+                    .background(Color.Red)
+            )
+            Text(
+                text = stringResource(R.string.threshold_line),
+                style = TextStyle(color = Color.Black)
+            )
+        }
+    }
+
+    Column() {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Blue)
+            })
+            Text(text = " Humidity ", style = TextStyle(color = Color.Black))
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.Magenta)
+            })
+            Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
+        }
+        Row {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(color = Color.DarkGray)
+            })
+            Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
+        }
+    }
+
 }
 
 //generates all variable lines in the chart
@@ -700,30 +766,6 @@ fun createLine(
             backgroundColor = Color.Transparent
         )
     )
-}
-
-// rescales the dew point so that if the list contains a negative value,
-// the entire scale is moved up in order to avoid dealing with negative values
-fun absMinDew(weatherDataLists: WeatherDataLists): Double {
-    val min = weatherDataLists.dewPoint.minOrNull()
-    if (min is Double)
-        return kotlin.math.abs(min)
-    return 0.0
-}
-
-//calculates each point on the line as percentage of its own threshold
-//purpose: create a common threshold line for all points
-// to show visually if the values are below or above their respective threshold.
-fun rescalePoint(realValue: Double?, threshold: Double?): Double {
-    if (threshold is Double && realValue is Double) {
-        var rescaled = ((realValue) / (threshold + 0.000001))
-        if (rescaled > 1.95)
-            rescaled = 1.95 //so that extremes are still visible on the graph
-        if (rescaled <= 0.05)
-            rescaled = 0.05 //so that extremes are still visible on the graph
-        return rescaled
-    }
-    return 0.0
 }
 
 val dummyData: WeatherDataLists = WeatherDataLists(
@@ -795,9 +837,3 @@ val dummyData: WeatherDataLists = WeatherDataLists(
     updated = "08:38",
     availableIndexes = AvailableIndexes()
 )
-val dummyThreasholds: Thresholds = Thresholds.getDefaultInstance()
-
-
-
-
-

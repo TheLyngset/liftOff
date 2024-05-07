@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,7 +45,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -78,13 +81,28 @@ fun HomeScreen(
         }
     }
 
-    if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier.fillMaxWidth().offset(y= (100.dp)),
-            contentAlignment = Alignment.Center){
-            Rocket()
+    //portriat pad
+    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
         }
-
     }
+    //landscape pad
+    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (-300.dp)),
+            contentAlignment = Alignment.BottomCenter){
+            Rocket(Modifier)
+        }
+    }
+    //phone portriat - does not render on phone landscape
+    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Box(modifier = Modifier.fillMaxWidth().offset(y= (-100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
+        }
+    }
+    //if ()
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -132,56 +150,56 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                 weatherInfoList = mutableListOf(
                     WeatherInfo(
                         WeatherParameter.GROUNDWIND,
-                        "Ground Wind",
+                        stringResource(R.string.groundWind_title),
                         uiState.weatherPointInTime.groundWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.groundwind2)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWIND,
-                        "Max Wind",
+                        stringResource(R.string.maxWind_title),
                         uiState.weatherPointInTime.maxWind.speed,
                         "m/s",
                         painterResource(id = R.drawable.wind)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWINDSHEAR,
-                        "Max Shear",
+                        stringResource(R.string.maxShear_title),
                         uiState.weatherPointInTime.maxWindShear.speed,
                         "m/s",
                         painterResource(id = R.drawable.shearwind)
                     ),
                     WeatherInfo(
                         WeatherParameter.CLOUDFRACTION,
-                        "Cloudiness",
+                        stringResource(R.string.cloudiness_title),
                         uiState.weatherPointInTime.cloudFraction,
                         "%",
                         painterResource(id = R.drawable.cloud)
                     ),
                     WeatherInfo(
                         WeatherParameter.RAIN,
-                        "Rain",
+                        stringResource(R.string.rain_title),
                         uiState.weatherPointInTime.rain.probability,
                         "%",
                         painterResource(id = R.drawable.rain)
                     ),
                     WeatherInfo(
                         WeatherParameter.HUMIDITY,
-                        "Humidity",
+                        stringResource(R.string.humidity_title),
                         uiState.weatherPointInTime.humidity,
                         "%",
                         painterResource(id = R.drawable.humidity)
                     ),
                     WeatherInfo(
                         WeatherParameter.FOG,
-                        "Fog",
+                        stringResource(R.string.fog_title),
                         uiState.weatherPointInTime.fog,
                         "%",
                         painterResource(id = R.drawable.fog)
                     ),
                     WeatherInfo(
                         WeatherParameter.DEWPOINT,
-                        "Dew Point",
+                        stringResource(R.string.dewPoint_title),
                         uiState.weatherPointInTime.dewPoint,
                         "℃",
                         painterResource(id = R.drawable.dewpoint),
@@ -223,7 +241,7 @@ fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
                 if (trafficLightColor != TrafficLightColor.WHITE) {
                     Image(
                         painter = painterResource(id = trafficLightColor.image),
-                        contentDescription = "GreenLightIcon",
+                        contentDescription = null,
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
                             .size(60.dp)
@@ -259,7 +277,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
             if (trafficLightColor != TrafficLightColor.WHITE) {
                 Image(
                     painter = painterResource(id = trafficLightColor.image),
-                    contentDescription = "GreenLightIcon",
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .size(60.dp)
@@ -297,14 +315,18 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
         border = BorderStroke(2.5.dp, color)
 
     ) {
-        Box(Modifier
-            .fillMaxSize()
-            .padding(2.5.dp),
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(2.5.dp),
             contentAlignment = Alignment.BottomCenter) {
 
             Box(modifier = Modifier
                 .fillMaxWidth()
-                .background(shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp), color = color)
+                .background(
+                    shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
+                    color = color
+                )
                 .height(12.dp))
 
             Column(

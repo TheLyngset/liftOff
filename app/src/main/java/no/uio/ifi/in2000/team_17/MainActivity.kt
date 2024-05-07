@@ -1,9 +1,11 @@
 package no.uio.ifi.in2000.team_17
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Window
+import android.view.accessibility.AccessibilityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -81,15 +83,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    if (!uiState.hasData) {
+                    if (uiState.hasData) {
+                        App(
+                            context = LocalContext.current,
+                            windowSizeClass = windowSizeClass,
+                        )
+                    } else {
                         val context = LocalContext.current
                         NoDataScreen(viewModel = splashScreenViewModel) {
                             context.restart()
                         }
-                    } else {
-                        App(
-                            windowSizeClass = windowSizeClass,
-                        )
                     }
                 }
             }
@@ -105,4 +108,14 @@ fun Context.restart() {
     startActivity(restartIntent)
     Runtime.getRuntime().exit(0)
 }
+
+fun Context.isScreenReaderOn():Boolean{
+    val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+    if (am != null && am.isEnabled) {
+        val serviceInfoList =
+            am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN)
+        if (!serviceInfoList.isEmpty())
+            return true
+    }
+    return false}
 

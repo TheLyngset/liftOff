@@ -26,18 +26,34 @@ data class WeatherPointInTime(
     val date: String = "00",
     val time: String = "00",
     val groundWind: WindLayer = WindLayer(),
-    val maxWindShear: WindShear = WindShear(),
+    var maxWindShear: WindShear = WindShear(),
     val maxWind: WindLayer = WindLayer(),
     val temperature: Double = -1.0,
     val pressure: Double = -1.0,
     val height: Double = -1.0,
-    val cloudFraction: Double = -1.0,
+    var cloudFraction: Double = -1.0,
     val rain: Rain = Rain(),
-    val humidity: Double = -1.0,
-    val dewPoint: Double = -1.0,
-    val fog: Double = -1.0,
+    var humidity: Double = -1.0,
+    var dewPoint: Double = -1.0,
+    var fog: Double = -1.0,
     val available: Available = Available()
 )
+{
+    operator fun iterator(): List<Pair<WeatherParameter, Any>> {
+        return listOf(
+            WeatherParameter.DATE to date,
+            WeatherParameter.TIME to time,
+            WeatherParameter.MAXWIND to maxWind,
+            WeatherParameter.MAXWINDSHEAR to maxWindShear,
+            WeatherParameter.GROUNDWIND to groundWind,
+            WeatherParameter.RAIN to rain,
+            WeatherParameter.HUMIDITY to humidity,
+            WeatherParameter.CLOUDFRACTION to cloudFraction,
+            WeatherParameter.DEWPOINT to dewPoint,
+            WeatherParameter.FOG to fog
+        )
+    }
+}
 
 /*//object holding lists of values for each variable that needs to be displyed and used in the resultsUI
 data class WeatherPointsResults(
@@ -92,7 +108,7 @@ data class WeatherDataLists(
             humidity = humidity.getOrElse(index) { 0.0 },
             dewPoint = dewPoint.getOrElse(index) { 0.0 },
             fog = fog.getOrElse(index) { 0.0 },
-            temperature = temperature.getOrElse(index){0.0},
+            temperature = temperature.getOrElse(index) { 0.0 },
             available = Available(
                 date = availableIndexes.date > index,
                 time = availableIndexes.time > index,
@@ -194,27 +210,27 @@ data class Available(
  * A data class holding relevant values for wind
  */
 data class WindLayer(
-    val speed: Double = 0.0,
+    var speed: Double = 0.0,
     val height: Double = 0.0,
     val direction: Double = 0.0
-)
-{
+) {
     override fun toString(): String {
         return speed.toString()
     }
 }
+
 /**
  * A data class holding relevant values for WindShear
  */
 data class WindShear(
-    val speed: Double = 0.0,
+    var speed: Double = 0.0,
     val height: Double = 0.0
-)
-{
+) {
     override fun toString(): String {
         return speed.toString()
     }
 }
+
 /**
  * a data class holding relevant values for rain
  */
@@ -222,8 +238,8 @@ data class Rain(
     val min: Double = 0.0,
     val median: Double = 0.0, // is this precipitation amount? There is no median in the API
     val max: Double = 0.0,
-    val probability: Double = 0.0
-){
+    var probability: Double = 0.0
+) {
     override fun toString(): String {
         return probability.toString()
     }

@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team_17.ui.splash_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +14,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team17.Settings
 import no.uio.ifi.in2000.team_17.data.Repository
 import no.uio.ifi.in2000.team_17.data.settings.SettingsRepository
+import no.uio.ifi.in2000.team_17.model.LatLng
 
 data class SplashScreenUiState(
     val isLoading: Boolean = true,
@@ -50,7 +50,7 @@ class SplashScreenViewModel(
     )
     init {
         viewModelScope.launch {
-            delay(4000)
+            delay(2000)
             _isLoading.update { false }
         }
     }

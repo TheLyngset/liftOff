@@ -30,7 +30,7 @@ class IsobaricDataSource {
     private val client = HttpClient {
         install(ContentNegotiation) { gson() }
         install(HttpTimeout) {
-            requestTimeoutMillis = 3000
+            requestTimeoutMillis = 5000
         }
     }
 
@@ -41,13 +41,8 @@ class IsobaricDataSource {
         isoBaricTime: IsoBaricTime = IsoBaricTime.NOW
     ): IsoBaricModel {
         val queryUrl = "${isoBaricTime.URL}?coords=POINT%28$lng%20$lat%29"
-        return try {
-            Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
-            client.get(queryUrl).body<IsoBaricModel>()
-        } catch (e: Exception) {
-            Log.e(LOG_NAME, "Got an IO exception while trying to fetch from $queryUrl", e)
-            IsoBaricModel()
-        }
+        Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
+        return client.get(queryUrl).body<IsoBaricModel>()
     }
 
 }

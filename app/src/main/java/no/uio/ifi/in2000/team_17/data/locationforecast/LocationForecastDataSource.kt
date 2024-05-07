@@ -1,16 +1,17 @@
 package no.uio.ifi.in2000.team_17.data.locationforecast
 
 import android.util.Log
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 
 private const val LOG_NAME = "LOCATIONFORECASTDATASOURCE"
+
 /**
  * This class is responsible for fetching location forecast data from the API.
  */
@@ -45,7 +46,10 @@ class LocationForecastDataSource {
 
         val path = "weatherapi//locationforecast/2.0/complete?lat=${lat}&lon=${lon}"
 
-        Log.e(LOG_NAME, "Attempting to fetch data from: https://gw-uio.intark.uh-it.no/in2000/$path")
+        Log.e(
+            LOG_NAME,
+            "Attempting to fetch data from: https://gw-uio.intark.uh-it.no/in2000/$path "
+        )
         val response = client.get(path)
         Log.d("FetchLocationforecast", "${response.status}")
 

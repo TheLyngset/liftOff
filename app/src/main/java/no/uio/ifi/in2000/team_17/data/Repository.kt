@@ -1,22 +1,25 @@
 package no.uio.ifi.in2000.team_17.data
 
 import android.util.Log
-import com.google.android.gms.maps.model.LatLng
+import io.ktor.client.call.NoTransformationFoundException
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricModel
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricTime
 import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsobaricDataSource
 import no.uio.ifi.in2000.team_17.data.locationforecast.LocationForecastDataSource
-import no.uio.ifi.in2000.team_17.data.isobaricgrib.IsoBaricModel
+import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Properties
+import no.uio.ifi.in2000.team_17.model.LatLng
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointLayer
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
-import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.Properties
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -75,7 +78,8 @@ class RepositoryImplementation : Repository {
     private var lastMaxHeight = 3
 
     // Load data from isoBaricDataSource and locationForecastDataSource
-    private val locationForecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
+    private val locationForecastDataSource: LocationForecastDataSource =
+        LocationForecastDataSource()
     private val isobaricDataSource: IsobaricDataSource = IsobaricDataSource()
 
     // Creates necessary StateFlows
@@ -117,6 +121,33 @@ class RepositoryImplementation : Repository {
                 delay(500)
                 _failedToUpdate.update { false }
                 it.copy()
+            } catch (e: NoTransformationFoundException) {
+                Log.e(
+                    LOG_NAME,
+                    "NoTransformationFoundException while fetching Locationforecast data: ${e.message}"
+                )
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
+                it.copy()
+            } catch (e: ClientRequestException) {
+                Log.e(
+                    LOG_NAME,
+                    "ClientRequestException while fetching Locationforecast data: ${e.message}"
+                )
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
+                it.copy()
+            } catch (e: ServerResponseException) {
+                Log.e(
+                    LOG_NAME,
+                    "ServerResponseException while fetching Locationforecast data: ${e.message}"
+                )
+                _failedToUpdate.update { true }
+                delay(500)
+                _failedToUpdate.update { false }
+                it.copy()
             }
         }
     }
@@ -134,30 +165,49 @@ class RepositoryImplementation : Repository {
         var isoBaricIn3 = IsoBaricModel.Ranges()
         var isoBaricIn6 = IsoBaricModel.Ranges()
         try {
-            isoBaricNow =  isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.NOW).ranges
+            isoBaricNow = isobaricDataSource.getData(
+                latLng.latitude,
+                latLng.longitude,
+                IsoBaricTime.NOW
+            ).ranges
             _hasIsoBaricData.update { true }
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
-            if(hasIsoBaricData.value){
+            if (hasIsoBaricData.value) {
                 _failedToUpdate.update { true }
                 delay(500)
                 _failedToUpdate.update { false }
                 return
+            } else {
+                _hasIsoBaricData.update { false }
             }
         }
 
-        try { isoBaricIn3 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_3).ranges }
-        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+        try {
+            isoBaricIn3 = isobaricDataSource.getData(
+                latLng.latitude,
+                latLng.longitude,
+                IsoBaricTime.IN_3
+            ).ranges
+        } catch (e: IOException) {
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+        }
 
-        try { isoBaricIn6 = isobaricDataSource.getData(latLng.latitude, latLng.longitude, IsoBaricTime.IN_6).ranges }
-        catch (e: IOException) { Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}") }
+        try {
+            isoBaricIn6 = isobaricDataSource.getData(
+                latLng.latitude,
+                latLng.longitude,
+                IsoBaricTime.IN_6
+            ).ranges
+        } catch (e: IOException) {
+            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+        }
 
-        if(isoBaricNow.temperature.values.isNotEmpty()) {
+        if (isoBaricNow.temperature.values.isNotEmpty()) {
             (startIndex..2).forEach { newIsoBaricModel.add(isoBaricNow) }
-            if (isoBaricIn3.temperature.values.isNotEmpty()){
+            if (isoBaricIn3.temperature.values.isNotEmpty()) {
                 (1..3).forEach { newIsoBaricModel.add(isoBaricIn3) }
-                if (isoBaricIn6.temperature.values.isNotEmpty()){
+                if (isoBaricIn6.temperature.values.isNotEmpty()) {
                     (1..3).forEach { newIsoBaricModel.add(isoBaricIn6) }
                 }
             }
@@ -177,8 +227,7 @@ class RepositoryImplementation : Repository {
             loadIsobaric(latLng)
             updateWeatherDataLists(maxHeight)
             lastLatLng = latLng
-        }
-        else if (maxHeight != lastMaxHeight) {
+        } else if (maxHeight != lastMaxHeight) {
             updateWeatherDataLists(maxHeight)
         }
     }
@@ -197,26 +246,27 @@ class RepositoryImplementation : Repository {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
             val isobaricData = isoBaricData.value
-            val listOfWeatherPointList = isobaricData.zip(locationData.timeseries){isoBaric, location ->
-                val locationDetails = location.data.instant.details
-                val groundWeatherPoint = WeatherPointLayer(
-                    windSpeed = locationDetails.wind_speed,
-                    windDirection = locationDetails.wind_from_direction,
-                    temperature = locationDetails.air_temperature,
-                    pressure = locationDetails.air_pressure_at_sea_level,
-                    height = 10.0,
-                    cloudFraction = locationDetails.cloud_area_fraction,
-                    rain = location.data.next_1_hours.details.probability_of_precipitation,
-                    humidity = locationDetails.relative_humidity,
-                    dewPoint = locationDetails.dew_point_temperature,
-                    fog = locationDetails.fog_area_fraction
-                )
-                generateWeatherPointLayerList(
-                    isoData = isoBaric,
-                    groundWeatherPoint = groundWeatherPoint,
-                    maxHeight = maxHeight
-                )
-            }
+            val listOfWeatherPointList =
+                isobaricData.zip(locationData.timeseries) { isoBaric, location ->
+                    val locationDetails = location.data.instant.details
+                    val groundWeatherPoint = WeatherPointLayer(
+                        windSpeed = locationDetails.wind_speed,
+                        windDirection = locationDetails.wind_from_direction,
+                        temperature = locationDetails.air_temperature,
+                        pressure = locationDetails.air_pressure_at_sea_level,
+                        height = 10.0,
+                        cloudFraction = locationDetails.cloud_area_fraction,
+                        rain = location.data.next_1_hours.details.probability_of_precipitation,
+                        humidity = locationDetails.relative_humidity,
+                        dewPoint = locationDetails.dew_point_temperature,
+                        fog = locationDetails.fog_area_fraction
+                    )
+                    generateWeatherPointLayerList(
+                        isoData = isoBaric,
+                        groundWeatherPoint = groundWeatherPoint,
+                        maxHeight = maxHeight
+                    )
+                }
             it.copy(
                 date = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
@@ -230,7 +280,13 @@ class RepositoryImplementation : Repository {
                         .plusHours(2)//TODO this is summertime only
                         .toString()
                 },
-                groundWind = locationData.timeseries.map { WindLayer(it.data.instant.details.wind_speed, 10.0, it.data.instant.details.wind_from_direction)  },
+                groundWind = locationData.timeseries.map {
+                    WindLayer(
+                        it.data.instant.details.wind_speed,
+                        10.0,
+                        it.data.instant.details.wind_from_direction
+                    )
+                },
                 maxWindShear = listOfWeatherPointList.map {
                     val windShear = it.map { it.windShear }
                     val maxWindShear = windShear.max()
@@ -253,17 +309,18 @@ class RepositoryImplementation : Repository {
                         data.probability_of_precipitation
                     )
                 },
-                temperature = locationData.timeseries.map { it.data.instant.details.air_temperature},
+                temperature = locationData.timeseries.map { it.data.instant.details.air_temperature },
                 humidity = locationData.timeseries.map { it.data.instant.details.relative_humidity },
                 dewPoint = locationData.timeseries.map { it.data.instant.details.dew_point_temperature },
                 fog = locationData.timeseries.map { it.data.instant.details.fog_area_fraction },
-                updated = try {LocalDateTime.parse(
-                    locationData.meta.updated_at,
-                    DateTimeFormatter.ISO_DATE_TIME
-                ).toLocalTime()
-                    .plusHours(2)//TODO: now summertime only
-                    .toString()
-                }catch (e: DateTimeParseException){
+                updated = try {
+                    LocalDateTime.parse(
+                        locationData.meta.updated_at,
+                        DateTimeFormatter.ISO_DATE_TIME
+                    ).toLocalTime()
+                        .plusHours(2)//TODO: now summertime only
+                        .toString()
+                } catch (e: DateTimeParseException) {
                     e.printStackTrace()
                     ""
                 }

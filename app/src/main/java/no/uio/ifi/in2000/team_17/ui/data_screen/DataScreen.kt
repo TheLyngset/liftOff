@@ -1,16 +1,23 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,9 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.isScreenReaderOn
 import no.uio.ifi.in2000.team_17.ui.Background
 
 enum class Toggle {
@@ -57,6 +69,7 @@ enum class Toggle {
  */
 @Composable
 fun DataScreen(
+    context: Context,
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     viewModel: DataScreenViewModel,
@@ -65,25 +78,23 @@ fun DataScreen(
     val uiState by viewModel.uiState.collectAsState()
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
     var selectedTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
-    var showingTimeIndex by rememberSaveable { mutableIntStateOf(uiState.selectedTimeIndex) }
+    var showingTimeIndex by rememberSaveable { mutableStateOf<Int?>(uiState.selectedTimeIndex) }
 
+    var nextIndex by remember { mutableIntStateOf(0) }
     var scrollToItem by remember { mutableStateOf<Int?>(null) }
-    //var selectedTimeLocked by remember { mutableStateOf(true) }
-    var graphTutorialIsDismissed by remember { mutableStateOf(false) }
-    var tableTutorialIsDismissed by remember { mutableStateOf(false) }
-    var waitingForSettings by remember { mutableStateOf(true) }
-    var showInfoBox by remember { mutableStateOf(true) }
+    var graphTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
+    var tableTutorialIsDismissed by rememberSaveable { mutableStateOf(false) }
+    var waitingForSettings by rememberSaveable { mutableStateOf(true) }
+    var showInfoBox by rememberSaveable { mutableStateOf(false) }
+    var graphBackgroundSwitch by rememberSaveable { mutableStateOf(uiState.graphBackgroundSwitch) }
 
     LaunchedEffect(Unit) {
         delay(500)
         waitingForSettings = false
-
     }
     if (uiState.weatherDataLists.date.size > 1) {
         selectedTimeIndex = uiState.selectedTimeIndex
-        //showSwipe = dataScreenUiState.showSwipe.value
     }
-    //val configuration = LocalConfiguration.current
 
     Background()
     Box(
@@ -91,21 +102,24 @@ fun DataScreen(
             .fillMaxSize()
     ) {
         Column {
-            SelectTimeCard(
-                dataScreenUiState = uiState,
-                indexToPin = showingTimeIndex
-            ) {
-                selectedTimeIndex = it
-                setTimeIndex(it)
+            if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+                SelectTimeCard(
+                    dataScreenUiState = uiState,
+                    indexToPin = showingTimeIndex ?: 0
+                ) {
+                    selectedTimeIndex = it
+                    setTimeIndex(it)
+                }
             }
+            val bottomPadding =
+                if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact) 60 else 30
             when (toggleState) {
                 Toggle.TABLE -> {
                     Column(
                         Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-                        Box(Modifier.padding(bottom = 30.dp)) {
+                        Box(Modifier.padding(bottom = bottomPadding.dp)) {
                             Table(
                                 scrollToItem = scrollToItem,
                                 uiState = uiState,
@@ -124,7 +138,7 @@ fun DataScreen(
                                         viewModel.dontShowTableTurotialAgain()
                                     },
                                     painter = painterResource(id = R.drawable.swipe),
-                                    text = "Scroll left to see more weather data."
+                                    text = stringResource(R.string.table_tutorial)
                                 )
                             }
                         }
@@ -133,10 +147,17 @@ fun DataScreen(
 
                 Toggle.GRAPH -> {
                     ThresholdGraph(
-                        dataScreenUiState = uiState,
+                        uiState = uiState,
+                        screenReaderOn = context.isScreenReaderOn(),
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
-                        closeInfoBox = { showInfoBox = false }
+                        closeInfoBox = { showInfoBox = false },
+                        backgroundSwitch = graphBackgroundSwitch,
+                        onFlip = {
+                            graphBackgroundSwitch = !graphBackgroundSwitch
+                            viewModel.graphBackgroundSwitch(graphBackgroundSwitch)
+                        }
+
                     ) {
                         showingTimeIndex = it
                     }
@@ -148,7 +169,7 @@ fun DataScreen(
                                 viewModel.dontShowGraphTurotialAgain()
                             },
                             painter = painterResource(id = R.drawable.swipe),
-                            text = "Scroll left to see more weather data.\nPinch to zoom."
+                            text = stringResource(R.string.infoDialog)
                         )
                     }
                 }
@@ -158,23 +179,25 @@ fun DataScreen(
     Box(
         modifier
             .fillMaxSize()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 5.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
-            Modifier.height(45.dp),
+            Modifier
+                .height(45.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.Center
         ) {
             if (toggleState == Toggle.TABLE) {
-                TextButton(modifier = Modifier.width(80.dp), onClick = { scrollToItem = 0 }) {
-                    Text(text = "Now")
+                TextButton(modifier = Modifier.size(60.dp), onClick = { scrollToItem = 0 }) {
+                    Text(text = stringResource(R.string.now))
                 }
             } else {
                 IconButton(
-                    modifier = Modifier.width(50.dp),
+                    modifier = Modifier.size(50.dp),
                     onClick = { showInfoBox = !showInfoBox }) {
-                    Icon(Icons.Outlined.Info, "info")
+                    Icon(Icons.Outlined.Info, stringResource(R.string.info))
                 }
             }
             ToggleButton {
@@ -185,9 +208,16 @@ fun DataScreen(
             }
             if (toggleState == Toggle.TABLE) {
                 TextButton(
-                    modifier = Modifier.width(80.dp),
-                    onClick = { scrollToItem = selectedTimeIndex }) {
-                    Text("Selected")
+                    modifier = Modifier.size(60.dp),
+                    onClick = {
+                        scrollToItem = uiState.launchWindows.getOrElse(nextIndex) {
+                            nextIndex = 0
+                            uiState.launchWindows.getOrNull(nextIndex)
+                        }
+                        showingTimeIndex = scrollToItem
+                        nextIndex++
+                    }) {
+                    Text(stringResource(R.string.next_window))
                 }
             } else {
                 Box(modifier = Modifier.width(50.dp))
@@ -212,9 +242,14 @@ fun ToggleButton(
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
-                modifier = modifier,
+                modifier = modifier.semantics {
+                    if (option == "Graph"){
+                        contentDescription = "The graph does not work with TalkBack. Use the Table instead"
+                    }
+                },
                 selected = selectedIndex == index,
                 onClick = {
+
                     selectedIndex = index
                     onFlip(index)
                 },
@@ -237,6 +272,67 @@ fun ToggleButton(
             )
             {
                 Text(text = option)
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectTimeCard(
+    dataScreenUiState: DataScreenUiState,
+    indexToPin: Int,
+    setTimeIndex: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.padding(8.dp),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.onPrimary.copy(0.6f)
+        )
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.on_home_screen),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.width(15.dp))
+            if (dataScreenUiState.selectedTimeIndex != indexToPin) {
+                Button(
+                    modifier = Modifier.width(214.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    onClick = { setTimeIndex(indexToPin) }) {
+                    var date = dataScreenUiState.weatherDataLists.date[indexToPin]
+                    date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                    val time = dataScreenUiState.weatherDataLists.time[indexToPin]
+                    Text(text = stringResource(R.string.change_to_kl, date, time))
+                }
+            } else {
+                var date =
+                    dataScreenUiState.weatherDataLists.date[dataScreenUiState.selectedTimeIndex]
+                date = "${date.slice(8..9)}.${date.slice(5..6)}"
+                val time =
+                    dataScreenUiState.weatherDataLists.time[dataScreenUiState.selectedTimeIndex]
+                Button(
+                    modifier = Modifier.width(214.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    onClick = {}) {
+                    Text(
+                        stringResource(R.string.dateTime, date, time),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+
             }
         }
     }

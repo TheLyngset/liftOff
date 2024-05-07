@@ -7,16 +7,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 
 @Composable
@@ -53,7 +58,7 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                 )
             )
             {
-                Box(){
+                Box(contentAlignment = Alignment.TopEnd){
                     Column(
                         Modifier
                             .padding(16.dp)
@@ -61,50 +66,46 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         InfoSection(
-                            title = "Max Ground Wind",
-                            description = "Max Ground Wind is the maximum wind speed at ground layer for which it is safe to launch the rocket"
+                            title = stringResource(R.string.safety_margin_title),
+                            description = stringResource(R.string.safety_margin_description)
                         )
                         InfoSection(
-                            title = "Max Wind",
-                            description = "max wind is the maximum wind speed at any level for which it is safe to launch the rocket"
+                            title = stringResource(R.string.max_ground_wind_title),
+                            description = stringResource(R.string.max_ground_wind_description)
                         )
                         InfoSection(
-                            title = "Max Wind Shear",
-                            description = "Max Wind Shear is the maximum wind shear at any level for which it is safe to launch the rocket"
+                            title = stringResource(id = R.string.maxWind_title),
+                            description = stringResource(R.string.maxWind_description)
                         )
                         InfoSection(
-                            title = "Max Cloud Fraction",
-                            description = "Max Cloud Fraction is the maximum cloud coverage in % for which it is safe to launch the rocket"
+                            title = stringResource(id = R.string.max_shear_wind),
+                            description = stringResource(R.string.maxShear_description)
                         )
                         InfoSection(
-                            title = "Max Fog",
-                            description = "Max Fog is the maximum fog fraction in % for which it is safe to launch the rocket"
+                            title = stringResource(R.string.max_cloud_fraction_title),
+                            description = stringResource(R.string.max_cloud_fraction_description)
                         )
                         InfoSection(
-                            title = "Max allowed rain",
-                            description = "Max allowed rain is the maximum amount of rain in mm/h for which it is safe to launch the rocket"
+                            title = stringResource(R.string.max_fog_title),
+                            description = stringResource(R.string.max_fog_description)
                         )
                         InfoSection(
-                            title = "Max humidity",
-                            description = "Max humidity is the maximum relative humidity in % for which it is safe to launch the rocket"
+                            title = stringResource(R.string.max_allowed_rain_title),
+                            description = stringResource(R.string.max_allowed_rain_description)
                         )
                         InfoSection(
-                            title = "Max Dew Point",
-                            description = "Max Dew Point is the maximum dew point temperature in ℃ for which it is safe to launch the rocket"
+                            title = stringResource(R.string.max_humidity_title),
+                            description = stringResource(R.string.max_humidity_description)
                         )
                         InfoSection(
-                            title = "Safety margin",
-                            description = "Safety margin is how much of the threshold is colored Green and Yellow for each Threshold. For example a Threshold of 10.0 with the Margin set to 0.6 wil be colored green until 6.o, yellow until 10.0 and red for anything above 10 "
+                            title = stringResource(R.string.max_dew_point_title),
+                            description = stringResource(R.string.max_dew_point_description)
                         )
 
                     }
-                    Box(
-                        Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
-                        Button(onClick = { onDone() }) {
-                            Text(text = "Close")
-                        }
+                    IconButton(
+                        onClick = { onDone() }) {
+                        Icon(Icons.Outlined.Close, "Close")
                     }
                 }
             }
