@@ -31,8 +31,7 @@ Alternativ flyt<br>
 1.2 Brukeren ser splashscreen og trykker på "Retry".<br>
 1.3 Brukeren returnerer til steg 1 i hovedflytten.<br>
 </p>
-<h3> Use-cases Diagram:</h3>
-<img src = "./Modelling_pictures/UseCaseDiagram.png">
+
 <p>Use-case navn: User navigates to table screen and changes location <br>
 Aktør: PortalSpace user<br>
 Prebetingelser: Brukeren er på hjemmeskjermen i appen og har internet.<br>
@@ -55,6 +54,9 @@ Hovedflyt: <br>
 3. Brukeren er spurt om det er ønskelig å pinne tidspunkt til hjemmeskjermen.<br>
 4. Brukeren trykker på knappen for å pinne tidspunkt.<br>
 </p>
+
+<h3> Use-cases Diagram:</h3>
+<img src = "./Modelling_pictures/UseCaseDiagram.png">
 
 <h3> Sequence Diagrams: </h3>
 <img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp.png">
