@@ -16,11 +16,11 @@ object ThresholdsSerializer : Serializer<Thresholds> {
             .setMaxWindSpeed(17.2)
             .setMaxWindShear(24.5)
             .setCloudFraction(15.0)
-            .setFog(1.0)
+            .setFog(0.0)
             .setRain(10.0)
             .setHumidity(75.0)
             .setDewPoint(15.0)
-            .setMargin(0.6)
+            .setMargin(0.8)
             .build()
 
     override suspend fun readFrom(input: InputStream): Thresholds {
