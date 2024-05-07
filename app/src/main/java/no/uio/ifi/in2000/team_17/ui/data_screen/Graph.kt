@@ -68,8 +68,6 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
-import kotlin.math.max
-import kotlin.math.round
 
 @SuppressLint("ResourceAsColor")
 @Composable
@@ -234,6 +232,16 @@ fun ThresholdGraph(
 
     //Builds colors for background
     //@Author Hedda
+    var colorStops: Array<Pair<Float, Color>> =
+        arrayOf(0.0f to Color.White, 0.0f to Color.White)
+    if (backgroundSwitch) {
+        colorStops = arrayOf(
+            0.0f to TrafficLightColor.RED.color.copy(1f),
+            0.5f to TrafficLightColor.YELLOW.color.copy(1f),
+            1.0f to TrafficLightColor.GREEN.color.copy(1f)
+        )
+    }
+    /*
     var colors: List<Color> =
         listOf(
             Color.White,
@@ -248,6 +256,7 @@ fun ThresholdGraph(
                     (1..yellowCount).map { TrafficLightColor.YELLOW.color.copy(1f) } +
                     (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
     }
+*/
 
     //builds the list of lines that is going to be sent to the graph to be displayed on the chart
     val data = LineChartData(
@@ -262,9 +271,9 @@ fun ThresholdGraph(
                     IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
                     SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
                     ShadowUnderLine(
-                        alpha = 0.75f,
+                        alpha = 0.85f,
                         brush = Brush.verticalGradient(
-                            colors = colors
+                            colorStops = colorStops
                         )
                     ),
                     SelectionHighlightPopUp(
