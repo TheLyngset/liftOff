@@ -377,7 +377,7 @@ fun ThresholdGraph(
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         isZoomAllowed = true,
-        paddingTop = 11.dp,//just enough space to display the date and time when clicking on the graph
+        paddingTop = 13.dp,//just enough space to display the date and time when clicking on the graph
         bottomPadding = 5.dp,
         paddingRight = 2.dp,
         containerPaddingEnd = 2.dp,
@@ -502,7 +502,7 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
         onCheckedChange = {
             onFlip()
         },
-        modifier = Modifier.scale(0.5f)
+        modifier = Modifier.scale(0.8f)
     )
 }
 
