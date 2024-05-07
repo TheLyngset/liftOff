@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,6 +35,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -103,8 +106,10 @@ fun AppTopBar(
                 ) {
                     Image(
                         painter = painterResource(id = logoId),
-                        contentDescription = "Logo",
-                        modifier = Modifier.clickable { onLogoClick() }
+                        contentDescription = "Home",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clickable { onLogoClick() }
                     )
                     //center
                     /*
@@ -121,8 +126,9 @@ fun AppTopBar(
 
                     Image(
                         painter = painterResource(id = R.drawable.settings),
-                        contentDescription = "Search",
+                        contentDescription = "Location and Thresholds",
                         modifier = Modifier
+                            .size(50.dp)
                             .padding(horizontal = 8.dp)
                             .clickable {
                                 onSearchClick()
@@ -148,6 +154,7 @@ fun AppTopBar(
  */
 @Composable
 fun App(
+    context: Context,
     windowSizeClass: WindowSizeClass,
 ) {
     //Using viewModel Factories to take the repository created in Main activity as a parameter
@@ -379,6 +386,7 @@ fun App(
                 route = Screen.Data.name
             ) {
                 DataScreen(
+                    context = context,
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,

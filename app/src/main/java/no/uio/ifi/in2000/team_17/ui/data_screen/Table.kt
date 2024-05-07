@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -198,10 +199,14 @@ fun SelectedBox(
 
                 Spacer(modifier = modifier
                     .clickable(
-                        onClickLabel = onClickLabel
-                    ) {
+                        onClickLabel = onClickLabel) {
                     if (i != 0) setIndex(i - 1)
-                })
+                    }
+                    .semantics {
+                        contentDescription = onClickLabel
+                    }
+
+                )
             }else{
                 Box(
                     modifier
@@ -263,7 +268,7 @@ fun TitleAndIconColumn(
     rows: List<GradientRow>
 ) {
     //Titles and icons Column
-    LazyColumn(modifier) {
+    LazyColumn(modifier.clearAndSetSemantics { }) {
 
         items(rows) { row ->
             when (row.type) {

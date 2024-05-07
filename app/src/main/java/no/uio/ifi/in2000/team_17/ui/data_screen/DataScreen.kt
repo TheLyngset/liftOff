@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,9 +46,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.team_17.R
+import no.uio.ifi.in2000.team_17.isScreenReaderOn
 import no.uio.ifi.in2000.team_17.ui.Background
 
 enum class Toggle {
@@ -64,6 +69,7 @@ enum class Toggle {
  */
 @Composable
 fun DataScreen(
+    context: Context,
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     viewModel: DataScreenViewModel,
@@ -142,6 +148,7 @@ fun DataScreen(
                 Toggle.GRAPH -> {
                     ThresholdGraph(
                         uiState = uiState,
+                        screenReaderOn = context.isScreenReaderOn(),
                         windowSizeClass = windowSizeClass,
                         showInfoBox = showInfoBox,
                         closeInfoBox = { showInfoBox = false },
@@ -188,7 +195,7 @@ fun DataScreen(
                 }
             } else {
                 IconButton(
-                    modifier = Modifier.width(50.dp),
+                    modifier = Modifier.size(50.dp),
                     onClick = { showInfoBox = !showInfoBox }) {
                     Icon(Icons.Outlined.Info, stringResource(R.string.info))
                 }
@@ -235,9 +242,14 @@ fun ToggleButton(
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
-                modifier = modifier,
+                modifier = modifier.semantics {
+                    if (option == "Graph"){
+                        contentDescription = "The graph does not work with TalkBack. Use the Table instead"
+                    }
+                },
                 selected = selectedIndex == index,
                 onClick = {
+
                     selectedIndex = index
                     onFlip(index)
                 },

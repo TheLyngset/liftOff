@@ -241,7 +241,7 @@ fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
                 if (trafficLightColor != TrafficLightColor.WHITE) {
                     Image(
                         painter = painterResource(id = trafficLightColor.image),
-                        contentDescription = "GreenLightIcon",
+                        contentDescription = null,
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
                             .size(60.dp)
@@ -277,7 +277,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
             if (trafficLightColor != TrafficLightColor.WHITE) {
                 Image(
                     painter = painterResource(id = trafficLightColor.image),
-                    contentDescription = "GreenLightIcon",
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .size(60.dp)
