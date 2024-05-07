@@ -235,8 +235,8 @@ fun ThresholdGraph(
     //@Author Hedda
     var colors: List<Color> =
         listOf(
-            Color.LightGray,
-            Color.LightGray
+            Color.White,
+            Color.White
         )
     if (backgroundSwitch) {
         val nGreen = round(uiState.thresholds.margin * 6).toInt()
