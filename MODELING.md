@@ -59,7 +59,7 @@ Hovedflyt: <br>
 <img src = "./Modelling_pictures/UseCaseDiagram.png">
 
 <h3> Sequence Diagrams: </h3>
-<img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp.png">
+<img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp2.png">
 <img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png">
 <img src = "./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png">
 
