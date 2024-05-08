@@ -12,7 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.ui.BackGroundImage
 import no.uio.ifi.in2000.team_17.ui.Background
 
@@ -30,14 +32,14 @@ fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
         ElevatedCard {
             Box() {
                 Column(Modifier.padding(16.dp)) {
-                    Text(text = "We are not receiving data from our servers. Make sure you are connected to the internet and try again")
+                    Text(text = stringResource(R.string.SplashcreenText))
                 }
                 Box(
                     modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     TextButton(onClick = { retry() }) {
-                        Text(text = "Retry")
+                        Text(text = stringResource(R.string.Retry))
                     }
                 }
             }
