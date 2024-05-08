@@ -314,44 +314,44 @@ fun ThresholdGraph(
                 ),
                 createLine(
                     pointsMaxAirWind,
-                    Color(0XFFFFE500),
+                    Color(0XFFC71585),
                     false,
                     stringResource(R.string.max_air_wind)
                 ),
                 createLine(
                     pointsMaxWindShear,
-                    Color(0XFFFF7A00),
+                    Color(0XFFCC5500),
                     false,
                     stringResource(R.string.shear_wind)
                 ),
                 createLine(
                     pointsCloudFraction,
-                    Color.Cyan,
+                    Color(0XFF008080),
                     false,
                     stringResource(R.string.could_coverage)
                 ),
                 createLine(
                     pointsMedianRain,
-                    Color.Magenta,
+                    Color(0XFF8B4513),
                     false,
                     stringResource(R.string.rain)
                 ),
                 createLine(
                     pointsFog,
-                    Color(0XFF9E00FF),
+                    Color(0XFF800080),
                     false,
                     stringResource(R.string.fog)
                 ),
                 createLine(
                     pointsHumidity,
-                    Color.Blue,
+                    Color(0XFF000080),
                     false,
                     stringResource(R.string.humidity)
 
                 ),
                 createLine(
                     pointsDewPoint,
-                    Color.Green,
+                    Color(0XFF006600),
                     false,
                     stringResource(R.string.dew_point)
                 ),
@@ -645,7 +645,7 @@ fun InfoBoxContent() {
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color(0XFFFFE500))
+                drawCircle(color = Color(0XFFC71585))
             })
             Text(
                 text = stringResource(R.string.max_wind_altitude),
@@ -656,7 +656,7 @@ fun InfoBoxContent() {
             Canvas(modifier = Modifier
                 .size(15.dp)
                 .padding(bottom = 2.dp), onDraw = {
-                drawCircle(color = Color(0XFFFF7A00))
+                drawCircle(color = Color(0XFFCC5500))
             })
             Text(
                 text = stringResource(R.string.max_shear_wind),
@@ -668,13 +668,13 @@ fun InfoBoxContent() {
     Column() {
         Row(Modifier.padding(top = 5.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color.Green)
+                drawCircle(Color(0XFF006600))
             })
             Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color.Cyan)
+                drawCircle(Color(0XFF008080))
             })
             Text(
                 text = stringResource(R.string.cloud_coverage),
@@ -705,19 +705,19 @@ fun InfoBoxContent() {
     Column() {
         Row(Modifier.padding(top = 5.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color.Blue)
+                drawCircle(Color(0XFF000080))
             })
             Text(text = " Humidity ", style = TextStyle(color = Color.Black))
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color.Magenta)
+                drawCircle(Color(0XFF8B4513))
             })
             Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
         }
         Row {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(color = Color.DarkGray)
+                drawCircle(Color(0XFF800080))
             })
             Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
         }
