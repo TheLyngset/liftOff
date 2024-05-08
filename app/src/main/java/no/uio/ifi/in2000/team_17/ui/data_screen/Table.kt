@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -150,19 +151,20 @@ fun IconBox(modifier: Modifier, image: Image) {
 
 @Composable
 fun SelectedBox(
-    modifier: Modifier,
+    overlayModifier: Modifier,
+    dateTimeModifier: Modifier,
+    rowModifier: Modifier,
+    dividerModifier: Modifier,
     uiState: DataScreenUiState,
     state: LazyListState,
     index: Int,
-    dates: List<String>,
-    times: List<String>,
     boxWidth: Int,
     setIndex:(Int) -> Unit
 ) {
     LazyRow(state = state) {
-        items((0..dates.size).toList()) {i ->
+        items((0..uiState.weatherDataLists.date.size).toList()) {i ->
+            val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
             if (i - 1 != index) {
-                val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
                 val onClickLabel =  " select "  +
                         "${
                             weatherPointInTime
@@ -195,10 +197,11 @@ fun SelectedBox(
                                     }
                                 }}"
 
-                Spacer(modifier = modifier
+                Spacer(modifier = overlayModifier
                     .clickable(
-                        onClickLabel = onClickLabel) {
-                    if (i != 0) setIndex(i - 1)
+                        onClickLabel = onClickLabel
+                    ) {
+                        if (i != 0) setIndex(i - 1)
                     }
                     .semantics {
                         contentDescription = onClickLabel
@@ -207,21 +210,27 @@ fun SelectedBox(
                 )
             }else{
                 Box(
-                    modifier
+                    overlayModifier
                         .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                        .background(Color.White.copy(0.0f))
-                        .offset(x = (boxWidth.times(0.19)).dp)
-                        .semantics { contentDescription = "to select this time on the home screen, click the change to button" }
+                        .background(Color.White.copy(0.5f))
+                        .semantics {
+                            contentDescription =
+                                "to select this time on the home screen, click the change to button"
+                        }
                 ) {
-                    val date = dates.getOrElse(index) { "            " }
-                    val time = times.getOrElse(index) { "00:00" }
-
-                    if (time != "00:00") {
-                        Text(
-                            "${date.subSequence(8, 10)}.${date.subSequence(5, 7)}",
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.Black.copy(0.57f),
-                        )
+                    LazyColumn(
+                        Modifier.offset((boxWidth/4).dp),
+                        userScrollEnabled = false
+                    ) {
+                        items(weatherPointInTime.iterator()){(type, value)->
+                            val text = value.toString()
+                            when(type){
+                                DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}", bold = true)
+                                TIME -> InfoBox(dateTimeModifier, text, bold = true)
+                                else -> InfoBox(rowModifier, text, bold = true)
+                            }
+                            HorizontalDivider(dividerModifier, color = Color.Transparent)
+                        }
                     }
                 }
             }
@@ -329,6 +338,7 @@ fun GradientRowsColumn(
     dividerModifier: Modifier,
     state: LazyListState,
     rows: List<GradientRow>,
+    selectedIndex: Int,
     thresholds: Thresholds
 ) {
     val size = rows[0].data.size
@@ -374,6 +384,7 @@ fun GradientRowsColumn(
                 items((0..<size).toList()){i->
                     if (i < row.data.size) {
                         val data = row.data[i]
+                        val text =  if(i != selectedIndex) data else ""
                         when (row.type) {
                             DATE -> {
                                 val info = if (rows[1].data[i] == "00:00") {
@@ -391,7 +402,7 @@ fun GradientRowsColumn(
                             TIME -> {
                                 InfoBox(
                                     dateTimeModifier,
-                                    data,
+                                    text,
                                     listOf(Color.Unspecified, Color.Unspecified)
                                 )
                             }
@@ -406,7 +417,7 @@ fun GradientRowsColumn(
                                 } else {
                                     listOf(Color.White.copy(0.0f))
                                 }
-                                InfoBox(rowModifier, data, colorsNow + colorsAfter, bold = false)
+                                InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false)
                             }
                         }
                     } else {
@@ -460,7 +471,8 @@ fun GradientRows(
         dividerModifier = dividerModifier,
         state = state,
         rows = rows,
-        thresholds = thresholds
+        thresholds = thresholds,
+        selectedIndex = selectedIndex
     )
 
     //SelectedTimeIndex box
@@ -471,7 +483,16 @@ fun GradientRows(
             .offset(x = 70.dp)
             .fillMaxSize()
     ) {
-        SelectedBox(overlayModifier, uiState, mainState, selectedIndex, rows[0].data, rows[1].data, boxWidth){
+        SelectedBox(
+            overlayModifier,
+            dateTimeModifier,
+            rowModifier,
+            dividerModifier,
+            uiState,
+            mainState,
+            selectedIndex,
+            boxWidth
+        ){
             setIndex(it)
         }
     }

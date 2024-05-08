@@ -91,7 +91,6 @@ dependencies {
     implementation(libs.ktor.serialization.gson)
     implementation(libs.slf4j.simple)
 
-
     implementation  (libs.androidx.datastore)
     implementation  (libs.protobuf.javalite)
 
