@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -151,6 +152,7 @@ fun IconBox(modifier: Modifier, image: Image) {
 
 @Composable
 fun SelectedBox(
+    modifier:Modifier,
     overlayModifier: Modifier,
     dateTimeModifier: Modifier,
     rowModifier: Modifier,
@@ -161,77 +163,123 @@ fun SelectedBox(
     boxWidth: Int,
     setIndex:(Int) -> Unit
 ) {
-    LazyRow(state = state) {
-        items((0..uiState.weatherDataLists.date.size).toList()) {i ->
-            val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
-            if (i - 1 != index) {
-                val onClickLabel =  " select "  +
-                        "${
-                            weatherPointInTime
-                                .iterator().map { (type, value) ->
-                                    if(weatherPointInTime.available.get(type)){
-                                        type.title + " "+
-                                                value.toString() + " "+
-                                                when(calculateColor(type, value.toString(), uiState.thresholds)){
-                                                    TrafficLightColor.RED -> ". Over Threshold"
-                                                    TrafficLightColor.YELLOW -> ". Close to Threshold"
-                                                    TrafficLightColor.GREEN -> ". Under Threshold"
-                                                    TrafficLightColor.WHITE -> ""
-                                                }
-                                    }
-                                    else{
-                                        when(type){
-                                            DATE -> value.toString()
-                                            TIME -> {
-                                                value.toString() + 
-                                                        when(WeatherUseCase.canLaunch(weatherPointInTime, uiState.thresholds)){
-                                                    TrafficLightColor.RED -> "which is Over Threshold."
-                                                    TrafficLightColor.YELLOW -> "which is Close to Threshold."
-                                                    TrafficLightColor.GREEN -> "which is Under Threshold."
-                                                    TrafficLightColor.WHITE -> ""
-                                                }
-                                            }
-                                            else -> type.title + ". no data"
-                                        }
+    Column(
+        modifier
+            .offset(x = 70.dp)
+            .fillMaxSize()
+    )  {
+        LazyRow(state = state, userScrollEnabled = false) {
+            items((0..uiState.weatherDataLists.date.size).toList()) { i ->
+                val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
+                if (i - 1 != index) {
 
-                                    }
-                                }}"
-
-                Spacer(modifier = overlayModifier
-                    .clickable(
-                        onClickLabel = onClickLabel
-                    ) {
-                        if (i != 0) setIndex(i - 1)
-                    }
-                    .semantics {
-                        contentDescription = onClickLabel
-                    }
-
-                )
-            }else{
-                Box(
-                    overlayModifier
-                        .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                        .background(Color.White.copy(0.3f))
-                        .semantics {
-                            contentDescription =
-                                "to select this time on the home screen, click the change to button"
+                    Spacer(modifier = overlayModifier
+                        .clickable{
+                            if (i != 0) setIndex(i - 1)
                         }
-                ) {
-                    LazyColumn(
-                        Modifier.offset((boxWidth/4).dp),
-                        userScrollEnabled = false
+                    )
+                } else {
+                    Box(
+                        overlayModifier
+                            .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
+                            .background(Color.White.copy(0.3f))
                     ) {
-                        items(weatherPointInTime.iterator()){(type, value)->
-                            val text = value.toString()
-                            when(type){
-                                DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}", bold = true)
-                                TIME -> InfoBox(dateTimeModifier, text, bold = true)
-                                else -> InfoBox(rowModifier, text, bold = true)
+                        LazyColumn(
+                            Modifier.offset((boxWidth / 4).dp),
+                            userScrollEnabled = false
+                        ) {
+                            items(weatherPointInTime.iterator()) { (type, value) ->
+                                val text = value.toString()
+                                when (type) {
+                                    DATE -> InfoBox(
+                                        dateTimeModifier,
+                                        "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",
+                                        bold = true
+                                    )
+
+                                    TIME -> InfoBox(dateTimeModifier, text, bold = true)
+                                    else -> InfoBox(rowModifier, text, bold = true)
+                                }
+                                HorizontalDivider(dividerModifier, color = Color.Transparent)
                             }
-                            HorizontalDivider(dividerModifier, color = Color.Transparent)
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ScrollLayer(
+    modifier: Modifier,
+    overlayModifier: Modifier,
+    uiState: DataScreenUiState,
+    state: LazyListState,
+    index: Int,
+    setIndex:(Int) -> Unit
+) {
+    Column(
+        modifier
+            .offset(x = 70.dp)
+            .fillMaxSize()
+    ) {
+        LazyRow(state = state) {
+            items((0..uiState.weatherDataLists.date.size).toList()) { i ->
+                val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
+                if (i - 1 != index) {
+                    val onClickLabel = " select " +
+                            "${
+                                weatherPointInTime
+                                    .iterator().map { (type, value) ->
+                                        if (weatherPointInTime.available.get(type)) {
+                                            type.title + " " +
+                                                    value.toString() + " " +
+                                                    when (calculateColor(
+                                                        type,
+                                                        value.toString(),
+                                                        uiState.thresholds
+                                                    )) {
+                                                        TrafficLightColor.RED -> ". Over Threshold"
+                                                        TrafficLightColor.YELLOW -> ". Close to Threshold"
+                                                        TrafficLightColor.GREEN -> ". Under Threshold"
+                                                        TrafficLightColor.WHITE -> ""
+                                                    }
+                                        } else {
+                                            when (type) {
+                                                DATE -> value.toString()
+                                                TIME -> {
+                                                    value.toString() +
+                                                            when (WeatherUseCase.canLaunch(
+                                                                weatherPointInTime,
+                                                                uiState.thresholds
+                                                            )) {
+                                                                TrafficLightColor.RED -> "which is Over Threshold."
+                                                                TrafficLightColor.YELLOW -> "which is Close to Threshold."
+                                                                TrafficLightColor.GREEN -> "which is Under Threshold."
+                                                                TrafficLightColor.WHITE -> ""
+                                                            }
+                                                }
+
+                                                else -> type.title + ". no data"
+                                            }
+
+                                        }
+                                    }
+                            }"
+
+                    Spacer(modifier = overlayModifier
+                        .clickable(
+                            onClickLabel = onClickLabel
+                        ) {
+                            if (i != 0) setIndex(i - 1)
+                        }
+                    )
+                } else {
+                    Spacer(overlayModifier.semantics {
+                        contentDescription =
+                            "to select this time on the home screen, click the change to button"
+                    })
                 }
             }
         }
@@ -353,7 +401,7 @@ fun GradientRowsColumn(
             ) {
                 item {
                     when (row.type) {
-                        WeatherParameter.TIME -> {
+                        TIME -> {
                             InfoBox(
                                 dateTimeModifier,
                                 "",
@@ -361,7 +409,7 @@ fun GradientRowsColumn(
                             )
                         }
 
-                        WeatherParameter.DATE -> {
+                        DATE -> {
                             InfoBox(
                                 dateTimeModifier,
                                 "",
@@ -478,23 +526,28 @@ fun GradientRows(
     //SelectedTimeIndex box
     //Making all rows scroll together by adding big boxes on top
     val mainState = rememberLazyListState()
-    Column(
-        modifier
-            .offset(x = 70.dp)
-            .fillMaxSize()
+
+    SelectedBox(
+        modifier,
+        overlayModifier,
+        dateTimeModifier,
+        rowModifier,
+        dividerModifier,
+        uiState,
+        state,
+        selectedIndex,
+        boxWidth
+    ){
+        setIndex(it)
+    }
+    ScrollLayer(
+        modifier = modifier,
+        overlayModifier = overlayModifier,
+        uiState = uiState,
+        state = mainState,
+        index = selectedIndex
     ) {
-        SelectedBox(
-            overlayModifier,
-            dateTimeModifier,
-            rowModifier,
-            dividerModifier,
-            uiState,
-            mainState,
-            selectedIndex,
-            boxWidth
-        ){
-            setIndex(it)
-        }
+        setIndex(it)
     }
     //scrolls to now or selected
     if (scrollToItem != null) {
