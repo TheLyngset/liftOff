@@ -212,7 +212,7 @@ fun SelectedBox(
                 Box(
                     overlayModifier
                         .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                        .background(Color.White.copy(0.5f))
+                        .background(Color.White.copy(0.3f))
                         .semantics {
                             contentDescription =
                                 "to select this time on the home screen, click the change to button"
