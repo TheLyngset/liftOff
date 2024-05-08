@@ -76,5 +76,7 @@
     <string name="info">info</string>
     <string name="NoGraphBackground">Show graph background</string>
     <string name="GraphBackground">Don\'t show graph background</string>
+    <string name="SplashcreenText">We are not receiving data from our servers. Make sure you are connected to the internet and try again</string>
+    <string name="Retry">Retry</string>
 
 </resources>
