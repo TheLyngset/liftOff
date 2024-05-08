@@ -209,7 +209,7 @@ fun SelectedBox(
                 Box(
                     modifier
                         .border(1.dp, Color.Black, RoundedCornerShape(5.dp))
-                        .background(Color.White.copy(0.3f))
+                        .background(Color.White.copy(0.0f))
                         .offset(x = (boxWidth.times(0.19)).dp)
                         .semantics { contentDescription = "to select this time on the home screen, click the change to button" }
                 ) {
