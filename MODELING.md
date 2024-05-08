@@ -311,5 +311,5 @@ classDiagram
 
 <h2> ● (3) Andre diagrammer </h2>
 <img src = "./Modelling_pictures/AktivitetDiagram_UserOpensApp.png">
-<img src = "./Modelling_pictures/AktivitetDiagram_UserTableChangeLocation.png">
+<img src = "./Modelling_pictures/AktivittetDiagram_UserTableChangeLocation.png">
 <img src = "./Modelling_pictures/AktivitetDiagram_UserGraphPinToHomescreen.png">
