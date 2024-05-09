@@ -2,9 +2,11 @@
     <string name="app_name">team-17</string>
     <string name="dewPoint_title">Dew Point</string>
     <string name="groundWind_title">Ground Wind</string>
-    <string name="maxWind_title">Max Wind</string>
+    <string name="maxAirWind_title">Max Air Wind</string>
     <string name="maxShear_title">Max Shear</string>
+    <string name="maxShear_titleLong">Max Wind Shear</string>
     <string name="cloudiness_title">Cloudiness</string>
+    <string name="cloudFraction_title">Cloud Fraction</string>
     <string name="rain_title">Rain</string>
     <string name="humidity_title">Humidity</string>
     <string name="fog_title">Fog</string>
@@ -41,13 +43,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="dateTime">%1$s kl. %2$s</string>
     <string name="change_to_kl_date">"Change to: %1$s kl. %2$s "</string>
-    <string name="dew_point">Dew Point</string>
-    <string name="humidity">Humidity</string>
-    <string name="fog">Fog</string>
-    <string name="could_coverage">Could Coverage</string>
-    <string name="shear_wind">Shear Wind</string>
-    <string name="max_air_wind">Max Air Wind</string>
-    <string name="ground_wind">Ground Wind</string>
     <string name="max_ground_wind_description">Max Ground Wind is the maximum wind speed at ground layer for which it is safe to launch the rocket.</string>
     <string name="max_ground_wind_title">Max Ground Wind</string>
     <string name="maxWind_description">Max Air Wind is the maximum wind speed at any level above the ground for which it is safe to launch the rocket.</string>
@@ -80,5 +75,8 @@
     <string name="Retry">Retry</string>
     <string name="empty_Date">0000-00-00</string>
     <string name="m_s">m/s</string>
+    <string name="percentage">%</string>
+    <string name="celsiusDegree"> ℃</string>
+    <string name="empty_time">00:00</string>
 
 </resources>

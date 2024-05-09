@@ -74,7 +74,7 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                             description = stringResource(R.string.max_ground_wind_description)
                         )
                         InfoSection(
-                            title = stringResource(id = R.string.maxWind_title),
+                            title = stringResource(id = R.string.maxAirWind_title),
                             description = stringResource(R.string.maxWind_description)
                         )
                         InfoSection(

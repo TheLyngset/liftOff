@@ -128,7 +128,7 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
         .fillMaxWidth(),
         contentAlignment = Alignment.TopEnd) {
         Text(
-            text = (uiState.weatherPointInTime.temperature.toString() + "°"),
+            text = (uiState.weatherPointInTime.temperature.toString() + stringResource(R.string.celsiusDegree)),
             style = TextStyle(fontSize = 35.sp),
             color = MaterialTheme.colorScheme.inverseSurface
         )
@@ -165,7 +165,7 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWIND,
-                        stringResource(R.string.maxWind_title),
+                        stringResource(R.string.maxAirWind_title),
                         uiState.weatherPointInTime.maxWind.speed,
                         stringResource(R.string.m_s),
                         painterResource(id = R.drawable.wind)
@@ -181,35 +181,35 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                         WeatherParameter.CLOUDFRACTION,
                         stringResource(R.string.cloudiness_title),
                         uiState.weatherPointInTime.cloudFraction,
-                        "%",
+                        stringResource(R.string.percentage),
                         painterResource(id = R.drawable.cloud)
                     ),
                     WeatherInfo(
                         WeatherParameter.RAIN,
                         stringResource(R.string.rain_title),
                         uiState.weatherPointInTime.rain.probability,
-                        "%",
+                        stringResource(R.string.percentage),
                         painterResource(id = R.drawable.rain)
                     ),
                     WeatherInfo(
                         WeatherParameter.HUMIDITY,
                         stringResource(R.string.humidity_title),
                         uiState.weatherPointInTime.humidity,
-                        "%",
+                        stringResource(R.string.percentage),
                         painterResource(id = R.drawable.humidity)
                     ),
                     WeatherInfo(
                         WeatherParameter.FOG,
                         stringResource(R.string.fog_title),
                         uiState.weatherPointInTime.fog,
-                        "%",
+                        stringResource(R.string.percentage),
                         painterResource(id = R.drawable.fog)
                     ),
                     WeatherInfo(
                         WeatherParameter.DEWPOINT,
                         stringResource(R.string.dewPoint_title),
                         uiState.weatherPointInTime.dewPoint,
-                        "℃",
+                        stringResource(R.string.celsiusDegree),
                         painterResource(id = R.drawable.dewpoint),
                     ),
                 ).sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal },

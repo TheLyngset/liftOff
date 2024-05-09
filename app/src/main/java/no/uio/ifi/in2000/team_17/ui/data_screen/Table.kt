@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -435,7 +436,7 @@ fun GradientRowsColumn(
                         val text =  if(i != selectedIndex) data else ""
                         when (row.type) {
                             DATE -> {
-                                val info = if (rows[1].data[i] == "00:00") {
+                                val info = if (rows[1].data[i] == stringResource(R.string.empty_time)) {
                                     "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
                                 } else {
                                     ""

@@ -310,25 +310,25 @@ fun ThresholdGraph(
                     pointsGroundWind,
                     Color.Black,
                     false,
-                    stringResource(R.string.ground_wind)
+                    stringResource(R.string.groundWind_title)
                 ),
                 createLine(
                     pointsMaxAirWind,
                     Color(0XFFC71585),
                     false,
-                    stringResource(R.string.max_air_wind)
+                    stringResource(R.string.maxAirWind_title)
                 ),
                 createLine(
                     pointsMaxWindShear,
                     Color(0XFFCC5500),
                     false,
-                    stringResource(R.string.shear_wind)
+                    stringResource(R.string.maxShear_titleLong)
                 ),
                 createLine(
                     pointsCloudFraction,
                     Color(0XFF008080),
                     false,
-                    stringResource(R.string.could_coverage)
+                    stringResource(R.string.cloudFraction_title)
                 ),
                 createLine(
                     pointsMedianRain,
@@ -340,20 +340,20 @@ fun ThresholdGraph(
                     pointsFog,
                     Color(0XFF800080),
                     false,
-                    stringResource(R.string.fog)
+                    stringResource(R.string.fog_title)
                 ),
                 createLine(
                     pointsHumidity,
                     Color(0XFF000080),
                     false,
-                    stringResource(R.string.humidity)
+                    stringResource(R.string.humidity_title)
 
                 ),
                 createLine(
                     pointsDewPoint,
                     Color(0XFF006600),
                     false,
-                    stringResource(R.string.dew_point)
+                    stringResource(R.string.dewPoint_title)
                 ),
             )
         ),
