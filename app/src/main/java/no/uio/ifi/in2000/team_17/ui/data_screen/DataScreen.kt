@@ -31,7 +31,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -247,7 +246,7 @@ fun ToggleButton(
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = modifier.semantics {
-                    if (option == graph){
+                    if (option == graph) {
                         contentDescription = context.getString(R.string.talkback_graph_not_working)
                     }
                 },

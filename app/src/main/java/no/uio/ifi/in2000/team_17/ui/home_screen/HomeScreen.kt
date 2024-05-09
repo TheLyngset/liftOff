@@ -45,7 +45,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -68,45 +67,60 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
-        Column(modifier = Modifier.fillMaxWidth(),
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
 
         ) {
             var date = uiState.weatherPointInTime.date
             if (date.length < 10) date = stringResource(R.string.empty_Date)
-            Text(text = uiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
-            Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
+            Text(
+                text = uiState.weatherPointInTime.time,
+                style = TextStyle(fontSize = 35.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
+            Text(
+                text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}",
+                style = TextStyle(fontSize = 19.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
         }
     }
 
     //portriat pad
-    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .offset(y = (100.dp)),
-            contentAlignment = Alignment.TopCenter){
+    if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .offset(y = (100.dp)),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Rocket(Modifier)
         }
     }
     //landscape pad
-    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .offset(y = (-300.dp)),
-            contentAlignment = Alignment.BottomCenter){
+    else if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .offset(y = (-300.dp)),
+            contentAlignment = Alignment.BottomCenter
+        ) {
             Rocket(Modifier)
         }
     }
     //phone portriat - does not render on phone landscape
-    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .offset(y = (-100.dp)),
-            contentAlignment = Alignment.TopCenter){
+    else if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = (-100.dp)),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Rocket(Modifier)
         }
     }
@@ -121,12 +135,17 @@ fun HomeScreen(
 }
 
 @Composable
-fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { //weatherInfoList: List<Triple<String, Double, String>>
+fun BottomCard(
+    uiState: HomeScreenUiState,
+    windowSizeClass: WindowSizeClass
+) { //weatherInfoList: List<Triple<String, Double, String>>
 
-    Box(modifier = Modifier
-        .padding(16.dp, 5.dp)
-        .fillMaxWidth(),
-        contentAlignment = Alignment.TopEnd) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp, 5.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd
+    ) {
         Text(
             text = (uiState.weatherPointInTime.temperature.toString() + stringResource(R.string.celsiusDegree)),
             style = TextStyle(fontSize = 35.sp),
@@ -212,7 +231,13 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                         stringResource(R.string.celsiusDegree),
                         painterResource(id = R.drawable.dewpoint),
                     ),
-                ).sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal },
+                ).sortedBy {
+                    calculateColor(
+                        it.type,
+                        it.value.toString(),
+                        uiState.thresholds
+                    ).ordinal
+                },
                 uiState.weatherPointInTime.available,
                 uiState.thresholds
             )
@@ -222,13 +247,13 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
 
 @Composable
 fun LaunchClearanceCard(trafficLightColor: TrafficLightColor, windowSizeClass: WindowSizeClass) {
-    if(windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact){
+    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         LaunchClearanceCardCompactWidth(trafficLightColor)
-    }
-    else{
+    } else {
         LaunchClearanceCardMediumOrExpanded(trafficLightColor)
     }
 }
+
 @Composable
 fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
     Card(
@@ -269,6 +294,7 @@ fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
 fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
     Card(
@@ -308,8 +334,9 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
-fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
+fun CardItem(title: String, image: Painter, value: Double, unit: String, color: Color) {
     OutlinedCard(
         modifier = Modifier
             .size(width = 130.dp, height = 130.dp)
@@ -327,15 +354,18 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
             Modifier
                 .fillMaxSize()
                 .padding(2.5.dp),
-            contentAlignment = Alignment.BottomCenter) {
+            contentAlignment = Alignment.BottomCenter
+        ) {
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
-                    color = color
-                )
-                .height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
+                        color = color
+                    )
+                    .height(12.dp)
+            )
 
             Column(
                 modifier = Modifier
@@ -408,8 +438,13 @@ fun Modifier.simpleHorizontalScrollbar(
         }
     }
 }
+
 @Composable
-fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thresholds: Thresholds) {
+fun WeatherCardRow(
+    weatherInfoList: List<WeatherInfo>,
+    available: Available,
+    thresholds: Thresholds
+) {
     val listState = rememberLazyListState()
     LazyRow(
         state = listState,
@@ -425,7 +460,11 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
                     value = weatherInfo.value,
                     unit = weatherInfo.unit,
                     image = weatherInfo.image,
-                    color = calculateColor(weatherInfo.type, weatherInfo.value.toString(), thresholds).color
+                    color = calculateColor(
+                        weatherInfo.type,
+                        weatherInfo.value.toString(),
+                        thresholds
+                    ).color
                 )
             }
         }
