@@ -95,6 +95,20 @@ fun HomeScreen(
             )
         }
     }
+    val offsetMap = mapOf(
+        WindowHeightSizeClass.Medium to 100.dp,
+        WindowHeightSizeClass.Expanded to -300.dp,
+        WindowHeightSizeClass.Compact to -100.dp
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Rocket(Modifier)
+    }
 
     //portriat pad
     if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
@@ -108,30 +122,6 @@ fun HomeScreen(
             Rocket(Modifier)
         }
     }
-    //landscape pad
-    else if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .offset(y = (-300.dp)),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Rocket(Modifier)
-        }
-    }
-    //phone portriat - does not render on phone landscape
-    else if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-100.dp)),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Rocket(Modifier)
-        }
-    }
-    //if ()
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -475,6 +465,8 @@ fun WeatherCardRow(
     }
 }
 
+
+
 data class WeatherInfo(
     val type: WeatherParameter,
     val title: String,
@@ -483,4 +475,3 @@ data class WeatherInfo(
     val image: Painter,
     val direction: Float? = null
 )
-
