@@ -247,16 +247,20 @@ data class Rain(
     }
 }
 
-enum class WeatherParameter(val titleId: Int) {
-    DATE(R.string.date),
-    TIME(R.string.time),
-    GROUNDWIND(R.string.groundWind_title),
-    MAXWINDSHEAR(R.string.maxShear_titleLong),
-    MAXWIND(R.string.maxAirWind_title),
-    CLOUDFRACTION(R.string.cloudFraction_title),
-    RAIN(R.string.rain_title),
-    HUMIDITY(R.string.humidity_title),
-    DEWPOINT(R.string.dewPoint_title),
-    FOG(R.string.fog_title),
-    MARGIN(R.string.safety_margin_title)
+enum class WeatherParameter(
+    val titleId: Int,
+    val unitId: Int?,
+    val imageID: Int?
+) {
+    DATE(R.string.date, null, null),
+    TIME(R.string.time, null, null),
+    GROUNDWIND(R.string.groundWind_title, R.string.m_s, R.drawable.groundwind2),
+    MAXWINDSHEAR(R.string.maxShear_titleLong, R.string.m_s, R.drawable.shearwind),
+    MAXWIND(R.string.maxAirWind_title, R.string.m_s, R.drawable.wind),
+    CLOUDFRACTION(R.string.cloudFraction_title, R.string.percentage, R.drawable.cloud),
+    RAIN(R.string.rain_title, R.string.percentage, R.drawable.rain),
+    HUMIDITY(R.string.humidity_title, R.string.percentage, R.drawable.humidity),
+    DEWPOINT(R.string.dewPoint_title, R.string.celsiusDegree, R.drawable.dewpoint),
+    FOG(R.string.fog_title, R.string.percentage, R.drawable.fog),
+    MARGIN(R.string.safety_margin_title, null, null)
 }

@@ -110,8 +110,8 @@ class RepositoryImplementation : Repository {
         _locationForecastData.update {
             try {
                 val data = locationForecastDataSource.fetchLocationforecast(
-                    round(latLng.latitude),
-                    round(latLng.longitude)
+                    latLng.latitude,
+                    latLng.longitude
                 ).properties
                 _hasLocationForecastData.update { true }
                 data
