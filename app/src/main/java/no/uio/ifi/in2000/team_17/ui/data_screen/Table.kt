@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -22,9 +23,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -52,6 +57,8 @@ import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
+import no.uio.ifi.in2000.team_17.model.WindLayer
+import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
@@ -82,8 +89,7 @@ fun Table(
                 )
                 .offset(x = -(boxWidth.times(0.25)).dp),
             uiState = uiState,
-            rows = uiState.weatherDataLists.iterator()
-                .map { GradientRow(it.second.map { it.toString() }, it.first) },
+            rows = uiState.weatherDataLists.iterator().map {(type, data)-> GradientRow(data, type)},
             thresholds = uiState.thresholds,
             selectedIndex = index
         ) { setIndex(it) }
@@ -92,7 +98,7 @@ fun Table(
 
 @Immutable
 data class GradientRow(
-    val data: List<String>,
+    val data: List<Any>,
     val type: WeatherParameter
 )
 
@@ -291,7 +297,8 @@ fun InfoBox(
     modifier: Modifier = Modifier,
     info: String? = null,
     colors: List<Color> = listOf(Color.Transparent, Color.Transparent),
-    bold: Boolean = true
+    bold: Boolean = true,
+    direction: Float? = null
 ) {
     Box(
         modifier = modifier
@@ -305,10 +312,22 @@ fun InfoBox(
                 5 -> info
                 else -> info
             }
-            if (bold) {
-                AutoHeightText(text = newInfo, style = TextStyle(fontWeight = FontWeight.SemiBold))
-            } else {
-                AutoHeightText(text = newInfo, style = TextStyle())
+            Row{
+                if (bold) {
+                    AutoHeightText(
+                        text = newInfo,
+                        style = TextStyle(fontWeight = FontWeight.SemiBold)
+                    )
+                } else {
+                    AutoHeightText(text = newInfo, style = TextStyle())
+                }
+                if (direction != null) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        modifier = Modifier.rotate(90f + direction),
+                        contentDescription = null
+                    )
+                }
             }
         }
     }
@@ -423,7 +442,7 @@ fun GradientRowsColumn(
                                 "",
                                 listOf(
                                     Color.White.copy(0.0f),
-                                    calculateColor(row.type, row.data.first(), thresholds).color
+                                    calculateColor(row.type, row.data.first().toString(), thresholds).color
                                 ),
                             )
                         }
@@ -431,7 +450,7 @@ fun GradientRowsColumn(
                 }
                 items((0..<size).toList()){i->
                     if (i < row.data.size) {
-                        val data = row.data[i]
+                        val data = row.data[i].toString()
                         val text =  if(i != selectedIndex) data else ""
                         when (row.type) {
                             DATE -> {
@@ -460,12 +479,17 @@ fun GradientRowsColumn(
                                 val colorsNow = listOf(colorNow, colorNow)
                                 val colorsAfter = if (i < row.data.size - 1) {
                                     val colorAfter =
-                                        calculateColor(row.type, row.data[i + 1], thresholds).color
+                                        calculateColor(row.type, row.data[i + 1].toString(), thresholds).color
                                     listOf(colorAfter)
                                 } else {
                                     listOf(Color.White.copy(0.0f))
                                 }
-                                InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false)
+                                val direction = if(row.type in listOf(GROUNDWIND, MAXWIND)) {
+                                    (row.data[i] as WindLayer).direction.toFloat()
+                                } else {
+                                    null
+                                }
+                                InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false, direction = direction)
                             }
                         }
                     } else {
