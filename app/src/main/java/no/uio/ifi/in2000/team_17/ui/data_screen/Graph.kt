@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,18 +71,18 @@ import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import kotlin.math.round
 
-@SuppressLint("ResourceAsColor")
+
+/**
+ * The TresholdsGraph fun creates the ui of the graph in data screen
+ * @param uiState is used to load relevant data
+ * @param  windowSizeClass is used find the heightSizeClass and set the height of the graph
+ * @param showInfoBox is boolean determining whether the info box with names and colours of variables is going to be displayed
+ * @param closeInfoBox is a lambda used close the infobox
+ * @param backgroundSwitch is boolean used determined the background pallets of the graph
+ * @param onFlip is a lambda used swap graph background between coloured vs. colourblind friendly background
+ * @param setTimeIndex is a lambda used pin the chosen date/time/location to homescreen
+ */
 @Composable
-        /**
-         * The TresholdsGraph fun creates the ui of the graph in data screen
-         * @param uiState is used to load relevant data
-         * @param  windowSizeClass is used find the heightSizeClass and set the height of the graph
-         * @param showInfoBox is boolean determining whether the info box with names and colours of variables is going to be displayed
-         * @param closeInfoBox is a lambda used close the infobox
-         * @param backgroundSwitch is boolean used determined the background pallets of the graph
-         * @param onFlip is a lambda used swap graph background between coloured vs. colourblind friendly background
-         * @param setTimeIndex is a lambda used pin the chosen date/time/location to homescreen
-         */
 fun ThresholdGraph(
     uiState: DataScreenUiState,
     screenReaderOn: Boolean,
@@ -92,281 +93,8 @@ fun ThresholdGraph(
     onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
-    //creating necessary values for the graph
-    val weatherDataLists = uiState.weatherDataLists
-    val thresholds = uiState.thresholds
-    val size = weatherDataLists.time.size
-    val lastUpdated: String = uiState.weatherDataLists.updated
-
-    // retrieving data for the graph lines
-    // parsing the data in a way that can be displayed by the graph
-    //all values are calculated by rescale() as percentage of their respective threshold
-    val pointsGroundWind: List<Point> = List(weatherDataLists.groundWind.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.groundWind[index].speed,
-                thresholds.groundWindSpeed
-            )).toFloat()
-        )
-    }
-    val pointsMaxAirWind: List<Point> = List(weatherDataLists.maxWind.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.maxWind[index].speed,
-                thresholds.maxWindSpeed
-            )).toFloat()
-        )
-    }
-    val pointsMaxWindShear: List<Point> = List(weatherDataLists.maxWindShear.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.maxWindShear[index].speed,
-                thresholds.maxWindShear
-            )).toFloat()
-        )
-    }
-    val pointsCloudFraction: List<Point> =
-        List(weatherDataLists.cloudFraction.size) { index ->
-            Point(
-                x = index.toFloat(),
-                y = (rescalePoint(
-                    weatherDataLists.cloudFraction[index] / 100,
-                    thresholds.cloudFraction / 100
-                )).toFloat()
-            )
-        }
-    val pointsMedianRain: List<Point> = List(weatherDataLists.rain.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.rain[index].probability / 100,
-                thresholds.rain / 100
-            )).toFloat()
-        )
-    }
-    val pointsFog: List<Point> = List(weatherDataLists.fog.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(weatherDataLists.fog[index], thresholds.fog)).toFloat()
-        )
-    }
-    val pointsHumidity: List<Point> = List(weatherDataLists.humidity.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.humidity[index] / 100,
-                thresholds.humidity / 100
-            )).toFloat()
-        )
-    }
-    val absMinDew = absMinDew(weatherDataLists)
-    val pointsDewPoint: List<Point> = List(weatherDataLists.dewPoint.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = (rescalePoint(
-                weatherDataLists.dewPoint[index] + absMinDew,
-                thresholds.dewPoint + absMinDew
-            )).toFloat()
-        )
-    }
-    val thresholdLine = List(weatherDataLists.date.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = 1f,
-        )
-    }
-    val upperLine = List(weatherDataLists.date.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = 2f,
-        )
-    }
-
-    val pointsTime: List<Point> = List(weatherDataLists.time.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = ("${
-                weatherDataLists.time[index].subSequence(
-                    0,
-                    2
-                )
-            }.${weatherDataLists.time[index].subSequence(3, 5)}").toFloat()
-        )
-    }
-    val pointsDate: List<Point> = List(weatherDataLists.date.size) { index ->
-        Point(
-            x = index.toFloat(),
-            y = ("${
-                weatherDataLists.date[index].subSequence(8, 10)
-            }.${weatherDataLists.date[index].subSequence(5, 7)}").toFloat()
-        )
-    }
-
-    //generating the x and y-axis of the graph
-    val xAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.Transparent)
-        .axisStepSize(30.dp)
-        .topPadding(2.dp)
-        .bottomPadding(2.dp)
-        .steps(size - 1)
-        //.labelData { i -> i.toString() }
-        .labelAndAxisLinePadding(15.dp)
-        .axisLabelDescription { "Time indexes" }
-        .axisLabelAngle(90.toFloat())
-        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
-        .axisLineColor(MaterialTheme.colorScheme.tertiary)
-        .build()
-    val yAxisData = AxisData.Builder()
-        .backgroundColor(color = Color.Transparent)
-        .steps(2)
-        .labelAndAxisLinePadding(20.dp)
-        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
-        .axisLineColor(MaterialTheme.colorScheme.tertiary)
-        .labelData { i ->
-            val yMax = 2f
-            val yScale = yMax / 2
-            ((i * yScale)).formatToSinglePrecision()
-        }
-        .build()
-
-    //Builds colors for background
-    //@Author Hedda
-    var colors: List<Color> =
-        listOf(
-            Color.White,
-            Color.White
-        )
-    if (backgroundSwitch) {
-        val nGreen = round(uiState.thresholds.margin * 5).toInt()
-        colors =
-            (1..nGreen).map { TrafficLightColor.RED.color.copy(1f) } +
-                    (1..((5 - nGreen) * 2)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
-                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
-    }
-
     //builds the list of lines that is going to be sent to the graph to be displayed on the chart
-    val data = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = upperLine,
-                    LineStyle(
-                        color = Color.Transparent,
-                        lineType = LineType.SmoothCurve(isDotted = false)
-                    ),
-                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
-                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
-                    ShadowUnderLine(
-                        alpha = 0.75f,
-                        brush = Brush.verticalGradient(
-                            colors = colors
-                        )
-                    ),
-                    SelectionHighlightPopUp(
-                        popUpLabel =
-                        { x, _ ->
-                            val index = x.toInt()
-                            setTimeIndex(index)
-                            val date =
-                                pointsDate[index].y
-                            val time =
-                                pointsTime[index].y
-                            val dateAndTime = "Date: $date \nTime: ${time}0"
-                            "$dateAndTime"
-                        },
-                        paddingBetweenPopUpAndPoint = 1.dp,
-                        labelAlignment = android.graphics.Paint.Align.LEFT,
-                        labelColor = Color.Black,
-                        backgroundColor = Color.Transparent
-                        //labelAlignment = android.graphics.Paint.Align.LEFT,
-                    )
-                ),
-                Line(
-                    dataPoints = thresholdLine,
-                    LineStyle(
-                        color = Color.Red,
-                        lineType = LineType.SmoothCurve(isDotted = true)
-                    ),
-                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
-                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
-                    ShadowUnderLine(
-                        color = Color.Green,
-                        alpha = 0.005f,
-                    ),
-                    SelectionHighlightPopUp(
-                        popUpLabel = { _, _ ->
-                            "Treshold Line"
-                        },
-                        paddingBetweenPopUpAndPoint = 2.dp,
-                        labelAlignment = android.graphics.Paint.Align.LEFT,
-                        backgroundColor = Color.Transparent
-                        //labelAlignment = android.graphics.Paint.Align.LEFT,
-                    )
-                ),
-                createLine(
-                    pointsGroundWind,
-                    Color.Black,
-                    false,
-                    stringResource(R.string.groundWind_title)
-                ),
-                createLine(
-                    pointsMaxAirWind,
-                    Color(0XFFC71585),
-                    false,
-                    stringResource(R.string.maxAirWind_title)
-                ),
-                createLine(
-                    pointsMaxWindShear,
-                    Color(0XFFCC5500),
-                    false,
-                    stringResource(R.string.maxShear_titleLong)
-                ),
-                createLine(
-                    pointsCloudFraction,
-                    Color(0XFF008080),
-                    false,
-                    stringResource(R.string.cloudFraction_title)
-                ),
-                createLine(
-                    pointsMedianRain,
-                    Color(0XFF8B4513),
-                    false,
-                    stringResource(R.string.rain_title)
-                ),
-                createLine(
-                    pointsFog,
-                    Color(0XFF800080),
-                    false,
-                    stringResource(R.string.fog_title)
-                ),
-                createLine(
-                    pointsHumidity,
-                    Color(0XFF000080),
-                    false,
-                    stringResource(R.string.humidity_title)
-
-                ),
-                createLine(
-                    pointsDewPoint,
-                    Color(0XFF006600),
-                    false,
-                    stringResource(R.string.dewPoint_title)
-                ),
-            )
-        ),
-        //defining constraints for the graph
-        backgroundColor = MaterialTheme.colorScheme.background.copy(1f),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        isZoomAllowed = true,
-        paddingTop = 13.dp,//just enough space to display the date and time when clicking on the graph
-        bottomPadding = 5.dp,
-        paddingRight = 2.dp,
-        containerPaddingEnd = 2.dp,
-    )
+    val data = generateLineChartData(uiState, backgroundSwitch){ setTimeIndex(it) }
     // setting the graph, toggle and infobox in a constraints box
     // the BoxWithConstraints insures that the graph is scaled based on the screen orientation and display heigth/width
     BoxWithConstraints(
@@ -379,35 +107,23 @@ fun ThresholdGraph(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.End
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(25.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.background.copy(0f),
-                                MaterialTheme.colorScheme.background.copy(1f)
-                            )
-                        )
-                    )
-            ) {
-                Row(
-                    Modifier
-                        .height(25.dp)
-                        .fillMaxWidth()
-                        .padding(end = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    var text = stringResource(R.string.NoGraphBackground)
-                    if (backgroundSwitch) text = stringResource(R.string.GraphBackground)
-                    Text(text, Modifier.scale(0.75f, 0.75f))
-                    Spacer(modifier = Modifier.width(5.dp))
-                    BackgroundSwitch(backgroundSwitch, onFlip)
-                }
-            }
             if (!screenReaderOn) {
+                Box(contentAlignment = Alignment.TopCenter) {
+                    GraphEdgeGradient(top = true)
+                    Row(Modifier
+                            .height(25.dp)
+                            .fillMaxWidth()
+                            .padding(end = 8.dp, bottom = 1.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        var text = stringResource(R.string.NoGraphBackground)
+                        if (backgroundSwitch) text = stringResource(R.string.GraphBackground)
+                        Text(text, Modifier.scale(0.75f, 0.75f))
+                        Spacer(modifier = Modifier.width(5.dp))
+                        BackgroundSwitch(backgroundSwitch, onFlip)
+                    }
+                }
                 LineChart(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -415,28 +131,18 @@ fun ThresholdGraph(
                         .background(Color.Transparent),
                     lineChartData = data,
                 )
+                GraphEdgeGradient(top = false)
             }
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(20.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.background.copy(1f),
-                                MaterialTheme.colorScheme.background.copy(0f),
-                            )
-                        )
-                    )
-            )
+
         }
-        val bottomPadding = if (!horizontal) 55.dp else 45.dp
-        val alignment = if (horizontal) Alignment.CenterEnd else Alignment.BottomCenter
         if (showInfoBox) {
-            Box(Modifier.fillMaxSize(), contentAlignment = alignment) {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = if (horizontal) Alignment.CenterEnd else Alignment.BottomCenter
+            ) {
                 InfoBox(
-                    lastUpdated = lastUpdated,
-                    bottomPadding = bottomPadding,
+                    lastUpdated = uiState.weatherDataLists.updated,
+                    bottomPadding = if (horizontal) 45.dp else 55.dp,
                     horizontal = horizontal
                 ) {
                     closeInfoBox()
@@ -444,6 +150,56 @@ fun ThresholdGraph(
             }
         }
     }
+}
+fun generateColorGradient(margin: Double, backgroundSwitch: Boolean): List<Color> {
+    var colors: List<Color> =
+        listOf(
+            Color.White,
+            Color.White
+        )
+    if (backgroundSwitch) {
+        val nGreen = round(margin * 5).toInt()
+        colors =
+            (1..nGreen).map { TrafficLightColor.RED.color.copy(1f) } +
+                    (1..((5 - nGreen) * 2)).map { TrafficLightColor.YELLOW.color.copy(1f) } +
+                    (1..nGreen).map { TrafficLightColor.GREEN.color.copy(1f) }
+    }
+    return colors
+}
+
+fun generatePoints(data: List<Double>, threshold: Double, absMinDew: Double = 0.0): List<Point> {
+    return List(data.size) { index ->
+        Point(
+            x = index.toFloat(),
+            y = (rescalePoint(data[index] + absMinDew
+                , threshold + absMinDew
+            )).toFloat()
+        )
+    }
+}
+
+
+@Composable
+fun GraphEdgeGradient(modifier: Modifier = Modifier, top: Boolean) {
+    val colors = if (top) {
+        listOf(
+            MaterialTheme.colorScheme.background.copy(0f),
+            MaterialTheme.colorScheme.background.copy(1f)
+        )
+    } else {
+        listOf(
+            MaterialTheme.colorScheme.background.copy(1f),
+            MaterialTheme.colorScheme.background.copy(0f)
+        )
+    }
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(25.dp)
+            .background(
+                brush = Brush.verticalGradient(colors)
+            )
+    )
 }
 
 /*
@@ -730,8 +486,6 @@ fun InfoBoxContent() {
             )
         }
     }
-
-
 }
 
 //generates all variable lines in the chart
@@ -776,6 +530,194 @@ fun createLine(
         )
     )
 }
+
+@Composable
+fun generateLineChartData(uiState: DataScreenUiState, backgroundSwitch: Boolean, setTimeIndex: (Int) -> Unit): LineChartData {
+    //creating necessary values for the graph
+    val weatherDataLists = uiState.weatherDataLists
+    val thresholds = uiState.thresholds
+    val size = weatherDataLists.time.size
+
+    // retrieving data for the graph lines
+    // parsing the data in a way that can be displayed by the graph
+    //all values are calculated by rescale() as percentage of their respective threshold
+    val pointsGroundWind: List<Point> = generatePoints(weatherDataLists.groundWind.map { it.speed }, thresholds.groundWindSpeed)
+    val pointsMaxAirWind: List<Point> = generatePoints(weatherDataLists.maxWind.map { it.speed }, thresholds.maxWindSpeed)
+    val pointsMaxWindShear: List<Point> = generatePoints(weatherDataLists.maxWindShear.map { it.speed }, thresholds.maxWindShear)
+    val pointsCloudFraction: List<Point> = generatePoints(weatherDataLists.cloudFraction, thresholds.cloudFraction)
+    val pointsRain: List<Point> = generatePoints(weatherDataLists.rain.map { it.probability }, thresholds.rain)
+    val pointsFog: List<Point> = generatePoints(weatherDataLists.fog, thresholds.fog)
+    val pointsHumidity: List<Point> = generatePoints(weatherDataLists.humidity, thresholds.humidity)
+    val pointsDewPoint: List<Point> = generatePoints(weatherDataLists.dewPoint, thresholds.dewPoint, absMinDew(weatherDataLists))
+    val thresholdLine = List(weatherDataLists.date.size) { Point(x = it.toFloat(), y = 1f) }
+    val upperLine = List(weatherDataLists.date.size) { Point(x = it.toFloat(), y = 2f) }
+
+    val pointsTime: List<Point> = List(weatherDataLists.time.size) { index ->
+        Point(
+            x = index.toFloat(),
+            y = ("${
+                weatherDataLists.time[index].subSequence(0, 2)
+            }.${weatherDataLists.time[index].subSequence(3, 5)}").toFloat()
+        )
+    }
+    val pointsDate: List<Point> = List(weatherDataLists.date.size) { index ->
+        Point(
+            x = index.toFloat(),
+            y = ("${
+                weatherDataLists.date[index].subSequence(8, 10)
+            }.${weatherDataLists.date[index].subSequence(5, 7)}").toFloat()
+        )
+    }
+
+    //generating the x and y-axis of the graph
+    val xAxisData = AxisData.Builder()
+        .backgroundColor(color = Color.Transparent)
+        .axisStepSize(30.dp)
+        .topPadding(2.dp)
+        .bottomPadding(2.dp)
+        .steps(size - 1)
+        .labelAndAxisLinePadding(15.dp)
+        .axisLabelDescription { "Time indexes" }
+        .axisLabelAngle(90.toFloat())
+        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
+        .axisLineColor(MaterialTheme.colorScheme.tertiary)
+        .build()
+
+    val yAxisData = AxisData.Builder()
+        .backgroundColor(color = Color.Transparent)
+        .steps(2)
+        .labelAndAxisLinePadding(20.dp)
+        .axisLabelColor(MaterialTheme.colorScheme.tertiary)
+        .axisLineColor(MaterialTheme.colorScheme.tertiary)
+        .labelData { i ->
+            val yMax = 2f
+            val yScale = yMax / 2
+            ((i * yScale)).formatToSinglePrecision()
+        }
+        .build()
+
+    val colors = generateColorGradient(uiState.thresholds.margin, backgroundSwitch)
+    return LineChartData(
+        linePlotData = LinePlotData(
+            lines = listOf(
+                Line(
+                    dataPoints = upperLine,
+                    LineStyle(
+                        color = Color.Transparent,
+                        lineType = LineType.SmoothCurve(isDotted = false)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        alpha = 0.75f,
+                        brush = Brush.verticalGradient(
+                            colors = colors
+                        )
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel =
+                        { x, _ ->
+                            val index = x.toInt()
+                            setTimeIndex(index)
+                            val date =
+                                pointsDate[index].y
+                            val time =
+                                pointsTime[index].y
+                            val dateAndTime = "Date: $date \nTime: ${time}0"
+                            "$dateAndTime"
+                        },
+                        paddingBetweenPopUpAndPoint = 1.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        labelColor = Color.Black,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
+                Line(
+                    dataPoints = thresholdLine,
+                    LineStyle(
+                        color = Color.Red,
+                        lineType = LineType.SmoothCurve(isDotted = true)
+                    ),
+                    IntersectionPoint(radius = 0.1.dp, color = MaterialTheme.colorScheme.tertiary),
+                    SelectionHighlightPoint(color = MaterialTheme.colorScheme.inversePrimary),
+                    ShadowUnderLine(
+                        color = Color.Green,
+                        alpha = 0.005f,
+                    ),
+                    SelectionHighlightPopUp(
+                        popUpLabel = { _, _ ->
+                            "Treshold Line"
+                        },
+                        paddingBetweenPopUpAndPoint = 2.dp,
+                        labelAlignment = android.graphics.Paint.Align.LEFT,
+                        backgroundColor = Color.Transparent
+                        //labelAlignment = android.graphics.Paint.Align.LEFT,
+                    )
+                ),
+                createLine(
+                    pointsGroundWind,
+                    Color.Black,
+                    false,
+                    stringResource(R.string.groundWind_title)
+                ),
+                createLine(
+                    pointsMaxAirWind,
+                    Color(0XFFC71585),
+                    false,
+                    stringResource(R.string.maxAirWind_title)
+                ),
+                createLine(
+                    pointsMaxWindShear,
+                    Color(0XFFCC5500),
+                    false,
+                    stringResource(R.string.maxShear_titleLong)
+                ),
+                createLine(
+                    pointsCloudFraction,
+                    Color(0XFF008080),
+                    false,
+                    stringResource(R.string.cloudFraction_title)
+                ),
+                createLine(
+                    pointsRain,
+                    Color(0XFF8B4513),
+                    false,
+                    stringResource(R.string.rain_title)
+                ),
+                createLine(
+                    pointsFog,
+                    Color(0XFF800080),
+                    false,
+                    stringResource(R.string.fog_title)
+                ),
+                createLine(
+                    pointsHumidity,
+                    Color(0XFF000080),
+                    false,
+                    stringResource(R.string.humidity_title)
+
+                ),
+                createLine(
+                    pointsDewPoint,
+                    Color(0XFF006600),
+                    false,
+                    stringResource(R.string.dewPoint_title)
+                ),
+            )
+        ),
+        //defining constraints for the graph
+        backgroundColor = MaterialTheme.colorScheme.background.copy(1f),
+        xAxisData = xAxisData,
+        yAxisData = yAxisData,
+        isZoomAllowed = true,
+        paddingTop = 13.dp,//just enough space to display the date and time when clicking on the graph
+        bottomPadding = 5.dp,
+        paddingRight = 2.dp,
+        containerPaddingEnd = 2.dp,
+    )
+}
+
 
 val dummyData: WeatherDataLists = WeatherDataLists(
     date = listOf(
