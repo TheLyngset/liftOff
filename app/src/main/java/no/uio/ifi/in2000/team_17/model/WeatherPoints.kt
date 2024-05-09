@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team_17.model
 
+import no.uio.ifi.in2000.team_17.R
+
 /**
  * A data class used when parsing isobaric data and finding maxWind and maxShear
  */
@@ -245,16 +247,16 @@ data class Rain(
     }
 }
 
-enum class WeatherParameter(val title: String) {
-    DATE("Date"),
-    TIME("Time"),
-    GROUNDWIND("Ground Wind"),
-    MAXWINDSHEAR("Wind Shear"),
-    MAXWIND("Max Wind"),
-    CLOUDFRACTION("Cloud Fraction"),
-    RAIN("Rain"),
-    HUMIDITY("Humidity"),
-    DEWPOINT("Dew point"),
-    FOG("Fog"),
-    MARGIN("margin")
+enum class WeatherParameter(val titleId: Int) {
+    DATE(R.string.date),
+    TIME(R.string.time),
+    GROUNDWIND(R.string.groundWind_title),
+    MAXWINDSHEAR(R.string.maxShear_titleLong),
+    MAXWIND(R.string.maxAirWind_title),
+    CLOUDFRACTION(R.string.cloudFraction_title),
+    RAIN(R.string.rain_title),
+    HUMIDITY(R.string.humidity_title),
+    DEWPOINT(R.string.dewPoint_title),
+    FOG(R.string.fog_title),
+    MARGIN(R.string.safety_margin_title)
 }

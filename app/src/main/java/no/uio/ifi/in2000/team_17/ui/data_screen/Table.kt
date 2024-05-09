@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,7 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -128,7 +127,7 @@ fun IconBox(modifier: Modifier, image: Image) {
                     .size(width, height)
                     .clickable { showDescription = true },
                 painter = painterResource(id = image.id),
-                contentDescription = image.type.title
+                contentDescription = stringResource(image.type.titleId)
             )
 
 
@@ -140,7 +139,7 @@ fun IconBox(modifier: Modifier, image: Image) {
                     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
                         Text(
                             modifier = Modifier.padding(5.dp),
-                            text = image.type.title,
+                            text = stringResource(image.type.titleId),
                             fontSize = 13.sp,
                             lineHeight = 16.sp
                         )
@@ -210,7 +209,7 @@ fun SelectedBox(
         }
     }
 }
-
+// comment what this does
 @Composable
 fun ScrollLayer(
     modifier: Modifier,
@@ -229,22 +228,22 @@ fun ScrollLayer(
             items((0..uiState.weatherDataLists.date.size).toList()) { i ->
                 val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
                 if (i - 1 != index) {
-                    val onClickLabel = " select " +
+                    val onClickLabel = stringResource(R.string.select) +
                             "${
                                 weatherPointInTime
                                     .iterator().map { (type, value) ->
                                         if (weatherPointInTime.available.get(type)) {
-                                            type.title + " " +
-                                                    value.toString() + " " +
+                                            stringResource(type.titleId) + stringResource(R.string.empty_string) +
+                                                    value.toString() + stringResource(R.string.empty_string)  +
                                                     when (calculateColor(
                                                         type,
                                                         value.toString(),
                                                         uiState.thresholds
                                                     )) {
-                                                        TrafficLightColor.RED -> ". Over Threshold"
-                                                        TrafficLightColor.YELLOW -> ". Close to Threshold"
-                                                        TrafficLightColor.GREEN -> ". Under Threshold"
-                                                        TrafficLightColor.WHITE -> ""
+                                                        TrafficLightColor.RED -> stringResource(R.string.over_threshold)
+                                                        TrafficLightColor.YELLOW -> stringResource(R.string.close_to_threshold)
+                                                        TrafficLightColor.GREEN -> stringResource(R.string.under_threshold)
+                                                        TrafficLightColor.WHITE -> stringResource(R.string.empty_string)
                                                     }
                                         } else {
                                             when (type) {
@@ -255,14 +254,14 @@ fun ScrollLayer(
                                                                 weatherPointInTime,
                                                                 uiState.thresholds
                                                             )) {
-                                                                TrafficLightColor.RED -> "which is Over Threshold."
-                                                                TrafficLightColor.YELLOW -> "which is Close to Threshold."
-                                                                TrafficLightColor.GREEN -> "which is Under Threshold."
-                                                                TrafficLightColor.WHITE -> ""
+                                                                TrafficLightColor.RED -> stringResource(R.string.over_threshold)
+                                                                TrafficLightColor.YELLOW -> stringResource(R.string.close_to_threshold)
+                                                                TrafficLightColor.GREEN -> stringResource(R.string.under_threshold)
+                                                                TrafficLightColor.WHITE -> stringResource(R.string.empty_string)
                                                             }
                                                 }
 
-                                                else -> type.title + ". no data"
+                                                else -> stringResource(type.titleId) + stringResource(R.string.no_data)
                                             }
 
                                         }
@@ -277,9 +276,10 @@ fun ScrollLayer(
                         }
                     )
                 } else {
+                    val context = LocalContext.current
                     Spacer(overlayModifier.semantics {
                         contentDescription =
-                            "to select this time on the home screen, click the change to button"
+                            context.getString(R.string.selected_box_sematics)
                     })
                 }
             }
@@ -369,7 +369,7 @@ fun TitleAndIconColumn(
                 else -> {
                     InfoBox(
                         dateTimeModifier,
-                        "    ${row.type.title}",
+                        "    ${row.type.titleId}",
                         listOf(Color.Transparent, Color.Transparent)
                     )
                 }

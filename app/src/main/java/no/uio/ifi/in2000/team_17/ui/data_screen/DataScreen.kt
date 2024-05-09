@@ -312,7 +312,7 @@ fun SelectTimeCard(
                     var date = dataScreenUiState.weatherDataLists.date[indexToPin]
                     date = "${date.slice(8..9)}.${date.slice(5..6)}"
                     val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = stringResource(R.string.change_to_kl, date, time))
+                    Text(text = stringResource(R.string.change_to_kl_date, date, time))
                 }
             } else {
                 var date =
