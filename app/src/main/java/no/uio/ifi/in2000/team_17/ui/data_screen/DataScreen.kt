@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -236,15 +237,18 @@ fun ToggleButton(
     modifier: Modifier = Modifier,
     onFlip: (Int) -> Unit
 ) {
-    val options = remember { mutableStateListOf("Table", "Graph") }
+    val table = stringResource(id = R.string.table)
+    val graph = stringResource(R.string.graph)
+    val context = LocalContext.current
+    val options = remember { mutableStateListOf(table, graph) }
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = modifier.semantics {
-                    if (option == "Graph"){
-                        contentDescription = "The graph does not work with TalkBack. Use the Table instead"
+                    if (option == graph){
+                        contentDescription = context.getString(R.string.talkback_graph_not_working)
                     }
                 },
                 selected = selectedIndex == index,

@@ -81,5 +81,8 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="selected_box_sematics">to select this time on the home screen, click the change to button</string>
+    <string name="table">Table</string>
+    <string name="graph">Graph</string>
+    <string name="talkback_graph_not_working">The graph does not work with TalkBack. Use the Table instead</string>
 
 </resources>
