@@ -74,6 +74,33 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
+    SelectedDateAndTime(modifier, uiState)
+
+    val offsetMap = mapOf(
+        WindowHeightSizeClass.Medium to 100.dp,
+        WindowHeightSizeClass.Expanded to -300.dp,
+        WindowHeightSizeClass.Compact to -100.dp
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Rocket(Modifier)
+    }
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+
+        BottomCard(uiState, windowSizeClass)
+    }
+}
+
+@Composable
+fun SelectedDateAndTime(modifier: Modifier = Modifier, uiState: HomeScreenUiState) {
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -94,40 +121,6 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.inverseSurface
             )
         }
-    }
-    val offsetMap = mapOf(
-        WindowHeightSizeClass.Medium to 100.dp,
-        WindowHeightSizeClass.Expanded to -300.dp,
-        WindowHeightSizeClass.Compact to -100.dp
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Rocket(Modifier)
-    }
-
-    //portriat pad
-    if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .offset(y = (100.dp)),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Rocket(Modifier)
-        }
-    }
-    Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-
-        BottomCard(uiState, windowSizeClass)
     }
 }
 
