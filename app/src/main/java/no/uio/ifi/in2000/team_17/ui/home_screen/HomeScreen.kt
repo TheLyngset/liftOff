@@ -77,9 +77,9 @@ fun HomeScreen(
     SelectedDateAndTime(modifier, uiState)
 
     val offsetMap = mapOf(
-        WindowHeightSizeClass.Medium to 100.dp,
-        WindowHeightSizeClass.Expanded to -300.dp,
-        WindowHeightSizeClass.Compact to -100.dp
+        WindowHeightSizeClass.Medium to 100.dp, //portriat pad
+        WindowHeightSizeClass.Expanded to -300.dp, //landscape pad
+        WindowHeightSizeClass.Compact to -100.dp //phone portriat - does not render on phone landscape
     )
     Box(
         modifier = Modifier
@@ -457,9 +457,6 @@ fun WeatherCardRow(
         }
     }
 }
-
-
-
 data class WeatherInfo(
     val type: WeatherParameter,
     val title: String,
