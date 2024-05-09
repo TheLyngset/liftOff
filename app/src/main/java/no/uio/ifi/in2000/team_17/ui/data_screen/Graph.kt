@@ -334,7 +334,7 @@ fun ThresholdGraph(
                     pointsMedianRain,
                     Color(0XFF8B4513),
                     false,
-                    stringResource(R.string.rain)
+                    stringResource(R.string.rain_title)
                 ),
                 createLine(
                     pointsFog,
@@ -633,13 +633,14 @@ fun InfoBox(
  */
 @Composable
 fun InfoBoxContent() {
-    Column() {
+    Column(modifier = Modifier.padding(start = 7.dp)) {
         Row(Modifier.padding(top = 5.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                 drawCircle(color = Color.Black)
             })
+            Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = stringResource(R.string.max_wind_ground),
+                text = stringResource(R.string.groundWind_title),
                 style = TextStyle(color = Color.Black)
             )
         }
@@ -647,8 +648,9 @@ fun InfoBoxContent() {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                 drawCircle(color = Color(0XFFC71585))
             })
+            Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = stringResource(R.string.max_wind_altitude),
+                text = stringResource(R.string.maxAirWind_title),
                 style = TextStyle(color = Color.Black)
             )
         }
@@ -658,26 +660,52 @@ fun InfoBoxContent() {
                 .padding(bottom = 2.dp), onDraw = {
                 drawCircle(color = Color(0XFFCC5500))
             })
+            Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = stringResource(R.string.max_shear_wind),
+                text = stringResource(R.string.maxShear_titleLong),
                 style = TextStyle(color = Color.Black)
             )
         }
     }
 
-    Column() {
+    Column(modifier = Modifier.padding(start = 7.dp)) {
+        Row(Modifier.padding(top = 5.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(Color(0XFF000080))
+            })
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = stringResource(R.string.humidity_title), style = TextStyle(color = Color.Black))
+        }
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(Color(0XFF8B4513))
+            })
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = stringResource(R.string.rain_title), style = TextStyle(color = Color.Black))
+        }
+        Row {
+            Canvas(modifier = Modifier.size(15.dp), onDraw = {
+                drawCircle(Color(0XFF800080))
+            })
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = stringResource(R.string.fog_title), style = TextStyle(color = Color.DarkGray))
+        }
+    }
+    Column(modifier = Modifier.padding(start = 7.dp)) {
         Row(Modifier.padding(top = 5.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                 drawCircle(Color(0XFF006600))
             })
-            Text(text = " Dew Point ", style = TextStyle(color = Color.Black))
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = stringResource(R.string.dewPoint_title), style = TextStyle(color = Color.Black))
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
                 drawCircle(Color(0XFF008080))
             })
+            Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = stringResource(R.string.cloud_coverage),
+                text = stringResource(R.string.cloudFraction_title),
                 style = TextStyle(color = Color.Black)
             )
         }
@@ -695,6 +723,7 @@ fun InfoBoxContent() {
                     .height(2.dp)
                     .background(Color.Red)
             )
+            Spacer(modifier = Modifier.width(5.dp))
             Text(
                 text = stringResource(R.string.threshold_line),
                 style = TextStyle(color = Color.Black)
@@ -702,26 +731,6 @@ fun InfoBoxContent() {
         }
     }
 
-    Column() {
-        Row(Modifier.padding(top = 5.dp)) {
-            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(Color(0XFF000080))
-            })
-            Text(text = " Humidity ", style = TextStyle(color = Color.Black))
-        }
-        Row(Modifier.padding(vertical = 10.dp)) {
-            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(Color(0XFF8B4513))
-            })
-            Text(text = stringResource(R.string.rain), style = TextStyle(color = Color.Black))
-        }
-        Row {
-            Canvas(modifier = Modifier.size(15.dp), onDraw = {
-                drawCircle(Color(0XFF800080))
-            })
-            Text(text = " Fog ", style = TextStyle(color = Color.DarkGray))
-        }
-    }
 
 }
 
