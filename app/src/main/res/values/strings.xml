@@ -78,5 +78,7 @@
     <string name="GraphBackground">Don\'t show graph background</string>
     <string name="SplashcreenText">We are not receiving data from our servers. Make sure you are connected to the internet and try again</string>
     <string name="Retry">Retry</string>
+    <string name="empty_Date">0000-00-00</string>
+    <string name="m_s">m/s</string>
 
 </resources>

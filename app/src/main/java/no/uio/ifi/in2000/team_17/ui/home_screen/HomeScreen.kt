@@ -75,7 +75,7 @@ fun HomeScreen(
 
         ) {
             var date = uiState.weatherPointInTime.date
-            if (date.length < 10) date = "0000-00-00"
+            if (date.length < 10) date = stringResource(R.string.empty_Date)
             Text(text = uiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
             Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
         }
@@ -83,21 +83,29 @@ fun HomeScreen(
 
     //portriat pad
     if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .offset(y = (100.dp)),
             contentAlignment = Alignment.TopCenter){
             Rocket(Modifier)
         }
     }
     //landscape pad
     else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (-300.dp)),
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .offset(y = (-300.dp)),
             contentAlignment = Alignment.BottomCenter){
             Rocket(Modifier)
         }
     }
     //phone portriat - does not render on phone landscape
     else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier.fillMaxWidth().offset(y= (-100.dp)),
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-100.dp)),
             contentAlignment = Alignment.TopCenter){
             Rocket(Modifier)
         }
@@ -152,21 +160,21 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
                         WeatherParameter.GROUNDWIND,
                         stringResource(R.string.groundWind_title),
                         uiState.weatherPointInTime.groundWind.speed,
-                        "m/s",
+                        stringResource(R.string.m_s),
                         painterResource(id = R.drawable.groundwind2)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWIND,
                         stringResource(R.string.maxWind_title),
                         uiState.weatherPointInTime.maxWind.speed,
-                        "m/s",
+                        stringResource(R.string.m_s),
                         painterResource(id = R.drawable.wind)
                     ),
                     WeatherInfo(
                         WeatherParameter.MAXWINDSHEAR,
                         stringResource(R.string.maxShear_title),
                         uiState.weatherPointInTime.maxWindShear.speed,
-                        "m/s",
+                        stringResource(R.string.m_s),
                         painterResource(id = R.drawable.shearwind)
                     ),
                     WeatherInfo(
