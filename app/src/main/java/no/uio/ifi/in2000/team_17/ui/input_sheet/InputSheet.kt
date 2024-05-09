@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -25,10 +24,8 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +38,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -49,8 +45,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team_17.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team_17.ui.ConditionalText
 import no.uio.ifi.in2000.team_17.ui.thresholds.InfoSection
 
@@ -62,7 +56,7 @@ fun InputSheet(
     setMaxHeight: (String) -> Unit,
     setLat: (String) -> Unit,
     setLng: (String) -> Unit,
-    failedToUpdate:()->Unit,
+    failedToUpdate: () -> Unit,
     toThresholdsScreen: () -> Unit,
     onDismiss: () -> Unit,
     sheetState: Boolean,
@@ -70,29 +64,36 @@ fun InputSheet(
     ) {
     val uiState by viewModel.uiState.collectAsState()
     val failedToUpdate = uiState.failedToUpdate
-    if(failedToUpdate){
+    if (failedToUpdate) {
         failedToUpdate()
     }
     if (sheetState) {
         ModalBottomSheet(
             onDismissRequest = { onDismiss() },
-            dragHandle = { IconButton(
-                modifier = Modifier.clearAndSetSemantics { contentDescription = "double click to exit" },
-                onClick = { onDismiss() }
-            ) {
-                Icon(modifier = Modifier.size(60.dp).padding(5.dp),
-                    painter = painterResource(id = R.drawable.drag_handle),
-                    contentDescription = "drag handle"
-                )
-            }}
+            dragHandle = {
+                IconButton(
+                    modifier = Modifier.clearAndSetSemantics {
+                        contentDescription = "double click to exit"
+                    },
+                    onClick = { onDismiss() }
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(5.dp),
+                        painter = painterResource(id = R.drawable.drag_handle),
+                        contentDescription = "drag handle"
+                    )
+                }
+            }
         ) {
             InputSheetContent(
                 failedToUpdate = failedToUpdate,
                 uiState = uiState,
                 toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
-                setLat = {setLat(it)},
-                setLng = {setLng(it)},
+                setLat = { setLat(it) },
+                setLng = { setLng(it) },
             )
 
         }
@@ -104,22 +105,22 @@ fun InputSheetContent(
     modifier: Modifier = Modifier,
     failedToUpdate: Boolean,
     uiState: InputSheetUiState,
-    toAdvancedSettings:()->Unit,
-    setMaxHeight:(String) -> Unit,
-    setLat:(String) -> Unit,
-    setLng:(String) -> Unit,
+    toAdvancedSettings: () -> Unit,
+    setMaxHeight: (String) -> Unit,
+    setLat: (String) -> Unit,
+    setLng: (String) -> Unit,
 ) {
     var maxHeightText by remember { mutableStateOf(uiState.maxHeight.toString()) }
     var latString by remember { mutableStateOf(uiState.latLng.latitude.toString()) }
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
 
-    if(failedToUpdate){
+    if (failedToUpdate) {
         latString = uiState.latLng.latitude.toString()
         lngString = uiState.latLng.longitude.toString()
     }
 
-    Box{
+    Box {
         Column(
             modifier
                 .fillMaxSize(),
@@ -147,8 +148,8 @@ fun InputSheetContent(
                         contentDescription = "Show info about max height",
                         modifier = Modifier
                             .clickable {
-                            showInfoCard = !showInfoCard
-                        })
+                                showInfoCard = !showInfoCard
+                            })
                 }
             }
             Row(
@@ -232,7 +233,6 @@ fun InputSheetContent(
         }
     }
 }
-
 
 
 @Composable

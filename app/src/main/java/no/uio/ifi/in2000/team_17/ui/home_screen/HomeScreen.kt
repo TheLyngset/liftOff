@@ -74,45 +74,60 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
-        Column(modifier = Modifier.fillMaxWidth(),
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
 
         ) {
             var date = uiState.weatherPointInTime.date
             if (date.length < 10) date = stringResource(R.string.empty_Date)
-            Text(text = uiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
-            Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
+            Text(
+                text = uiState.weatherPointInTime.time,
+                style = TextStyle(fontSize = 35.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
+            Text(
+                text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}",
+                style = TextStyle(fontSize = 19.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
         }
     }
 
     //portriat pad
-    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .offset(y = (100.dp)),
-            contentAlignment = Alignment.TopCenter){
+    if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .offset(y = (100.dp)),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Rocket(Modifier)
         }
     }
     //landscape pad
-    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .offset(y = (-300.dp)),
-            contentAlignment = Alignment.BottomCenter){
+    else if (windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .offset(y = (-300.dp)),
+            contentAlignment = Alignment.BottomCenter
+        ) {
             Rocket(Modifier)
         }
     }
     //phone portriat - does not render on phone landscape
-    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .offset(y = (-100.dp)),
-            contentAlignment = Alignment.TopCenter){
+    else if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = (-100.dp)),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Rocket(Modifier)
         }
     }
@@ -127,12 +142,17 @@ fun HomeScreen(
 }
 
 @Composable
-fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { //weatherInfoList: List<Triple<String, Double, String>>
+fun BottomCard(
+    uiState: HomeScreenUiState,
+    windowSizeClass: WindowSizeClass
+) { //weatherInfoList: List<Triple<String, Double, String>>
 
-    Box(modifier = Modifier
-        .padding(16.dp, 5.dp)
-        .fillMaxWidth(),
-        contentAlignment = Alignment.TopEnd) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp, 5.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd
+    ) {
         Text(
             text = (uiState.weatherPointInTime.temperature.toString() + stringResource(R.string.celsiusDegree)),
             style = TextStyle(fontSize = 35.sp),
@@ -225,13 +245,13 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
 
 @Composable
 fun LaunchClearanceCard(trafficLightColor: TrafficLightColor, windowSizeClass: WindowSizeClass) {
-    if(windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact){
+    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         LaunchClearanceCardCompactWidth(trafficLightColor)
-    }
-    else{
+    } else {
         LaunchClearanceCardMediumOrExpanded(trafficLightColor)
     }
 }
+
 @Composable
 fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
     Card(
@@ -272,6 +292,7 @@ fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
 fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
     Card(
@@ -311,6 +332,7 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
 fun CardItem(weatherInfo: WeatherInfo, thresholds: Thresholds) {
     val color = calculateColor(
@@ -335,15 +357,18 @@ fun CardItem(weatherInfo: WeatherInfo, thresholds: Thresholds) {
             Modifier
                 .fillMaxSize()
                 .padding(2.5.dp),
-            contentAlignment = Alignment.BottomCenter) {
+            contentAlignment = Alignment.BottomCenter
+        ) {
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
-                    color = color
-                )
-                .height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
+                        color = color
+                    )
+                    .height(12.dp)
+            )
 
             Column(
                 modifier = Modifier
@@ -424,8 +449,13 @@ fun Modifier.simpleHorizontalScrollbar(
         }
     }
 }
+
 @Composable
-fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thresholds: Thresholds) {
+fun WeatherCardRow(
+    weatherInfoList: List<WeatherInfo>,
+    available: Available,
+    thresholds: Thresholds
+) {
     val listState = rememberLazyListState()
     LazyRow(
         state = listState,
