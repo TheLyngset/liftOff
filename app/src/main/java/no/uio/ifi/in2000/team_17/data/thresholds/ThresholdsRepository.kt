@@ -16,7 +16,6 @@ class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds
 
 
     suspend fun setGroundWind(groundWind: Double){
-        Log.d(LOG_NAME, "setting ground wind to $groundWind")
         thresholdsDataStore.updateData {
             it.toBuilder().setGroundWindSpeed(groundWind).build()
         }
