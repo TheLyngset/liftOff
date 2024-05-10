@@ -10,25 +10,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,13 +39,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
@@ -58,11 +55,11 @@ import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.model.WindLayer
-import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
+import kotlin.math.round
 
 @Composable
 fun Table(
@@ -77,6 +74,7 @@ fun Table(
         val boxHeight = (maxHeight.value - (dividerPadding * 19 + 25 * 2)) / 8 * 0.9
         val index = selectedIndex?: 0
         GradientRows(
+            boxHeight = boxHeight,
             scrollToItem = scrollToItem,
             boxWidth = boxWidth,
             dividerModifier = Modifier.padding(vertical = dividerPadding.dp),
@@ -89,7 +87,10 @@ fun Table(
                 )
                 .offset(x = -(boxWidth.times(0.25)).dp),
             uiState = uiState,
-            rows = uiState.weatherDataLists.iterator().map {(type, data)-> GradientRow(data, type)},
+            rows = uiState.weatherDataLists.iterator()
+                .map {(type, value) ->
+                    GradientRow(value, type)
+                     },
             thresholds = uiState.thresholds,
             selectedIndex = index
         ) { setIndex(it) }
@@ -99,7 +100,7 @@ fun Table(
 @Immutable
 data class GradientRow(
     val data: List<Any>,
-    val type: WeatherParameter
+    val type: WeatherParameter,
 )
 
 data class Image(
@@ -133,7 +134,7 @@ fun IconBox(modifier: Modifier, image: Image) {
                     .size(width, height)
                     .clickable { showDescription = true },
                 painter = painterResource(id = image.id),
-                contentDescription = image.type.title
+                contentDescription = stringResource(image.type.titleId)
             )
 
 
@@ -145,7 +146,7 @@ fun IconBox(modifier: Modifier, image: Image) {
                     Box(Modifier.fillMaxSize(),contentAlignment = Alignment.CenterStart) {
                         Text(
                             modifier = Modifier.padding(5.dp),
-                            text = image.type.title,
+                            text = stringResource(image.type.titleId),
                             fontSize = 13.sp,
                             lineHeight = 16.sp
                         )
@@ -167,6 +168,7 @@ fun SelectedBox(
     state: LazyListState,
     index: Int,
     boxWidth: Int,
+    boxHeight: Double,
     setIndex:(Int) -> Unit
 ) {
     Column(
@@ -197,14 +199,20 @@ fun SelectedBox(
                             items(weatherPointInTime.iterator()) { (type, value) ->
                                 val text = value.toString()
                                 when (type) {
-                                    DATE -> InfoBox(
-                                        dateTimeModifier,
-                                        "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",
-                                        bold = true
-                                    )
-
-                                    TIME -> InfoBox(dateTimeModifier, text, bold = true)
-                                    else -> InfoBox(rowModifier, text, bold = true)
+                                    DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",)
+                                    TIME -> InfoBox(dateTimeModifier, text)
+                                    else -> {
+                                        when(type){
+                                            MAXWIND, GROUNDWIND -> WindInfoBox(
+                                                rowModifier,
+                                                boxHeight = boxHeight,
+                                                data = value as WindLayer,
+                                                text,
+                                                listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                                            )
+                                            else -> InfoBox(rowModifier, text)
+                                        }
+                                    }
                                 }
                                 HorizontalDivider(dividerModifier, color = Color.Transparent)
                             }
@@ -215,7 +223,7 @@ fun SelectedBox(
         }
     }
 }
-
+// comment what this does
 @Composable
 fun ScrollLayer(
     modifier: Modifier,
@@ -234,22 +242,22 @@ fun ScrollLayer(
             items((0..uiState.weatherDataLists.date.size).toList()) { i ->
                 val weatherPointInTime = uiState.weatherDataLists.get(i - 1)
                 if (i - 1 != index) {
-                    val onClickLabel = " select " +
+                    val onClickLabel = stringResource(R.string.select) +
                             "${
                                 weatherPointInTime
                                     .iterator().map { (type, value) ->
                                         if (weatherPointInTime.available.get(type)) {
-                                            type.title + " " +
-                                                    value.toString() + " " +
+                                            stringResource(type.titleId) + stringResource(R.string.empty_string) +
+                                                    value.toString() + stringResource(R.string.empty_string)  +
                                                     when (calculateColor(
                                                         type,
                                                         value.toString(),
                                                         uiState.thresholds
                                                     )) {
-                                                        TrafficLightColor.RED -> ". Over Threshold"
-                                                        TrafficLightColor.YELLOW -> ". Close to Threshold"
-                                                        TrafficLightColor.GREEN -> ". Under Threshold"
-                                                        TrafficLightColor.WHITE -> ""
+                                                        TrafficLightColor.RED -> stringResource(R.string.over_threshold)
+                                                        TrafficLightColor.YELLOW -> stringResource(R.string.close_to_threshold)
+                                                        TrafficLightColor.GREEN -> stringResource(R.string.under_threshold)
+                                                        TrafficLightColor.WHITE -> stringResource(R.string.empty_string)
                                                     }
                                         } else {
                                             when (type) {
@@ -260,14 +268,14 @@ fun ScrollLayer(
                                                                 weatherPointInTime,
                                                                 uiState.thresholds
                                                             )) {
-                                                                TrafficLightColor.RED -> "which is Over Threshold."
-                                                                TrafficLightColor.YELLOW -> "which is Close to Threshold."
-                                                                TrafficLightColor.GREEN -> "which is Under Threshold."
-                                                                TrafficLightColor.WHITE -> ""
+                                                                TrafficLightColor.RED -> stringResource(R.string.over_threshold)
+                                                                TrafficLightColor.YELLOW -> stringResource(R.string.close_to_threshold)
+                                                                TrafficLightColor.GREEN -> stringResource(R.string.under_threshold)
+                                                                TrafficLightColor.WHITE -> stringResource(R.string.empty_string)
                                                             }
                                                 }
 
-                                                else -> type.title + ". no data"
+                                                else -> stringResource(type.titleId) + stringResource(R.string.no_data)
                                             }
 
                                         }
@@ -282,9 +290,10 @@ fun ScrollLayer(
                         }
                     )
                 } else {
+                    val context = LocalContext.current
                     Spacer(overlayModifier.semantics {
                         contentDescription =
-                            "to select this time on the home screen, click the change to button"
+                            context.getString(R.string.selected_box_sematics)
                     })
                 }
             }
@@ -297,8 +306,7 @@ fun InfoBox(
     modifier: Modifier = Modifier,
     info: String? = null,
     colors: List<Color> = listOf(Color.Transparent, Color.Transparent),
-    bold: Boolean = true,
-    direction: Float? = null
+    bold: Boolean = true
 ) {
     Box(
         modifier = modifier
@@ -312,22 +320,10 @@ fun InfoBox(
                 5 -> info
                 else -> info
             }
-            Row{
-                if (bold) {
-                    AutoHeightText(
-                        text = newInfo,
-                        style = TextStyle(fontWeight = FontWeight.SemiBold)
-                    )
-                } else {
-                    AutoHeightText(text = newInfo, style = TextStyle())
-                }
-                if (direction != null) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        modifier = Modifier.rotate(90f + direction),
-                        contentDescription = null
-                    )
-                }
+            if (bold) {
+                AutoHeightText(text = newInfo, style = TextStyle(fontWeight = FontWeight.SemiBold))
+            } else {
+                AutoHeightText(text = newInfo, style = TextStyle())
             }
         }
     }
@@ -387,7 +383,7 @@ fun TitleAndIconColumn(
                 else -> {
                     InfoBox(
                         dateTimeModifier,
-                        "    ${row.type.title}",
+                        "    ${stringResource(row.type.titleId)}",
                         listOf(Color.Transparent, Color.Transparent)
                     )
                 }
@@ -400,6 +396,7 @@ fun TitleAndIconColumn(
 @Composable
 fun GradientRowsColumn(
     modifier: Modifier,
+    boxHeight: Double,
     rowModifier: Modifier,
     dateTimeModifier: Modifier,
     dividerModifier: Modifier,
@@ -450,12 +447,12 @@ fun GradientRowsColumn(
                 }
                 items((0..<size).toList()){i->
                     if (i < row.data.size) {
-                        val data = row.data[i].toString()
-                        val text =  if(i != selectedIndex) data else ""
+                        val data = row.data[i]
+                        val text =  if(i != selectedIndex) data.toString() else ""
                         when (row.type) {
                             DATE -> {
-                                val info = if (rows[1].data[i] == "00:00") {
-                                    "${data.subSequence(8, 10)}.${data.subSequence(5, 7)}"
+                                val info = if (rows[1].data[i] == stringResource(R.string.empty_time)) {
+                                    "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}"
                                 } else {
                                     ""
                                 }
@@ -473,9 +470,8 @@ fun GradientRowsColumn(
                                     listOf(Color.Unspecified, Color.Unspecified)
                                 )
                             }
-
                             else -> {
-                                val colorNow = calculateColor(row.type, data, thresholds).color
+                                val colorNow = calculateColor(row.type, data.toString(), thresholds).color
                                 val colorsNow = listOf(colorNow, colorNow)
                                 val colorsAfter = if (i < row.data.size - 1) {
                                     val colorAfter =
@@ -484,12 +480,17 @@ fun GradientRowsColumn(
                                 } else {
                                     listOf(Color.White.copy(0.0f))
                                 }
-                                val direction = if(row.type in listOf(GROUNDWIND, MAXWIND)) {
-                                    (row.data[i] as WindLayer).direction.toFloat()
-                                } else {
-                                    null
+                                when(row.type){
+                                    GROUNDWIND, MAXWIND -> WindInfoBox(
+                                        rowModifier,
+                                        boxHeight,
+                                        data as WindLayer,
+                                        text,
+                                        colorsNow + colorsAfter,
+                                        bold = false
+                                    )
+                                    else -> InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false)
                                 }
-                                InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false, direction = direction)
                             }
                         }
                     } else {
@@ -505,11 +506,24 @@ fun GradientRowsColumn(
     }
 }
 
+@Composable
+fun WindInfoBox(modifier: Modifier = Modifier, boxHeight: Double, data: WindLayer, text: String, colors:List<Color>, bold: Boolean = true){
+    if(boxHeight >= 40) Box {
+        InfoBox(modifier,"", colors, bold = bold)
+        if(text != "") WindArrowText(
+            modifier = modifier.offset(x = -(70/4).dp),
+            value = data.speed,
+            direction = data.direction.toFloat()
+        )
+    }
+    else InfoBox(modifier, text, colors, bold = bold)
+}
 
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun GradientRows(
     modifier: Modifier = Modifier,
+    boxHeight: Double,
     scrollToItem: Int? = null,
     boxWidth: Int,
     dividerModifier: Modifier,
@@ -537,6 +551,7 @@ fun GradientRows(
     InfoBox(modifier = dateTimeModifier.offset(x = 70.dp), info = info, bold = true)
 
     GradientRowsColumn(
+        boxHeight = boxHeight,
         modifier = modifier,
         rowModifier = rowModifier,
         dateTimeModifier = dateTimeModifier,
@@ -560,7 +575,8 @@ fun GradientRows(
         uiState,
         state,
         selectedIndex,
-        boxWidth
+        boxWidth,
+        boxHeight,
     ){
         setIndex(it)
     }
@@ -594,7 +610,25 @@ fun GradientRows(
     }
 }
 
-
+@Composable
+fun WindArrowText(modifier: Modifier = Modifier, value: Double, direction: Float) {
+    Box(modifier,contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(id = R.drawable.wind_arrow),
+            contentDescription = null,
+            modifier = Modifier
+                .rotate(90f + direction)
+        )
+        Text(
+            text = round(value).toInt().toString()
+        )
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun WindArrowPreview(modifier: Modifier = Modifier) {
+    WindArrowText(value = 11.34, direction = 45f)
+}
 /*
 @Preview(showBackground = true)
 @Composable

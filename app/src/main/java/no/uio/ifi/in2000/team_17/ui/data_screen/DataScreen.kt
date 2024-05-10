@@ -31,7 +31,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -236,15 +236,18 @@ fun ToggleButton(
     modifier: Modifier = Modifier,
     onFlip: (Int) -> Unit
 ) {
-    val options = remember { mutableStateListOf("Table", "Graph") }
+    val table = stringResource(id = R.string.table)
+    val graph = stringResource(R.string.graph)
+    val context = LocalContext.current
+    val options = remember { mutableStateListOf(table, graph) }
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 modifier = modifier.semantics {
-                    if (option == "Graph"){
-                        contentDescription = "The graph does not work with TalkBack. Use the Table instead"
+                    if (option == graph) {
+                        contentDescription = context.getString(R.string.talkback_graph_not_working)
                     }
                 },
                 selected = selectedIndex == index,
@@ -312,7 +315,7 @@ fun SelectTimeCard(
                     var date = dataScreenUiState.weatherDataLists.date[indexToPin]
                     date = "${date.slice(8..9)}.${date.slice(5..6)}"
                     val time = dataScreenUiState.weatherDataLists.time[indexToPin]
-                    Text(text = stringResource(R.string.change_to_kl, date, time))
+                    Text(text = stringResource(R.string.change_to_kl_date, date, time))
                 }
             } else {
                 var date =

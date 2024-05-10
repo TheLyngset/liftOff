@@ -110,8 +110,8 @@ class RepositoryImplementation : Repository {
         _locationForecastData.update {
             try {
                 val data = locationForecastDataSource.fetchLocationforecast(
-                    round(latLng.latitude),
-                    round(latLng.longitude)
+                    latLng.latitude,
+                    latLng.longitude
                 ).properties
                 _hasLocationForecastData.update { true }
                 data
@@ -409,8 +409,7 @@ internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Doub
     //trenger vi egentlig polar koordinater her? Ja, vind kommer med retning og lengde - Samuel
     val d_0_rad = d_0 * PI / 180
     val d_1_rad = d_1 * PI / 180
-    return sqrt(
-        (s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
+    return sqrt((s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
             d_0_rad
         )).pow(2)
     )

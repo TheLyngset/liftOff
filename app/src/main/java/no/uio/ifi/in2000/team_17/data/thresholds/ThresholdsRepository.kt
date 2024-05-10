@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team_17.data.thresholds
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.team17.Thresholds
@@ -15,54 +14,61 @@ class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds
     val thresholdsFlow: Flow<Thresholds> = thresholdsDataStore.data
 
 
-    suspend fun setGroundWind(groundWind: Double){
-        Log.d(LOG_NAME, "setting ground wind to $groundWind")
+    suspend fun setGroundWind(groundWind: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setGroundWindSpeed(groundWind).build()
         }
     }
-    suspend fun setMaxWind(maxWind: Double){
+
+    suspend fun setMaxWind(maxWind: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setMaxWindSpeed(maxWind).build()
         }
     }
-    suspend fun setMaxWindShear(maxWindShear: Double){
+
+    suspend fun setMaxWindShear(maxWindShear: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setMaxWindShear(maxWindShear).build()
         }
     }
-    suspend fun setCloudFraction(fraction: Double){
+
+    suspend fun setCloudFraction(fraction: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setCloudFraction(fraction).build()
         }
     }
-    suspend fun setFog(fog: Double){
+
+    suspend fun setFog(fog: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setFog(fog).build()
         }
     }
-    suspend fun setRain(rain: Double){
+
+    suspend fun setRain(rain: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setRain(rain).build()
         }
     }
-    suspend fun setHumidity(humidity: Double){
+
+    suspend fun setHumidity(humidity: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setHumidity(humidity).build()
         }
     }
-    suspend fun setDewPoint(dewPoint: Double){
+
+    suspend fun setDewPoint(dewPoint: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setDewPoint(dewPoint).build()
         }
     }
-    suspend fun setMargin(margin: Double){
+
+    suspend fun setMargin(margin: Double) {
         thresholdsDataStore.updateData {
             it.toBuilder().setMargin(margin).build()
         }
     }
 
-    suspend fun resetAll(){
+    suspend fun resetAll() {
         val default = ThresholdsSerializer.defaultValue
         setGroundWind(default.groundWindSpeed)
         setMaxWindShear(default.maxWindShear)
@@ -74,9 +80,10 @@ class ThresholdsRepository(private val thresholdsDataStore: DataStore<Thresholds
         setFog(default.fog)
         setMargin(default.margin)
     }
-    suspend fun reset(threshold: WeatherParameter){
+
+    suspend fun reset(threshold: WeatherParameter) {
         val default = ThresholdsSerializer.defaultValue
-        when(threshold){
+        when (threshold) {
             WeatherParameter.GROUNDWIND -> setGroundWind(default.groundWindSpeed)
             WeatherParameter.MAXWINDSHEAR -> setMaxWindShear(default.maxWindShear)
             WeatherParameter.MAXWIND -> setMaxWind(default.maxWindSpeed)

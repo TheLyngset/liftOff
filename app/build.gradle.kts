@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.window.sizeclass.android)
 
+
     //Lottie animation
     implementation(libs.lottie.compose)
 

@@ -170,7 +170,7 @@ fun InputFieldColumn1(
             InputTextField(
                 value = maxWindShearText,
                 onValueChange = { update(MAXWINDSHEAR, it) },
-                label = stringResource(id = R.string.max_shear_wind)
+                label = stringResource(id = R.string.maxShear_titleLong)
             ) {
                 set(MAXWINDSHEAR, it)
             }
@@ -294,7 +294,7 @@ fun InputFieldColumn2(
             InputTextField(
                 value = dewPointText,
                 onValueChange = { update(DEWPOINT, it) },
-                label = stringResource(id = R.string.max_shear_wind)
+                label = stringResource(id = R.string.maxShear_titleLong)
             ) {
                 set(DEWPOINT, it)
             }

@@ -18,14 +18,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -39,13 +43,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.input.key.Key.Companion.F
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -57,7 +62,11 @@ import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Available
+import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
+import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
+import no.uio.ifi.in2000.team_17.model.WindLayer
+import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.Rocket
 import no.uio.ifi.in2000.team_17.ui.calculateColor
 
@@ -68,41 +77,22 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
-        Column(modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+    SelectedDateAndTime(modifier, uiState)
 
-        ) {
-            var date = uiState.weatherPointInTime.date
-            if (date.length < 10) date = "0000-00-00"
-            Text(text = uiState.weatherPointInTime.time, style = TextStyle(fontSize = 35.sp), color = MaterialTheme.colorScheme.inverseSurface)
-            Text(text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}", style = TextStyle(fontSize = 19.sp), color = MaterialTheme.colorScheme.inverseSurface)
-        }
+    val offsetMap = mapOf(
+        WindowHeightSizeClass.Medium to 100.dp, //portriat pad
+        WindowHeightSizeClass.Expanded to -300.dp, //landscape pad
+        WindowHeightSizeClass.Compact to -100.dp //phone portriat - does not render on phone landscape
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Rocket(Modifier)
     }
-
-    //portriat pad
-    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
-            contentAlignment = Alignment.TopCenter){
-            Rocket(Modifier)
-        }
-    }
-    //landscape pad
-    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
-        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (-300.dp)),
-            contentAlignment = Alignment.BottomCenter){
-            Rocket(Modifier)
-        }
-    }
-    //phone portriat - does not render on phone landscape
-    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
-        Box(modifier = Modifier.fillMaxWidth().offset(y= (-100.dp)),
-            contentAlignment = Alignment.TopCenter){
-            Rocket(Modifier)
-        }
-    }
-    //if ()
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -113,14 +103,44 @@ fun HomeScreen(
 }
 
 @Composable
-fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { //weatherInfoList: List<Triple<String, Double, String>>
+fun SelectedDateAndTime(modifier: Modifier = Modifier, uiState: HomeScreenUiState) {
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
 
-    Box(modifier = Modifier
-        .padding(16.dp, 5.dp)
-        .fillMaxWidth(),
-        contentAlignment = Alignment.TopEnd) {
+        ) {
+            var date = uiState.weatherPointInTime.date
+            if (date.length < 10) date = stringResource(R.string.empty_Date)
+            Text(
+                text = uiState.weatherPointInTime.time,
+                style = TextStyle(fontSize = 35.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
+            Text(
+                text = "${date.slice(8..9)}.${date.slice(5..6)}.${date.slice(0..3)}",
+                style = TextStyle(fontSize = 19.sp),
+                color = MaterialTheme.colorScheme.inverseSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun BottomCard(
+    uiState: HomeScreenUiState,
+    windowSizeClass: WindowSizeClass
+) { //weatherInfoList: List<Triple<String, Double, String>>
+
+    Box(
+        modifier = Modifier
+            .padding(16.dp, 5.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd
+    ) {
         Text(
-            text = (uiState.weatherPointInTime.temperature.toString() + "°"),
+            text = (uiState.weatherPointInTime.temperature.toString() + stringResource(R.string.celsiusDegree)),
             style = TextStyle(fontSize = 35.sp),
             color = MaterialTheme.colorScheme.inverseSurface
         )
@@ -147,80 +167,55 @@ fun BottomCard(uiState: HomeScreenUiState, windowSizeClass: WindowSizeClass) { /
         ) {
             LaunchClearanceCard(uiState.trafficLightColor, windowSizeClass)
             WeatherCardRow(
-                weatherInfoList = mutableListOf(
-                    WeatherInfo(
-                        WeatherParameter.GROUNDWIND,
-                        stringResource(R.string.groundWind_title),
-                        uiState.weatherPointInTime.groundWind.speed,
-                        "m/s",
-                        painterResource(id = R.drawable.groundwind2)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.MAXWIND,
-                        stringResource(R.string.maxWind_title),
-                        uiState.weatherPointInTime.maxWind.speed,
-                        "m/s",
-                        painterResource(id = R.drawable.wind)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.MAXWINDSHEAR,
-                        stringResource(R.string.maxShear_title),
-                        uiState.weatherPointInTime.maxWindShear.speed,
-                        "m/s",
-                        painterResource(id = R.drawable.shearwind)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.CLOUDFRACTION,
-                        stringResource(R.string.cloudiness_title),
-                        uiState.weatherPointInTime.cloudFraction,
-                        "%",
-                        painterResource(id = R.drawable.cloud)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.RAIN,
-                        stringResource(R.string.rain_title),
-                        uiState.weatherPointInTime.rain.probability,
-                        "%",
-                        painterResource(id = R.drawable.rain)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.HUMIDITY,
-                        stringResource(R.string.humidity_title),
-                        uiState.weatherPointInTime.humidity,
-                        "%",
-                        painterResource(id = R.drawable.humidity)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.FOG,
-                        stringResource(R.string.fog_title),
-                        uiState.weatherPointInTime.fog,
-                        "%",
-                        painterResource(id = R.drawable.fog)
-                    ),
-                    WeatherInfo(
-                        WeatherParameter.DEWPOINT,
-                        stringResource(R.string.dewPoint_title),
-                        uiState.weatherPointInTime.dewPoint,
-                        "℃",
-                        painterResource(id = R.drawable.dewpoint),
-                    ),
-                ).sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal },
+                generateWeatherInfoList(uiState),
                 uiState.weatherPointInTime.available,
                 uiState.thresholds
             )
         }
     }
 }
-
+@Composable
+fun generateWeatherInfoList(uiState: HomeScreenUiState ): List<WeatherInfo> {
+    return uiState.weatherPointInTime.iterator().map {(type, value) ->
+        when(type){
+            WeatherParameter.DATE -> null
+            WeatherParameter.TIME -> null
+            else -> {
+                val num = when (type) {
+                    WeatherParameter.MAXWIND -> (value as WindLayer).speed
+                    WeatherParameter.GROUNDWIND -> (value as WindLayer).speed
+                    WeatherParameter.MAXWINDSHEAR -> (value as WindShear).speed
+                    WeatherParameter.RAIN -> (value as Rain).probability
+                    else -> value as Double
+                }
+                val direction = when (type) {
+                    WeatherParameter.MAXWIND -> (value as WindLayer).direction.toFloat()
+                    WeatherParameter.GROUNDWIND -> (value as WindLayer).direction.toFloat()
+                    else -> null
+                }
+                WeatherInfo(
+                    type = type,
+                    title = stringResource(type.titleId),
+                    value = num,
+                    unit = stringResource(id = type.unitId!!),
+                    image = painterResource(id = type.imageID!!),
+                    direction = direction
+                )
+            }
+        }
+    }
+        .filterNotNull()
+        .sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal }
+}
 @Composable
 fun LaunchClearanceCard(trafficLightColor: TrafficLightColor, windowSizeClass: WindowSizeClass) {
-    if(windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact){
+    if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         LaunchClearanceCardCompactWidth(trafficLightColor)
-    }
-    else{
+    } else {
         LaunchClearanceCardMediumOrExpanded(trafficLightColor)
     }
 }
+
 @Composable
 fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
     Card(
@@ -261,6 +256,7 @@ fun LaunchClearanceCardCompactWidth(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
 fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
     Card(
@@ -300,8 +296,14 @@ fun LaunchClearanceCardMediumOrExpanded(trafficLightColor: TrafficLightColor) {
         }
     }
 }
+
 @Composable
-fun CardItem(title: String, image: Painter, value: Double, unit: String, color:Color) {
+fun CardItem(weatherInfo: WeatherInfo, thresholds: Thresholds) {
+    val color = calculateColor(
+        weatherInfo.type,
+        weatherInfo.value.toString(),
+        thresholds
+    ).color
     OutlinedCard(
         modifier = Modifier
             .size(width = 130.dp, height = 130.dp)
@@ -319,15 +321,18 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
             Modifier
                 .fillMaxSize()
                 .padding(2.5.dp),
-            contentAlignment = Alignment.BottomCenter) {
+            contentAlignment = Alignment.BottomCenter
+        ) {
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
-                    color = color
-                )
-                .height(12.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp),
+                        color = color
+                    )
+                    .height(12.dp)
+            )
 
             Column(
                 modifier = Modifier
@@ -337,23 +342,43 @@ fun CardItem(title: String, image: Painter, value: Double, unit: String, color:C
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = title,
+                    text = weatherInfo.title,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Image(
-                    painter = image,
+                    painter = weatherInfo.image,
                     contentDescription = null,
                     modifier = Modifier.size(35.dp)
                 )
-                Text(
-                    text = "$value $unit",
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(5.dp)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Text(
+                        text = "${weatherInfo.value} ${weatherInfo.unit}",
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    if(weatherInfo.type in listOf(GROUNDWIND, MAXWIND)) Spacer(modifier = Modifier.width(40.dp))
+                    
+                }
+
+            }
+            if(weatherInfo.type in listOf(GROUNDWIND, MAXWIND)&& weatherInfo.direction != null){
+                Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 12.dp), horizontalAlignment = Alignment.End) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        modifier = Modifier.rotate(90f + weatherInfo.direction),
+                        contentDescription = null
+                    )
+                    val text = when(weatherInfo.direction){
+                        in 0f..90f -> "NE"
+                        in 90f..180f -> "SE"
+                        in 180f..270f -> "SW"
+                        else -> "NW"
+                    }
+                    Text(text = text, fontWeight = FontWeight.SemiBold)
+                }
             }
         }
     }
@@ -400,8 +425,13 @@ fun Modifier.simpleHorizontalScrollbar(
         }
     }
 }
+
 @Composable
-fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thresholds: Thresholds) {
+fun WeatherCardRow(
+    weatherInfoList: List<WeatherInfo>,
+    available: Available,
+    thresholds: Thresholds
+) {
     val listState = rememberLazyListState()
     LazyRow(
         state = listState,
@@ -413,22 +443,18 @@ fun WeatherCardRow(weatherInfoList: List<WeatherInfo>, available: Available, thr
             if (available.get(weatherInfo.type)) {
                 Spacer(modifier = Modifier.size(8.dp))
                 CardItem(
-                    title = weatherInfo.title,
-                    value = weatherInfo.value,
-                    unit = weatherInfo.unit,
-                    image = weatherInfo.image,
-                    color = calculateColor(weatherInfo.type, weatherInfo.value.toString(), thresholds).color
+                    weatherInfo,
+                    thresholds
                 )
             }
         }
     }
 }
-
 data class WeatherInfo(
     val type: WeatherParameter,
     val title: String,
     val value: Double,
     val unit: String,
-    val image: Painter
+    val image: Painter,
+    val direction: Float? = null
 )
-

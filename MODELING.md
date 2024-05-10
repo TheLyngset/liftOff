@@ -12,7 +12,7 @@ aktivitetsdiagram (flytdiagram) eller tilstandsdiagram.</h3>
 Brukeren kan se på tre forskjellige måter om det går an eller ikke å skyte opp en rakett. <br>
 Brukeren kan endre instillinger som lokasjon og thresholds for hvor data er hentet fra 
 og får vist informasjon for nye lokasjoner og beregninger for nye thresholds. <br>
-Brukeren kan velge å følge med på hjemmeskjermen en valg tidspunt og lokasjon hvis f.eks. 
+Brukeren kan velge å følge med på hjemmeskjermen et valgt tidspunkt og lokasjon hvis f.eks. 
 det er ønskelig å følge med framtidig informasjon på en lett måte.
 </p>
 <h3>Tekstlig beskrivelse av de viktigste use-casene: </h3>
@@ -310,3 +310,7 @@ classDiagram
 ```
 
 <h2> ● (3) Andre diagrammer </h2>
+<h3> Aktivitetsdiagrammer </h3>
+<img src = "./Modelling_pictures/AktivitetDiagram_UserOpensApp.png">
+<img src = "./Modelling_pictures/AktivittetDiagram_UserTableChangeLocation.png">
+<img src = "./Modelling_pictures/AktivitetDiagram_UserGraphPinToHomescreen.png">
