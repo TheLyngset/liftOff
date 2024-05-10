@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -94,7 +92,7 @@ fun ThresholdGraph(
     setTimeIndex: (Int) -> Unit
 ) {
     //builds the list of lines that is going to be sent to the graph to be displayed on the chart
-    val data = generateLineChartData(uiState, backgroundSwitch){ setTimeIndex(it) }
+    val data = generateLineChartData(uiState, backgroundSwitch) { setTimeIndex(it) }
     // setting the graph, toggle and infobox in a constraints box
     // the BoxWithConstraints insures that the graph is scaled based on the screen orientation and display heigth/width
     BoxWithConstraints(
@@ -110,7 +108,8 @@ fun ThresholdGraph(
             if (!screenReaderOn) {
                 Box(contentAlignment = Alignment.TopCenter) {
                     GraphEdgeGradient(top = true)
-                    Row(Modifier
+                    Row(
+                        Modifier
                             .height(25.dp)
                             .fillMaxWidth()
                             .padding(end = 8.dp, bottom = 1.dp),
@@ -133,7 +132,6 @@ fun ThresholdGraph(
                 )
                 GraphEdgeGradient(top = false)
             }
-
         }
         if (showInfoBox) {
             Box(
@@ -151,6 +149,7 @@ fun ThresholdGraph(
         }
     }
 }
+
 fun generateColorGradient(margin: Double, backgroundSwitch: Boolean): List<Color> {
     var colors: List<Color> =
         listOf(
@@ -171,8 +170,8 @@ fun generatePoints(data: List<Double>, threshold: Double, absMinDew: Double = 0.
     return List(data.size) { index ->
         Point(
             x = index.toFloat(),
-            y = (rescalePoint(data[index] + absMinDew
-                , threshold + absMinDew
+            y = (rescalePoint(
+                data[index] + absMinDew, threshold + absMinDew
             )).toFloat()
         )
     }
@@ -251,7 +250,6 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
 * retrives the date and time when the data was last updated
 * follows the lastUpdated that comes from the Locationforcast API
  */
-
 @Composable
 fun LastUpdated(lastUpdated: String) {
     Row(
@@ -430,7 +428,10 @@ fun InfoBoxContent() {
                 drawCircle(Color(0XFF000080))
             })
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = stringResource(R.string.humidity_title), style = TextStyle(color = Color.Black))
+            Text(
+                text = stringResource(R.string.humidity_title),
+                style = TextStyle(color = Color.Black)
+            )
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
@@ -444,7 +445,10 @@ fun InfoBoxContent() {
                 drawCircle(Color(0XFF800080))
             })
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = stringResource(R.string.fog_title), style = TextStyle(color = Color.DarkGray))
+            Text(
+                text = stringResource(R.string.fog_title),
+                style = TextStyle(color = Color.DarkGray)
+            )
         }
     }
     Column(modifier = Modifier.padding(start = 7.dp)) {
@@ -453,7 +457,10 @@ fun InfoBoxContent() {
                 drawCircle(Color(0XFF006600))
             })
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = stringResource(R.string.dewPoint_title), style = TextStyle(color = Color.Black))
+            Text(
+                text = stringResource(R.string.dewPoint_title),
+                style = TextStyle(color = Color.Black)
+            )
         }
         Row(Modifier.padding(vertical = 10.dp)) {
             Canvas(modifier = Modifier.size(15.dp), onDraw = {
@@ -532,7 +539,11 @@ fun createLine(
 }
 
 @Composable
-fun generateLineChartData(uiState: DataScreenUiState, backgroundSwitch: Boolean, setTimeIndex: (Int) -> Unit): LineChartData {
+fun generateLineChartData(
+    uiState: DataScreenUiState,
+    backgroundSwitch: Boolean,
+    setTimeIndex: (Int) -> Unit
+): LineChartData {
     //creating necessary values for the graph
     val weatherDataLists = uiState.weatherDataLists
     val thresholds = uiState.thresholds
@@ -541,14 +552,20 @@ fun generateLineChartData(uiState: DataScreenUiState, backgroundSwitch: Boolean,
     // retrieving data for the graph lines
     // parsing the data in a way that can be displayed by the graph
     //all values are calculated by rescale() as percentage of their respective threshold
-    val pointsGroundWind: List<Point> = generatePoints(weatherDataLists.groundWind.map { it.speed }, thresholds.groundWindSpeed)
-    val pointsMaxAirWind: List<Point> = generatePoints(weatherDataLists.maxWind.map { it.speed }, thresholds.maxWindSpeed)
-    val pointsMaxWindShear: List<Point> = generatePoints(weatherDataLists.maxWindShear.map { it.speed }, thresholds.maxWindShear)
-    val pointsCloudFraction: List<Point> = generatePoints(weatherDataLists.cloudFraction, thresholds.cloudFraction)
-    val pointsRain: List<Point> = generatePoints(weatherDataLists.rain.map { it.probability }, thresholds.rain)
+    val pointsGroundWind: List<Point> =
+        generatePoints(weatherDataLists.groundWind.map { it.speed }, thresholds.groundWindSpeed)
+    val pointsMaxAirWind: List<Point> =
+        generatePoints(weatherDataLists.maxWind.map { it.speed }, thresholds.maxWindSpeed)
+    val pointsMaxWindShear: List<Point> =
+        generatePoints(weatherDataLists.maxWindShear.map { it.speed }, thresholds.maxWindShear)
+    val pointsCloudFraction: List<Point> =
+        generatePoints(weatherDataLists.cloudFraction, thresholds.cloudFraction)
+    val pointsRain: List<Point> =
+        generatePoints(weatherDataLists.rain.map { it.probability }, thresholds.rain)
     val pointsFog: List<Point> = generatePoints(weatherDataLists.fog, thresholds.fog)
     val pointsHumidity: List<Point> = generatePoints(weatherDataLists.humidity, thresholds.humidity)
-    val pointsDewPoint: List<Point> = generatePoints(weatherDataLists.dewPoint, thresholds.dewPoint, absMinDew(weatherDataLists))
+    val pointsDewPoint: List<Point> =
+        generatePoints(weatherDataLists.dewPoint, thresholds.dewPoint, absMinDew(weatherDataLists))
     val thresholdLine = List(weatherDataLists.date.size) { Point(x = it.toFloat(), y = 1f) }
     val upperLine = List(weatherDataLists.date.size) { Point(x = it.toFloat(), y = 2f) }
 
