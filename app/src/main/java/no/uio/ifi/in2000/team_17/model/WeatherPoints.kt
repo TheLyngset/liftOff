@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team_17.model
 
 import no.uio.ifi.in2000.team_17.R
+import java.time.LocalDateTime
 
 /**
  * A data class used when parsing isobaric data and finding maxWind and maxShear
@@ -84,6 +85,7 @@ A data class containing lists for each parameter where indexes correspond to hou
  * [WeatherParameter] and the corresponding parameter
  */
 data class WeatherDataLists(
+    val dateTime: List<String> = listOf("0000-00-00T00:00:00"),
     val date: List<String> = listOf("0000-00-00"),
     val time: List<String> = listOf(""),
     val groundWind: List<WindLayer> = listOf(WindLayer()),

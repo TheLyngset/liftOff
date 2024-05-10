@@ -73,7 +73,6 @@ fun DataScreen(
     windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
     viewModel: DataScreenViewModel,
-    setTimeIndex: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var toggleState by rememberSaveable { mutableStateOf(Toggle.TABLE) }
@@ -108,7 +107,7 @@ fun DataScreen(
                     indexToPin = showingTimeIndex ?: 0
                 ) {
                     selectedTimeIndex = it
-                    setTimeIndex(it)
+                    viewModel.setTimeIndex(it)
                 }
             }
             val bottomPadding =

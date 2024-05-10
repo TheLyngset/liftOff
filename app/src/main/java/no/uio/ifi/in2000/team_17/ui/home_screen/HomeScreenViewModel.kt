@@ -45,7 +45,7 @@ class HomeScreenViewModel(
         settingsRepository.settingsFlow
     ){ weatherDataList: WeatherDataLists, thresholds: Thresholds, settings:Settings ->
 
-        val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time))
+        val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time, weatherDataList))
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             trafficLightColor = WeatherUseCase.canLaunch(weatherPointInTime, thresholds),

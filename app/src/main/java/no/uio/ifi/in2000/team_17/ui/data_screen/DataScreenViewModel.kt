@@ -17,6 +17,7 @@ import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
+import java.time.LocalDateTime
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
@@ -45,7 +46,7 @@ class DataScreenViewModel(
         DataScreenUiState(
             weatherDataList,
             thresholds,
-            SaveTimeUseCase.timeStringToIndex(settings.time),
+            SaveTimeUseCase.timeStringToIndex(settings.time, weatherDataList),
             settings.graphShowTutorial, settings.tableShowTutorial,
             settings.graphBackgroundSwitch,
             launchWindows
@@ -57,7 +58,11 @@ class DataScreenViewModel(
     )
 
     fun setTimeIndex(index: Int) {
-        viewModelScope.launch { settingsRepo.setTime(SaveTimeUseCase.timeIndexToString(index)) }
+        viewModelScope.launch {
+            settingsRepo.setTime(
+                uiState.value.weatherDataLists.dateTime[index]
+            )
+        }
     }
 
     fun dontShowTableTurotialAgain() {

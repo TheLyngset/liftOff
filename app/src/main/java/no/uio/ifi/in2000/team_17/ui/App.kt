@@ -386,7 +386,7 @@ fun App(
                     windowSizeClass = windowSizeClass,
                     modifier = Modifier.padding(innerPadding),
                     viewModel = dataScreenViewModel,
-                ) { dataScreenViewModel.setTimeIndex(it) }
+                )
             }
             composable(
                 enterTransition = {

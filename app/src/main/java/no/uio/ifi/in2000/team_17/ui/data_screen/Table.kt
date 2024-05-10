@@ -629,6 +629,7 @@ fun WindArrowText(modifier: Modifier = Modifier, value: Double, direction: Float
 fun WindArrowPreview(modifier: Modifier = Modifier) {
     WindArrowText(value = 11.34, direction = 45f)
 }
+
 /*
 @Preview(showBackground = true)
 @Composable

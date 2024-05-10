@@ -268,6 +268,11 @@ class RepositoryImplementation : Repository {
                     )
                 }
             it.copy(
+                dateTime = locationData.timeseries.map {
+                    LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
+                        .plusHours(2)//Todo this is summertime only
+                        .toString()
+                },
                 date = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
                         .plusHours(2)//Todo this is summertime only
