@@ -164,60 +164,7 @@ fun BottomCard(
         ) {
             LaunchClearanceCard(uiState.trafficLightColor, windowSizeClass)
             WeatherCardRow(
-                uiState.weatherPointInTime.iterator().map {(type, value) ->
-                    when(type){
-                        WeatherParameter.MAXWIND -> { value as WindLayer
-                            WeatherInfo(
-                                type = type,
-                                title = stringResource(type.titleId),
-                                value = value.speed,
-                                unit = stringResource(id = type.unitId!!),
-                                image = painterResource(id = type.imageID!!),
-                                direction = value.direction.toFloat()
-                            )
-                        }
-                        WeatherParameter.GROUNDWIND -> { value as WindLayer
-                            WeatherInfo(
-                                type = type,
-                                title = stringResource(type.titleId),
-                                value = value.speed,
-                                unit = stringResource(id = type.unitId!!),
-                                image = painterResource(id = type.imageID!!),
-                                direction = value.direction.toFloat()
-                            )
-                        }
-                        WeatherParameter.DATE -> null
-                        WeatherParameter.TIME -> null
-                        WeatherParameter.RAIN -> { value as Rain
-                            WeatherInfo(
-                                type = type,
-                                title = stringResource(type.titleId),
-                                value = value.probability,
-                                unit = stringResource(id = type.unitId!!),
-                                image = painterResource(id = type.imageID!!),
-                            )
-                        }
-                        else -> {
-                            var num = 0.0
-                            if(type == WeatherParameter.MAXWINDSHEAR){
-                                value as WindShear
-                                num = value.speed
-                            }
-                            else{
-                                num = value as Double
-                            }
-                            WeatherInfo(
-                                type = type,
-                                title = stringResource(type.titleId),
-                                value = num,
-                                unit = stringResource(id = type.unitId!!),
-                                image = painterResource(id = type.imageID!!)
-                            )
-                        }
-                    }
-                }
-                    .filterNotNull()
-                    .sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal },
+                generateWeatherInfoList(uiState),
                 uiState.weatherPointInTime.available,
                 uiState.thresholds
             )
@@ -225,6 +172,39 @@ fun BottomCard(
     }
 }
 
+@Composable
+fun generateWeatherInfoList(uiState: HomeScreenUiState ): List<WeatherInfo> {
+    return uiState.weatherPointInTime.iterator().map {(type, value) ->
+        when(type){
+            WeatherParameter.DATE -> null
+            WeatherParameter.TIME -> null
+            else -> {
+                val num = when (type) {
+                    WeatherParameter.MAXWIND -> (value as WindLayer).speed
+                    WeatherParameter.GROUNDWIND -> (value as WindLayer).speed
+                    WeatherParameter.MAXWINDSHEAR -> (value as WindShear).speed
+                    WeatherParameter.RAIN -> (value as Rain).probability
+                    else -> value as Double
+                }
+                val direction = when (type) {
+                    WeatherParameter.MAXWIND -> (value as WindLayer).direction.toFloat()
+                    WeatherParameter.GROUNDWIND -> (value as WindLayer).direction.toFloat()
+                    else -> null
+                }
+                WeatherInfo(
+                    type = type,
+                    title = stringResource(type.titleId),
+                    value = num,
+                    unit = stringResource(id = type.unitId!!),
+                    image = painterResource(id = type.imageID!!),
+                    direction = direction
+                )
+            }
+        }
+    }
+        .filterNotNull()
+        .sortedBy { calculateColor(it.type, it.value.toString(), uiState.thresholds).ordinal }
+}
 @Composable
 fun LaunchClearanceCard(trafficLightColor: TrafficLightColor, windowSizeClass: WindowSizeClass) {
     if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
