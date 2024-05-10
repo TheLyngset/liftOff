@@ -165,7 +165,6 @@ fun BottomCard(
             LaunchClearanceCard(uiState.trafficLightColor, windowSizeClass)
             WeatherCardRow(
                 uiState.weatherPointInTime.iterator().map {(type, value) ->
-                    var num = 0.0
                     when(type){
                         WeatherParameter.MAXWIND -> { value as WindLayer
                             WeatherInfo(
