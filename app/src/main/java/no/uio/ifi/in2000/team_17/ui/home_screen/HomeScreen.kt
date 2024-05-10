@@ -171,7 +171,6 @@ fun BottomCard(
         }
     }
 }
-
 @Composable
 fun generateWeatherInfoList(uiState: HomeScreenUiState ): List<WeatherInfo> {
     return uiState.weatherPointInTime.iterator().map {(type, value) ->
