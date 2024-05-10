@@ -383,7 +383,7 @@ fun TitleAndIconColumn(
                 else -> {
                     InfoBox(
                         dateTimeModifier,
-                        "    ${row.type.titleId}",
+                        "    ${stringResource(row.type.titleId)}",
                         listOf(Color.Transparent, Color.Transparent)
                     )
                 }
@@ -486,7 +486,8 @@ fun GradientRowsColumn(
                                         boxHeight,
                                         data as WindLayer,
                                         text,
-                                        colorsNow + colorsAfter
+                                        colorsNow + colorsAfter,
+                                        bold = false
                                     )
                                     else -> InfoBox(rowModifier, text, colorsNow + colorsAfter, bold = false)
                                 }
