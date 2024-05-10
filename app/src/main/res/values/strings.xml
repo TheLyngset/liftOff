@@ -56,7 +56,7 @@
     <string name="safety_margin_description">Safety margin represents how much below or above its threshold a value can be to be considered possible launch clearance. The margin is calculated as percentage of each threshold. If the margin is set at 0.8, then there is a margin of 20% below and above the threshold. This means that then values below this margin will be green, from 0.8 below the threshold to 1.2 above the threshold is colored yellow, and 1.2 above the threshold will be red. </string>
     <string name="max_ground_wind_speed_label">Max ground wind speed</string>
     <string name="max_air_wind_speed_label">Max air wind speed</string>
-    <string name="max_cloud_fraction_in_percent">Max cloud fraction in percent</string>
+    <string name="max_cloud_fraction_in_percent">Max cloud fraction</string>
     <string name="max_rain_probability">Max rain probability</string>
     <string name="reset_all">Reset All</string>
     <string name="dont_show_again">Don\'t show again</string>
