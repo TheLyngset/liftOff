@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -62,6 +63,7 @@ import no.uio.ifi.in2000.team_17.R
 import no.uio.ifi.in2000.team_17.model.Available
 import no.uio.ifi.in2000.team_17.model.Rain
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
+import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.Rocket
@@ -356,14 +358,26 @@ fun CardItem(weatherInfo: WeatherInfo, thresholds: Thresholds) {
                         modifier = Modifier
                             .padding(5.dp)
                     )
-                    if(weatherInfo.type in listOf(WeatherParameter.GROUNDWIND, WeatherParameter.MAXWIND)&& weatherInfo.direction != null){
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            modifier = Modifier.rotate(90f + weatherInfo.direction),
-                            contentDescription = null)
-                    }
+                    if(weatherInfo.type in listOf(GROUNDWIND, MAXWIND)) Spacer(modifier = Modifier.width(40.dp))
+                    
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+
+            }
+            if(weatherInfo.type in listOf(GROUNDWIND, MAXWIND)&& weatherInfo.direction != null){
+                Column(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 12.dp), horizontalAlignment = Alignment.End) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        modifier = Modifier.rotate(90f + weatherInfo.direction),
+                        contentDescription = null
+                    )
+                    val text = when(weatherInfo.direction){
+                        in 0f..90f -> "NE"
+                        in 90f..180f -> "SE"
+                        in 180f..270f -> "SW"
+                        else -> "NW"
+                    }
+                    Text(text = text)
+                }
             }
         }
     }

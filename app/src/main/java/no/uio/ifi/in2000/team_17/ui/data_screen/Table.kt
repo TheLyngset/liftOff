@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team_17.ui.data_screen
 
 import android.annotation.SuppressLint
-import android.util.Half.toFloat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
