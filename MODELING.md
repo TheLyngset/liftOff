@@ -56,7 +56,7 @@ Hovedflyt: <br>
 </p>
 
 <h3> Use-cases Diagram:</h3>
-<img src = "./Modelling_pictures/UseCaseDiagram.png">
+<img src = "./Modelling_pictures/UseCaseDiagram2.png">
 
 <h3> Sequence Diagrams: </h3>
 <img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp2.png">
