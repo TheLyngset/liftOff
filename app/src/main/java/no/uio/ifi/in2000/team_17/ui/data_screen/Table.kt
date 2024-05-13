@@ -202,16 +202,18 @@ fun SelectedBox(
                                     DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",)
                                     TIME -> InfoBox(dateTimeModifier, text)
                                     else -> {
-                                        when(type){
-                                            MAXWIND, GROUNDWIND -> WindInfoBox(
-                                                rowModifier,
-                                                boxHeight = boxHeight,
-                                                data = value as WindLayer,
-                                                text,
-                                                listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
-                                            )
-                                            else -> InfoBox(rowModifier, text)
-                                        }
+                                        if(uiState.weatherDataLists.get(i).available.get(type)){
+                                            when(type){
+                                                MAXWIND, GROUNDWIND -> WindInfoBox(
+                                                    rowModifier,
+                                                    boxHeight = boxHeight,
+                                                    data = value as WindLayer,
+                                                    text,
+                                                    listOf(Color.White.copy(0.0f), Color.White.copy(0.0f))
+                                                )
+                                                else -> InfoBox(rowModifier, text)
+                                            }
+                                        }else InfoBox(rowModifier)
                                     }
                                 }
                                 HorizontalDivider(dividerModifier, color = Color.Transparent)
@@ -519,7 +521,7 @@ fun WindInfoBox(modifier: Modifier = Modifier, boxHeight: Double, data: WindLaye
     else InfoBox(modifier, text, colors, bold = bold)
 }
 
-@SuppressLint("FrequentlyChangedStateReadInComposition")
+
 @Composable
 fun GradientRows(
     modifier: Modifier = Modifier,
@@ -602,11 +604,13 @@ fun GradientRows(
     }
     //scrolls all rows when overlaying row is scrolled
     LaunchedEffect(mainState.firstVisibleItemScrollOffset) {
-        currentDateIndex = mainState.firstVisibleItemIndex - 1
-        state.scrollToItem(
-            mainState.firstVisibleItemIndex,
-            mainState.firstVisibleItemScrollOffset
-        )
+        if(!state.isScrollInProgress){
+            currentDateIndex = mainState.firstVisibleItemIndex - 1
+            state.scrollToItem(
+                mainState.firstVisibleItemIndex,
+                mainState.firstVisibleItemScrollOffset
+            )
+        }
     }
 }
 
@@ -663,3 +667,4 @@ fun GradientRowPreview() {
 }
 
 */
+
