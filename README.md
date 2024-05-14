@@ -1,7 +1,5 @@
 ![LiftOff Logo](Readme_pictures/logo.png)
 
-LiftOff is an application that provides a weather forecast for both ground and atmospheric pressure points. The app can store and use thresholds set by you to calculate "safe" rocket launch time-periods. The application is developed by a team of 6 people.
-The team consists of students from the University of Oslo taking the course IN2000 - Software Engineering.
 
 
 
@@ -14,12 +12,16 @@ The team consists of students from the University of Oslo taking the course IN20
 - [API](#api)
 - [Contributing](#contributing)
 
+## About
+LiftOff is an application that provides a weather forecast for both ground and atmospheric pressure points. The app can store and use thresholds set by you to calculate "safe" rocket launch time-periods. The application is developed by a team of 6 people.
+The team consists of students from the University of Oslo taking the course IN2000 - Software Engineering.
+
 ## Background
 We were approached with multiple cases, and we chose to work on the case "Weather data for a safe rocket launch". 
 We have worked closely with the student organization [Portal Space](https://www.portalspace.no/), catering features, design, and functionality to their needs.
 ## Screenshots
-
-
+![Home Screen](Readme_pictures/HomeScreen_shot.png)
+![Table Screen](Readme_pictures/Table_shot.png)
 ## Documentation
 Information on the applications architecture and further maintaining, will be found here. [ARCHITECTURE.md](ARCHITECTURE.md)
 
