@@ -56,12 +56,12 @@ Hovedflyt: <br>
 </p>
 
 <h3> Use-cases Diagram:</h3>
-<img src = "./Modelling_pictures/UseCaseDiagram2.png">
+<img src = "./Modelling_pictures/UseCaseDiagram2.png" alt="Bilde som viser use case diagram.">
 
 <h3> Sequence Diagrams: </h3>
-<img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp2.png">
-<img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png">
-<img src = "./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png">
+<img src = "./Modelling_pictures/SequenceDiagram_UserOpensApp2.png" alt="Bilde som viser sekvensdiagram for use case bruker åpner app.">
+<img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png" alt="Bilde som viser sekvensdiagram for use case bruker endrer lokasjon.">
+<img src = "./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png" alt="Bilde som viser sekvensdiagram for use case bruker legger til tidspunkt og lokasjon til hjemmeskjerm.">
 
 <h2> ● (2) Klassediagram </h2>
 
@@ -311,6 +311,6 @@ classDiagram
 
 <h2> ● (3) Andre diagrammer </h2>
 <h3> Aktivitetsdiagrammer </h3>
-<img src = "./Modelling_pictures/AktivitetDiagram_UserOpensApp.png">
-<img src = "./Modelling_pictures/AktivittetDiagram_UserTableChangeLocation.png">
-<img src = "./Modelling_pictures/AktivitetDiagram_UserGraphPinToHomescreen.png">
+<img src = "./Modelling_pictures/AktivitetDiagram_UserOpensApp.png" alt="Bilde som viser aktivitetsdiagram for use case bruker åpner app">
+<img src = "./Modelling_pictures/AktivittetDiagram_UserTableChangeLocation.png" alt="Bilde som viser aktivitetsdiagram for use case bruker endrer lokasjon.">
+<img src = "./Modelling_pictures/AktivitetDiagram_UserGraphPinToHomescreen.png" alt="Bilde som viser aktivitetsdiagram for use case bruker legger til tidspunkt og lokasjon til hjemmeskjerm.">>
