@@ -202,7 +202,7 @@ fun SelectedBox(
                                     DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",)
                                     TIME -> InfoBox(dateTimeModifier, text)
                                     else -> {
-                                        if(uiState.weatherDataLists.get(i).available.get(type)){
+                                        if(uiState.weatherDataLists.get(i-1).available.get(type)){
                                             when(type){
                                                 MAXWIND, GROUNDWIND -> WindInfoBox(
                                                     rowModifier,
@@ -522,6 +522,7 @@ fun WindInfoBox(modifier: Modifier = Modifier, boxHeight: Double, data: WindLaye
 }
 
 
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun GradientRows(
     modifier: Modifier = Modifier,
