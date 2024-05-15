@@ -27,6 +27,7 @@ import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
+import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
 import no.uio.ifi.in2000.team_17.ui.input_sheet.InputSheetViewModel
 import no.uio.ifi.in2000.team_17.ui.splash_screen.NoDataScreen
 import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
@@ -55,8 +56,6 @@ class MainActivity : ComponentActivity() {
                 }
             )
             val uiState by splashScreenViewModel.uiState.collectAsState()
-9
-
 
             installSplashScreen().apply {
                 this.setKeepOnScreenCondition {
