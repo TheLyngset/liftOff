@@ -63,7 +63,13 @@ Hovedflyt: <br>
 <img src = "./Modelling_pictures/SequenceDiagram_UserTableChangeLocation.png" alt="Bilde som viser sekvensdiagram for use case bruker endrer lokasjon.">
 <img src = "./Modelling_pictures/SequenceDiagram_UserGraphPinToHomescreen.png" alt="Bilde som viser sekvensdiagram for use case bruker legger til tidspunkt og lokasjon til hjemmeskjerm.">
 
-<h2> ● (2) Klassediagram </h2>
+## ● (2) Klassediagram
+
+I dette klassediagrammet har vi valgt å fokusere mest på dataflyten. Disse forenklinger er gjort for å få diagrammet mer oversiktlig:
+
+* Skjermene vises som klasser selv om de egentlig er Composable funksjoner
+* typen til variablene og returverdiene til metodene vises ikke
+* Vi har utelatt de detaljerte forholdene mellom klassene da det varierer lite mellom Jetpack Compose prosjekter
 
 ```mermaid
 classDiagram 
@@ -240,6 +246,8 @@ classDiagram
 
 ```
 
+ui-state dataklassene ser slik ut for de forskjellige klassene:
+
 ```mermaid
 classDiagram
     class InputSheetUiState{
@@ -281,33 +289,59 @@ classDiagram
     } 
 ```
 
+Modellen vår består i hovedsak av disse klassene. Vi har noen flere som brukes til mellomregning for å finne maxWind og maxWindShear i tillegg til enum klassen WeatherParameter som vi bruker til å hente ut en parameter fra modellen:
+
 ```mermaid
 classDiagram
-        class WeatherDataList{
-        +time
-        +date
-        +groundWind
-        +maxWind
-        +maxWindShear
-        +cloudFraction
-        +fog
-        +rain
-        +humidity
-        +dewPoint
+        class WeatherDataLists{
+        +List~String~ time
+        +List~String~ date
+        +List~WindLayer~ groundWind
+        +List~WindLayer~ maxWind
+        +List~WindShear~ maxWindShear
+        +List~Double~ cloudFraction
+        +List~Double~ fog
+        +List~Rain~ rain
+        +List~Double~ humidity
+        +List~Double~ dewPoint
+        +iterator()
+        +get(index) WeatherPointInTime
     }
     class WeatherPointInTime{
-        +time
-        +date
-        +groundWind
-        +maxWind
-        +maxWindShear
-        +cloudFraction
-        +fog
-        +rain
-        +humidity
-        +dewPoint
+        +String time
+        +String date
+        +WindLayer groundWind
+        +WindLayer maxWind
+        +WindShear maxWindShear
+        +Double cloudFraction
+        +Double fog
+        +Rain rain
+        +Double humidity
+        +Double dewPoint
+        +Available available
+        +get(weatherParameter) Any
+        +iterator()
+    }
+    class Available{
+        +Boolean time
+        +Boolean date
+        +Boolean groundWind
+        +Boolean maxWind
+        +Boolean maxWindShear
+        +Boolean cloudFraction
+        +Boolean fog
+        +Boolean rain
+        +Boolean humidity
+        +Boolean dewPoint
+        +get(weatherParameter) Boolean
     }
 ```
+
+Syntaksen for bruk av Availableklassen er slik:
+
+weatherDataLists.get(index).available.get(weatherParameter)
+
+Iteratoren til WeatherDataList returnerer en liste med Pair < WeatherParameter, List < Any > >
 
 <h2> ● (3) Andre diagrammer </h2>
 <h3> Aktivitetsdiagrammer </h3>
