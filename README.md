@@ -58,7 +58,9 @@ We have used the following API's in our application:
   - This API is used to get the atmospheric pressure data for the rocket launch.
   - Fetching, parsing and formatting is done by a secondary api we are hosting at NREC. The original api is created by MET. [EDR-Isobaric](https://github.com/metno/edrisobaric)
   - We have modified EDR-Isobaric to better suite our problems and to make it easier to use in our application. Although this is never ran through the application we have decided to add the folder to our project folders for documentation. This is found in the [isobaricgrib](app/src/main/java/no/uio/ifi/in2000/team_17/data/isobaricgrib) folder.
-
+## Security
+Since everything is stored locally, and the application does not ask for any personal information, information theft should not be an issue.
+However the locally hosted API is not secure, and should not be used for any sensitive information. It has no throttle control, this feature is to be implemented.
 ## Contributing
 - Amandus Guldahl - [amandug](https://github.uio.no/amandug)
 - Hedda Johnsen - [heddjo](https://github.uio.no/heddjo)
