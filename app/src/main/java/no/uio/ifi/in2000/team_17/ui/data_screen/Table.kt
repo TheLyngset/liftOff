@@ -56,9 +56,9 @@ import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherParameter.*
 import no.uio.ifi.in2000.team_17.model.WindLayer
 import no.uio.ifi.in2000.team_17.ui.AutoHeightText
-import no.uio.ifi.in2000.team_17.ui.calculateColor
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
+import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase.Companion.calculateColor
 import kotlin.math.round
 
 @Composable
@@ -407,6 +407,7 @@ fun GradientRowsColumn(
     selectedIndex: Int,
     thresholds: Thresholds
 ) {
+    val context = LocalContext.current
     val size = rows[0].data.size
     //Column of gradient rows
     LazyColumn(modifier.offset(x = 70.dp)) {
@@ -450,7 +451,7 @@ fun GradientRowsColumn(
                 items((0..<size).toList()){i->
                     if (i < row.data.size) {
                         val data = row.data[i]
-                        val text =  if(i != selectedIndex) data.toString() else ""
+                        val text =  if(i != selectedIndex) data.toString() else context.getString(R.string.long_empty_string)
                         when (row.type) {
                             DATE -> {
                                 val info = if (rows[1].data[i] == stringResource(R.string.empty_time)) {

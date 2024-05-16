@@ -84,5 +84,27 @@
     <string name="table">Table</string>
     <string name="graph">Graph</string>
     <string name="talkback_graph_not_working">The graph does not work with TalkBack. Use the Table instead</string>
+    <string name="double_click_to_exit">double click to exit</string>
+    <string name="drag_handle">drag handle</string>
+    <string name="show_info_about_max_height">Show info about max height</string>
+    <string name="ippc_avinor">IPPC Avinor</string>
+    <string name="ippc_url">https://www.ippc.no/ippc/index.jsp</string>
+    <string name="safety_code_nar">Safety Code NAR</string>
+    <string name="nar_url">https://nar.org/safety-information/model-rocket-safety-code/</string>
+    <string name="url">URL</string>
+    <string name="close">Close</string>
+    <string name="failed_to_update_do_you_have_internet_connection">failed to update, do you have internet connection?</string>
+    <string name="set_max_height_to">Set max height to %1$s</string>
+    <string name="invalid_max_height">Invalid Max Height</string>
+    <string name="set_latitude_to">Set latitude to %1$s</string>
+    <string name="invalid_latitude_it_must_be_between_58_0_and_64_24">Invalid Latitude, it must be between 58.0 and 64.24</string>
+    <string name="invalid_latitude">Invalid Latitude</string>
+    <string name="set_longitude_to">Set longitude to %1$s</string>
+    <string name="invalid_longitude_it_must_be_between_4_0_and_12_5">Invalid longitude, it must be between 4.0 and 12.5</string>
+    <string name="invalid_longitude">Invalid Longitude</string>
+    <string name="invalid_input_for">Invalid input for %1$s</string>
+    <string name="home">Home</string>
+    <string name="data">Data</string>
+    <string name="long_empty_string">"             "</string>
 
 </resources>

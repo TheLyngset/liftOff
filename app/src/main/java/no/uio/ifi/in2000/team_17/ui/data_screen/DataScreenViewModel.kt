@@ -15,9 +15,8 @@ import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsRepository
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
-import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
+import no.uio.ifi.in2000.team_17.usecases.CalculateTimeIndexUseCase
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
-import java.time.LocalDateTime
 
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
@@ -46,7 +45,7 @@ class DataScreenViewModel(
         DataScreenUiState(
             weatherDataList,
             thresholds,
-            SaveTimeUseCase.timeStringToIndex(settings.time, weatherDataList),
+            CalculateTimeIndexUseCase.timeStringToIndex(settings.time, weatherDataList),
             settings.graphShowTutorial, settings.tableShowTutorial,
             settings.graphBackgroundSwitch,
             launchWindows

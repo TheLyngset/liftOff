@@ -42,7 +42,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -84,9 +86,7 @@ fun AppTopBar(
     windowSizeClass: WindowSizeClass,
     logoId: Int,
     onSearchClick: () -> Unit,
-    onLogoClick: () -> Unit,
-
-    //modifier: Modifier
+    onLogoClick: () -> Unit
 ) {
     if (windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
 
@@ -107,19 +107,6 @@ fun AppTopBar(
                             .size(50.dp)
                             .clickable { onLogoClick() }
                     )
-                    //center
-                    /*
-                    Text(
-                        text = "Oslo",
-                        style = TextStyle(fontSize = 22.sp),
-                        modifier = Modifier.padding()
-
-                    )
-                */
-
-
-
-
                     Image(
                         painter = painterResource(id = R.drawable.settings),
                         contentDescription = "Location and Thresholds",
@@ -134,8 +121,6 @@ fun AppTopBar(
             },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Color.Transparent
-                //containerColor = Color.White.copy(alpha = 0.65f)
-                //MaterialTheme.colorScheme.primaryContainer
             ),
             modifier = Modifier.height(50.dp)
         )
@@ -186,8 +171,6 @@ fun App(
         }
     )
 
-    //dataScreenViewModel.resetShowTutorial()
-
     val navController: NavHostController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -207,7 +190,6 @@ fun App(
                 onLogoClick = {
                     navController.navigate("Home")
                 },
-                //Modifier.shadow(elevation = 15.dp, spotColor = Color.DarkGray, shape = RoundedCornerShape(1.dp))
             )
         },
         bottomBar = {
@@ -247,15 +229,19 @@ fun App(
         InputSheet(
             viewModel = inputSheetViewModel,
             failedToUpdate = {
-                coroutineScope.launch { snackBarHostState.showSnackbar("failed to update, do you have internet connection?") }
+                coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.failed_to_update_do_you_have_internet_connection)) }
                 inputSheetViewModel.rollback()
             },
             setMaxHeight = {
                 try {
                     inputSheetViewModel.setMaxHeight(it.toInt())
-                    coroutineScope.launch { snackBarHostState.showSnackbar("Set max height to $it") }
+                    coroutineScope.launch { snackBarHostState.showSnackbar(
+                        context.getString(
+                            R.string.set_max_height_to,
+                            it
+                        )) }
                 } catch (e: NumberFormatException) {
-                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Max Height") }
+                    coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.invalid_max_height)) }
                 }
             },
             setLat = {
@@ -263,12 +249,16 @@ fun App(
                     val lat = it.toDouble()
                     if (58 < lat && lat < 64.25) {
                         inputSheetViewModel.setLat(lat)
-                        coroutineScope.launch { snackBarHostState.showSnackbar("Set latitude to $it") }
+                        coroutineScope.launch { snackBarHostState.showSnackbar(
+                            context.getString(
+                                R.string.set_latitude_to,
+                                it
+                            )) }
                     } else {
-                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude, it must be between 58.0 and 64.24") }
+                        coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.invalid_latitude_it_must_be_between_58_0_and_64_24)) }
                     }
                 } catch (e: NumberFormatException) {
-                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Latitude") }
+                    coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.invalid_latitude)) }
                 }
             },
             setLng = {
@@ -276,12 +266,16 @@ fun App(
                     val lng = it.toDouble()
                     if (4 < lng && lng < 12.5) {
                         inputSheetViewModel.setLng(lng)
-                        coroutineScope.launch { snackBarHostState.showSnackbar("Set longitude to $it") }
+                        coroutineScope.launch { snackBarHostState.showSnackbar(
+                            context.getString(
+                                R.string.set_longitude_to,
+                                it
+                            )) }
                     } else {
-                        coroutineScope.launch { snackBarHostState.showSnackbar("Invalid longitude, it must be between 4.0 and 12.5") }
+                        coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.invalid_longitude_it_must_be_between_4_0_and_12_5)) }
                     }
                 } catch (e: NumberFormatException) {
-                    coroutineScope.launch { snackBarHostState.showSnackbar("Invalid Longitude") }
+                    coroutineScope.launch { snackBarHostState.showSnackbar(context.getString(R.string.invalid_longitude)) }
                 }
             },
             toThresholdsScreen = {
@@ -346,7 +340,7 @@ fun App(
                 ) {
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar(
-                            message = "Invalid input for ${it.titleId}"
+                            message = context.getString(R.string.invalid_input_for, context.getString(it.titleId))
                         )
                     }
                 }
@@ -442,7 +436,9 @@ fun SegmentedNavigationButton(
     currentScreen: Screen,
     onNavigate: (Int) -> Unit
 ) {
-    val options = remember { mutableStateListOf("Home", "Data", "Legal") }
+    val context = LocalContext.current
+    val options = remember { mutableStateListOf(context.getString(R.string.home),
+        context.getString(R.string.data), context.getString(R.string.legal)) }
 
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->

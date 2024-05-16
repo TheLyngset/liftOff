@@ -19,7 +19,7 @@ import no.uio.ifi.in2000.team_17.ui.BackGroundImage
 import no.uio.ifi.in2000.team_17.ui.Background
 
 @Composable
-fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
+fun NoDataScreen(retry:()->Unit) {
     BackGroundImage()
     Background()
     Box(
@@ -28,7 +28,6 @@ fun NoDataScreen(viewModel: SplashScreenViewModel, retry:()->Unit) {
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        val uiState by viewModel.uiState.collectAsState()
         ElevatedCard {
             Box() {
                 Column(Modifier.padding(16.dp)) {

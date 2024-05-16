@@ -68,20 +68,6 @@ fun IconSwitch(checked: Boolean, icon: ImageVector? = null, drawableON: Int = R.
     )
 }
 
-fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds): TrafficLightColor {
-    return when(type){
-        WeatherParameter.CLOUDFRACTION-> WeatherUseCase.canLaunch(WeatherPointInTime(cloudFraction = value.toDouble()), thresholds)
-        WeatherParameter.GROUNDWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(groundWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.MAXWINDSHEAR -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWindShear = WindShear(value.toDouble())), thresholds)
-        WeatherParameter.MAXWIND -> WeatherUseCase.canLaunch(WeatherPointInTime(maxWind = WindLayer(value.toDouble())), thresholds)
-        WeatherParameter.RAIN -> WeatherUseCase.canLaunch(WeatherPointInTime(rain = Rain(median = value.toDouble())), thresholds)
-        WeatherParameter.HUMIDITY -> WeatherUseCase.canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
-        WeatherParameter.DEWPOINT -> WeatherUseCase.canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
-        WeatherParameter.FOG -> WeatherUseCase.canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
-        else -> TrafficLightColor.WHITE
-    }
-}
-
 @Composable
 fun ConditionalText(modifier: Modifier = Modifier, text: String){
 

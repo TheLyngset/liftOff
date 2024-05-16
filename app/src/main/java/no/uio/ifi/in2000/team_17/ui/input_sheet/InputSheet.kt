@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,9 +63,9 @@ fun InputSheet(
     sheetState: Boolean,
 
     ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val failedToUpdate = uiState.failedToUpdate
-    if (failedToUpdate) {
+    if (uiState.failedToUpdate) {
         failedToUpdate()
     }
     if (sheetState) {
@@ -73,7 +74,7 @@ fun InputSheet(
             dragHandle = {
                 IconButton(
                     modifier = Modifier.clearAndSetSemantics {
-                        contentDescription = "double click to exit"
+                        contentDescription = context.getString(R.string.double_click_to_exit)
                     },
                     onClick = { onDismiss() }
                 ) {
@@ -82,13 +83,12 @@ fun InputSheet(
                             .size(60.dp)
                             .padding(5.dp),
                         painter = painterResource(id = R.drawable.drag_handle),
-                        contentDescription = "drag handle"
+                        contentDescription = stringResource(R.string.drag_handle)
                     )
                 }
             }
         ) {
             InputSheetContent(
-                failedToUpdate = failedToUpdate,
                 uiState = uiState,
                 toAdvancedSettings = toThresholdsScreen,
                 setMaxHeight = { setMaxHeight(it) },
@@ -103,7 +103,6 @@ fun InputSheet(
 @Composable
 fun InputSheetContent(
     modifier: Modifier = Modifier,
-    failedToUpdate: Boolean,
     uiState: InputSheetUiState,
     toAdvancedSettings: () -> Unit,
     setMaxHeight: (String) -> Unit,
@@ -115,7 +114,7 @@ fun InputSheetContent(
     var lngString by remember { mutableStateOf(uiState.latLng.longitude.toString()) }
     var showInfoCard by remember { mutableStateOf(false) }
 
-    if (failedToUpdate) {
+    if (uiState.failedToUpdate) {
         latString = uiState.latLng.latitude.toString()
         lngString = uiState.latLng.longitude.toString()
     }
@@ -145,7 +144,7 @@ fun InputSheetContent(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,
-                        contentDescription = "Show info about max height",
+                        contentDescription = stringResource(R.string.show_info_about_max_height),
                         modifier = Modifier
                             .clickable {
                                 showInfoCard = !showInfoCard

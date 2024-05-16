@@ -1,7 +1,11 @@
 package no.uio.ifi.in2000.team_17.usecases
 
 import no.uio.ifi.in2000.team17.Thresholds
+import no.uio.ifi.in2000.team_17.model.Rain
+import no.uio.ifi.in2000.team_17.model.WeatherParameter
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
+import no.uio.ifi.in2000.team_17.model.WindLayer
+import no.uio.ifi.in2000.team_17.model.WindShear
 import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 
 class WeatherUseCase {
@@ -70,6 +74,20 @@ class WeatherUseCase {
             ) return TrafficLightColor.YELLOW
 
             return TrafficLightColor.RED
+        }
+        @JvmStatic
+        fun calculateColor(type: WeatherParameter, value: String, thresholds: Thresholds): TrafficLightColor {
+            return when(type){
+                WeatherParameter.CLOUDFRACTION-> canLaunch(WeatherPointInTime(cloudFraction = value.toDouble()), thresholds)
+                WeatherParameter.GROUNDWIND -> canLaunch(WeatherPointInTime(groundWind = WindLayer(value.toDouble())), thresholds)
+                WeatherParameter.MAXWINDSHEAR -> canLaunch(WeatherPointInTime(maxWindShear = WindShear(value.toDouble())), thresholds)
+                WeatherParameter.MAXWIND -> canLaunch(WeatherPointInTime(maxWind = WindLayer(value.toDouble())), thresholds)
+                WeatherParameter.RAIN -> canLaunch(WeatherPointInTime(rain = Rain(median = value.toDouble())), thresholds)
+                WeatherParameter.HUMIDITY -> canLaunch(WeatherPointInTime(humidity = value.toDouble()), thresholds)
+                WeatherParameter.DEWPOINT -> canLaunch(WeatherPointInTime(dewPoint = value.toDouble()), thresholds)
+                WeatherParameter.FOG -> canLaunch(WeatherPointInTime(fog = value.toDouble()), thresholds)
+                else -> TrafficLightColor.WHITE
+            }
         }
     }
 }

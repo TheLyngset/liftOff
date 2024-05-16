@@ -105,36 +105,11 @@ fun ThresholdsInfo(modifier: Modifier = Modifier,show: Boolean, onDone:()->Unit)
                     }
                     IconButton(
                         onClick = { onDone() }) {
-                        Icon(Icons.Outlined.Close, "Close")
+                        Icon(Icons.Outlined.Close, stringResource(R.string.close))
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun InfoSection2(title: String, description: String) {
-    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        var showDescription by remember { mutableStateOf(false) }
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp
-            )
-            Spacer(Modifier.size(10.dp))
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = null,
-                Modifier.clickable {
-                    showDescription = !showDescription
-                }
-            )
-        }
-        if(showDescription) Text(text = description)
     }
 }
 

@@ -267,7 +267,7 @@ class RepositoryImplementation : Repository {
                         maxHeight = maxHeight
                     )
                 }
-            it.copy(
+            WeatherDataLists(
                 dateTime = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
                         .plusHours(2)//Todo this is summertime only

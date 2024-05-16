@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -54,15 +55,15 @@ fun JudicialScreen(modifier: Modifier, windowSizeClass: WindowSizeClass?) {
                     stringResource(R.string.ippcTitle),
                     stringResource(R.string.ippc_description),
                     stringResource(R.string.ippc_readMore),
-                    listOf("IPPC Avinor"),
-                    listOf("https://www.ippc.no/ippc/index.jsp")
+                    listOf(stringResource(R.string.ippc_avinor)),
+                    listOf(stringResource(R.string.ippc_url))
                 )
                 LegalCard(
                     stringResource(R.string.model_rocket_safety_code_title),
                     stringResource(R.string.model_rocket_safety_code_description),
                     stringResource(R.string.model_rocket_safety_code_readMore),
-                    listOf("Safety Code NAR"),
-                    listOf("https://nar.org/safety-information/model-rocket-safety-code/")
+                    listOf(stringResource(R.string.safety_code_nar)),
+                    listOf(stringResource(R.string.nar_url))
                 )
             }
         }
@@ -83,15 +84,15 @@ fun JudicialScreen(modifier: Modifier, windowSizeClass: WindowSizeClass?) {
                         stringResource(R.string.ippcTitle),
                         stringResource(R.string.ippc_description),
                         stringResource(R.string.ippc_readMore),
-                        listOf("IPPC Avinor"),
-                        listOf("https://www.ippc.no/ippc/index.jsp")
+                        listOf(stringResource(R.string.ippc_avinor)),
+                        listOf(stringResource(R.string.ippc_url))
                     )
                     LegalCard(
                         stringResource(R.string.model_rocket_safety_code_title),
                         stringResource(R.string.model_rocket_safety_code_description),
                         stringResource(R.string.model_rocket_safety_code_readMore),
-                        listOf("Safety Code NAR"),
-                        listOf("https://nar.org/safety-information/model-rocket-safety-code/")
+                        listOf(stringResource(R.string.safety_code_nar)),
+                        listOf(stringResource(R.string.nar_url))
                     )
                 }
             }
@@ -167,7 +168,7 @@ fun HyperlinkText(
                 end = endIndex
             )
             addStringAnnotation(
-                tag = "URL",
+                tag = stringResource(R.string.url),
                 annotation = hyperlinks[index],
                 start = startIndex,
                 end = endIndex
@@ -183,13 +184,14 @@ fun HyperlinkText(
     }
 
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
 
     ClickableText(
         modifier = modifier,
         text = annotatedString,
         onClick = {
             annotatedString
-                .getStringAnnotations("URL", it, it)
+                .getStringAnnotations(context.getString(R.string.url), it, it)
                 .firstOrNull()?.let { stringAnnotation ->
                     uriHandler.openUri(stringAnnotation.item)
                 }

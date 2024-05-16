@@ -27,15 +27,15 @@ import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.data.settings.SettingsSerializer
 import no.uio.ifi.in2000.team_17.ui.App
-import no.uio.ifi.in2000.team_17.ui.data_screen.DataScreenViewModel
-import no.uio.ifi.in2000.team_17.ui.input_sheet.InputSheetViewModel
 import no.uio.ifi.in2000.team_17.ui.splash_screen.NoDataScreen
 import no.uio.ifi.in2000.team_17.ui.splash_screen.SplashScreenViewModel
+
 
 val Context.thresholdsDataStore: DataStore<Thresholds> by dataStore(
     fileName = "advanced_settings",
     serializer = ThresholdsSerializer
 )
+
 val Context.settingsStore: DataStore<Settings> by dataStore(
     fileName = "settings",
     serializer = SettingsSerializer
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                         )
                     } else {
                         val context = LocalContext.current
-                        NoDataScreen(viewModel = splashScreenViewModel) {
+                        NoDataScreen {
                             context.restart()
                         }
                     }
@@ -87,6 +87,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Restart the app
+ */
 fun Context.restart() {
     val packageManager = packageManager
     val intent = packageManager.getLaunchIntentForPackage(packageName)!!
@@ -96,6 +99,9 @@ fun Context.restart() {
     Runtime.getRuntime().exit(0)
 }
 
+/**
+ * Check if the screen reader is on
+ */
 fun Context.isScreenReaderOn():Boolean{
     val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
     if (am != null && am.isEnabled) {

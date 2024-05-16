@@ -17,7 +17,7 @@ import no.uio.ifi.in2000.team_17.data.thresholds.ThresholdsSerializer
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.model.WeatherDataLists
 import no.uio.ifi.in2000.team_17.model.WeatherPointInTime
-import no.uio.ifi.in2000.team_17.usecases.SaveTimeUseCase
+import no.uio.ifi.in2000.team_17.usecases.CalculateTimeIndexUseCase
 
 data class HomeScreenUiState(
     val weatherPointInTime: WeatherPointInTime = WeatherPointInTime(),
@@ -45,7 +45,7 @@ class HomeScreenViewModel(
         settingsRepository.settingsFlow
     ){ weatherDataList: WeatherDataLists, thresholds: Thresholds, settings:Settings ->
 
-        val weatherPointInTime = weatherDataList.get(SaveTimeUseCase.timeStringToIndex(settings.time, weatherDataList))
+        val weatherPointInTime = weatherDataList.get(CalculateTimeIndexUseCase.timeStringToIndex(settings.time, weatherDataList))
         HomeScreenUiState(
             weatherPointInTime = weatherPointInTime,
             trafficLightColor = WeatherUseCase.canLaunch(weatherPointInTime, thresholds),
