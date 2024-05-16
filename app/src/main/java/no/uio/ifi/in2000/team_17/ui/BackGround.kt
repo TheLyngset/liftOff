@@ -43,7 +43,6 @@ fun Rocket(modifier: Modifier) {
     if (isPlaying == false){
         isPlaying = true
     }
-
 }
 
 

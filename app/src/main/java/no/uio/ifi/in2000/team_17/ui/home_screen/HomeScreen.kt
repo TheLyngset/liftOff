@@ -89,7 +89,26 @@ fun HomeScreen(
             .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
         contentAlignment = Alignment.TopCenter
     ) {
-        Rocket(Modifier)
+    }
+    if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
+        }
+    }
+    //landscape pad
+    else if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Expanded) {
+        Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (-300.dp)),
+            contentAlignment = Alignment.BottomCenter){
+            Rocket(Modifier)
+        }
+    }
+    //phone portriat - does not render on phone landscape
+    else if(windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact) {
+        Box(modifier = Modifier.fillMaxWidth().offset(y= (-100.dp)),
+            contentAlignment = Alignment.TopCenter){
+            Rocket(Modifier)
+        }
     }
     Column(
         Modifier.fillMaxSize(),
