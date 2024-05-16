@@ -46,7 +46,7 @@ You will need permission to clone all the files.
 
 Locationforecast API is also reliant on an API-key, which is not included.
 
-After cloning the project files, add your key to [LocationforecastKeyEmpty](team-17/app/src/main/java/no/uio/ifi/in2000/team_17/data/locationforecast/LocationforecastKeyEmpty.kt)
+After cloning the project files, add your key to [LocationforecastKeyEmpty](/app/src/main/java/no/uio/ifi/in2000/team_17/data/locationforecast/LocationforecastKeyEmpty.kt)
 ## Usage
 Run the application on an emulator or physical device. The application will guide you on usage. There are multiple features to explore, such as setting thresholds, viewing weather data, and viewing the forecast.
 
