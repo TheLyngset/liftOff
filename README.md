@@ -1,8 +1,5 @@
 ![LiftOff Logo](Readme_pictures/logo.png)
 
-
-
-
 ## Table of Contents
 - [Background](#background)
 - [Screenshots](#screenshots)
@@ -58,9 +55,25 @@ We have used the following API's in our application:
   - This API is used to get the atmospheric pressure data for the rocket launch.
   - Fetching, parsing and formatting is done by a secondary api we are hosting at NREC. The original api is created by MET. [EDR-Isobaric](https://github.com/metno/edrisobaric)
   - We have modified EDR-Isobaric to better suite our problems and to make it easier to use in our application. Although this is never ran through the application we have decided to add the folder to our project folders for documentation. This is found in the [isobaricgrib](app/src/main/java/no/uio/ifi/in2000/team_17/data/isobaricgrib) folder.
+
+## Libraries
+These are the libraries we have used in our application:
+- [Ktor](https://ktor.io/docs/welcome.html)
+  - Used for networking
+- [Gson](https://github.com/google/gson)
+  - Used for parsing JSON
+- [Ycharts](https://github.com/codeandtheory/YCharts)
+  - Used for creating graphs
+- [LottieFiles](https://developers.lottiefiles.com/docs/)
+  - Used for animations
+- [ProtoDataStore](https://developer.android.com/topic/libraries/architecture/datastore)
+  - Used for storing data locally
+
 ## Security
-Since everything is stored locally, and the application does not ask for any personal information, information theft should not be an issue.
-However the locally hosted API is not secure, and should not be used for any sensitive information. It has no throttle control, this feature is to be implemented.
+Since everything is stored locally, and the application does not ask for any personal information, 
+information theft should not be an issue.
+However the locally hosted API is not secure, and should not be used for any sensitive information. 
+It has no security against DDos attacks, and is not encrypted. Beyond that, the application should be safe to use.
 ## Contributing
 - Amandus Guldahl - [amandug](https://github.uio.no/amandug)
 - Hedda Johnsen - [heddjo](https://github.uio.no/heddjo)
