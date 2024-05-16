@@ -10,14 +10,14 @@ import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
 import no.uio.ifi.in2000.team_17.data.locationforecast.weatherDTO.LocationforecastDTO
 
-private const val LOG_NAME = "LOCATIONFORECASTDATASOURCE"
+private const val LOG_NAME = "LOCATION_FORECAST_DATASOURCE"
 
 /**
  * This class is responsible for fetching location forecast data from the API.
  */
 class LocationForecastDataSource {
-    private val ApiKey = LocationforecastKey()
-    private val keyValue = ApiKey.getAPIKey()
+    private val apiKey = LocationforecastKey()
+    private val keyValue = apiKey.getAPIKey()
 
     /**
      * HttpClient is used to send HTTP requests.

@@ -91,10 +91,10 @@ fun ThresholdGraph(
     onFlip: () -> Unit,
     setTimeIndex: (Int) -> Unit
 ) {
-    //builds the list of lines that is going to be sent to the graph to be displayed on the chart
+    // generating the data for the graph
     val data = generateLineChartData(uiState, backgroundSwitch) { setTimeIndex(it) }
-    // setting the graph, toggle and infobox in a constraints box
-    // the BoxWithConstraints insures that the graph is scaled based on the screen orientation and display heigth/width
+
+
     BoxWithConstraints(
         Modifier.padding(bottom = 10.dp),
         contentAlignment = Alignment.BottomStart
@@ -150,6 +150,13 @@ fun ThresholdGraph(
     }
 }
 
+/**
+ * Generates a color gradient for the graph based on the margin and the background switch status.
+ *
+ * @param margin The margin used to determine the number of green colors in the gradient.
+ * @param backgroundSwitch A boolean value indicating whether the background switch is on or off. If it's on, the gradient will include colors for red, yellow, and green. If it's off, the gradient will only include white.
+ * @return A list of colors representing the gradient.
+ */
 fun generateColorGradient(margin: Double, backgroundSwitch: Boolean): List<Color> {
     var colors: List<Color> =
         listOf(
@@ -166,6 +173,14 @@ fun generateColorGradient(margin: Double, backgroundSwitch: Boolean): List<Color
     return colors
 }
 
+/**
+ * Generates a list of points for a graph based on the provided data and threshold.
+ *
+ * @param data The list of data values to be plotted on the graph.
+ * @param threshold The threshold value used to determine the y-coordinate of each point.
+ * @param absMinDew The absolute minimum dew point used to adjust the y-coordinate of each point. Default value is 0.0.
+ * @return A list of points representing the data to be plotted on the graph.
+ */
 fun generatePoints(data: List<Double>, threshold: Double, absMinDew: Double = 0.0): List<Point> {
     return List(data.size) { index ->
         Point(
@@ -177,7 +192,12 @@ fun generatePoints(data: List<Double>, threshold: Double, absMinDew: Double = 0.
     }
 }
 
-
+/**
+ * A composable function that creates a gradient at the edge of the graph.
+ *
+ * @param modifier The modifier to be applied to this function.
+ * @param top A boolean value indicating whether the gradient is at the top of the graph. If true, the gradient starts from transparent and ends at the background color. If false, the gradient starts from the background color and ends at transparent.
+ */
 @Composable
 fun GraphEdgeGradient(modifier: Modifier = Modifier, top: Boolean) {
     val colors = if (top) {
@@ -201,9 +221,11 @@ fun GraphEdgeGradient(modifier: Modifier = Modifier, top: Boolean) {
     )
 }
 
-/*
+/**
 * rescales the dew point so that if the list contains a negative value,
 * the entire scale is moved up in order to avoid dealing with negative values
+ * @param weatherDataLists the list of weather data
+ * @return the absolute minimum dew point
  */
 fun absMinDew(weatherDataLists: WeatherDataLists): Double {
     val min = weatherDataLists.dewPoint.minOrNull()
@@ -212,10 +234,13 @@ fun absMinDew(weatherDataLists: WeatherDataLists): Double {
     return 0.0
 }
 
-/*
+/**
 *calculates each point on the line as percentage of its own threshold
 * purpose: create a common threshold line for all points
 * to show visually if the values are below or above their respective threshold.
+ * @param realValue the real value of the point
+ * @param threshold the threshold value of the point
+ * @return the rescaled value of the point
  */
 fun rescalePoint(realValue: Double?, threshold: Double?): Double {
     if (threshold is Double && realValue is Double) {
@@ -229,8 +254,10 @@ fun rescalePoint(realValue: Double?, threshold: Double?): Double {
     return 0.0
 }
 
-/*
- * the function called when toggling the switch graph background switch
+/**
+ * the function called when toggling the switch graph background switch. Switches between coloured vs. colourblind friendly background
+ * @param checked the current state of the switch
+ * @param onFlip the function to be called when the switch is toggled
  */
 @Composable
 fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
@@ -246,9 +273,10 @@ fun BackgroundSwitch(checked: Boolean, onFlip: () -> Unit) {
     )
 }
 
-/*
-* retrives the date and time when the data was last updated
-* follows the lastUpdated that comes from the Locationforcast API
+/**
+* Retrieves the date and time when the data was last updated
+* follows the lastUpdated that comes from the Locationforecast API
+ * @param lastUpdated the last updated time
  */
 @Composable
 fun LastUpdated(lastUpdated: String) {
@@ -264,9 +292,13 @@ fun LastUpdated(lastUpdated: String) {
 }
 
 
-/*
-* Shows a tutorial informing the user that the graph is scrollable horisontally
-* infroms the user that it is possible to zoom in/out on the graph
+/**
+* Shows a tutorial informing the user that the graph is scrollable horizontally
+* and that it is possible to zoom in/out on the graph
+ * @param onDismiss the function to be called when the dialog is dismissed
+ * @param onDontShowAgain the function to be called when the dialog is dismissed and the user does not want to see it again
+ * @param painter the painter used to display the image in the dialog
+ * @param text the text to be displayed in the dialog
  */
 @Composable
 fun GraphInfoDialog(
@@ -341,8 +373,13 @@ fun GraphInfoDialog(
     }
 }
 
-/*
-* defines the UI and constraints used to show the infobox with graph lines name and colours
+/**
+* Defines the UI and constraints used to show the infobox with graph lines name and colours
+ * @param modifier the modifier to be applied to the infobox
+ * @param lastUpdated the last updated time
+ * @param bottomPadding the padding at the bottom of the infobox
+ * @param horizontal a boolean value indicating whether the infobox is horizontal or not
+ * @param onDismiss the function to be called when the infobox is dismissed
  */
 @Composable
 fun InfoBox(
@@ -382,8 +419,8 @@ fun InfoBox(
     }
 }
 
-/*
-* sets the content of the infobox with graph lines name and colours
+/**
+* The content of the infobox, which is shown when the user clicks on the info button in the graph
  */
 @Composable
 fun InfoBoxContent() {

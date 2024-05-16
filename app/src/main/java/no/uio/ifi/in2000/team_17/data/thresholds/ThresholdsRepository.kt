@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import no.uio.ifi.in2000.team17.Thresholds
 import no.uio.ifi.in2000.team_17.model.WeatherParameter
 
-private val LOG_NAME = "ADVANCED_SETTINGS_REPOSITORY"
-
 /**
  * a repository for reading and saving Thresholds using proto Data Store
  */

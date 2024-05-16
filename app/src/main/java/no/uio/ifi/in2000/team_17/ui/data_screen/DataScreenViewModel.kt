@@ -18,6 +18,18 @@ import no.uio.ifi.in2000.team_17.ui.home_screen.TrafficLightColor
 import no.uio.ifi.in2000.team_17.usecases.CalculateTimeIndexUseCase
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 
+
+/**
+ * The UI state for the DataScreen
+ *
+ * @property weatherDataLists The weather data lists
+ * @property thresholds The user defined thresholds
+ * @property selectedTimeIndex The selected time index
+ * @property showGraphTutorial Whether to show the graph tutorial, switched off permanently if wanted
+ * @property showTableTutorial Whether to show the table tutorial, switched off permanently if wanted
+ * @property graphBackgroundSwitch Whether to show the colorful graph background
+ * @property launchWindows The list of time indices where the weather data is safe to launch
+ */
 data class DataScreenUiState(
     val weatherDataLists: WeatherDataLists = WeatherDataLists(),
     val thresholds: Thresholds = ThresholdsSerializer.defaultValue,
@@ -28,6 +40,15 @@ data class DataScreenUiState(
     val launchWindows: List<Int> = listOf()
 )
 
+/**
+ * The ViewModel for the DataScreen
+ *
+ * Exposes the UI state for the DataScreen, and provides methods for updating the state
+ *
+ * @property repo The repository for weather data
+ * @property settingsRepo The repository for settings
+ * @property thresholdsRepository The repository for thresholds
+ */
 class DataScreenViewModel(
     private val repo: Repository,
     private val settingsRepo: SettingsRepository,
@@ -64,11 +85,11 @@ class DataScreenViewModel(
         }
     }
 
-    fun dontShowTableTurotialAgain() {
+    fun dontShowTableTutorialAgain() {
         viewModelScope.launch { settingsRepo.setTableShowTutorial(false) }
     }
 
-    fun dontShowGraphTurotialAgain() {
+    fun dontShowGraphTutorialAgain() {
         viewModelScope.launch { settingsRepo.setGraphShowTutorial(false) }
     }
 
@@ -76,7 +97,11 @@ class DataScreenViewModel(
         viewModelScope.launch { settingsRepo.setGraphBackgroundSwitch(switch) }
     }
 
-    //This function is useful when user-testing if we want to show the tutorial again
+     /**
+     * Resets the show tutorial flags to true
+     *
+     * This is used to reset the show tutorial flags to true, so that the tutorials will be shown again. Primarily used for testing.
+     */
     fun resetShowTutorial() {
         viewModelScope.launch {
             settingsRepo.setGraphShowTutorial(true)

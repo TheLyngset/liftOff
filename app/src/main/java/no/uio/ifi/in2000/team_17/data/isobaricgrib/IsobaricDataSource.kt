@@ -19,14 +19,14 @@ import io.ktor.serialization.gson.gson
  * The class abstracts away the networking logic and error handling, providing a simple interface
  * for retrieving the IsoBaricModel objects that contain the requested isobaric data.
  */
-enum class IsoBaricTime(val URL: String) {
+enum class IsoBaricTime(val url: String) {
     NOW("http://158.39.75.8:5000/collections/isobaric/position"),
     IN_3("http://158.39.75.8:5001/collections/isobaric/position"),
     IN_6("http://158.39.75.8:5002/collections/isobaric/position")
 }
 
 class IsobaricDataSource {
-    private val LOG_NAME = "ISOBARIC_DATASOURCE"
+    private val logname = "ISOBARIC_DATASOURCE"
     private val client = HttpClient {
         install(ContentNegotiation) { gson() }
         install(HttpTimeout) {
@@ -40,8 +40,8 @@ class IsobaricDataSource {
         lng: Double,
         isoBaricTime: IsoBaricTime = IsoBaricTime.NOW
     ): IsoBaricModel {
-        val queryUrl = "${isoBaricTime.URL}?coords=POINT%28$lng%20$lat%29"
-        Log.d(LOG_NAME, "Attempting to fetch data from: $queryUrl")
+        val queryUrl = "${isoBaricTime.url}?coords=POINT%28$lng%20$lat%29"
+        Log.d(logname, "Attempting to fetch data from: $queryUrl")
         return client.get(queryUrl).body<IsoBaricModel>()
     }
 

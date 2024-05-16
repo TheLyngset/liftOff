@@ -60,12 +60,12 @@ enum class Toggle {
 }
 
 /**
- * The Data screen displays the weatherData using the composable
- * [Table] and [ThresholdGraph] which present the data in different ways
- * @param windowSizeClass is used to make the screen reactive
- * @param dataScreenUiState contains the relevant data
- * @param dontShowAgain is a lambda used to not show the tutorial again
- * @param setTimeIndex is a lambda used to set a time for the home screen
+ * A composable function that displays the data screen of the application.
+ *
+ * @param context The context in which this function is being invoked.
+ * @param windowSizeClass The size class of the window in which this function is being displayed.
+ * @param modifier The modifier to be applied to this function.
+ * @param viewModel The ViewModel that provides the data for this function.
  */
 @Composable
 fun DataScreen(
@@ -134,7 +134,7 @@ fun DataScreen(
                                     onDismiss = { tableTutorialIsDismissed = true },
                                     onDontShowAgain = {
                                         tableTutorialIsDismissed = true
-                                        viewModel.dontShowTableTurotialAgain()
+                                        viewModel.dontShowTableTutorialAgain()
                                     },
                                     painter = painterResource(id = R.drawable.swipe),
                                     text = stringResource(R.string.table_tutorial)
@@ -165,7 +165,7 @@ fun DataScreen(
                             onDismiss = { graphTutorialIsDismissed = true },
                             onDontShowAgain = {
                                 graphTutorialIsDismissed = true
-                                viewModel.dontShowGraphTurotialAgain()
+                                viewModel.dontShowGraphTutorialAgain()
                             },
                             painter = painterResource(id = R.drawable.swipe),
                             text = stringResource(R.string.infoDialog)
@@ -229,6 +229,12 @@ fun DataScreen(
 }
 
 
+/**
+ * A composable function that displays a toggle button.
+ *
+ * @param modifier The modifier to be applied to this function.
+ * @param onFlip A lambda function that is invoked when the button is clicked. The index of the selected option is passed as a parameter.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToggleButton(
@@ -279,6 +285,13 @@ fun ToggleButton(
     }
 }
 
+/**
+ * A composable function that displays a card for selecting time.
+ *
+ * @param dataScreenUiState The UI state of the data screen.
+ * @param indexToPin The index of the time to be pinned.
+ * @param setTimeIndex A lambda function that sets the time index when invoked.
+ */
 @Composable
 fun SelectTimeCard(
     dataScreenUiState: DataScreenUiState,

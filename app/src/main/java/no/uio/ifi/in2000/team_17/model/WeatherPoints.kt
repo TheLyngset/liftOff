@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.team_17.model
 
 import no.uio.ifi.in2000.team_17.R
-import java.time.LocalDateTime
+
 
 /**
  * A data class used when parsing isobaric data and finding maxWind and maxShear
@@ -58,31 +58,26 @@ data class WeatherPointInTime(
     }
 }
 
-/*//object holding lists of values for each variable that needs to be displyed and used in the resultsUI
-data class WeatherPointsResults(
-    var date: MutableList<String> = mutableListOf(),
-    var time: MutableList<String> = mutableListOf(),
-    var groundWindSpeed: MutableList<Double> = mutableListOf(),
-    var windDirection: MutableList<Double> = mutableListOf(),
-    var maxWindShear: MutableList<Double> = mutableListOf(),
-    var maxWindSpeed: MutableList<Double> = mutableListOf(),
-    var cloudFraction: MutableList<Double> = mutableListOf(),
-    var rain: MutableList<Double> = mutableListOf(),
-    var humidity: MutableList<Double> = mutableListOf(),
-    var dewPoint: MutableList<Double> = mutableListOf(),
-    var fog: MutableList<Double> = mutableListOf()
-)*/
-
-/*
-A data class containing lists for each parameter where indexes correspond to hours in the future
-*/
 /**
- * A data class containing lists for each parameter where indexes correspond to hours in the future
- * The lists may have different lengths depending on what data is available
- * availableIndexes contains information on how many data-points is available for each parameter
- * [WeatherDataLists.get] returns a [WeatherPointInTime] at the corresponding index
- * [WeatherDataLists.iterator] iterates over the parameters and returns a pair of
- * [WeatherParameter] and the corresponding parameter
+ * A data class containing lists for each weather parameter where indexes correspond to hours in the future.
+ * The lists may have different lengths depending on what data is available.
+ *
+ * @property dateTime List of date and time strings.
+ * @property date List of date strings.
+ * @property time List of time strings.
+ * @property groundWind List of ground wind data.
+ * @property maxWindShear List of maximum wind shear data.
+ * @property maxWind List of maximum wind data.
+ * @property cloudFraction List of cloud fraction data.
+ * @property rain List of rain data.
+ * @property humidity List of humidity data.
+ * @property dewPoint List of dew point data.
+ * @property fog List of fog data.
+ * @property temperature List of temperature data.
+ * @property updated String representing the last update time.
+ * @property availableIndexes Object of type [AvailableIndexes] containing information on how many data-points are available for each parameter.
+ *
+ * @constructor Initializes the availableIndexes property based on the size of each list.
  */
 data class WeatherDataLists(
     val dateTime: List<String> = listOf("0000-01-01T00:00:00"),
@@ -100,6 +95,14 @@ data class WeatherDataLists(
     val updated: String = "00",
     var availableIndexes: AvailableIndexes = AvailableIndexes()
 ) {
+
+    /**
+     * Returns a [WeatherPointInTime] at the specified index.
+     *
+     * @param index The index of the weather data point.
+     * @return A [WeatherPointInTime] containing the weather data at the specified index.
+     * If the index is out of bounds for a certain parameter, the default value for that parameter is used.
+     */
     fun get(index: Int): WeatherPointInTime {
         return WeatherPointInTime(
             date = date.getOrElse(index) { "" },
@@ -145,6 +148,11 @@ data class WeatherDataLists(
         )
     }
 
+    /**
+     * Returns a list of pairs where each pair consists of a [WeatherParameter] and a list of corresponding weather data.
+     *
+     * @return A list of pairs. Each pair consists of a [WeatherParameter] and a list of corresponding weather data.
+     */
     operator fun iterator(): List<Pair<WeatherParameter, List<Any>>> {
         return listOf(
             WeatherParameter.DATE to date,
@@ -249,6 +257,13 @@ data class Rain(
     }
 }
 
+/**
+ * An enum class representing different types of weather parameters. Each parameter has a title, a unit, and an image associated with it.
+ *
+ * @property titleId The resource ID for the title of the weather parameter.
+ * @property unitId The resource ID for the unit of the weather parameter. Can be null if the parameter does not have a unit.
+ * @property imageID The resource ID for the image representing the weather parameter. Can be null if the parameter does not have an associated image.
+ */
 enum class WeatherParameter(
     val titleId: Int,
     val unitId: Int?,
