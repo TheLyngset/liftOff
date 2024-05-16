@@ -61,6 +61,10 @@ import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase
 import no.uio.ifi.in2000.team_17.usecases.WeatherUseCase.Companion.calculateColor
 import kotlin.math.round
 
+
+/**
+ * Table is the main composable for the Table screen. It contains the [GradientRows]
+ */
 @Composable
 fun Table(
     scrollToItem: Int? = null,
@@ -107,6 +111,12 @@ data class Image(
     val type: WeatherParameter,
     val id: Int
 )
+
+/**
+ * IconBox is a box that contains an icon and a description of the icon. The icon can be clicked to show the description.
+ * @param modifier the modifier for the box
+ * @param image the image that the box should contain
+ */
 @Composable
 fun IconBox(modifier: Modifier, image: Image) {
     var showDescription by remember { mutableStateOf( false ) }
@@ -225,7 +235,17 @@ fun SelectedBox(
         }
     }
 }
-// comment what this does
+
+/**
+ * ScrollLayer is basically a LazyRow that is overlaying all other rows. Making it cleanly scroll. This is also what supports TalkBack
+ *
+ * @param modifier the modifier for the column
+ * @param overlayModifier the modifier for the overlaying row
+ * @param uiState the current uiState
+ * @param state the state of the lazy row
+ * @param index the index of the selected row
+ * @param setIndex the function that sets the index of the selected row
+ */
 @Composable
 fun ScrollLayer(
     modifier: Modifier,
@@ -303,6 +323,13 @@ fun ScrollLayer(
     }
 }
 
+/**
+ * InfoBox are boxes that purely contain the information of the weather data and their respective colors.
+ * @param modifier the modifier for the box
+ * @param info the information that the box should contain, usually weather data
+ * @param colors the colors that the box should have. Usually based on thresholds and weather data
+ * @param bold if the text should be bold or not
+ */
 @Composable
 fun InfoBox(
     modifier: Modifier = Modifier,
@@ -331,6 +358,14 @@ fun InfoBox(
     }
 }
 
+/**
+ * TitleAndIconColumn is a column that contains all the titles and icons of the weather data.
+ * @param modifier the modifier for the column
+ * @param rowModifier the modifier for the rows
+ * @param dateTimeModifier the modifier for the date and time
+ * @param dividerModifier the modifier for the dividers
+ * @param rows the list of rows that contains the weather data
+ */
 @Composable
 fun TitleAndIconColumn(
     modifier: Modifier,
@@ -395,6 +430,18 @@ fun TitleAndIconColumn(
     }
 }
 
+/**
+ * GradientRowsColumn is a column that contains all the weather data in rows. Calls the InfoBox and WindInfoBox for the different types of weather data.
+ * @param modifier the modifier for the column
+ * @param boxHeight the height of the boxes
+ * @param rowModifier the modifier for the rows
+ * @param dateTimeModifier the modifier for the date and time
+ * @param dividerModifier the modifier for the dividers
+ * @param state the state of the lazy list
+ * @param rows the list of rows that contains the weather data
+ * @param selectedIndex the index of the selected row
+ * @param thresholds the thresholds for the weather data
+ */
 @Composable
 fun GradientRowsColumn(
     modifier: Modifier,
@@ -420,15 +467,7 @@ fun GradientRowsColumn(
             ) {
                 item {
                     when (row.type) {
-                        TIME -> {
-                            InfoBox(
-                                dateTimeModifier,
-                                "",
-                                listOf(Color.Unspecified, Color.Unspecified)
-                            )
-                        }
-
-                        DATE -> {
+                        TIME, DATE -> {
                             InfoBox(
                                 dateTimeModifier,
                                 "",
@@ -509,6 +548,15 @@ fun GradientRowsColumn(
     }
 }
 
+/**
+ * WindInfoBox is a box that contains the wind data and the wind arrow. Calls the WindArrowText for the wind arrow.
+ * @param modifier the modifier for the box
+ * @param boxHeight the height of the box
+ * @param data the wind data
+ * @param text the text that the box should contain
+ * @param colors the colors that the box should have. Usually based on thresholds and weather data
+ * @param bold if the text should be bold or not
+ */
 @Composable
 fun WindInfoBox(modifier: Modifier = Modifier, boxHeight: Double, data: WindLayer, text: String, colors:List<Color>, bold: Boolean = true){
     if(boxHeight >= 40) Box {
@@ -522,7 +570,23 @@ fun WindInfoBox(modifier: Modifier = Modifier, boxHeight: Double, data: WindLaye
     else InfoBox(modifier, text, colors, bold = bold)
 }
 
-
+/**
+ * GradientRows is a column that contains all the weather data in rows. Calls the TitleAndIconColumn and GradientRowsColumn for the different types of weather data.
+ * This the main column that is called by the Table.
+ * @param modifier the modifier for the column
+ * @param boxHeight the height of the boxes
+ * @param scrollToItem the item that should be scrolled to
+ * @param boxWidth the width of the boxes
+ * @param dividerModifier the modifier for the dividers
+ * @param rowModifier the modifier for the rows
+ * @param dateTimeModifier the modifier for the date and time
+ * @param overlayModifier the modifier for the overlaying row
+ * @param uiState the current uiState
+ * @param rows the list of rows that contains the weather data
+ * @param thresholds the thresholds for the weather data
+ * @param selectedIndex the index of the selected row
+ * @param setIndex the function that sets the index of the selected row
+ */
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun GradientRows(
@@ -616,6 +680,13 @@ fun GradientRows(
     }
 }
 
+/**
+ * WindArrowText is a box that contains the wind arrow and the wind data. The wind arrow is rotated based on the wind direction.
+ * @param modifier the modifier for the box
+ * @param value the wind data
+ * @param direction the wind direction, used for rotation of the wind arrow
+
+ */
 @Composable
 fun WindArrowText(modifier: Modifier = Modifier, value: Double, direction: Float) {
     Box(modifier,contentAlignment = Alignment.Center) {
@@ -632,6 +703,6 @@ fun WindArrowText(modifier: Modifier = Modifier, value: Double, direction: Float
 }
 @Preview(showBackground = true)
 @Composable
-fun WindArrowPreview(modifier: Modifier = Modifier) {
+fun WindArrowPreview() {
     WindArrowText(value = 11.34, direction = 45f)
 }
