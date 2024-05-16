@@ -89,7 +89,7 @@ fun HomeScreen(
             .offset(y = (offsetMap[windowSizeClass.heightSizeClass] ?: 0.dp)),
         contentAlignment = Alignment.TopCenter
     ) {
-    }
+    } // Responsive with screensize
     if(windowSizeClass.heightSizeClass == WindowHeightSizeClass.Medium) {
         Box(modifier = Modifier.fillMaxWidth().fillMaxHeight().offset(y= (100.dp)),
             contentAlignment = Alignment.TopCenter){
