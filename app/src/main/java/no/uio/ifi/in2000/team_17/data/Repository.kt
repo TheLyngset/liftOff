@@ -61,8 +61,6 @@ const val MOLAR_MASS_OF_AIR: Double = 0.028964425278793993 // kg/mol
  * This repository loads data from [IsobaricDataSource] and [LocationForecastDataSource]
  * and exposes it through the datastructure [WeatherDataLists]
  * [load] takes the parameters
- * @param latLng, a dataclass holding the coordinates,
- * @param maxHeight, a Double describing the maximum height the rocket can reach
  */
 interface Repository {
     suspend fun load(latLng: LatLng, maxHeight: Int)
@@ -73,7 +71,7 @@ interface Repository {
 }
 
 class RepositoryImplementation : Repository {
-    private val LOG_NAME = "REPOSITORY"
+    private val logname = "REPOSITORY"
     private var lastLatLng = LatLng(59.0, 10.0)
     private var lastMaxHeight = 3
 
@@ -116,14 +114,14 @@ class RepositoryImplementation : Repository {
                 _hasLocationForecastData.update { true }
                 data
             } catch (e: IOException) {
-                Log.e(LOG_NAME, "Error while fetching Locationforecast data: ${e.message}")
+                Log.e(logname, "Error while fetching Locationforecast data: ${e.message}")
                 _failedToUpdate.update { true }
                 delay(500)
                 _failedToUpdate.update { false }
                 it.copy()
             } catch (e: NoTransformationFoundException) {
                 Log.e(
-                    LOG_NAME,
+                    logname,
                     "NoTransformationFoundException while fetching Locationforecast data: ${e.message}"
                 )
                 _failedToUpdate.update { true }
@@ -132,7 +130,7 @@ class RepositoryImplementation : Repository {
                 it.copy()
             } catch (e: ClientRequestException) {
                 Log.e(
-                    LOG_NAME,
+                    logname,
                     "ClientRequestException while fetching Locationforecast data: ${e.message}"
                 )
                 _failedToUpdate.update { true }
@@ -141,7 +139,7 @@ class RepositoryImplementation : Repository {
                 it.copy()
             } catch (e: ServerResponseException) {
                 Log.e(
-                    LOG_NAME,
+                    logname,
                     "ServerResponseException while fetching Locationforecast data: ${e.message}"
                 )
                 _failedToUpdate.update { true }
@@ -154,7 +152,7 @@ class RepositoryImplementation : Repository {
 
     /**
      * loads data from [isobaricDataSource] and mimics [locationForecastData] by
-     * making a list of [IsoBarcModel.Ranges] with the index 0 corresponding to now,
+     * making a list of [IsoBaricModel.Ranges] with the index 0 corresponding to now,
      * index 1 corresponding to in one hour and so on
      * @param latLng a data class containing the coordinates from which to load data
      */
@@ -172,7 +170,7 @@ class RepositoryImplementation : Repository {
             ).ranges
             _hasIsoBaricData.update { true }
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            Log.e(logname, "Error while fetching isobaric data: ${e.message}")
             if (hasIsoBaricData.value) {
                 _failedToUpdate.update { true }
                 delay(500)
@@ -190,7 +188,7 @@ class RepositoryImplementation : Repository {
                 IsoBaricTime.IN_3
             ).ranges
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            Log.e(logname, "Error while fetching isobaric data: ${e.message}")
         }
 
         try {
@@ -200,15 +198,15 @@ class RepositoryImplementation : Repository {
                 IsoBaricTime.IN_6
             ).ranges
         } catch (e: IOException) {
-            Log.e(LOG_NAME, "Error while fetching isobaric data: ${e.message}")
+            Log.e(logname, "Error while fetching isobaric data: ${e.message}")
         }
 
         if (isoBaricNow.temperature.values.isNotEmpty()) {
-            (startIndex..2).forEach { newIsoBaricModel.add(isoBaricNow) }
+            (startIndex..2).forEach { _ -> newIsoBaricModel.add(isoBaricNow) }
             if (isoBaricIn3.temperature.values.isNotEmpty()) {
-                (1..3).forEach { newIsoBaricModel.add(isoBaricIn3) }
+                (1..3).forEach { _ -> newIsoBaricModel.add(isoBaricIn3) }
                 if (isoBaricIn6.temperature.values.isNotEmpty()) {
-                    (1..3).forEach { newIsoBaricModel.add(isoBaricIn6) }
+                    (1..3).forEach { _ -> newIsoBaricModel.add(isoBaricIn6) }
                 }
             }
         }
@@ -233,15 +231,15 @@ class RepositoryImplementation : Repository {
     }
 
     /**
-     * updates the WeatherDataLists by using [locationForecastData]
-     * and [isoBaricData] to make a [listOfWeatherPointList] which
+     * Updates the WeatherDataLists by using [locationForecastData]
+     * and [isoBaricData] to make a [weatherDataList] which
      * generates a weatherPointList for each hour available from
-     * [isoBaricData] and uses this to generate [maxWindShear] and
-     * [maxWindSpeed] values when available. The resulting data class
-     * has lists of varying length depending on the data available
+     * [isoBaricData] and uses this to generate [WindShear] and
+     * [WindLayer] values when available. The resulting data class
+     * has lists of varying length depending on the data available.
+     *
      * @param maxHeight The maximum possible height the rocket can reach
      */
-
     private fun updateWeatherDataLists(maxHeight: Int) {
         _weatherDataLists.update {
             val locationData = locationForecastData.value
@@ -270,19 +268,19 @@ class RepositoryImplementation : Repository {
             WeatherDataLists(
                 dateTime = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
-                        .plusHours(2)//Todo this is summertime only
+                        .plusHours(2)
                         .toString()
                 },
                 date = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
-                        .plusHours(2)//Todo this is summertime only
+                        .plusHours(2)
                         .toLocalDate()
                         .toString()
                 },
                 time = locationData.timeseries.map {
                     LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME)
                         .toLocalTime()
-                        .plusHours(2)//TODO this is summertime only
+                        .plusHours(2)
                         .toString()
                 },
                 groundWind = locationData.timeseries.map {
@@ -292,17 +290,17 @@ class RepositoryImplementation : Repository {
                         it.data.instant.details.wind_from_direction
                     )
                 },
-                maxWindShear = listOfWeatherPointList.map {
-                    val windShear = it.map { it.windShear }
+                maxWindShear = listOfWeatherPointList.map { weatherPointLayerList ->
+                    val windShear = weatherPointLayerList.map { it.windShear }
                     val maxWindShear = windShear.max()
                     val index = windShear.indexOf(windShear.max())
-                    WindShear(maxWindShear, it[index].height)
+                    WindShear(maxWindShear, weatherPointLayerList[index].height)
                 },
-                maxWind = listOfWeatherPointList.map {
-                    val windSpeed = it.map { it.windSpeed }
+                maxWind = listOfWeatherPointList.map { weatherPointLayerList ->
+                    val windSpeed = weatherPointLayerList.map { it.windSpeed }
                     val maxWindSpeed = windSpeed.max()
                     val index = windSpeed.indexOf(maxWindSpeed)
-                    WindLayer(maxWindSpeed, it[index].height, it[index].windDirection)
+                    WindLayer(maxWindSpeed, weatherPointLayerList[index].height, weatherPointLayerList[index].windDirection)
                 },
                 cloudFraction = locationData.timeseries.map { it.data.instant.details.cloud_area_fraction },
                 rain = locationData.timeseries.map {
@@ -323,7 +321,7 @@ class RepositoryImplementation : Repository {
                         locationData.meta.updated_at,
                         DateTimeFormatter.ISO_DATE_TIME
                     ).toLocalTime()
-                        .plusHours(2)//TODO: now summertime only
+                        .plusHours(2)
                         .toString()
                 } catch (e: DateTimeParseException) {
                     e.printStackTrace()
@@ -337,9 +335,9 @@ class RepositoryImplementation : Repository {
 
 /**
  * Generates a list of [WeatherPointLayer]
- * @param isoData is the data from the edrIsoBaricApi
+ * @param isoData is the data from the edrisoBaricApi
  * @param pressures is a list of predetermined pressures from the api
- * @param groundWeatherPoint is a generated [WeatherPointLayer] from [locationForecastData]
+ * @param groundWeatherPoint is a generated [WeatherPointLayer] from [LocationForecastDataSource]
  * @param maxHeight is the max height predicted for the rocket to reach
  */
 private fun generateWeatherPointLayerList(
@@ -349,18 +347,18 @@ private fun generateWeatherPointLayerList(
     maxHeight: Int
 ): List<WeatherPointLayer> {
     val pressureAtSeaLevel = groundWeatherPoint.pressure
-    var s_0 = groundWeatherPoint.windSpeed //Wind speed at lower level
-    var d_0 = groundWeatherPoint.windDirection //Wind direction at lower level
+    var s0 = groundWeatherPoint.windSpeed //Wind speed at lower level
+    var d0 = groundWeatherPoint.windDirection //Wind direction at lower level
     val windSpeed = isoData.windSpeed.values
     val temperatures = isoData.temperature.values
     val windFromDirection = isoData.windFromDirection.values
     val windShear = mutableListOf<Double>()
 
     windSpeed.zip(windFromDirection)
-        .forEach { (s_1, d_1) -> // Wind speed and wind direction at higher level
-            windShear.add(round(calculateWindShear(s_0, d_0, s_1, d_1)))
-            s_0 = s_1
-            d_0 = d_1
+        .forEach { (s1, d1) -> // Wind speed and wind direction at higher level
+            windShear.add(round(calculateWindShear(s0, d0, s1, d1)))
+            s0 = s1
+            d0 = d1
         }
     val allLayers = listOf(groundWeatherPoint) + windSpeed.zip(windFromDirection)
         .zip(temperatures) { (speed, direction), temperature ->
@@ -403,19 +401,18 @@ internal fun calculateHeight(
 /**
  * Calculates the Wind Shear between two points considering the wind speed and wind direction at each point.
  * Uses the formula: sqrt((s1 * cos(d1_rad) - s0 * cos(d0_rad))^2 + (s1 * sin(d1_rad) - s0 * sin(d0_rad))^2)
- * @param s_0 Wind Speed at the lower level
- * @param d_0 Wind direction at the lower level
- * @param s_1 Wind Speed at the higher level
- * @param d_1 Wind direction at the higher level
+ * @param s0 Wind Speed at the lower level
+ * @param d0 Wind direction at the lower level
+ * @param s1 Wind Speed at the higher level
+ * @param d1 Wind direction at the higher level
  * @return Wind Shear between the two points
  */
 
-internal fun calculateWindShear(s_0: Double, d_0: Double, s_1: Double, d_1: Double): Double {
-    //trenger vi egentlig polar koordinater her? Ja, vind kommer med retning og lengde - Samuel
-    val d_0_rad = d_0 * PI / 180
-    val d_1_rad = d_1 * PI / 180
-    return sqrt((s_1 * cos(d_1_rad) - s_0 * cos(d_0_rad)).pow(2) + (s_1 * sin(d_1_rad) - s_0 * sin(
-            d_0_rad
+internal fun calculateWindShear(s0: Double, d0: Double, s1: Double, d1: Double): Double {
+    val d0Rad = d0 * PI / 180
+    val d1Rad = d1 * PI / 180
+    return sqrt((s1 * cos(d1Rad) - s0 * cos(d0Rad)).pow(2) + (s1 * sin(d1Rad) - s0 * sin(
+            d0Rad
         )).pow(2)
     )
 }
