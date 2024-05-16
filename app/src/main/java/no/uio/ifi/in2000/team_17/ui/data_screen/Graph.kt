@@ -532,7 +532,12 @@ fun InfoBoxContent() {
     }
 }
 
-//generates all variable lines in the chart
+/**
+ * Creates a line for the graph with the given points, line color, and text.
+ * @param points The list of points to be plotted on the line.
+ * @param lineColor The color of the line.
+ * @param fillColor A boolean value indicating whether the line should be filled with color.
+ */
 @Composable
 fun createLine(
     points: List<Point>,
@@ -575,6 +580,13 @@ fun createLine(
     )
 }
 
+/**
+ * Generates the data for the graph based on the provided UI state.
+ * @param uiState The UI state containing the weather data lists and thresholds.
+ * @param backgroundSwitch A boolean value indicating whether the background switch is on or off.
+ * @param setTimeIndex The function to be called when a point on the graph is selected.
+ * @return LineChartData object containing the data for the graph.
+ */
 @Composable
 fun generateLineChartData(
     uiState: DataScreenUiState,
@@ -646,7 +658,7 @@ fun generateLineChartData(
         .labelData { i ->
             val yMax = 2f
             val yScale = yMax / 2
-            ((i * yScale)).formatToSinglePrecision()
+            (i * yScale).formatToSinglePrecision()
         }
         .build()
 
@@ -678,7 +690,7 @@ fun generateLineChartData(
                             val time =
                                 pointsTime[index].y
                             val dateAndTime = "Date: $date \nTime: ${time}0"
-                            "$dateAndTime"
+                            dateAndTime
                         },
                         paddingBetweenPopUpAndPoint = 1.dp,
                         labelAlignment = android.graphics.Paint.Align.LEFT,
@@ -771,74 +783,3 @@ fun generateLineChartData(
         containerPaddingEnd = 2.dp,
     )
 }
-
-
-val dummyData: WeatherDataLists = WeatherDataLists(
-    date = listOf(
-        "2024-04-18",
-        "2024-04-19",
-        "2024-04-20",
-        "2024-04-21",
-        "2024-04-22",
-        "2024-04-23",
-        "2024-04-24",
-        "2024-04-25",
-        "2024-04-26",
-        "2024-04-27"
-    ),
-    time = listOf(
-        "08:38",
-        "09:00",
-        "10:00",
-        "11.00",
-        "12.00",
-        "13.00",
-        "14.00",
-        "15.00",
-        "16.00",
-        "17.00"
-    ),
-    groundWind = listOf(
-        WindLayer(1.2, 10.0, 123.5),
-        WindLayer(1.4, 10.0, 123.5),
-        WindLayer(3.4, 10.0, 123.5),
-        WindLayer(4.6, 10.0, 123.5),
-        WindLayer(6.5, 10.0, 123.5),
-        WindLayer(3.7, 10.0, 123.5),
-        WindLayer(8.5, 10.0, 123.5),
-        WindLayer(9.2, 10.0, 123.5),
-        WindLayer(10.4, 10.0, 123.5),
-        WindLayer(13.5, 10.0, 123.5)
-    ),
-    maxWindShear = listOf(WindShear()),
-    maxWind = listOf(
-        WindLayer(1.2, 10.0, 123.5),
-        WindLayer(1.4, 12.0, 123.5),
-        WindLayer(3.4, 18.0, 123.5),
-        WindLayer(4.6, 100.0, 123.5),
-        WindLayer(6.5, 120.0, 123.5),
-        WindLayer(3.7, 130.0, 123.5),
-        WindLayer(8.5, 140.0, 123.5),
-        WindLayer(9.2, 160.0, 123.5),
-        WindLayer(10.4, 189.0, 123.5),
-        WindLayer(13.5, 270.0, 123.5)
-    ),
-    cloudFraction = listOf(0.0, 10.0, 20.0, 30.0, 15.0, 40.0, 13.0, 34.0, 11.0),
-    rain = listOf(
-        Rain(0.0, 0.0, 0.1),
-        Rain(0.0, 0.0, 0.0),
-        Rain(0.0, 0.0, 0.3),
-        Rain(0.0, 0.0, 0.1),
-        Rain(0.0, 0.0, 0.2),
-        Rain(0.0, 0.0, 0.0),
-        Rain(0.0, 0.0, 0.4),
-        Rain(0.0, 0.0, 0.0),
-        Rain(0.0, 0.0, 0.9),
-        Rain(0.0, 0.0, 0.11)
-    ),
-    humidity = listOf(51.0, 57.0, 59.9, 60.00, 62.00, 68.0, 70.0, 71.0, 53.0, 54.0),
-    fog = listOf(0.1, 0.2, 0.4, 0.5, 1.4, 1.2, 1.6, 1.7, 0.9, 0.85),
-    temperature = listOf(-3.0, -2.0, 0.0, 12.0, 3.0, 19.0, 30.0, 14.0, 5.0, -15.0),
-    updated = "08:38",
-    availableIndexes = AvailableIndexes()
-)
