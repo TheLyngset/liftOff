@@ -10,24 +10,24 @@
 
 De viktigste funksjonelle kravene til appen vår er følgende:
 
-Brukeren kan se på tre forskjellige måter om det går an eller ikke å skyte opp en rakett.
+Brukeren kan se på tre forskjellige måter om det er forsvarlig å skyte opp en rakett.
 
-Brukeren kan endre instillinger som lokasjon og thresholds for hvor data er hentet fra og får vist informasjon for nye lokasjoner og beregninger for nye thresholds.
+Brukeren kan endre instillinger som lokasjon og thresholds for hvor data er hentet fra. I tillegg får brukeren vist informasjon for nye lokasjoner og beregninger for nye thresholds.
 
-Brukeren kan velge å følge med på hjemmeskjermen et valgt tidspunkt og lokasjon hvis f.eks.
-det er ønskelig å følge med framtidig informasjon på en lett måte.
+Brukeren kan velge å følge med på et valgt tidspunkt og lokasjon på hjemskjermen, hvis f.eks.
+det er ønskelig å følge med på framtidig informasjon på en lett måte.
 
 ### Tekstlig beskrivelse av de viktigste use-casene
 
-Viktige usecase er å åpne appen og se data på hjemmeskjermen, endre lokasjon/thresholds og pinne ønskelig lokasjon og tidspunkt til hjemmeskjermen.
+Viktige usecaser er å åpne appen og se data på hjemskjermen, endre lokasjon/threshold. I tillegg til å feste ønskelig lokasjon og tidspunkt til hjemskjermen.
 
-Use-case navn: Åpne appen og se data på hjemmeskjermen:
+Use-case navn: Åpne appen og se data på hjemskjermen
 
-Aktør: PortalSpace user
+Aktør: Bruker
 
-Prebetingelser: Ingen.
+Prebetingelser: Ingen
 
-Potbestingelser: Brukeren ser om det er mulig, ikke mulig eller innimelom å skyte opp PortalSpace sin rakett.
+Postbetingelser: Brukeren ser om et oppskytningsvindu er godkjent, ikke godkjent eller rundt grensen for å skyte opp raketten.
 
 Hovedflyt:
 
@@ -42,13 +42,14 @@ Alternativ flyt
 
 1.3 Brukeren returnerer til steg 1 i hovedflytten.
 
-Use-case navn: User navigates to table screen and changes location
+Use-case navn: Bruker navigerer til tabellscreen og endrer lokasjon
 
-Aktør: PortalSpace user
+Aktør: Bruker
 
-Prebetingelser: Brukeren er på hjemmeskjermen i appen og har internet.
+Prebetingelser: Brukeren er på hjemskjermen i appen og har internet.
 
-Potbestingelser: Brukeren ser data frem i tid for om det er mulig, ikke mulig eller innimelom å skyte opp PortalSpace sin rakett.
+Postbetingelser: Brukeren ser om et oppskytningsvindu er godkjent, ikke godkjent eller rundt grensen for å skyte opp raketten på den nye lokasjonen.
+
 
 Hovedflyt:
 
@@ -58,20 +59,20 @@ Hovedflyt:
 4. Brukeren endrer lokasjon.
 5. Brukeren går tilbake til data-skjermen og ser på data for ny lokasjon.
 
-Use-case navn: Brukeren pins tidspunkt og lokasjon til hjemmeskjerm
+Use-case navn: Brukeren fester tidspunkt til hjemskjermen
 
-Aktør: PortalSpace user
+Aktør: Bruker
 
 Prebetingelser: Brukeren er på dataskjermen og ser på graf.
 
-Potbestingelser: Brukeren har pinned tidspunkt og lokasjon til hjemmeskjerm.
+Postbetingelser: Brukeren har festet tidspunkt til hjemskjermen.
 
 Hovedflyt:
 
-1. Brukeren ser på graf og scroller til høyre fram til den finner tidspunt man kan skyte opp raketten.
-2. Brukeren trykker på grafen og ser hvilen dato og tid den er.
-3. Brukeren er spurt om det er ønskelig å pinne tidspunkt til hjemmeskjermen.
-4. Brukeren trykker på knappen for å pinne tidspunkt.
+1. Brukeren ser på graf og blar til høyre fram til de finner tidspunkt man kan skyte opp raketten.
+2. Brukeren trykker på grafen og ser hvilken dato og tid det er.
+3. Brukeren er spurt om det er ønskelig å festw tidspunkt til hjemskjermen.
+4. Brukeren trykker på knappen for å feste tidspunkt.
 
 ### Use-cases Diagram
 
@@ -85,7 +86,7 @@ Hovedflyt:
 
 ## ● (2) Klassediagram
 
-I dette klassediagrammet har vi valgt å fokusere mest på dataflyten. Disse forenklinger er gjort for å få diagrammet mer oversiktlig:
+I dette klassediagrammet har vi valgt å fokusere mest på dataflyten. Disse forenklingene er gjort for å få diagrammet mer oversiktlig:
 
 * Skjermene vises som klasser selv om de egentlig er Composable funksjoner
 * typen til variablene og returverdiene til metodene vises ikke
