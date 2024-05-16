@@ -199,7 +199,7 @@ fun SelectedBox(
                             items(weatherPointInTime.iterator()) { (type, value) ->
                                 val text = value.toString()
                                 when (type) {
-                                    DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}",)
+                                    DATE -> InfoBox(dateTimeModifier, "${text.subSequence(8, 10)}.${text.subSequence(5, 7)}")
                                     TIME -> InfoBox(dateTimeModifier, text)
                                     else -> {
                                         if(uiState.weatherDataLists.get(i-1).available.get(type)){
@@ -635,38 +635,3 @@ fun WindArrowText(modifier: Modifier = Modifier, value: Double, direction: Float
 fun WindArrowPreview(modifier: Modifier = Modifier) {
     WindArrowText(value = 11.34, direction = 45f)
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun GradientRowPreview() {
-    val testPoints = listOf(1.0, 3.0,14.0,24.0, 34.0)
-    val testTimes = listOf("23.00", "00.00", "01.00", "02.00", "03.00")
-    val testDates = listOf("2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21", "2024-04-21")
-    var selectedIndex by remember {
-        mutableStateOf(0)
-    }
-    GradientRows(
-        70,
-        Modifier.padding(vertical = 8.dp),
-        Modifier.size(height = 35.dp, width = 70.dp),
-        Modifier.size(height = 35.dp, width = 70.dp),
-        Modifier.size(width = 70.dp, height = 586.dp),
-        rows = listOf(
-            GradientRow(testDates.map { it.toString() }, WeatherParameter.DATE),
-            GradientRow(testTimes.map { it.toString() }, WeatherParameter.TIME),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.GROUNDWIND),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWIND),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.MAXWINDSHEAR),
-            GradientRow(testPoints.map { it.toString() }, WeatherParameter.CLOUDFRACTION)
-        ),
-        thresholds = ThresholdsSerializer.defaultValue,
-        selectedIndex = selectedIndex,
-        setIndex = {
-            selectedIndex = it
-        }
-        )
-}
-
-*/
-
