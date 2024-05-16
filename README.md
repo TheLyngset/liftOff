@@ -10,11 +10,11 @@
 - [Contributing](#contributing)
 
 ## About
-LiftOff is an application that provides a weather forecast for both ground and atmospheric pressure points. The app can store and use thresholds set by you to calculate "safe" rocket launch time-periods. The application is developed by a team of 6 people.
+LiftOff is an application that provides a weather forecast for both ground and atmospheric pressure points. The app can store and use thresholds set by the user to calculate "safe" rocket launch time-periods. The application is developed by a team of 6 people.
 The team consists of students from the University of Oslo taking the course IN2000 - Software Engineering.
 
 ## Background
-We were approached with multiple cases, and we chose to work on the case "Weather data for a safe rocket launch". 
+We were approached with multiple cases, and we chose to work on the case "Case 1. Rocket Launch". 
 We have worked closely with the student organization [Portal Space](https://www.portalspace.no/), catering features, design, and functionality to their needs.
 ## Screenshots
 ![Home Screen](Readme_pictures/HomeScreen_shot.png)
@@ -24,12 +24,11 @@ Information on the applications architecture and further maintaining, will be fo
 
 Graphs and system design will be found here. [MODELING.md](MODELING.md)
 
-Documentation on weatherDTO and how to use it will be found here. [weatherDTO_Documentation.md](app/src/main/java/no/uio/ifi/in2000/team_17/data/locationforecast/weatherDTO/weatherDTO_Documentation.md)
-
 ## Install
 #### Requirements
 - Emulator or physical device running Android 8.0 (API level 26) or higher
 - Either a clone of this repository or the APK file
+- Api-key for Locationforecast
 
 #### Apk file
 To install on a physical device, we recommend using Android Debug Bridge [(adb)](https://developer.android.com/tools/adb)
@@ -43,7 +42,9 @@ Clone the repository, and run trough android studio.
 ```sh
 $ git clone https://github.uio.no/IN2000-V24/team-17.git
 ```
-You will need permissions to clone all the files.
+You will need permission to clone all the files.
+
+Locationforecast API is also reliant on an API-key, which is not included.
 ## Usage
 Run the application on an emulator or physical device. The application will guide you on usage. There are multiple features to explore, such as setting thresholds, viewing weather data, and viewing the forecast.
 
